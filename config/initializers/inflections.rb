@@ -14,3 +14,15 @@
 # ActiveSupport::Inflector.inflections(:en) do |inflect|
 #   inflect.acronym "RESTful"
 # end
+
+ActiveSupport::Inflector.inflections(:en) do |inflect|
+  inflect.irregular 'rol', 'roles'
+  inflect.irregular 'usuario', 'usuarios'
+  inflect.irregular 'categoria', 'categorias'
+  inflect.irregular 'producto', 'productos'
+  inflect.irregular 'orden', 'ordenes'
+  inflect.irregular 'detalle_orden', 'detalle_ordenes'
+  inflect.irregular 'pago', 'pagos'
+  inflect.irregular 'envio', 'envios'
+  inflect.irregular 'metodos_de_pago', 'metodos_de_pagos'
+end

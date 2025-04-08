@@ -27,6 +27,6 @@ RUN bundle install
 
 COPY . .
 
-EXPOSE 3000
+EXPOSE 4000
 
 ENTRYPOINT ["bash", "-c", "rm -f tmp/pids/server.pid && bundle exec rails server -b 0.0.0.0 -p 4000"]

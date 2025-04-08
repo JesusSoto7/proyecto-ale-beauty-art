@@ -10,5 +10,96 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 0) do
+ActiveRecord::Schema[8.0].define(version: 2025_04_08_012601) do
+  create_table "categorias", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.string "nombreCategoria"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "detalle_ordenes", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.bigint "orden_id", null: false
+    t.bigint "producto_id", null: false
+    t.integer "cantidad"
+    t.decimal "precioUnitario", precision: 10
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["orden_id"], name: "index_detalle_ordenes_on_orden_id"
+    t.index ["producto_id"], name: "index_detalle_ordenes_on_producto_id"
+  end
+
+  create_table "envios", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.bigint "orden_id", null: false
+    t.string "direccion_envio"
+    t.date "fecha_envio"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["orden_id"], name: "index_envios_on_orden_id"
+  end
+
+  create_table "metodos_de_pagos", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.string "nombreMetodo"
+    t.boolean "estado"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "ordenes", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.bigint "usuario_id", null: false
+    t.decimal "total", precision: 10
+    t.date "fechaOrden"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["usuario_id"], name: "index_ordenes_on_usuario_id"
+  end
+
+  create_table "pagos", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.bigint "orden_id", null: false
+    t.bigint "metodos_de_pago_id", null: false
+    t.decimal "monto", precision: 10
+    t.date "fecha_pago"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["metodos_de_pago_id"], name: "index_pagos_on_metodos_de_pago_id"
+    t.index ["orden_id"], name: "index_pagos_on_orden_id"
+  end
+
+  create_table "productos", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.string "nombreProducto"
+    t.decimal "precioProducto", precision: 10
+    t.text "descripcionProducto"
+    t.integer "stock"
+    t.bigint "categoria_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["categoria_id"], name: "index_productos_on_categoria_id"
+  end
+
+  create_table "roles", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.string "nombreRol"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "usuarios", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.string "nombre"
+    t.string "apellido"
+    t.string "email"
+    t.string "contraseña"
+    t.string "telefono"
+    t.string "direccion"
+    t.bigint "rol_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["rol_id"], name: "index_usuarios_on_rol_id"
+  end
+
+  add_foreign_key "detalle_ordenes", "ordenes"
+  add_foreign_key "detalle_ordenes", "productos"
+  add_foreign_key "envios", "ordenes"
+  add_foreign_key "ordenes", "usuarios"
+  add_foreign_key "pagos", "metodos_de_pagos"
+  add_foreign_key "pagos", "ordenes"
+  add_foreign_key "productos", "categorias"
+  add_foreign_key "usuarios", "roles"
 end
