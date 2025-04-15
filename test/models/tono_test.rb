@@ -1,6 +1,6 @@
 require "test_helper"
 
-class MetodosDePagoTest < ActiveSupport::TestCase
+class TonoTest < ActiveSupport::TestCase
   # test "the truth" do
   #   assert true
   # end

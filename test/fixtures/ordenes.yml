@@ -1,11 +1,11 @@
 # Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
 one:
-  usuario: one
+  fechaOrden: 2025-04-15
   total: 9.99
-  fechaOrden: 2025-04-08
+  usuario: one
 
 two:
-  usuario: two
+  fechaOrden: 2025-04-15
   total: 9.99
-  fechaOrden: 2025-04-08
+  usuario: two

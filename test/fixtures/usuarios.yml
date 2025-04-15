@@ -4,7 +4,7 @@ one:
   nombre: MyString
   apellido: MyString
   email: MyString
-  contraseña: MyString
+  password: MyString
   telefono: MyString
   direccion: MyString
   rol: one
@@ -13,7 +13,7 @@ two:
   nombre: MyString
   apellido: MyString
   email: MyString
-  contraseña: MyString
+  password: MyString
   telefono: MyString
   direccion: MyString
   rol: two

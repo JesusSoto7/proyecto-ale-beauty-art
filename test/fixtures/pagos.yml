@@ -1,13 +1,13 @@
 # Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
 one:
+  fecha_pago: 2025-04-15 21:05:35
+  pago_total: 9.99
   orden: one
-  metodos_de_pago: one
-  monto: 9.99
-  fecha_pago: 2025-04-08
+  metodoDePago: one
 
 two:
+  fecha_pago: 2025-04-15 21:05:35
+  pago_total: 9.99
   orden: two
-  metodos_de_pago: two
-  monto: 9.99
-  fecha_pago: 2025-04-08
+  metodoDePago: two

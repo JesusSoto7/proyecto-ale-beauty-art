@@ -1,4 +1,4 @@
 class Pago < ApplicationRecord
   belongs_to :orden
-  belongs_to :metodos_de_pago
+  belongs_to :metodo_de_pago
 end

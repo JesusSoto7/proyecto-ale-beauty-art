@@ -3,9 +3,11 @@
 one:
   orden: one
   direccion_envio: MyString
-  fecha_envio: 2025-04-08
+  estado_envio: MyString
+  fecha_envio: 2025-04-15 21:21:49
 
 two:
   orden: two
   direccion_envio: MyString
-  fecha_envio: 2025-04-08
+  estado_envio: MyString
+  fecha_envio: 2025-04-15 21:21:49
