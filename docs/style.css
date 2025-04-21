@@ -1,0 +1,100 @@
+.national-park-fuente {
+    font-family: "National Park", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 200;
+    font-style: normal;
+}
+/* body{
+}
+
+header{
+    width: 100%;
+    height: 40px;
+    border: solid 1px;
+}
+aside{
+    width: 130px;
+    height: 80vh;
+    border: solid 1px;
+}
+section{
+    height: 20px;
+    border: solid 1px;
+}
+
+div{
+    width: 100%;
+    height: 80vh;
+    border: solid 1px;
+    flex-direction: row;
+}
+
+footer{
+    border: solid 1px;
+    display: flex;
+    justify-content: center;
+} */
+
+
+/* --------------------- */
+nav{
+    /* border: solid 1px; */
+    width: 99.9%;
+    height: 70px;
+ }
+
+ div{
+   display: flex;
+   flex-direction: row;
+ }
+
+ 
+ aside{
+    height: 92vh;
+    width: 200px;
+    box-shadow: inset 14px 15px 29px -26px rgb(189, 227, 243);
+ }
+
+
+ #bttn1 a{
+  color: rgb(252, 252, 252);
+  text-decoration: none;
+ }
+
+ section{
+  width: 89.5%;
+  height: 609px;
+  overflow: scroll;
+  box-shadow: inset 14px 15px 29px -26px rgba(175,221,240,1);
+ }
+
+  section h1 {
+    margin-top: 50px;
+    margin-left: 50px;
+  }
+
+ .fullHeight {
+    height: 92vh;
+  }
+
+  #personajes{
+    display: flex;
+    /* justify-content: space-around; */
+    flex-flow: row wrap;
+  }
+
+  #newPj a{
+    color: white;
+    text-decoration: none;
+  }
+
+  #newPj{
+    margin-top: 50px;
+    margin-left: 50px;
+  }
+
+  .btn a{
+    color: black;
+    text-decoration: none;
+    font-size: 20px;
+  }
