@@ -1,3 +1,3 @@
 class Categoria < ApplicationRecord
-  has_many :productos
+  has_many :productos, dependent: :destroy
 end
