@@ -24,5 +24,5 @@ ActiveSupport::Inflector.inflections(:en) do |inflect|
   inflect.irregular 'detalle_orden', 'detalle_ordenes'
   inflect.irregular 'pago', 'pagos'
   inflect.irregular 'envio', 'envios'
-  inflect.irregular 'metodos_de_pago', 'metodos_de_pagos'
+  inflect.irregular 'metodo_de_pago', 'metodos_de_pago'
 end
