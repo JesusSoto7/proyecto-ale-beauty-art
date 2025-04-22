@@ -7,34 +7,6 @@
 /* body{
 }
 
-header{
-    width: 100%;
-    height: 40px;
-    border: solid 1px;
-}
-aside{
-    width: 130px;
-    height: 80vh;
-    border: solid 1px;
-}
-section{
-    height: 20px;
-    border: solid 1px;
-}
-
-div{
-    width: 100%;
-    height: 80vh;
-    border: solid 1px;
-    flex-direction: row;
-}
-
-footer{
-    border: solid 1px;
-    display: flex;
-    justify-content: center;
-} */
-
 
 /* --------------------- */
 nav{
@@ -62,7 +34,7 @@ nav{
  }
 
  section{
-  width: 89.5%;
+  /* width: 89.5%; */
   height: 609px;
   overflow: scroll;
   box-shadow: inset 14px 15px 29px -26px rgba(175,221,240,1);
