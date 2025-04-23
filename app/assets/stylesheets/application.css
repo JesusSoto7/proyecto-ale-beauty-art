@@ -8,3 +8,37 @@
  *
  * Consider organizing styles into separate files for maintainability.
  */
+body{
+    border: solid 2px black;  
+}
+header{
+    border: solid 2px black;  
+    height: 70px;
+}
+nav{
+    border: solid 2px black;  
+    height: 50px;
+}
+#id1{
+    border: solid 2px black;  
+    height: 600px;
+    width: 1330px;
+}
+aside{
+    border: solid 2px rgb(197, 34, 6);  
+    height: 600px;
+    width: 320px;
+    float: left;
+    display: flex;
+    justify-content: center;
+}
+#id2{
+    border: solid 2px rgb(5, 255, 88);  
+    height: 600px;
+    width: 1000px;
+    float: inline-end;
+}
+footer{
+    border: solid 2px black;  
+    height: 70px;
+}
