@@ -18,6 +18,8 @@ header{
 nav{
     border: solid 2px black;  
     height: 50px;
+    display: flex;
+    justify-content: end;
 }
 #id1{
     border: solid 2px black;  
@@ -43,4 +45,14 @@ footer{
     height: 70px;
     align-content: center;
     
+}
+.logout-link {
+    color: rgb(68, 0, 255);
+    text-decoration: none;
+    font-weight: bold;
+    margin-left: auto;
+    cursor: pointer;
+}
+.logout-link:hover {
+    text-decoration: underline;
 }

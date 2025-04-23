@@ -24,12 +24,22 @@
 
   <body>
     <header></header>
-    <nav></nav>
+    <nav>
+    <a href="#" onclick="cerrarSesion(event)">Cerrar sesión</a>
+    <script>
+    function cerrarSesion(e) {
+      e.preventDefault();
+      alert("Sesión cerrada (simulado)");
+      // Aquí puedes hacer fetch() si tienes un backend real
+    }
+    </script>
+    </nav>
     <section id="id1">
       <aside></aside>
       <section id="id2"><%= yield %></section>
     </section>
     <footer>
-    <p>Black friday 90% de descuento</p></footer>
+    <p>Black friday 90% de descuento</p>
+    </footer>
   </body>
 </html>
