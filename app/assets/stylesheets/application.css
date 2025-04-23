@@ -41,4 +41,6 @@ aside{
 footer{
     border: solid 2px black;  
     height: 70px;
+    align-content: center;
+    
 }
