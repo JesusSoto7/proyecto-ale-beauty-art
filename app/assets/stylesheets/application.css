@@ -14,12 +14,14 @@ body{
 header{
     border: solid 2px black;  
     height: 70px;
+    display: flex;
+    justify-content: end;
+    background-color: rosybrown;
 }
 nav{
     border: solid 2px black;  
     height: 50px;
-    display: flex;
-    justify-content: end;
+    background-color: aliceblue;
 }
 #id1{
     border: solid 2px black;  
@@ -31,8 +33,7 @@ aside{
     height: 600px;
     width: 320px;
     float: left;
-    display: flex;
-    justify-content: center;
+    background-color: ;
 }
 #id2{
     border: solid 2px rgb(5, 255, 88);  

@@ -23,8 +23,7 @@
   </head>
 
   <body>
-    <header></header>
-    <nav>
+    <header>
     <a href="#" onclick="cerrarSesion(event)">Cerrar sesión</a>
     <script>
     function cerrarSesion(e) {
@@ -33,7 +32,8 @@
       // Aquí puedes hacer fetch() si tienes un backend real
     }
     </script>
-    </nav>
+    </header>
+    <nav></nav>
     <section id="id1">
       <aside></aside>
       <section id="id2"><%= yield %></section>
