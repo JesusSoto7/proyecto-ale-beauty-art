@@ -39,9 +39,14 @@ body {
     border: 1px solid #000;
 }
 
-.dropdown-menu, .logo, .cart {
+.dropdown-menu, .cart {
     margin: 0 10px;
 }
+.logo img {
+    height: 50px; 
+    width: auto;
+}
+
 
 .menu-icon {
     cursor: pointer;

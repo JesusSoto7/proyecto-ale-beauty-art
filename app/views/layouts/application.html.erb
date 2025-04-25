@@ -17,6 +17,7 @@
     <link rel="icon" href="/icon.png" type="image/png">
     <link rel="icon" href="/icon.svg" type="image/svg+xml">
     <link rel="apple-touch-icon" href="/icon.png">
+    
 
     <%# Includes all stylesheet files in app/assets/stylesheets %>
     <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
@@ -26,7 +27,9 @@
   <body>
       <header class="navbar">
       <div class="menu-icon" onclick="toggleMenu()">☰</div>
-        <div class="logo">🛍️</div>
+        <div class="logo">
+          <img src="app/assets/images/logo.jpg" alt="Ale Beauty Art">
+        </div>
         <nav>
             <a href="#">INICIO</a>
             <a href="#">PRODUCTOS</a>
@@ -41,10 +44,9 @@
           <a href="#" class="logout-link">Cerrar Sesión</a>
         </div>
         <div class="cart">🛒</div>
-    </header>
-    <!-- Menú desplegable oculto -->
+      </header>
+      <section><!-- Menú desplegable oculto -->
         <div id="dropdown-menu" class="dropdown-menu">
-            <a href="#">Perfil</a>
             <a href="#">Mis Compras</a>
             <a href="#">Favoritos</a>
             <a href="#">Ajustes</a>
@@ -54,38 +56,39 @@
           ¡Bienvenido/a a nuestra tienda de maquillaje!
         </div>
 
-    <section class="slider">
-        <p>SECTION</p>
-        <div class="dots">
-            ● ○ ○ ○
-        </div>
+      <section class="slider">
+          <p>SECTION</p>
+          <div class="dots">
+              ● ○ ○ ○
+          </div>
+      </section>
+
+      <section class="articles">
+          <article>ARTICLE</article>
+          <article>ARTICLE</article>
+          <article>ARTICLE</article>
+          <article>ARTICLE</article>
+          <button class="view-more">Ver Más</button>
+      </section>
+
+      <section class="section-extra">
+          <p>SECTION</p>
+      </section>
+
+      <footer>
+          FOOTER
+      </footer>
+
+      <script>
+          function toggleMenu() {
+              var menu = document.getElementById('dropdown-menu');
+              if (menu.style.display === 'flex') {
+                  menu.style.display = 'none';
+              } else {
+                  menu.style.display = 'flex';
+              }
+          }
+      </script>
     </section>
-
-    <section class="articles">
-        <article>ARTICLE</article>
-        <article>ARTICLE</article>
-        <article>ARTICLE</article>
-        <article>ARTICLE</article>
-        <button class="view-more">Ver Más</button>
-    </section>
-
-    <section class="section-extra">
-        <p>SECTION</p>
-    </section>
-
-    <footer>
-        FOOTER
-    </footer>
-
-    <script>
-        function toggleMenu() {
-            var menu = document.getElementById('dropdown-menu');
-            if (menu.style.display === 'flex') {
-                menu.style.display = 'none';
-            } else {
-                menu.style.display = 'flex';
-            }
-        }
-    </script>
   </body>
 </html>
