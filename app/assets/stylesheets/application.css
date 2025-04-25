@@ -8,54 +8,192 @@
  *
  * Consider organizing styles into separate files for maintainability.
  */
-body{
-    border: solid 2px black;  
+ * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
-header{
-    border: solid 2px black;  
-    height: 70px;
-    display: flex;
-    justify-content: end;
-    background-color: violet;
-}
-nav{
-    border: solid 2px black;  
-    height: 50px;
-    background-color: wheat;
-}
-#id1{
-    border: solid 2px black;  
-    height: 600px;
-    width: 1330px;;
-}
-aside{
-    border: solid 2px rgb(197, 34, 6);  
-    height: 600px;
-    width: 280px;
-    float: left;
-    background-color: wheat;
-    display: block;
-}
-#id2{
-    border: solid 2px rgb(5, 255, 88);  
-    height: 600px;
-    width: 1040px;
-    float: inline-end;
-}
-footer{
-    border: solid 2px black;  
-    height: 70px;
-    align-content: center;
-    background-color: violet;
-    
-}
-.logout-link {
-    color: rgb(68, 0, 255);
-    text-decoration: none;
+
+.bienvenida {
+    background-color: #ffe0ec;
+    color: #5c1a3b;
+    text-align: center;
+    padding: 15px;
+    font-size: 20px;
     font-weight: bold;
-    margin-left: auto;
+    border-bottom: 2px solid #f7bad2;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: #f2fdfc3a;
+    color: #5c1a3b;
+}
+
+
+.navbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px;
+    border: 1px solid #000;
+}
+
+.dropdown-menu, .logo, .cart {
+    margin: 0 10px;
+}
+
+.menu-icon {
     cursor: pointer;
 }
+
+.dropdown-menu {
+    display: none;
+    flex-direction: column;
+    position: absolute;
+    top: 60px;
+    left: 10px;
+    background-color: #ffe0ec;
+    border: 1px solid #f7bad2;
+    border-radius: 10px;
+    padding: 10px;
+    box-shadow: 0px 4px 8px rgba(0,0,0,0.1);
+}
+
+.dropdown-menu a {
+    text-decoration: none;
+    color: #5c1a3b;
+    margin: 8px 0;
+    font-weight: bold;
+}
+
+.dropdown-menu a:hover {
+    color: #e75480;
+}
+
+
+.user-options {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.profile {
+    font-size: 20px;
+    color: #5c1a3b;
+}
+
+.logout-link {
+    color: #5c1a3b;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: bold;
+    transition: color 0.3s;
+}
+
 .logout-link:hover {
-    text-decoration: underline;
+    color: #e75480;
+}
+
+nav a {
+    margin: 0 15px;
+    text-decoration: none;
+    color: #5c1a3b;
+    font-weight: bold;
+    transition: color 0.3s;
+}
+
+.search input {
+    padding: 8px 15px;
+    border-radius: 20px;
+    border: 1px solid #f7bad2;
+    background-color: #fff;
+}
+
+.slider {
+    border: 1px solid #000;
+    text-align: center;
+    margin: 30px auto;
+    padding: 60px;
+    background: linear-gradient(to right, #ffc1cc, #ffe4e1);
+    font-weight: bold
+}
+
+.dots {
+    margin-top: 20px;
+    font-size: 24px;
+    color: #e75480;     
+}
+
+.articles {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    margin: 20px;
+    position: relative;
+    margin: 40px;
+    gap: 20px;
+}
+
+.articles article {
+    width: 150px;
+    height: 150px;
+    margin: 10px;
+    border: 1px solid #000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #fff;
+    border: 2px solid #f7bad2;
+    border-radius: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    color: #e75480;
+    box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.1);
+    
+}
+
+.view-more {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    padding: 5px 10px;
+    position: absolute;
+    right: 10px;
+    background-color: #e75480;
+    color: #fff;
+    padding: 8px 15px;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.section-extra {
+    margin: 40px;
+    padding: 60px;
+    border: 1px solid #000;
+    text-align: center;
+    background: linear-gradient(to left, #ffc1cc, #ffe4e1);
+    border-radius: 15px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    font-size: 18px;
+    font-weight: bold
+}
+
+footer {
+    margin: 20px;
+    padding: 20px;
+    border: 1px solid #000;
+    text-align: center;
+    background-color: #ffe0ec;
+    text-align: center;
+    font-size: 16px;
+    color: #5c1a3b;
+    border-top: 2px solid #f7bad2;
+    border-radius: 15px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
 }

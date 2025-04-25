@@ -13,6 +13,7 @@
     <%# Enable PWA manifest for installable apps (make sure to enable in config/routes.rb too!) %>
     <%#= tag.link rel: "manifest", href: pwa_manifest_path(format: :json) %>
 
+    <title>Mockup Tienda</title>    
     <link rel="icon" href="/icon.png" type="image/png">
     <link rel="icon" href="/icon.svg" type="image/svg+xml">
     <link rel="apple-touch-icon" href="/icon.png">
@@ -23,23 +24,68 @@
   </head>
 
   <body>
-    <header>
-    <a href="#" onclick="cerrarSesion(event)">Cerrar sesión</a>
-    <script>
-    function cerrarSesion(e) {
-      e.preventDefault();
-      alert("Sesión cerrada (simulado)");
-      // Aquí puedes hacer fetch() si tienes un backend real
-    }
-    </script>
+      <header class="navbar">
+      <div class="menu-icon" onclick="toggleMenu()">☰</div>
+        <div class="logo">🛍️</div>
+        <nav>
+            <a href="#">INICIO</a>
+            <a href="#">PRODUCTOS</a>
+            <a href="#">ACERCA DE</a>
+            <a href="#">CONTACTO</a>
+        </nav>
+        <div class="search">
+            <input type="text" placeholder="Buscar...">
+        </div>
+        <div class="user-options">
+          <span class="profile">👤</span>
+          <a href="#" class="logout-link">Cerrar Sesión</a>
+        </div>
+        <div class="cart">🛒</div>
     </header>
-    <nav></nav>
-    <section id="id1">
-      <aside></aside>
-      <section id="id2"><%= yield %></section>
+    <!-- Menú desplegable oculto -->
+        <div id="dropdown-menu" class="dropdown-menu">
+            <a href="#">Perfil</a>
+            <a href="#">Mis Compras</a>
+            <a href="#">Favoritos</a>
+            <a href="#">Ajustes</a>
+        </div> 
+        
+        <div class="bienvenida">
+          ¡Bienvenido/a a nuestra tienda de maquillaje!
+        </div>
+
+    <section class="slider">
+        <p>SECTION</p>
+        <div class="dots">
+            ● ○ ○ ○
+        </div>
     </section>
+
+    <section class="articles">
+        <article>ARTICLE</article>
+        <article>ARTICLE</article>
+        <article>ARTICLE</article>
+        <article>ARTICLE</article>
+        <button class="view-more">Ver Más</button>
+    </section>
+
+    <section class="section-extra">
+        <p>SECTION</p>
+    </section>
+
     <footer>
-    <p>black friday 90% de descuento</p>
+        FOOTER
     </footer>
+
+    <script>
+        function toggleMenu() {
+            var menu = document.getElementById('dropdown-menu');
+            if (menu.style.display === 'flex') {
+                menu.style.display = 'none';
+            } else {
+                menu.style.display = 'flex';
+            }
+        }
+    </script>
   </body>
 </html>
