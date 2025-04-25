@@ -16,35 +16,37 @@ header{
     height: 70px;
     display: flex;
     justify-content: end;
-    background-color: rosybrown;
+    background-color: violet;
 }
 nav{
     border: solid 2px black;  
     height: 50px;
-    background-color: aliceblue;
+    background-color: wheat;
 }
 #id1{
     border: solid 2px black;  
     height: 600px;
-    width: 1330px;
+    width: 1330px;;
 }
 aside{
     border: solid 2px rgb(197, 34, 6);  
     height: 600px;
-    width: 320px;
+    width: 280px;
     float: left;
-    background-color: ;
+    background-color: wheat;
+    display: block;
 }
 #id2{
     border: solid 2px rgb(5, 255, 88);  
     height: 600px;
-    width: 1000px;
+    width: 1040px;
     float: inline-end;
 }
 footer{
     border: solid 2px black;  
     height: 70px;
     align-content: center;
+    background-color: violet;
     
 }
 .logout-link {
