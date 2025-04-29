@@ -28,4 +28,11 @@
 #       enabled: "ON"
 
 en:
+  activerecord:
+    attributes:
+      user:
+        email: "Correo electrónico"
+        password: "Contraseña"
+        password_confirmation: "Confirmar contraseña"
+        remember_me: "Recordarme"
   hello: "Hello world"

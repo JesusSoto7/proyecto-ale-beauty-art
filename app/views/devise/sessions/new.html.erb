@@ -1,26 +1,46 @@
-<h2>Log in</h2>
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inicio de sesión</title>
+    <link rel="stylesheet" href="app/assets/stylesheets/sign_in.css">
+  
+  </head>
+  <body>
 
-<%= form_for(resource, as: resource_name, url: session_path(resource_name)) do |f| %>
-  <div class="field">
-    <%= f.label :email %><br />
-    <%= f.email_field :email, autofocus: true, autocomplete: "email" %>
-  </div>
+   <section class="container">
+    <%= image_tag 'ale_logo.jpg', alt: 'logo', class: 'logo' %>
+      <h2>Iniciar sesión</h2>
+      <%= form_for(resource, as: resource_name, url: session_path(resource_name), html: {class: 'form'}) do |f| %>
+        <div class="field">
+          <%= f.label :email %><br />
+          <%= f.email_field :email, autofocus: true, autocomplete: "email" %>
+        </div>
 
-  <div class="field">
-    <%= f.label :password %><br />
-    <%= f.password_field :password, autocomplete: "current-password" %>
-  </div>
+        <div class="field">
+          <%= f.label :password %><br />
+          <%= f.password_field :password, autocomplete: "current-password" %>
+        </div>
+        <div class="opciones">
+         <%= render "devise/shared/links" %>
+        </div>
+        <% if devise_mapping.rememberable? %>
+          <div class="recuerda">
+           <%= f.check_box :remember_me %>
+           <%= f.label :remember_me %>
+          </div>
+        <% end %>
 
-  <% if devise_mapping.rememberable? %>
-    <div class="field">
-      <%= f.check_box :remember_me %>
-      <%= f.label :remember_me %>
-    </div>
-  <% end %>
+        <div class="actions">
+          <%= f.submit "Iniciar sesión" %>
+        </div>
+      <% end %>
 
-  <div class="actions">
-    <%= f.submit "Log in" %>
-  </div>
-<% end %>
+      
+    </section>
+  </body>
+</html>
 
-<%= render "devise/shared/links" %>
+
+
