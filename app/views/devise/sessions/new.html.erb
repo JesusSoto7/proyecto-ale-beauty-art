@@ -11,7 +11,7 @@
 
    <section class="container">
     <%= image_tag 'ale_logo.jpg', alt: 'logo', class: 'logo' %>
-      <h2>Sign in</h2>
+      <h2>Iniciar sesión</h2>
       <%= form_for(resource, as: resource_name, url: session_path(resource_name), html: {class: 'form'}) do |f| %>
         <div class="field">
           <%= f.label :email %><br />
@@ -33,7 +33,7 @@
         <% end %>
 
         <div class="actions">
-          <%= f.submit "Sign in" %>
+          <%= f.submit "Iniciar sesión" %>
         </div>
       <% end %>
 

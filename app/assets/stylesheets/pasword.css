@@ -28,6 +28,7 @@ body{
   justify-content: center;
   margin: auto;
   box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+  
 }
 .logo{
  width: 20vh;
@@ -35,17 +36,18 @@ body{
  border-radius: 40vh;
 }
 
-.opciones {
+.options {
   display: flex; 
-  gap: 5vh;
+  gap: 7vh;
   font-size: 15px;
   flex-direction: row-reverse;
-  justify-content:center;
-  margin-left: -5vh
+  justify-content:space-around;
+  align-items: center;
+  margin-left: -13vh;
 }
 
-.opciones a {
-  color: black;
+.options a {
+  color: rgb(0, 0, 0);
   font-size: 15px;
 
 }
@@ -105,17 +107,17 @@ body{
   background-color: #ffffff; 
   color: #000000; 
 }
-.actions{
+.boton{
   display: flex;
   justify-content: center;
   border-radius: 50vh;
 }
-.actions input{
+.boton input{
   background-color: rgb(250, 123, 187);
   color: rgb(0, 0, 0);
   border-radius: 50vh;
   border: none;
-  width: 40vh;
+  width: 42vh;
   margin-top: 5vh;
   padding: 10px 20px;
   font-size: 18px;
@@ -123,7 +125,7 @@ body{
   transition: all 0.3s ease;
 
 }
-.actions input:hover{
+.boton input:hover{
   background-color: rgb(246, 62, 154);}
 
 .recuerda{
@@ -139,3 +141,9 @@ body{
   width: 5vh;
 }
 
+.texto{
+  font-size: 15px;
+  color: rgb(0, 0, 0);
+  margin-top: 1vh;
+  margin-left: 2vh;
+}
