@@ -22,3 +22,8 @@ Things you may want to cover:
 * Deployment instructions
 
 * ...
+
+## DIAGRAMAS
+
+* https://drive.google.com/drive/folders/1J37XY3aTB6B1RAj08j-aSHylr3CtM-JI?usp=drive_link
+
