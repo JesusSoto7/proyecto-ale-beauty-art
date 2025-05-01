@@ -1,0 +1,331 @@
+body{
+    overflow: hidden;
+}
+
+section{
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: flex;
+    flex-direction: row;
+    width: 99.87%;
+    height: 99.84vh;
+}
+aside{
+    width: 70px;
+    height: 99.8vh;
+    border: solid 1px;
+    transition: all 0.5s;
+    
+}
+
+aside:hover{
+    width: 200px;
+}
+
+nav{
+    width: 100%;
+    height: 55px;
+    border: solid 1px;
+    /* background-color: rgb(39, 235, 39); */
+}
+article{
+    width: 100%;
+    height: 94vh;
+    overflow-y: scroll;
+    /* box-shadow: inset 14px 15px 29px -26px rgb(197, 199, 57); */
+}
+
+#dropdownMenuButton{
+    background-color: rgb(236, 224, 225);
+    border: none;
+    width: 20px;
+    padding: 2px;
+    position: absolute;
+    right: 30px;
+    bottom: -4px;
+}
+
+#dropdownMenuButton:hover{
+    background-color: #f4c5d7;
+}
+
+#itens{
+    display: flex;
+    flex-flow: row wrap;
+}
+
+#pantalla{
+    width: 100%;
+    /* background-color: aquamarine; */
+    /* background-color: blue; */
+}
+
+#car{
+    width: 30px;
+    height: 30px;
+    background-color:#f9Adb7;
+    border-radius: 50px;
+    position: absolute;
+    right: 10px;
+    bottom: 10px;
+    padding: 1px;
+}
+
+#car:hover{
+    transition: all 0.5s;
+    background-color: #fec9c3;
+}
+
+svg {
+    width: 27px;
+    height: 25px;
+}
+
+.checked {
+    color: orange;
+}
+
+/* .card-product{
+    
+} */
+
+
+.card img{
+    border-top-left-radius: 24px 24px;
+    border-top-right-radius: 24px 24px;
+}
+
+.card {
+    border-top-left-radius: 24px 24px;
+    border-top-right-radius: 24px 24px;
+    margin-top: 50px;
+    margin-left: 50px;
+    /* height: 389px; */
+  }
+
+  .card #ver{
+    margin-top: 7px;
+  }
+
+  .card h5{
+    margin-bottom: 17px;
+  }
+
+  .card p{
+    /* border: solid #85c5c2; */
+    margin-top: -12px;
+    
+}
+
+#fav{
+    position: absolute;
+    top: 10px;
+    left: 10px;
+}
+
+/* Uiverse */
+
+/* From Uiverse.io by Galahhad */ 
+.ui-bookmark {
+    --icon-size: 24px;
+    --icon-secondary-color: #e981A4;
+    --icon-hover-color: #f4c5d7;
+    --icon-primary-color: gold;
+    --icon-circle-border: 1px solid var(--icon-primary-color);
+    --icon-circle-size: 35px;
+    --icon-anmt-duration: 0.3s;
+  }
+  
+  .ui-bookmark input {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    display: none;
+  }
+  
+  .ui-bookmark .bookmark {
+    width: var(--icon-size);
+    height: auto;
+    fill: var(--icon-secondary-color);
+    cursor: pointer;
+    -webkit-transition: 0.2s;
+    -o-transition: 0.2s;
+    transition: 0.2s;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-pack: center;
+    -ms-flex-pack: center;
+    justify-content: center;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+    position: relative;
+    -webkit-transform-origin: top;
+    -ms-transform-origin: top;
+    transform-origin: top;
+  }
+  
+  .bookmark::after {
+    content: "";
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    -webkit-box-shadow: 0 30px 0 -4px var(--icon-primary-color),
+      30px 0 0 -4px var(--icon-primary-color),
+      0 -30px 0 -4px var(--icon-primary-color),
+      -30px 0 0 -4px var(--icon-primary-color),
+      -22px 22px 0 -4px var(--icon-primary-color),
+      -22px -22px 0 -4px var(--icon-primary-color),
+      22px -22px 0 -4px var(--icon-primary-color),
+      22px 22px 0 -4px var(--icon-primary-color);
+    box-shadow: 0 30px 0 -4px var(--icon-primary-color),
+      30px 0 0 -4px var(--icon-primary-color),
+      0 -30px 0 -4px var(--icon-primary-color),
+      -30px 0 0 -4px var(--icon-primary-color),
+      -22px 22px 0 -4px var(--icon-primary-color),
+      -22px -22px 0 -4px var(--icon-primary-color),
+      22px -22px 0 -4px var(--icon-primary-color),
+      22px 22px 0 -4px var(--icon-primary-color);
+    border-radius: 50%;
+    -webkit-transform: scale(0);
+    -ms-transform: scale(0);
+    transform: scale(0);
+  }
+  
+  .bookmark::before {
+    content: "";
+    position: absolute;
+    border-radius: 50%;
+    border: var(--icon-circle-border);
+    opacity: 0;
+  }
+  
+  /* actions */
+  
+  .ui-bookmark:hover .bookmark {
+    fill: var(--icon-hover-color);
+  }
+  
+  .ui-bookmark input:checked + .bookmark::after {
+    -webkit-animation: circles var(--icon-anmt-duration)
+      cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+    animation: circles var(--icon-anmt-duration)
+      cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+    -webkit-animation-delay: var(--icon-anmt-duration);
+    animation-delay: var(--icon-anmt-duration);
+  }
+  
+  .ui-bookmark input:checked + .bookmark {
+    fill: var(--icon-primary-color);
+    -webkit-animation: bookmark var(--icon-anmt-duration) forwards;
+    animation: bookmark var(--icon-anmt-duration) forwards;
+    -webkit-transition-delay: 0.3s;
+    -o-transition-delay: 0.3s;
+    transition-delay: 0.3s;
+  }
+  
+  .ui-bookmark input:checked + .bookmark::before {
+    -webkit-animation: circle var(--icon-anmt-duration)
+      cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+    animation: circle var(--icon-anmt-duration)
+      cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+    -webkit-animation-delay: var(--icon-anmt-duration);
+    animation-delay: var(--icon-anmt-duration);
+  }
+  
+  @-webkit-keyframes bookmark {
+    50% {
+      -webkit-transform: scaleY(0.6);
+      transform: scaleY(0.6);
+    }
+  
+    100% {
+      -webkit-transform: scaleY(1);
+      transform: scaleY(1);
+    }
+  }
+  
+  @keyframes bookmark {
+    50% {
+      -webkit-transform: scaleY(0.6);
+      transform: scaleY(0.6);
+    }
+  
+    100% {
+      -webkit-transform: scaleY(1);
+      transform: scaleY(1);
+    }
+  }
+  
+  @-webkit-keyframes circle {
+    from {
+      width: 0;
+      height: 0;
+      opacity: 0;
+    }
+  
+    90% {
+      width: var(--icon-circle-size);
+      height: var(--icon-circle-size);
+      opacity: 1;
+    }
+  
+    to {
+      opacity: 0;
+    }
+  }
+  
+  @keyframes circle {
+    from {
+      width: 0;
+      height: 0;
+      opacity: 0;
+    }
+  
+    90% {
+      width: var(--icon-circle-size);
+      height: var(--icon-circle-size);
+      opacity: 1;
+    }
+  
+    to {
+      opacity: 0;
+    }
+  }
+  
+  @-webkit-keyframes circles {
+    from {
+      -webkit-transform: scale(0);
+      transform: scale(0);
+    }
+  
+    40% {
+      opacity: 1;
+    }
+  
+    to {
+      -webkit-transform: scale(0.8);
+      transform: scale(0.8);
+      opacity: 0;
+    }
+  }
+  
+  @keyframes circles {
+    from {
+      -webkit-transform: scale(0);
+      transform: scale(0);
+    }
+  
+    40% {
+      opacity: 1;
+    }
+  
+    to {
+      -webkit-transform: scale(0.8);
+      transform: scale(0.8);
+      opacity: 0;
+    }
+}
+

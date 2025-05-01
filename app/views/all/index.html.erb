@@ -1,0 +1,12 @@
+<h1>Lista de productos</h1>
+
+<p class="btn btn-primary">
+  <%= link_to "New product", new_product_path %>
+</p>
+
+<ul>
+    <%@products.each do |product|%>
+    <li><%= product.nombre_producto %> - <%=number_to_currency(product.precio_producto) %></li>
+    <%end%>
+</ul>
+

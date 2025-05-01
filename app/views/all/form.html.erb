@@ -1,0 +1,69 @@
+<div id="form-cr">
+  <%= form_with(model: product) do |form| %>
+    <% if product.errors.any? %>
+      <div style="color: red">
+        <h2><%= pluralize(product.errors.count, "error") %> prohibited this product from being saved:</h2>
+
+        <ul>
+          <% product.errors.each do |error| %>
+            <li><%= error.full_message %></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+
+    <div class="frm">
+      <div>
+        <%= form.label :nombre_producto, style: "display: block" %>
+      </div>
+      
+      <div class="mgn">
+        <%= form.text_field :name %>
+      </div>
+    </div>
+
+    <div class="frm">
+      <div>
+        <%= form.label :lastname, style: "display: block" %>
+      </div>
+      
+      <div class="mgn">
+        <%= form.text_field :lastname %>
+      </div>
+    </div>
+
+    <div class="frm">
+      <div>
+        <%= form.label :age, style: "display: block" %>
+      </div>
+      
+      <div class="mgn">
+        <%= form.number_field :age %>
+      </div>
+    </div>
+
+    <div class="frm">
+      <div>
+        <%= form.label :serie, style: "display: block" %>
+      </div>
+      
+      <div class="mgn">
+        <%= form.text_field :serie %>
+      </div>
+    </div>
+
+    <div class="frm">
+      <p>
+        <%= form.label :img, style: "display: block" %>
+      </p>
+      <div class="mgn">
+        <%= form.text_field :img %>
+      </div>
+    </div>
+
+    <div class="frm">
+      <%= form.submit %>
+    </div>
+  <% end %>
+
+</div>
