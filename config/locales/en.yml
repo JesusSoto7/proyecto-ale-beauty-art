@@ -29,10 +29,24 @@
 
 en:
   activerecord:
+    format: "%{attribute} %{message}"
     attributes:
       user:
         email: "Correo electrónico"
         password: "Contraseña"
         password_confirmation: "Confirmar contraseña"
         remember_me: "Recordarme"
+    errors:
+      models:
+        user:
+          attributes:
+            email:
+              blank: " no puede estar en blanco"
+              format: "Correo electrónico debe ser en formato valido"
+            password:
+              blank: "Contraseña no puede estar en blanco"
+              confirmation: "Contraseña y confirmación no coinciden"
+            password_confirmation:
+              blank: "Confirmación de contraseña no puede estar en blanco"
+  
   hello: "Hello world"

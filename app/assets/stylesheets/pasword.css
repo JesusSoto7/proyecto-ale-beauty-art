@@ -28,7 +28,8 @@ body{
   justify-content: center;
   margin: auto;
   box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
-  
+  padding: 20px;
+  text-align: center;
 }
 .logo{
  width: 20vh;
@@ -146,4 +147,25 @@ body{
   color: rgb(0, 0, 0);
   margin-top: 1vh;
   margin-left: 2vh;
+}
+
+#error_explanation {
+  font-size: 14px; 
+  color: #d32f2f;          
+
+  h2 {
+    font-size: 14px;     
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+  }
+
+  ul {
+    margin: 0;
+    padding-left: 1.5rem;
+
+    li {
+      font-size: 14px;    
+      margin-bottom: 0.3rem;
+    }
+  }
 }

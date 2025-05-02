@@ -19,7 +19,9 @@ body{
 .container{
   border:1px solid rgb(255, 255, 255);
   width: 80vh;
-  height: 97vh;
+  min-height: 97vh;
+  height: auto;
+  overflow: auto;
   border-radius: 3vh;
   background-color: white;
   display: flex;
@@ -27,6 +29,7 @@ body{
   flex-direction: column;
   justify-content: center;
   margin: auto;
+  padding: 20px;
   box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
 }
 .logo{
