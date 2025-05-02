@@ -1,0 +1,57 @@
+<div class="page-container">
+
+  <!-- Carrusel principal -->
+  <section class="mb-5">
+    <div id="mainCarousel" class="carousel slide rounded overflow-hidden" data-bs-ride="carousel">
+      <div class="carousel-inner">
+        <div class="carousel-item active">
+          <img src="https://www.clarel.es/blog/wp-content/uploads/2023/03/maquillaje-2yk.jpg" class="d-block w-100" style="height: 400px; object-fit: cover;" alt="Maquillaje 2YK">
+        </div>
+        <!-- Puedes agregar más imágenes -->
+      </div>
+      <button class="carousel-control-prev" type="button" data-bs-target="#mainCarousel" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon"></span>
+      </button>
+      <button class="carousel-control-next" type="button" data-bs-target="#mainCarousel" data-bs-slide="next">
+        <span class="carousel-control-next-icon"></span>
+      </button>
+    </div>
+  </section>
+
+  <!-- Productos destacados -->
+  <section class="mb-5">
+    <div class="d-flex justify-content-center align-items-center mb-3">
+      <h3 class="fw-bold">Productos Destacados</h3>
+    </div>
+
+      <div class="row justify-content-center">
+      <% 4.times do %>
+        <div class="col-md-3 mb-4">
+          <div class="card h-100 border-0 shadow-sm">
+            <img src="https://es.lorealparisusa.com/-/media/project/loreal/brand-sites/oap/americas/us/beauty-magazine/slideshows/makeup-product-essentials/loreal-paris-bmag-slideshow-20-makeup-product-essentials-every-woman-should-own-slide16.jpg?cx=0.49&cy=0.54&cw=1510&ch=815&hash=14A8A6A2C0F3887566415B63A676D43A"
+                class="card-img-top"
+                alt="Producto Maquillaje"
+                style="height: 200px; object-fit: cover;">
+            <div class="card-body">
+              <h5 class="card-title fw-bold text-dark">Labial Rosa</h5>
+              <p class="card-text text-dark"><strong>$20.000</strong></p>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </section>
+
+  <!-- Otra sección opcional -->
+  <section class="p-4 rounded">
+    <h4 class="fw-bold">Ofertas de la Semana</h4>
+    <p>Descubre promociones exclusivas en nuestros productos destacados.</p>
+  </section>
+
+  <!-- Footer -->
+  <footer class="text-center py-4 mt-5">
+    © 2025 Tienda de Belleza - Todos los derechos reservados
+  </footer>
+
+</div>
+
