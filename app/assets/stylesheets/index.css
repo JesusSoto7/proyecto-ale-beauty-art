@@ -9,7 +9,57 @@
     background: linear-gradient(to right, #f8e1e7, #dbe8e1); /* Rosa y verde suave */
     border-top: 6px solid #cc4c74; /* tono maquillaje */
   }
+
+  .dropdown {
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    z-index: 2;
+  }
   
+  .dropbtn {
+    background-color: #ffb6c1;
+    color: white;
+    padding: 10px 15px;
+    font-size: 16px;
+    border: none;
+    cursor: pointer;
+  }
+  
+  .dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #f3cce3;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px rgba(0,0,0,0.2);
+    z-index: 1;
+    margin-top: 5px;
+  }
+  
+  .dropdown-content a {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+  }
+  
+  .dropdown-content a:hover {
+    background-color: #ffe6f0;
+  }
+  
+  .show {
+    display: block;
+  }
+  
+  .logo-container {
+    margin-right: 20px;
+  }
+  
+  .logo-img {
+    height: 40px;
+    width: auto;
+  }
+
   .navbar {
     display: flex;
     justify-content: space-between;
@@ -62,6 +112,31 @@
     gap: 8px;
     color: #555;
     font-size: 0.9rem;
+  }
+
+  .user-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-right: 10px;
+  }
+  
+  .user-options {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    font-size: 14px;
+  }
+  
+  .logout {
+    color: #d33;
+    text-decoration: none;
+    font-weight: bold;
+    margin-right: 30px;
+  }
+  
+  .logout:hover {
+    text-decoration: underline;
   }
   
   .grid {
