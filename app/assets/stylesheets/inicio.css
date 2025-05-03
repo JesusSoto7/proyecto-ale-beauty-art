@@ -1,0 +1,203 @@
+.navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px;
+  border-top-right-radius: 10px;
+  border-top-left-radius: 10px;
+  background-color: #ffe0ec;
+  position: relative;
+}
+
+.logo img {
+  height: 50px;
+  width: auto;
+  border-radius: 10vh;
+}
+
+nav {
+  display: flex;
+}
+
+nav a {
+  margin: 0 20px;
+  text-decoration: none;
+  color: #5c1a3b;
+  font-weight: bold;
+  transition: color 0.3s;
+}
+
+nav a:hover {
+  color: #e75480;
+}
+
+.menu-icon {
+  cursor: pointer;
+  font-size: 24px;
+  display: none; /* Se muestra solo en móviles */
+}
+
+.search input {
+  padding: 8px 15px;
+  border-radius: 20px;
+  border: 1px solid #f7bad2;
+  background-color: #fff;
+}
+
+.user-options {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.profile {
+  font-size: 20px;
+  color: #5c1a3b;
+}
+
+.logout-link {
+  color: #5c1a3b;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: bold;
+  transition: color 0.3s;
+}
+
+.logout-link:hover {
+  color: #e75480;
+}
+
+.cart {
+  margin-left: 10px;
+  font-size: 20px;
+}
+
+/* Menú desplegable */
+.dropdown-menu {
+  display: none;
+  flex-direction: column;
+  position: absolute;
+  top: 60px;
+  left: 10px;
+  background-color: #ffe0ec;
+  border: 1px solid #f7bad2;
+  border-radius: 10px;
+  padding: 10px;
+  box-shadow: 0px 4px 8px rgba(0,0,0,0.1);
+  z-index: 10;
+}
+
+.dropdown-menu a {
+  text-decoration: none;
+  color: #5c1a3b;
+  margin: 8px 0;
+  font-weight: bold;
+}
+
+.dropdown-menu a:hover {
+  color: #e75480;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  nav {
+    display: none;
+  }
+
+  .menu-icon {
+    display: block;
+  }
+
+  .dropdown-menu {
+    width: 90%;
+    left: 5%;
+  }
+}
+/* Estilo global para la página */
+.page-container {
+  background-color: #FBE8EB; /* Fondo principal más claro */
+  padding: 2rem;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+/* Estilos del carrusel */
+.carousel-inner img {
+  max-height: 500px;
+  object-fit: cover;
+}
+
+/* Estilo del título de productos destacados */
+h3 {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #E981A4; /* Color del texto */
+  margin-bottom: 20px;
+}
+
+/* Estilo para el botón "Ver Más" */
+button {
+  background-color: #E981A4;
+  border: none;
+  color: white;
+  font-weight: bold;
+}
+
+button:hover {
+  background-color: #f9ab875e; 
+  /* Color de hover */
+}
+
+/* Estilo para los productos destacados */
+.card {
+  background-color: #FDF6F6; /* Fondo más claro para los productos */
+  border-radius: 10px;
+  overflow: hidden;
+  transition: transform 0.3s ease;
+}
+
+.card:hover {
+  transform: scale(1.05); /* Efecto de hover para ampliar el producto */
+}
+
+.card-title {
+  font-size: 1.25rem;
+  font-weight: bold;
+  color: #333; /* Color oscuro para el título */
+}
+
+.card-text {
+  font-size: 1.1rem;
+  color: #333;
+}
+
+/* Sección de ofertas */
+section.p-4 {
+  background-color: #F4C5D7;
+  border-radius: 10px;
+}
+
+/* Estilo para el footer */
+footer {
+  background-color: #E981A4;
+  color: white;
+  font-size: 1rem;
+  padding: 20px;
+}
+
+/* Estilos para el contenedor de la página */
+.container-fluid {
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.row {
+  display: flex;
+  justify-content: center;
+}
+
+.col-md-3 {
+  margin-bottom: 20px;
+}
