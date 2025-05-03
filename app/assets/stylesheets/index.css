@@ -52,13 +52,17 @@
   }
   
   .logo-container {
-    margin-right: 20px;
+    padding: 0 10px;
   }
   
   .logo-img {
     height: 40px;
     width: auto;
+    object-fit: contain;
+    display: inline-block;
+    vertical-align: middle;
   }
+  
 
   .navbar {
     display: flex;
@@ -116,9 +120,13 @@
 
   .user-section {
     display: flex;
-    flex-direction: column;
     align-items: center;
-    margin-right: 10px;
+    gap: 8px;
+  }
+  
+  .user-icon {
+    font-size: 20px;
+    color: #444;
   }
   
   .user-options {
@@ -208,7 +216,7 @@
     padding: 20px 0;
     text-align: center;
     border-top: 2px solid #d48ca6;
-    margin-top: 180px;
+    margin-top: 200px;
     font-family: 'Arial', sans-serif;
   }
   
