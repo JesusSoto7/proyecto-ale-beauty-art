@@ -63,6 +63,28 @@
   font-size: 15px;
   
 }
+
+#user_nombre{
+  width: 50vh;
+  padding: 10px;
+    font-size: 18px;
+    border: 2px solid #000000;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    outline: none;
+}
+
+#user_apellido{
+  width: 50vh;
+  padding: 10px;
+    font-size: 18px;
+    border: 2px solid #000000;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    outline: none;
+}
+
+
 #user_email{
   width: 50vh;
   padding: 10px;

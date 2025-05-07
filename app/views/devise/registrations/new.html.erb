@@ -10,11 +10,26 @@
   <body class="body">
 
    <section class="container">
+
+   
+
       <%= image_tag 'ale_logo.jpg', alt: 'logo', class: 'logo' %>
       <br>
       <h2>Resgistrarse</h2>
       <%= form_for(resource, as: resource_name, url: registration_path(resource_name)) do |f| %>
         <%= render "devise/shared/error_messages", resource: resource %>
+      <div id="form-errors" class="error-box" style="color: red;"></div>
+        
+
+        <div class="field">
+          <%= f.label :nombre %><br />
+          <%= f.text_field :nombre %>
+        </div>
+
+        <div class="field">
+          <%= f.label :apellido %><br />
+          <%= f.text_field :apellido %>
+        </div>
 
         <div class="field">
           <%= f.label :email %><br />
@@ -42,5 +57,32 @@
          <%= render "devise/shared/links" %>
         </div>
     </section>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        const form = document.querySelector("form");
+        const errorBox = document.getElementById("form-errors");
+
+        form.addEventListener("submit", function(e) {
+          errorBox.innerHTML = "";
+          const nombre = document.querySelector("#user_nombre").value.trim();
+          const apellido = document.querySelector("#user_apellido").value.trim();
+          const email = document.querySelector("#user_email").value.trim();
+          const password = document.querySelector("#user_password").value.trim();
+
+          let errores = [];
+
+          if (!nombre) errores.push("El nombre es obligatorio.");
+          if (!apellido) errores.push("El apellido es obligatorio.");
+          if (!email) errores.push("El correo electrónico es obligatorio.");
+          if (!password) errores.push("La contraseña es obligatoria.");
+
+          if (errores.length > 0) {
+            e.preventDefault();
+            errorBox.innerHTML = "<ul><li>" + errores.join("</li><li>") + "</li></ul>";
+          }
+        });
+      });
+    </script>
   </body>
 </html>
