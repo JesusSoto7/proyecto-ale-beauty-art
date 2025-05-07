@@ -124,3 +124,9 @@
   border-color: 1px solid black;
   width: 5vh;
 }
+
+.texto{
+  font-size: 15px;
+  color: black;
+  text-decoration: none;
+}
