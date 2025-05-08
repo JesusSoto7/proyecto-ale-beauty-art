@@ -86,7 +86,7 @@
 
 
 #user_email{
-  width: 50vh;
+  width: 66vh;
   padding: 10px;
     font-size: 18px;
     border: 2px solid #000000;
@@ -95,8 +95,10 @@
     outline: none;
 }
 #user_password{
-  width: 50vh;
+  width: 66vh;
   padding: 10px;
+  /* margin-right: 5vh;
+  margin-left: 2vh; */
       font-size: 18px;
       border: 2px solid #000000;
       border-radius: 8px;
@@ -104,7 +106,7 @@
       outline: none;
 }
 #user_password_confirmation{
-  width: 50vh;
+  width: 66vh;
   padding: 10px;
       font-size: 18px;
       border: 2px solid #000000;
@@ -162,4 +164,49 @@
 #user_remember_me{
   border-color: 1px solid black;
   width: 5vh;
+}
+
+.nombres{
+  display: flex;
+  justify-content: center;
+}
+
+/* .pasword{
+  display: flex;
+  justify-content: center;
+}
+ */
+#user_nombre{
+  width: 30vh;
+  height: 9vh;
+  margin-right: 5vh;
+  padding: 10px;
+      font-size: 18px;
+      border: 2px solid #000000;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+      outline: none;
+}
+
+#user_nombre:focus{
+  border-color: #ff007b; 
+  background-color: #ffffff; 
+  color: #000000; 
+}
+
+#user_apellido{
+  width: 30vh;
+  height: 9vh;
+  padding: 10px;
+      font-size: 18px;
+      border: 2px solid #000000;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+      outline: none;
+}
+
+#user_apellido:focus{
+  border-color: #ff007b; 
+  background-color: #ffffff; 
+  color: #000000; 
 }

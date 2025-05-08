@@ -10,9 +10,6 @@
   <body class="body">
 
    <section class="container">
-
-   
-
       <%= image_tag 'ale_logo.jpg', alt: 'logo', class: 'logo' %>
       <br>
       <h2>Resgistrarse</h2>
@@ -20,34 +17,38 @@
         <%= render "devise/shared/error_messages", resource: resource %>
       <div id="form-errors" class="error-box" style="color: red;"></div>
         
+        <div class="nombres">
+          <div class="field">
+            <%= f.label :nombre %><br />
+            <%= f.text_field :nombre %>
+          </div>
 
-        <div class="field">
-          <%= f.label :nombre %><br />
-          <%= f.text_field :nombre %>
+          <div class="field">
+            <%= f.label :apellido %><br />
+            <%= f.text_field :apellido %>
+          </div>
         </div>
-
-        <div class="field">
-          <%= f.label :apellido %><br />
-          <%= f.text_field :apellido %>
-        </div>
+        
 
         <div class="field">
           <%= f.label :email %><br />
           <%= f.email_field :email, autofocus: true, autocomplete: "email" %>
         </div>
+        <div class="pasword">
+          <div class="field">
+            <%= f.label :password %>
+            <% if @minimum_password_length %>
+            
+            <% end %><br />
+            <%= f.password_field :password, autocomplete: "new-password" %>
+          </div>
 
-        <div class="field">
-          <%= f.label :password %>
-          <% if @minimum_password_length %>
-          <em>(<%= @minimum_password_length %> characters minimum)</em>
-          <% end %><br />
-          <%= f.password_field :password, autocomplete: "new-password" %>
+          <div class="field">
+            <%= f.label :password_confirmation %><br />
+            <%= f.password_field :password_confirmation, autocomplete: "new-password" %>
+          </div>
         </div>
-
-        <div class="field">
-          <%= f.label :password_confirmation %><br />
-          <%= f.password_field :password_confirmation, autocomplete: "new-password" %>
-        </div>
+        
 
         <div class="actions">
           <%= f.submit "registrarse" %>
@@ -56,6 +57,7 @@
         <div class="opciones">
          <%= render "devise/shared/links" %>
         </div>
+        <a class="texto" href="/localhost:4000/home"> Quizás mas tarde</a>
     </section>
 
     <script>
