@@ -19,24 +19,24 @@
         
         <div class="nombres">
           <div class="field">
-            <%= f.label :nombre %><br />
+            <%= f.label :nombre , class: "Text" %><br />
             <%= f.text_field :nombre %>
           </div>
 
           <div class="field">
-            <%= f.label :apellido %><br />
+            <%= f.label :apellido, class: "Text" %><br />
             <%= f.text_field :apellido %>
           </div>
         </div>
         
 
         <div class="field">
-          <%= f.label :email %><br />
+          <%= f.label :email, class: "Text" %><br />
           <%= f.email_field :email, autofocus: true, autocomplete: "email" %>
         </div>
         <div class="pasword">
           <div class="field">
-            <%= f.label :password %>
+            <%= f.label :password, class: "Text" %>
             <% if @minimum_password_length %>
             
             <% end %><br />
@@ -44,7 +44,7 @@
           </div>
 
           <div class="field">
-            <%= f.label :password_confirmation %><br />
+            <%= f.label :password_confirmation, class: "Text" %><br />
             <%= f.password_field :password_confirmation, autocomplete: "new-password" %>
           </div>
         </div>
@@ -57,7 +57,7 @@
         <div class="opciones">
          <%= render "devise/shared/links" %>
         </div>
-        <a class="texto" href="/localhost:4000/home"> Quizás mas tarde</a>
+        <a class="texto" href="http://localhost:4000/inicio#index"> Quizás mas tarde</a>
     </section>
 
     <script>

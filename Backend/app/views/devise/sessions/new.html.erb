@@ -22,7 +22,7 @@
           <%= f.label :password %><br />
           <%= f.password_field :password, autocomplete: "current-password" %>
         </div>
-        <div class="opciones">
+        <div class="opcionesb">
          <%= render "devise/shared/links" %>
         </div>
         <% if devise_mapping.rememberable? %>
@@ -35,8 +35,8 @@
         <div class="actions">
           <%= f.submit "Iniciar sesión" %>
         </div>
-
-        <a class="texto" href="http://localhost:4000/home"> Quizás mas tarde</a>
+        
+        <a class="texto" href="http://localhost:4000/inicio#index"> Quizás mas tarde</a>
       <% end %>
 
 
