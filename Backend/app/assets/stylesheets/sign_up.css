@@ -1,20 +1,21 @@
+html, body {
+  min-height: 100vh;
+  margin: 0;
+}
 .body{
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    margin: 0;
-    background: linear-gradient(
-      135deg,
-      rgba(255, 105, 180, 0.5), 
-      rgba(0, 191, 255, 0.5),    
-      rgba(255, 255, 0, 0.5)     
-    );
-    background-size: cover;
-    backdrop-filter: blur(5px);
-    display: flex;
-    justify-content: center;
-    align-items: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 105, 180, 0.5),
+    rgba(0, 191, 255, 0.5),
+    rgba(255, 255, 0, 0.5)
+  );
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  backdrop-filter: blur(5px);
 }
 .container{
   border:1px solid rgb(255, 255, 255);
@@ -39,6 +40,7 @@
 }
 
 .opciones {
+  margin-top: 2vh;
   display: flex; 
   gap: 5vh;
   font-size: 15px;
@@ -52,7 +54,11 @@
   font-size: 15px;
 
 }
-
+.Text{
+  float: left;
+  margin-top: 2vh;
+  margin-left: 1vh;
+}
 .form{
   display: flex;
   flex-direction: column;
@@ -61,7 +67,6 @@
 }
 .form label{
   font-size: 15px;
-  
 }
 
 #user_nombre{
@@ -171,14 +176,9 @@
   justify-content: center;
 }
 
-/* .pasword{
-  display: flex;
-  justify-content: center;
-}
- */
 #user_nombre{
   width: 30vh;
-  height: 9vh;
+  height: 7vh;
   margin-right: 5vh;
   padding: 10px;
       font-size: 18px;
@@ -196,7 +196,7 @@
 
 #user_apellido{
   width: 30vh;
-  height: 9vh;
+  height: 7vh;
   padding: 10px;
       font-size: 18px;
       border: 2px solid #000000;
