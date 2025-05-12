@@ -36,7 +36,7 @@
       <div class="user-section">
       <i class="fas fa-user-circle user-icon"></i>
       <div class="user-options">
-      <a href="" class="logout">Cerrar sesión</a>  
+      <%= button_to "Cerrar sesión", destroy_user_session_path, method: :delete, class:"logout" %>
       <span>ADMIN</span>
       </div>
     </nav>
