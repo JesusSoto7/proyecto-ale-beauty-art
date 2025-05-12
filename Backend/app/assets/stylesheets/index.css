@@ -137,10 +137,14 @@
   }
   
   .logout {
-    color: #d33;
+    color: #ffffff;
+    background-color: #cc4c74;
+    height: 30px;
+    width: 100px;
+    border-radius: 10px;
     text-decoration: none;
     font-weight: bold;
-    margin-right: 30px;
+    margin-right: 40px;
   }
   
   .logout:hover {
@@ -240,4 +244,3 @@
   .footer .social-icons i:hover {
     color: #a84267;
   }
-  
