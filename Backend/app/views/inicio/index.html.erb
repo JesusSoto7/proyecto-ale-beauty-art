@@ -1,5 +1,13 @@
-<div class="page-container">  
-  <header class="navbar">
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Menú desplegable</title>
+  <link rel="stylesheet" href="Backend/app/assets/stylesheets/inicio.css">
+</head>
+<body>
+<header class="navbar">
   <div class="menu-icon" onclick="toggleMenu()">☰</div>
 
   <div class="logo">
@@ -18,7 +26,7 @@
   </div>
 
   <div class="user-options">
-    <span class="profile">👤</span>
+    <span id="profile-icon">👤</span>
   </div>
 
   <div class="cart">🛒</div>
@@ -30,7 +38,7 @@
   <a href="#">Favoritos</a>
   <a href="#">Ajustes</a>
   </div>
-
+  </div>
   <script>
   function toggleMenu() {
     var menu = document.getElementById('dropdown-menu');
@@ -41,6 +49,34 @@
     }
   }
   </script>
+  <!-- Menu perfil -->
+  <div id="menu-perfil">
+    <ul id="ul-perfil">
+      <li class="logout-link"><%= link_to 'Mi perfil' %></li>
+      <li class="logout-link"><%= link_to 'Configuración' %></li>
+      <li class="logout-link"><%= link_to 'Cerrar sesión', "https://localhost:4000/users/sign_out", method: :delete %></li>
+    </ul>
+  </div>
+  <script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const profileIcon = document.getElementById("profile-icon");
+    const dropdownMenu = document.getElementById("menu-perfil");
+    const userOptions = document.getElementById("user-options");
+
+    profileIcon.addEventListener("click", function (e) {
+      e.stopPropagation(); // evita cierre inmediato
+      dropdownMenu.style.display = dropdownMenu.style.display === "none" ? "block" : "none";
+    });
+
+    document.addEventListener("click", function (event) {
+      if (!userOptions.contains(event.target)) {
+        dropdownMenu.style.display = "none";
+      }
+    });
+  });
+</script>
+
+
 
   <!-- Carrusel principal -->
   <section class="mb-5">
@@ -94,6 +130,6 @@
   <footer class="text-center py-4 mt-5">
     © 2025 Tienda de Belleza - Todos los derechos reservados
   </footer>
-
 </div>
-
+</body>
+</html>
