@@ -1,3 +1,7 @@
+*{
+  border: 1 px solid black;
+}
+
 .navbar {
   display: flex;
   align-items: center;
@@ -7,6 +11,7 @@
   border-top-left-radius: 10px;
   background-color: #ffe0ec;
   position: relative;
+  margin-bottom: 20px;
 }
 
 .logo img {
@@ -37,6 +42,40 @@ nav a:hover {
   display: none; /* Se muestra solo en móviles */
 }
 
+#menu-perfil {
+  display: none;
+  position: absolute;
+  right: 0;
+  top: 60px;
+  background: white;
+  border: 1px solid #ccc;
+  box-shadow: 0px 2px 5px rgba(0,0,0,0.2);
+  border-radius: 8px;
+  z-index: 10;           /* Bien alto para que esté al frente */
+  min-width: 150px;
+  
+}
+#ul-perfil {
+  list-style: none;
+  padding: 10px;
+  margin: 0;
+  
+}
+#ul-perfil>li>a {
+  text-decoration: none;
+  color:  #5c1a3b;
+  font-size: 16px;
+  background: none;
+  border: none;
+  padding: 0;
+  font-family: inherit;
+  margin-bottom: 20px;
+}
+
+#ul-perfil>li>a:hover {
+  color: #e75480;
+}
+
 .search input {
   padding: 8px 15px;
   border-radius: 20px;
@@ -48,11 +87,14 @@ nav a:hover {
   display: flex;
   align-items: center;
   gap: 8px;
+  position: relative; /* para que el menú se posicione con respecto a este */
+  display: inline-block;
 }
 
-.profile {
+#profile-icon {
   font-size: 20px;
   color: #5c1a3b;
+  cursor: pointer;
 }
 
 .logout-link {
