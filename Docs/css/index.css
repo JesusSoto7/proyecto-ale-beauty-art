@@ -1,0 +1,203 @@
+
+#copy{
+    margin: 20px;
+    margin-left: 50px;
+}
+
+.rubik-park-fuente {
+    font-family: "Rubik", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 200;
+    font-style: normal;
+}
+
+#tema{
+    width: 33px;
+    padding: 5px;
+    display: flex;
+    margin-right: 10px;
+}
+
+#contenido-dinamico{
+    display: flex;
+    flex-direction: column;
+    transition: all 0.3s ease;
+}
+
+aside{
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 260px;
+    height: 99.8vh;
+    border-right: solid 1px #e2dede;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    overflow-y: scroll;
+    scrollbar-color: rgb(201, 194, 194) rgb(255, 255, 255);
+}
+
+/* ---------inicio carpetas---------- */
+
+.content button {
+    width: 100%;
+    background: none;
+    border: none;
+    text-align: left;
+    padding: 8px;
+    font-size: 14px;
+    cursor: pointer;
+    color: #333;
+  }
+  
+  .content button:hover {
+    background-color: #eee;
+  }
+  
+
+a{
+    margin-left: 30px;
+}
+
+.toggle-btn {
+    width: 100%;
+    margin-left: 0;
+    padding: 10px;
+    background-color: #ffffff;
+    border: none;
+    font-weight: bold;
+    text-align: left;
+    cursor: pointer;
+}
+
+.content {
+    max-height: 0;
+    overflow: hidden;
+    padding-left: 10px;
+    background-color: #ffffff;
+    transition: max-height 0.4s ease;
+}
+
+.content.open {
+    max-height: 300px;
+}
+
+
+.btn-recargar {
+    width: 100%;
+    background: none;
+    border: none;
+    text-align: left;
+    padding: 8px 10px;
+    font-size: 14px;
+    color: #333;
+    cursor: pointer;
+}
+
+.btn-recargar:hover {
+    background-color: #eee;
+}
+
+.content ul {
+    list-style: none;
+    padding: 0;
+    margin: 10px 0;
+
+}
+
+.content ul li {
+    margin: 5px 0;
+
+}
+
+.content a {
+    text-decoration: none;
+    color: rgb(36, 36, 36);
+}
+
+.content a:hover {
+    text-decoration: underline;
+}
+
+/* --------fin-------- */
+
+#logo{
+    display: flex;
+    position: absolute;
+    top: 10px;
+    width: 220px;
+    height: 45px;
+    background-size: cover;
+    background-position: center;
+    flex-direction: row;
+    align-items: center; 
+    border-bottom: solid 1px #e2dede;
+}
+
+#logo h4{
+    margin-left: 10px;
+}
+
+aside label{
+    margin-top: 66px;
+    margin-left: -165px;
+    font-size: 17px;
+    color: #778088;
+    margin-bottom: 8px;
+}
+
+#contenido{
+    position: absolute;
+    top: 0;
+    left: 260px;
+    width: calc(100% - 260px);
+    height: calc(100% - 2px);
+    /* border: solid 1px #000; */
+    overflow-y: scroll;
+    scrollbar-color: rgb(201, 194, 194) rgb(255, 255, 255);
+}
+
+nav{
+    width: calc(100% - 1px);
+    height: 55px;
+    /* border: solid 1px #000; */
+    background-color: #f0c1c1;
+    display: flex;
+    justify-content: end;
+    align-items: center;
+}
+
+button{
+    text-align: start;
+    width: 90%;
+    height: 35px;
+    border-radius: 6px;
+    border: none;
+    background-color: #ffffff;
+    margin-bottom: 2px;
+    font-size: 16px;
+    padding-left: 20px;
+    font-family: Arial, Helvetica, sans-serif;
+}
+button:hover{
+    background-color: #f7e4e4;
+    color: #797878;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+
+.active {
+    background-color: #f0c1c1;
+    color: white;
+}
+
+.burger{
+    display: none;
+}
+
+@media screen and (max-width: 600px) {
+    
+        
+}
