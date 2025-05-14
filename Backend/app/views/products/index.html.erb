@@ -14,8 +14,7 @@
         <div class="dropdown">
             <button onclick="toggleDropdown()" class="dropbtn">☰ Menú</button>
             <div id="dropdownContent" class="dropdown-content">
-            <%= link_to "Agregar producto", add_product_path %>
-            <a href="#">Eliminar producto</a>
+            <%= link_to "Agregar producto", new_product_path %>
             <%= link_to "Agregar categoria", add_category_path%>
             </div>
         </div>
@@ -28,7 +27,7 @@
         </div>
         <div class="center">
             <a href="#">INICIO</a>
-            <a href="#">PRODUCTOS</a>
+            <%= link_to "PRODUCTOS", products_path %>
             <a href="#">ACERCA DE</a>
             <a href="#">CONTACTO</a>
             <input type="search" placeholder="Buscar...">
@@ -42,55 +41,20 @@
         </nav>
 
         <div>
-            <%= form_with(model: @product, local: true, html: { multipart: true }) do |form| %>
-                <% if @product.errors.any? %>
-                    <div style="color: pink">
-                        <h2><%= pluralize(@product.errors.count, "error") %> el producto no pudo ser creado </h2>
+            <% content_for :title, "Products"%>
 
-                        <ul>
-                            <% @product.errors.each do |error| %>
-                                <li><%= error.full_message %></li>
-                            <% end %>
-                        </ul>
-                    </div>
-                <% end %>
+            <h1> Products </h1>
 
-                <div>
-                    <%= form.label :nombre_producto, style: "display: block" %>
-                    <%= form.text_field :nombre_producto %>
-                </div>
-
-                <div>
-                    <%= form.label :category_id, "Categoria", style: "display: block"%>
-                    <%= form.collection_select :category_id, Category.all, :id, :nombre_categoria, prompt: "Seleccione Categoria"%>
-                </div>
-
-                <div>
-                    <%= form.label :precio_producto, style: "display: block" %>
-                    <%= form.number_field :precio_producto %>
-                </div>
-
-                <div>
-                    <%= form.label :descripcion, style: "display: block" %>
-                    <%= form.text_area :descripcion, rows: 5, cols: 40 %>
-                </div>
-
-                <div>
-                    <%= form.label :stock, style: "display: block"%>
-                    <%= form.number_field :stock%>
-                </div>
-
-                <div>
-                    <%= form.label :imagen, style: "display: block" %>
-                    <%= form.file_field :imagen %>
-                </div>
-
-                <div>
-                    <%= form.submit %>
-                </div>
-                
-            <% end %>
+            <div>
+                <% @products.each do |product| %>
+                    <%= render product %>
+                    <p>
+                      <%= link_to "Mostrar Producto", product%>
+                    </p>
+                <% end %> 
+            </div>
         </div>
+
         <div class="floating-btn"><i class="fas fa-plus"></i></div>
         <div class="logout-btn"><i class="fas fa-sign-out-alt"></i></div>
         <div class="filter-btn"><i class="fas fa-sliders-h"></i></div>

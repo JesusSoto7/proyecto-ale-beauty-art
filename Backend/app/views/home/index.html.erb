@@ -10,13 +10,12 @@
   <body class="uno">
 
     <nav class="navbar">
-      <!-- Menú desplegable -->
+      <!-- Menú desplegable --> 
       <div class="dropdown">
         <button onclick="toggleDropdown()" class="dropbtn">☰ Menú</button>
         <div id="dropdownContent" class="dropdown-content">
-          <%= link_to "Agregar producto", add_product_path %>
-          <a href="#">Eliminar producto</a>
-          <%= link_to "Agregar categoria", add_category_path%>
+          <%= link_to "Agregar Producto", new_product_path %>
+          <%= link_to "Agregar Categoria", add_category_path%>
         </div>
       </div>
       <div class="left">
@@ -28,7 +27,7 @@
       </div>
       <div class="center">
         <a href="#">INICIO</a>
-        <a href="#">PRODUCTOS</a>
+        <%= link_to "PRODUCTOS", products_path %>
         <a href="#">ACERCA DE</a>
         <a href="#">CONTACTO</a>
         <input type="search" placeholder="Buscar...">

@@ -1,0 +1,13 @@
+<div class="product">
+  <h3><%= product.nombre_producto %></h3>
+  <% if product.imagen.attached? %>
+      <%= image_tag product.imagen.variant(resize_to_limit: [300, 300])%>
+    <% else %>
+    <p>Sin imagen</p>
+  <% end %>
+  <p><strong>Categoria:</strong> <%= product.category.nombre_categoria %> </p>
+  <h4><%= product.precio_producto %></h4>
+
+  
+
+</div>

@@ -1,0 +1,48 @@
+<%= form_with(model: @product, local: true, html: { multipart: true }) do |form| %>
+            <% if @product.errors.any? %>
+                <div style="color: pink">
+                    <h2><%= pluralize(@product.errors.count, "error") %> el producto no pudo ser creado </h2>
+
+                    <ul>
+                        <% @product.errors.each do |error| %>
+                            <li><%= error.full_message %></li>
+                         <% end %>
+                    </ul>
+                </div>
+            <% end %>
+
+                <div>
+                    <%= form.label :nombre_producto, style: "display: block" %>
+                    <%= form.text_field :nombre_producto %>
+                </div>
+
+                <div>
+                    <%= form.label :category_id, "Categoria", style: "display: block"%>
+                    <%= form.collection_select :category_id, Category.all, :id, :nombre_categoria, prompt: "Seleccione Categoria"%>
+                </div>
+
+                <div>
+                    <%= form.label :precio_producto, style: "display: block" %>
+                    <%= form.number_field :precio_producto %>
+                </div>
+
+                <div>
+                    <%= form.label :descripcion, style: "display: block" %>
+                    <%= form.text_area :descripcion, rows: 5, cols: 40 %>
+                </div>
+
+                <div>
+                    <%= form.label :stock, style: "display: block"%>
+                    <%= form.number_field :stock%>
+                </div>
+
+                <div>
+                    <%= form.label :imagen, style: "display: block" %>
+                    <%= form.file_field :imagen %>
+                </div>
+
+                <div>
+                    <%= form.submit %>
+                </div>
+                
+<% end %>

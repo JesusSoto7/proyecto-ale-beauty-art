@@ -41,35 +41,18 @@
         </nav>
 
         <div>
-            <%= form_with(model: @category, local: true, html: { multipart: true }) do |form| %>
-                <% if @category.errors.any? %>
-                    <div style="color: pink">
-                        <h2><%= pluralize(@category.errors.count, "error") %> La categoria no pudo ser creado </h2>
+           <%= render @product%>
+            <p> <%= @product.stock %> </p>
+            <p> <%= @product.descripcion %> </p>
 
-                        <ul>
-                            <% @category.errors.each do |error| %>
-                                <li><%= error.full_message %></li>
-                            <% end %>
-                        </ul>
-                    </div>
-                <% end %>
+            <div>
+                <%= link_to "Editar Producto", edit_product_path(@product)%>
+                <%= link_to "Volver", products_path%>
 
-                <div>
-                    <%= form.label :nombre_categoria, style: "display: block" %>
-                    <%= form.text_field :nombre_categoria %>
-                </div>
-
-                <div>
-                    <%= form.label :imagen, style: "display: block" %>
-                    <%= form.file_field :imagen %>
-                </div>
-
-                <div>
-                    <%= form.submit %>
-                </div>
-                
-            <% end %>
+                <%= button_to "Eliminar Producto", @product, method: :delete%>
+            </div>
         </div>
+
         <div class="floating-btn"><i class="fas fa-plus"></i></div>
         <div class="logout-btn"><i class="fas fa-sign-out-alt"></i></div>
         <div class="filter-btn"><i class="fas fa-sliders-h"></i></div>

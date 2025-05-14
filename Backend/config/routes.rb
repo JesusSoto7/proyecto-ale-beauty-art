@@ -8,7 +8,6 @@ Rails.application.routes.draw do
 
   get "home" => "home#index", as: :welcome
   get 'inicio', to: 'inicio#index'
-  get 'addProduct' => "products#addProduct", as: :add_product
   post 'create' => "products#createProduct", as: :create
   resources :products
   resources :categories
