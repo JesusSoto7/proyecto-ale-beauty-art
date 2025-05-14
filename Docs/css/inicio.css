@@ -1,0 +1,107 @@
+#ti{
+    margin-left: 130px;
+    margin-top: 50px;
+    font-size: 40px;
+}
+
+
+#order{
+    margin-left: 100px;
+    columns: 3;
+    display: flex;
+    flex-flow: row wrap;
+}
+
+#order label{
+    font-size: 25px;
+    margin-bottom: 10px;
+}
+
+#order p{
+    color: #778088;
+}
+
+#order h4{
+    color: #d18fab;
+    font-size: 18px;
+}
+
+
+/* --------------------------------- */
+
+
+.card {
+    margin-left: 30px;
+    margin-top: 30px;
+    max-width: 350px;
+    height: 185px;
+    padding: 24px;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    background-color: #fff;
+    font-family: sans-serif;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    cursor: pointer;
+
+}
+
+.icon-box {
+  background-color: #ffe9e4;
+  width: 50px;
+  height: 50px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 16px;
+}
+#icon-box1 {
+    background-color: #ffe9e4;
+}
+#icon-box2 {
+    background-color: #f2f5c6;
+}
+#icon-box3 {
+    background-color: #bfffcb;
+}
+#icon-box4 {
+    background-color: #cccac8;
+}
+#icon-box5 {
+    background-color: #bbe1ff;
+}
+#icon-box6 {
+    background-color: #ffbbbb;
+}
+#icon-box7 {
+    background-color: #ffe4a8;
+}
+
+.icon {
+    color: #f15642;
+    font-size: 20px;
+}
+
+.title {
+  margin: 0;
+  font-size: 23px;
+  font-weight: 600;
+  color: #3d3d3d;
+}
+
+.description {
+  font-size: 14px;
+  color: #666;
+  margin: 12px 0;
+}
+
+.link {
+  color: #4e5bf2;
+  font-size: 14px;
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.link:hover {
+  text-decoration: underline;
+}
