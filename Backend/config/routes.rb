@@ -8,8 +8,13 @@ Rails.application.routes.draw do
 
   get "home" => "home#index", as: :welcome
   get 'inicio', to: 'inicio#index'
-  get 'addProduct' => "home#addProduct", as: :add_product
-  post 'create_product' => "home#createProduct", as: :create_product
+  get 'addProduct' => "products#addProduct", as: :add_product
+  post 'create' => "products#createProduct", as: :create
+  resources :products
+  resources :categories
+  get 'addCategory' => "categories#addCategory", as: :add_category
+  post 'create' => "categories#createCategory", as: :create_category
+
 
   # Render dynamic PWA files from app/views/pwa/* (remember to link manifest in application.html.erb)
   # get "manifest" => "rails/pwa#manifest", as: :pwa_manifest
