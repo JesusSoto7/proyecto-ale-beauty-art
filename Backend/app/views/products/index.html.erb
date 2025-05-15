@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Mi Proyecto</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheets" href= "app/assets/stylesheets/index.css">
+
+    </head>
+  <body class="uno">
+
+        <nav class="navbar">
+        <!-- Menú desplegable -->
+        <div class="dropdown">
+            <button onclick="toggleDropdown()" class="dropbtn">☰ Menú</button>
+            <div id="dropdownContent" class="dropdown-content">
+            <%= link_to "Agregar Producto", new_product_path %>
+            <%= link_to "Agregar Categoria", new_category_path%>
+            <%= link_to "Categorias", categories_path %>
+            </div>
+        </div>
+        <div class="left">
+            <i class="fas fa-bars"></i>
+            <i class="fas fa-shopping-bag"></i>
+        </div>
+        <div class="logo-container">
+            <%= image_tag "ale_logo.jpg", class: "logo-img" %>
+        </div>
+        <div class="center">
+            <a href="#">INICIO</a>
+            <%= link_to "PRODUCTOS", products_path %>
+            <a href="#">ACERCA DE</a>
+            <a href="#">CONTACTO</a>
+            <input type="search" placeholder="Buscar...">
+        </div>
+        <div class="user-section">
+        <i class="fas fa-user-circle user-icon"></i>
+        <div class="user-options">
+        <%= button_to "Cerrar sesión", destroy_user_session_path, method: :delete, class:"logout" %>
+        <span>ADMIN</span>
+        </div>
+        </nav>
+
+        <div>
+            <% content_for :title, "Productos"%>
+
+            <h1> Productos </h1>
+
+            <div>
+                <% @products.each do |product| %>
+                    <%= render product %>
+                    <p>
+                      <%= link_to "Ver Producto", product%>
+                    </p>
+                <% end %> 
+            </div>
+        </div>
+
+        <div class="floating-btn"><i class="fas fa-plus"></i></div>
+        <div class="logout-btn"><i class="fas fa-sign-out-alt"></i></div>
+        <div class="filter-btn"><i class="fas fa-sliders-h"></i></div>
+
+        <footer class="footer">
+        <div class="footer-content">
+            <p>&copy; 2025 Mi Tienda de Maquillaje. Todos los derechos reservados.</p>
+            <div class="social-icons">
+            <i class="fab fa-instagram"></i>
+            <i class="fab fa-facebook-f"></i>
+            <i class="fab fa-twitter"></i>
+            </div>
+        </div>
+        </footer>
+
+        <script>
+        function toggleDropdown() {
+            document.getElementById("dropdownContent").classList.toggle("show");
+        }
+
+        // Cierra el menú si se hace clic fuera
+        window.onclick = function(e) {
+            if (!e.target.matches('.dropbtn')) {
+            var dropdowns = document.getElementsByClassName("dropdown-content");
+            for (var i = 0; i < dropdowns.length; i++) {
+                var openDropdown = dropdowns[i];
+                if (openDropdown.classList.contains('show')) {
+                openDropdown.classList.remove('show');
+                }
+            }
+            }
+        }
+        </script>
+
+  </body>
+</html>
