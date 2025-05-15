@@ -1,0 +1,8 @@
+<div class="category">
+  <h3><%= category.nombre_categoria%></h3>
+  <% if category.imagen.attached? %>
+      <%= image_tag category.imagen.variant(resize_to_limit: [300, 300])%>
+    <% else %>
+    <p>Sin imagen</p>
+  <% end %>
+</div>

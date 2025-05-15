@@ -42,20 +42,9 @@
         </nav>
 
         <div>
-            <% content_for :title, "Productos"%>
-
-            <h1> Productos </h1>
-
-            <div>
-                <% @products.each do |product| %>
-                    <%= render product %>
-                    <p>
-                      <%= link_to "Ver Producto", product%>
-                    </p>
-                <% end %> 
-            </div>
+            <h1>Nueva Categoria</h1>
+            <%= render "form", category: @category%>
         </div>
-
         <div class="floating-btn"><i class="fas fa-plus"></i></div>
         <div class="logout-btn"><i class="fas fa-sign-out-alt"></i></div>
         <div class="filter-btn"><i class="fas fa-sliders-h"></i></div>

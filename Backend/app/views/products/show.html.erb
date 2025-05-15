@@ -14,8 +14,9 @@
         <div class="dropdown">
             <button onclick="toggleDropdown()" class="dropbtn">☰ Menú</button>
             <div id="dropdownContent" class="dropdown-content">
-            <%= link_to "Agregar producto", new_product_path %>
-            <%= link_to "Agregar categoria", add_category_path%>
+            <%= link_to "Agregar Producto", new_product_path %>
+            <%= link_to "Agregar Categoria", new_category_path%>
+            <%= link_to "Categorias", categories_path %>
             </div>
         </div>
         <div class="left">
@@ -42,7 +43,7 @@
 
         <div>
            <%= render @product%>
-            <p> <%= @product.stock %> </p>
+            <p> <strong>Stock: </strong> <%= @product.stock %> </p>
             <p> <%= @product.descripcion %> </p>
 
             <div>

@@ -1,6 +1,6 @@
 <%= form_with(model: @product, local: true, html: { multipart: true }) do |form| %>
             <% if @product.errors.any? %>
-                <div style="color: pink">
+                <div style="color: red">
                     <h2><%= pluralize(@product.errors.count, "error") %> el producto no pudo ser creado </h2>
 
                     <ul>
@@ -23,7 +23,7 @@
 
                 <div>
                     <%= form.label :precio_producto, style: "display: block" %>
-                    <%= form.number_field :precio_producto %>
+                    <%= form.number_field :precio_producto, min: 0, step: 0.01 %>
                 </div>
 
                 <div>
@@ -33,7 +33,7 @@
 
                 <div>
                     <%= form.label :stock, style: "display: block"%>
-                    <%= form.number_field :stock%>
+                    <%= form.number_field :stock, min: 0 %>
                 </div>
 
                 <div>

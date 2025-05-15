@@ -42,17 +42,13 @@
         </nav>
 
         <div>
-            <% content_for :title, "Productos"%>
-
-            <h1> Productos </h1>
+           <%= render @category%>
 
             <div>
-                <% @products.each do |product| %>
-                    <%= render product %>
-                    <p>
-                      <%= link_to "Ver Producto", product%>
-                    </p>
-                <% end %> 
+                <%= link_to "Editar Categoria", edit_category_path(@category)%>
+                <%= link_to "Volver", categories_path%>
+
+                <%= button_to "Eliminar Categoria", @category, method: :delete %>
             </div>
         </div>
 

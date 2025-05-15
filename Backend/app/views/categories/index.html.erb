@@ -14,8 +14,9 @@
         <div class="dropdown">
             <button onclick="toggleDropdown()" class="dropbtn">☰ Menú</button>
             <div id="dropdownContent" class="dropdown-content">
-            <%= link_to "Agregar producto", new_product_path %>
-            <%= link_to "Agregar categoria", add_category_path%>
+            <%= link_to "Agregar Producto", new_product_path %>
+            <%= link_to "Agregar Categoria", new_category_path%>
+            <%= link_to "Categorias", categories_path %>
             </div>
         </div>
         <div class="left">
@@ -41,35 +42,20 @@
         </nav>
 
         <div>
-            <%= form_with(model: @category, local: true, html: { multipart: true }) do |form| %>
-                <% if @category.errors.any? %>
-                    <div style="color: pink">
-                        <h2><%= pluralize(@category.errors.count, "error") %> La categoria no pudo ser creado </h2>
+            <% content_for :title, "Categories"%>
 
-                        <ul>
-                            <% @category.errors.each do |error| %>
-                                <li><%= error.full_message %></li>
-                            <% end %>
-                        </ul>
-                    </div>
-                <% end %>
+            <h1> Categorias </h1>
 
-                <div>
-                    <%= form.label :nombre_categoria, style: "display: block" %>
-                    <%= form.text_field :nombre_categoria %>
-                </div>
-
-                <div>
-                    <%= form.label :imagen, style: "display: block" %>
-                    <%= form.file_field :imagen %>
-                </div>
-
-                <div>
-                    <%= form.submit %>
-                </div>
-                
-            <% end %>
+            <div>
+                <% @categories.each do |category| %>
+                    <%= render category %>
+                    <p>
+                      <%= link_to "Ver Categoria", category%>
+                    </p>
+                <% end %> 
+            </div>
         </div>
+
         <div class="floating-btn"><i class="fas fa-plus"></i></div>
         <div class="logout-btn"><i class="fas fa-sign-out-alt"></i></div>
         <div class="filter-btn"><i class="fas fa-sliders-h"></i></div>

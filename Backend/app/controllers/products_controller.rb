@@ -9,7 +9,7 @@ class ProductsController < ApplicationController
   end
 
   def show
-     @product = Product.find(params[:id])
+    @product = Product.find(params[:id])
   end
 
   def edit
@@ -24,7 +24,7 @@ class ProductsController < ApplicationController
         format.html { redirect_to @product, notice: "El producto fue creado correctamente" }
         format.json { render :show, status: :created, location: @product }
         else
-          format.html { render :addProduct, status: :unprocessable_entity }
+          format.html { render :new, status: :unprocessable_entity }
           format.json { render json: @product.errors, status: :unprocessable_entity }
         end
       end
