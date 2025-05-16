@@ -1,11 +1,13 @@
-<div class="category">
-  <h3><%= category.nombre_categoria%></h3>
+<div class="card" style="width: 18rem;">
   <% if category.imagen.attached? %>
-      <%= image_tag category.imagen.variant(resize_to_limit: [300, 300])%>
+      <%= image_tag category.imagen, class: "card-img-top"%>
     <% else %>
     <p>Sin imagen</p>
   <% end %>
-
-  <p id="vcate"><%= link_to "Ver Categoria",  category %></p>
+  <div class="card-body">
+    <p class="card-text">
+    <%= category.nombre_categoria%>.
+    <%= link_to "Ver Categoria",  category %>
+    </p>
+  </div>
 </div>
-
