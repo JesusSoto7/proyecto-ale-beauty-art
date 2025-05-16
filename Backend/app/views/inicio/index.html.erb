@@ -54,7 +54,7 @@
     <ul id="ul-perfil">
       <li class="logout-link"><%= link_to 'Mi perfil' %></li>
       <li class="logout-link"><%= link_to 'Configuración' %></li>
-      <li class="logout-link"><%= link_to 'Cerrar sesión', "https://localhost:4000/users/sign_out", method: :delete %></li>
+      <%= button_to "Cerrar sesión", destroy_user_session_path, method: :delete, class:"cerrar_sesion" %>
     </ul>
   </div>
   <script>
