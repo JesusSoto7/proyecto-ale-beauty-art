@@ -1,48 +1,50 @@
-<%= form_with(model: @product, local: true, html: { multipart: true }) do |form| %>
-            <% if @product.errors.any? %>
-                <div style="color: red">
-                    <h2><%= pluralize(@product.errors.count, "error") %> el producto no pudo ser creado </h2>
-
-                    <ul>
-                        <% @product.errors.each do |error| %>
-                            <li><%= error.full_message %></li>
-                         <% end %>
-                    </ul>
-                </div>
+<section class="form-section">
+    <%= form_with(model: @product, local: true, html: { multipart: true, class: "needs-validation", novalidate: true }) do |form| %>
+    
+    <% if @product.errors.any? %>
+        <div class="alert alert-danger">
+        <h4><%= pluralize(@product.errors.count, "error") %> el producto no pudo ser creado:</h4>
+        <ul>
+            <% @product.errors.each do |error| %>
+            <li><%= error.full_message %></li>
             <% end %>
+        </ul>
+        </div>
+    <% end %>
 
-                <div>
-                    <%= form.label :nombre_producto, style: "display: block" %>
-                    <%= form.text_field :nombre_producto %>
-                </div>
+    <div class="mb-3">
+        <%= form.label :nombre_producto, class: "form-label" %>
+        <%= form.text_field :nombre_producto, class: "form-control" %>
+    </div>
 
-                <div>
-                    <%= form.label :category_id, "Categoria", style: "display: block"%>
-                    <%= form.collection_select :category_id, Category.all, :id, :nombre_categoria, prompt: "Seleccione Categoria"%>
-                </div>
+    <div class="mb-3">
+        <%= form.label :category_id, "Categoría", class: "form-label" %>
+        <%= form.collection_select :category_id, Category.all, :id, :nombre_categoria, { prompt: "Seleccione Categoría" }, class: "form-select" %>
+    </div>
 
-                <div>
-                    <%= form.label :precio_producto, style: "display: block" %>
-                    <%= form.number_field :precio_producto, min: 0, step: 0.01 %>
-                </div>
+    <div class="mb-3">
+        <%= form.label :precio_producto, class: "form-label" %>
+        <%= form.number_field :precio_producto, min: 0, step: 0.01, class: "form-control" %>
+    </div>
 
-                <div>
-                    <%= form.label :descripcion, style: "display: block" %>
-                    <%= form.text_area :descripcion, rows: 5, cols: 40 %>
-                </div>
+    <div class="mb-3">
+        <%= form.label :descripcion, class: "form-label" %>
+        <%= form.text_area :descripcion, rows: 5, class: "form-control" %>
+    </div>
 
-                <div>
-                    <%= form.label :stock, style: "display: block"%>
-                    <%= form.number_field :stock, min: 0 %>
-                </div>
+    <div class="mb-3">
+        <%= form.label :stock, class: "form-label" %>
+        <%= form.number_field :stock, min: 0, class: "form-control" %>
+    </div>
 
-                <div>
-                    <%= form.label :imagen, style: "display: block" %>
-                    <%= form.file_field :imagen %>
-                </div>
+    <div class="mb-3">
+        <%= form.label :imagen, class: "form-label" %>
+        <%= form.file_field :imagen, class: "form-control" %>
+    </div>
 
-                <div>
-                    <%= form.submit %>
-                </div>
-                
-<% end %>
+    <div class="mt-4">
+        <%= form.submit "Guardar Producto", class: "btn btn-primary" %>
+    </div>
+
+    <% end %>
+</section>
