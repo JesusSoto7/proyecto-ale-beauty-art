@@ -41,19 +41,35 @@
         </div>
         </nav>
 
-        <div>
-           <%= render @product%>
-            <p> <strong>Stock: </strong> <%= @product.stock %> </p>
-            <p> <%= @product.descripcion %> </p>
-
-            <div>
-                <%= link_to "Editar Producto", edit_product_path(@product)%>
-                <%= link_to "Volver", products_path%>
-
-                <%= button_to "Eliminar Producto", @product, method: :delete%>
+        <div id="shw">
+            <div id="fotoshow">
+                <% if @product.imagen.attached? %>
+                    <%= image_tag @product.imagen, class: "show-img" %>
+                    <% else %>
+                    <p>Sin imagen</p>
+                <% end %>
             </div>
-        </div>
 
+            <div id="datashow" >
+                <div id="infoshow">
+                    <h4><%= @product.nombre_producto %></h4>
+                    <p class="card-text"><%= @product.category.nombre_categoria %></p>
+                    <h5>$<%= @product.precio_producto %></h5>
+                    <p> <strong>Stock: </strong> <%= @product.stock %> </p>
+                    <p id= "des"> <strong>DESCRIPCIÓN</strong></p>
+                    <p id= "des-prod"> <%= @product.descripcion %> </p>
+                </div>
+                <div id="btnshow">
+                    <%= link_to "Editar", edit_product_path(@product), class:"btn btn-info"%>
+                    <%= link_to "Volver", products_path, class:"btn btn-secondary" %>
+                    <%= button_to "Eliminar", @product, class:"btn btn-danger", method: :delete%>
+                </div>
+
+            </div>
+            
+
+            
+        </div>
         <div class="floating-btn"><i class="fas fa-plus"></i></div>
         <div class="logout-btn"><i class="fas fa-sign-out-alt"></i></div>
         <div class="filter-btn"><i class="fas fa-sliders-h"></i></div>

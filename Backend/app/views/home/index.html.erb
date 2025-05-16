@@ -41,33 +41,12 @@
       </div>
     </nav>
 
-    <div class="grid">
-      <div class="card">
-        <div class="actions">
-          <i class="fas fa-pen"></i>
-          <i class="fas fa-trash"></i>
-        </div>
-        <div class="menu"><i class="fas fa-ellipsis-v"></i></div>
-      </div>
+    <div id="order">
+      <% @products.each do |product| %>
+          <%= render product %>
+      <% end %> 
+    </div>
 
-      <div class="card">
-        <div class="tools">
-          <i class="fas fa-pen"></i>
-          <i class="fas fa-trash-alt"></i>
-      </div>
-      <span>ARTICULOS</span>
-      <div class="options">
-        <i class="fas fa-ellipsis-v"></i>
-      </div>
-    </div>
-      <!-- Más tarjetas vacías -->
-      <div class="card"><div class="menu"><i class="fas fa-ellipsis-v"></i></div></div>
-      <div class="card"><div class="menu"><i class="fas fa-ellipsis-v"></i></div></div>
-      <div class="card"><div class="menu"><i class="fas fa-ellipsis-v"></i></div></div>
-      <div class="card"><div class="menu"><i class="fas fa-ellipsis-v"></i></div></div>
-      <div class="card"><div class="menu"><i class="fas fa-ellipsis-v"></i></div></div>
-      <div class="card"><div class="menu"><i class="fas fa-ellipsis-v"></i></div></div>
-    </div>
 
     <div class="floating-btn"><i class="fas fa-plus"></i></div>
     <div class="logout-btn"><i class="fas fa-sign-out-alt"></i></div>

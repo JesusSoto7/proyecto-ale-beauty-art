@@ -46,12 +46,9 @@
 
             <h1> Productos </h1>
 
-            <div>
+            <div id="order">
                 <% @products.each do |product| %>
                     <%= render product %>
-                    <p>
-                      <%= link_to "Ver Producto", product%>
-                    </p>
                 <% end %> 
             </div>
         </div>

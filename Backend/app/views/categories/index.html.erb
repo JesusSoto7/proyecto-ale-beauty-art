@@ -5,7 +5,7 @@
         <title>Mi Proyecto</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="stylesheets" href= "app/assets/stylesheets/index.css">
-
+        <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     </head>
   <body class="uno">
 
@@ -46,12 +46,9 @@
 
             <h1> Categorias </h1>
 
-            <div>
+            <div id="order">
                 <% @categories.each do |category| %>
                     <%= render category %>
-                    <p>
-                      <%= link_to "Ver Categoria", category%>
-                    </p>
                 <% end %> 
             </div>
         </div>

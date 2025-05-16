@@ -45,10 +45,10 @@
            <%= render @category%>
 
             <div>
-                <%= link_to "Editar Categoria", edit_category_path(@category)%>
-                <%= link_to "Volver", categories_path%>
+                <%= link_to "Editar Categoria", edit_category_path(@category), class:"btn btn-info"%>
+                <%= link_to "Volver", categories_path, class:"btn btn-secondary"%>
 
-                <%= button_to "Eliminar Categoria", @category, method: :delete %>
+                <%= button_to "Eliminar Categoria", @category, method: :delete, class:"btn btn-danger" %>
             </div>
         </div>
 

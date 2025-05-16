@@ -61,6 +61,7 @@
     object-fit: contain;
     display: inline-block;
     vertical-align: middle;
+    border-radius: 50%
   }
   
 
@@ -161,27 +162,12 @@
   }
   
   
-  .card {
-    height: 140px;
-    border: 2px solid #f2c1d1;
-    border-radius: 12px;
-    background: #fff;
-    position: relative;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-    transition: transform 0.2s ease;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 0.9rem;
-    color: #3b3b3b;
-  }
-  
   .card:hover {
     transform: translateY(-5px);
   }
   
   /* Íconos de opciones (3 puntos verticales en la esquina inferior derecha) */
-  .card .options {
+  /* .card .options {
     position: absolute;
     bottom: 8px;
     right: 8px;
@@ -189,19 +175,19 @@
     flex-direction: column;
     align-items: center;
     gap: 5px;
-  }
+  } */
   
   /* Íconos como editar y eliminar */
-  .card .tools {
+  /* .card .tools {
     position: absolute;
     top: 8px;
     left: 8px;
     display: flex;
     flex-direction: column;
     gap: 6px;
-  }
+  } */
   
-  .card .tools i,
+  /* .card .tools i,
   .card .options i {
     font-size: 0.9rem;
     color: #cc4c74;
@@ -212,7 +198,7 @@
   .card .tools i:hover,
   .card .options i:hover {
     color: #a03050;
-  }  
+  }   */
 
   .footer {
     background-color: #f8e1ea; /* Color suave, estilo maquillaje */

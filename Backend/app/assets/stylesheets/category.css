@@ -1,0 +1,27 @@
+.category{
+    width: 300px;
+    height: 200px;
+    object-fit: cover;
+    margin-top: 30px;
+    margin-left: 30px;
+    background-color: #eee;
+    border-radius: 8px;
+}
+
+.category h3{
+    z-index: 5;
+}
+
+.category:hover{
+    background-color: #20202018;
+    
+}
+.category img:hover{
+    opacity: 0.5;
+    transition: 0.5s;
+    display: block;
+}
+
+.category img{
+    z-index: 2;
+}

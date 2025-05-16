@@ -1,12 +1,19 @@
-<div class="product">
-  <h3><%= product.nombre_producto %></h3>
+<div class="card" style="width: 15rem;">
   <% if product.imagen.attached? %>
-      <%= image_tag product.imagen.variant(resize_to_limit: [300, 300])%>
+      <%= image_tag product.imagen, class: "card-img" %>
     <% else %>
     <p>Sin imagen</p>
   <% end %>
-  
-  <h4><strong>Precio: </strong><%= product.precio_producto %></h4>
-  <p><strong>Categoria:</strong> <%= product.category.nombre_categoria %> </p>
+  <div class="card-body">
+    <h5 class="card-title"><%= product.nombre_producto %></h5>
+    <p class="card-text"><%= product.category.nombre_categoria %>
+    </p>
+    <div class="d-flex justify-content-between align-items-center">
+      <strong id="preci">$<%= product.precio_producto %></strong>
+      <%= link_to "Ver", product, class: "btn btn-primary" %>
+    </div>
 
+    
+    
+  </div>
 </div>

@@ -148,3 +148,8 @@ html, body {
   text-decoration: none;
   margin-top: 1vh;
 }
+
+.alert{
+  position: absolute;
+  top: 80px;
+}
