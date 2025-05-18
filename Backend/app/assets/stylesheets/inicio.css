@@ -42,65 +42,137 @@ nav a:hover {
   display: none; /* Se muestra solo en móviles */
 }
 
-.cerrar_sesion {
-  border:none;
-  background: none;
-  color: #5c1a3b;
-  font-size: 16px;
-  align-content: left;
-
+/* Contenedor del ícono de usuario - ¡ESENCIAL! */
+.user-options {
+  position: relative;
+  display: inline-block;
+  margin-left: 15px;
 }
 
+/* Menú de perfil - Versión corregida */
 #menu-perfil {
-  display: none;
+   display: none;
   position: absolute;
   right: 0;
-  top: 60px;
+  top: calc(100% + 10px);
   background: white;
-  border: 1px solid #ccc;
-  box-shadow: 0px 2px 5px rgba(0,0,0,0.2);
-  border-radius: 8px;
-  z-index: 10;           /* Bien alto para que esté al frente */
-  min-width: 150px;
-  
-  
+  border: 1px solid #f0f0f0;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+  border-radius: 12px;
+  z-index: 1000;
+  width: 240px;
+  padding: 0;
+  margin: 0;
+  overflow: hidden;
+  transition: all 0.3s ease;
 }
+
+/* Estilo para la lista del menú */
 #ul-perfil {
   list-style: none;
-  padding: 10px;
-  margin: 0;
-  
-}
-#ul-perfil>li>a {
-  text-decoration: none;
-  color:  #5c1a3b;
-  font-size: 16px;
-  background: none;
-  border: none;
   padding: 0;
-  font-family: inherit;
-  margin-bottom: 20px;
-  margin-left: 2px;
+  margin: 0;
 }
 
-#ul-perfil>li>a:hover {
-  color: #e75480;
+#ul-perfil li {
+  transition: all 0.2s ease;
 }
 
-.search input {
-  padding: 8px 15px;
-  border-radius: 20px;
-  border: 1px solid #f7bad2;
-  background-color: #fff;
-}
-
-.user-options {
+#ul-perfil li a, 
+#ul-perfil li button {
   display: flex;
   align-items: center;
-  gap: 8px;
-  position: relative; /* para que el menú se posicione con respecto a este */
-  display: inline-block;
+  padding: 12px 20px;
+  width: 100%;
+  text-decoration: none;
+  color: #5c1a3b;
+  font-size: 14px;
+  font-weight: 500;
+  background: none;
+  border: none;
+  text-align: left;
+  cursor: pointer;
 }
+
+/* Estilo para el botón de cerrar sesión */
+.cerrar_sesion {
+    color: #ffffff !important;
+  font-weight: 600 !important;
+  background-color: #e75480 !important;
+  border-radius: 6px;
+  margin: 8px 12px !important;
+  padding: 10px 16px !important;
+  text-align: center !important;
+  display: flex !important;
+  justify-content: center;
+  align-items: center;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(231, 84, 128, 0.3);
+  border: none;
+  position: relative;
+  overflow: hidden;
+}
+.cerrar_sesion:hover {
+  background-color: #d1436d;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(231, 84, 128, 0.4);
+}
+
+/* Efecto de pulsación */
+.cerrar_sesion:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 6px rgba(231, 84, 128, 0.3);
+}
+
+/* Efecto de degradado sutil */
+.cerrar_sesion::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 100%;
+  background: linear-gradient(to right, 
+              rgba(255,255,255,0) 0%, 
+              rgba(255,255,255,0.2) 50%, 
+              rgba(255,255,255,0) 100%);
+  transform: translateX(-100%);
+  transition: transform 0.6s ease;
+}
+
+.cerrar_sesion:hover::before {
+  transform: translateX(100%);
+}
+
+/* Separador visual */
+#ul-perfil li:not(:last-child) {
+  border-bottom: 1px solid #f5f5f5;
+}
+
+#ul-perfil li a::before,
+#ul-perfil li button::before {
+  content: "";
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  margin-right: 12px;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  opacity: 0.7;
+}
+
+/* Ícono específico para cada opción */
+/* Versión móvil */
+@media (max-width: 768px) {
+  #menu-perfil {
+    right: auto;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 220px;
+  }
+}
+
 
 #profile-icon {
   font-size: 20px;
@@ -255,7 +327,8 @@ footer {
   margin-bottom: 20px;
 }
 
- * {
+/* Reset y estilos base */
+    * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
@@ -263,7 +336,7 @@ footer {
     }
     
     body {
-      background-color: #f8f9fa;
+      background-color: #FAF2DD;
       color: #333;
       line-height: 1.6;
     }
@@ -279,7 +352,7 @@ footer {
       justify-content: space-between;
       align-items: center;
       padding: 1rem 2rem;
-      background-color: #fff;
+      background-color: #FEC9C3;
       box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
       position: relative;
       flex-wrap: wrap;

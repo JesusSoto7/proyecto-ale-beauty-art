@@ -12,7 +12,7 @@
   <div class="menu-icon" onclick="toggleMenu()">☰</div>
 
   <div class="logo">
-    <img src="ale_logo.jpg" alt="Logo">
+    <img src="Backend/app/assets/images/ale_logo.jpg" alt="Logo">
   </div>
 
   <nav id="main-nav">
@@ -26,10 +26,14 @@
     <input type="text" placeholder="Buscar...">
   </div>
 
-  <div class="user-options">
-    <span id="profile-icon">👤</span>
+ <div class="user-options">
+  <span id="profile-icon">👤</span>
+  <div id="menu-perfil">
+    <ul id="ul-perfil">
+      <li><button class="cerrar_sesion">Cerrar sesión</button></li>
+    </ul>
   </div>
-
+</div>
   <div class="cart">🛒</div>
   </header>
 
@@ -43,8 +47,6 @@
   <!-- Menu perfil -->
   <div id="menu-perfil">
     <ul id="ul-perfil">
-      <li class="logout-link"><a href="#">Mi perfil</a></li>
-      <li class="logout-link"><a href="#">Configuración</a></li>
       <li><button class="cerrar_sesion">Cerrar sesión</button></li>
     </ul>
   </div>
@@ -92,7 +94,7 @@
   </footer>
 
   <script>
-    // Menú hamburguesa
+    // Menú desplegable
     function toggleMenu() {
       const nav = document.getElementById('main-nav');
       nav.classList.toggle('show');
@@ -104,31 +106,43 @@
     }
     
     // Menú desplegable
-    function toggleDropdown() {
-      var menu = document.getElementById('dropdown-menu');
-      if (menu.style.display === 'flex') {
-        menu.style.display = 'none';
-      } else {
-        menu.style.display = 'flex';
-      }
-    }
+      document.addEventListener("DOMContentLoaded", function() {
+  const profileIcon = document.getElementById("profile-icon");
+  const profileMenu = document.getElementById("menu-perfil");
+  
+  // Mostrar/ocultar menú con animación
+  profileIcon.addEventListener("click", function(e) {
+    e.stopPropagation();
     
-    // Menú perfil
-    document.addEventListener("DOMContentLoaded", function () {
-      const profileIcon = document.getElementById("profile-icon");
-      const dropdownMenu = document.getElementById("menu-perfil");
-      
-      profileIcon.addEventListener("click", function (e) {
-        e.stopPropagation();
-        dropdownMenu.style.display = dropdownMenu.style.display === "block" ? "none" : "block";
-      });
-      
-      document.addEventListener("click", function (event) {
-        if (!profileIcon.contains(event.target) && !dropdownMenu.contains(event.target)) {
-          dropdownMenu.style.display = "none";
-        }
-      });
-    });
+    if (profileMenu.style.display === "block") {
+      profileMenu.style.opacity = "0";
+      setTimeout(() => {
+        profileMenu.style.display = "none";
+      }, 300);
+    } else {
+      profileMenu.style.display = "block";
+      setTimeout(() => {
+        profileMenu.style.opacity = "1";
+      }, 10);
+    }
+  });
+  
+  // Cerrar al hacer clic fuera
+  document.addEventListener("click", function(e) {
+    if (!e.target.closest('.user-options')) {
+      profileMenu.style.opacity = "0";
+      setTimeout(() => {
+        profileMenu.style.display = "none";
+      }, 300);
+    }
+  });
+  
+  // Prevenir cierre al hacer clic dentro del menú
+  profileMenu.addEventListener("click", function(e) {
+    e.stopPropagation();
+  });
+});
+ 
     
     // Carrusel simple
     let currentSlide = 0;
