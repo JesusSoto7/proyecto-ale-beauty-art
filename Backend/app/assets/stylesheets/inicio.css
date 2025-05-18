@@ -349,13 +349,11 @@ footer {
     /* Header y navegación */
     .navbar {
       display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 1rem 2rem;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 5%; 
       background-color: #FEC9C3;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-      position: relative;
-      flex-wrap: wrap;
+       position: relative;
     }
     
     .menu-icon {
@@ -433,9 +431,10 @@ footer {
     }
     
     .cart {
-      order: 6;
-      cursor: pointer;
-    }
+  display: flex;
+  align-items: center;
+  height: 100%;
+  }
     
     /* Menú desplegable */
     .dropdown-menu {
@@ -502,54 +501,96 @@ footer {
     }
     
     /* Carrusel */
-    .carousel {
-      width: 100%;
-      overflow: hidden;
-      position: relative;
-      margin-bottom: 2rem;
-    }
-    
-    .carousel-inner {
-      display: flex;
-      transition: transform 0.5s ease;
-    }
-    
-    .carousel-item {
-      min-width: 100%;
-    }
-    
-    .carousel-item img {
-      width: 100%;
-      height: 400px;
-      object-fit: cover;
-    }
-    
-    .carousel-control-prev,
-    .carousel-control-next {
-      position: absolute;
-      top: 50%;
-      transform: translateY(-50%);
-      background-color: rgba(0, 0, 0, 0.5);
-      color: white;
-      border: none;
-      padding: 1rem;
-      cursor: pointer;
-      z-index: 10;
-      border-radius: 50%;
-      width: 40px;
-      height: 40px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    
-    .carousel-control-prev {
-      left: 1rem;
-    }
-    
-    .carousel-control-next {
-      right: 1rem;
-    }
+   /* Contenedor principal con márgenes */
+.carousel-container {
+  max-width: calc(100% - 40px);
+  margin: 40px auto;
+  padding: 0;
+}
+
+/* Estilo principal del carrusel */
+.carousel {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  aspect-ratio: 16/9; /* Relación de aspecto fija */
+}
+
+/* Contenedor de imágenes con animación */
+.carousel-inner {
+  display: flex;
+  transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  height: 100%; /* Altura relativa al contenedor */
+}
+
+/* Cada item del carrusel */
+.carousel-item {
+  min-width: 100%;
+  flex-shrink: 0;
+  position: relative;
+}
+
+/* Estilo para las imágenes - Ajuste responsivo */
+.carousel-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center center; /* Fuerza centrado vertical y horizontal */
+  display: block;
+}
+
+/* Botones de navegación */
+.carousel-control-prev,
+.carousel-control-next {
+  /* ... (mantener estilos anteriores) ... */
+}
+
+/* Versión para tablets */
+@media (max-width: 1024px) {
+  .carousel-container {
+    max-width: calc(100% - 30px);
+  }
+  
+  .carousel {
+    aspect-ratio: 4/3; /* Relación más cuadrada para tablets */
+  }
+}
+
+/* Versión para móviles */
+@media (max-width: 768px) {
+  .carousel-container {
+    max-width: calc(100% - 20px);
+  }
+  
+  .carousel {
+    aspect-ratio: 1/1; /* Relación cuadrada para móviles */
+    border-radius: 8px;
+  }
+  
+  .carousel-item img {
+    object-position: center top; /* Ajuste fino para móviles */
+  }
+}
+
+/* Ajuste para pantallas muy pequeñas */
+@media (max-width: 480px) {
+  .carousel {
+    aspect-ratio: 9/16; /* Relación vertical para móviles en portrait */
+  }
+  
+  .carousel-item img {
+    object-position: center center;
+  }
+  
+  .carousel-control-prev,
+  .carousel-control-next {
+    width: 28px;
+    height: 28px;
+    font-size: 14px;
+  }
+}
     
     /* Productos destacados */
     .productos-destacados {

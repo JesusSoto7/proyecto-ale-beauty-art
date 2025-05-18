@@ -52,16 +52,33 @@
   </div>
 
   <!-- Carrusel principal -->
+  
+  <div class="carousel-container">
   <section class="carousel">
     <div class="carousel-inner">
       <div class="carousel-item">
-        <img src="https://www.clarel.es/blog/wp-content/uploads/2023/03/maquillaje-2yk.jpg" alt="Maquillaje 2YK">
+        <img src="<%= asset_path('img1.jpg') %>" alt="Imagen 1" loading="lazy">
       </div>
-      <!-- Puedes agregar más imágenes -->
+      <div class="carousel-item">
+        <img src="<%= asset_path('img2.jpg') %>" alt="Imagen 2" loading="lazy">
+      </div>
+      <div class="carousel-item">
+        <img src="<%= asset_path('img3.jpg') %>" alt="Imagen 3" loading="lazy">
+      </div>
+      <div class="carousel-item">
+        <img src="<%= asset_path('img4.jpg') %>" alt="Imagen 4" loading="lazy">
+      </div>
+      <div class="carousel-item">
+        <img src="<%= asset_path('img5.jpg') %>" alt="Imagen 5" loading="lazy">
+      </div>
     </div>
-    <button class="carousel-control-prev" onclick="prevSlide()">‹</button>
-    <button class="carousel-control-next" onclick="nextSlide()">›</button>
+    
+    <button class="carousel-control-prev" aria-label="Anterior" onclick="prevSlide()">‹</button>
+    <button class="carousel-control-next" aria-label="Siguiente" onclick="nextSlide()">›</button>
   </section>
+</div>
+  
+  
 
   <!-- Productos destacados -->
   <section class="productos-destacados">
@@ -139,28 +156,86 @@
  
     
     // Carrusel simple
-    let currentSlide = 0;
-    const slides = document.querySelectorAll('.carousel-item');
-    const totalSlides = slides.length;
-    
-    function showSlide(index) {
-      const carouselInner = document.querySelector('.carousel-inner');
-      carouselInner.style.transform = `translateX(-${index * 100}%)`;
-      currentSlide = index;
+    document.addEventListener('DOMContentLoaded', function() {
+  const carousel = document.querySelector('.carousel');
+  const inner = document.querySelector('.carousel-inner');
+  const items = document.querySelectorAll('.carousel-item');
+  let currentIndex = 0;
+  let intervalId;
+  
+  // Función para ajustar altura según relación de aspecto
+  function adjustCarouselHeight() {
+    if (window.innerWidth <= 480) {
+      carousel.style.maxHeight = '80vh';
+    } else {
+      carousel.style.maxHeight = 'none';
     }
+  }
+  
+  // Inicializar carrusel
+  function initCarousel() {
+    adjustCarouselHeight();
+    items[0].classList.add('active');
+    startAutoPlay();
+    setupEventListeners();
+  }
+  
+  // Mover al slide específico
+  function goToSlide(index) {
+    currentIndex = (index + items.length) % items.length;
+    inner.style.transform = `translateX(-${currentIndex * 100}%)`;
     
-    function nextSlide() {
-      currentSlide = (currentSlide + 1) % totalSlides;
-      showSlide(currentSlide);
-    }
+    items.forEach(item => item.classList.remove('active'));
+    items[currentIndex].classList.add('active');
+  }
+  
+  // Navegación
+  function prevSlide() {
+    goToSlide(currentIndex - 1);
+    resetAutoPlay();
+  }
+  
+  function nextSlide() {
+    goToSlide(currentIndex + 1);
+    resetAutoPlay();
+  }
+  
+  // Auto-play
+  function startAutoPlay() {
+    intervalId = setInterval(nextSlide, 5000);
+  }
+  
+  function resetAutoPlay() {
+    clearInterval(intervalId);
+    startAutoPlay();
+  }
+  
+  // Event listeners
+  function setupEventListeners() {
+    window.addEventListener('resize', adjustCarouselHeight);
     
-    function prevSlide() {
-      currentSlide = (currentSlide - 1 + totalSlides) % totalSlides;
-      showSlide(currentSlide);
-    }
+    carousel.addEventListener('mouseenter', () => clearInterval(intervalId));
+    carousel.addEventListener('mouseleave', startAutoPlay);
     
-    // Auto avanzar el carrusel
-    setInterval(nextSlide, 5000);
+    // Touch events para móviles
+    let touchStartX = 0;
+    carousel.addEventListener('touchstart', (e) => {
+      touchStartX = e.touches[0].clientX;
+    }, {passive: true});
+    
+    carousel.addEventListener('touchend', (e) => {
+      const touchEndX = e.changedTouches[0].clientX;
+      if (touchEndX < touchStartX - 50) nextSlide();
+      if (touchEndX > touchStartX + 50) prevSlide();
+    }, {passive: true});
+  }
+  
+  initCarousel();
+  
+  // Funciones globales
+  window.prevSlide = prevSlide;
+  window.nextSlide = nextSlide;
+});
   </script>
 </body>
 </html>
