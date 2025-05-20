@@ -9,10 +9,10 @@ class ProductView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Flutter inicio'),
+        title: Text('JOA '),
       ),
       body: Center(
-        child: Text('Hola inicio'),
+        child: Text('Este es el producto'),
       ),
     );
   }
