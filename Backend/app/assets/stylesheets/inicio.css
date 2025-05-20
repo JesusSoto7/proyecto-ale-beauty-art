@@ -496,10 +496,14 @@ footer {
   
   .user-options {
     order: 3;
+    right: 29px;
+    top: 7px;
   }
-  
   .cart-icon {
     order: 5;
+    position: absolute;
+    top: 30px;
+    right: 15px;
   }
   
   .carousel-item img {
