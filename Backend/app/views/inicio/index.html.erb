@@ -3,133 +3,134 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Menú desplegable</title>
+  <title>Tienda de Belleza</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link rel="stylesheet" href="Backend/app/assets/stylesheets/inicio.css">
 </head>
 <body>
-<header class="navbar">
-  <div class="menu-icon" onclick="toggleMenu()">☰</div>
+  <header class="navbar">
+    <div class="menu-icon" onclick="toggleMenu()">
+      <i class="fas fa-bars"></i>
+    </div>
 
-  <div class="logo">
-    <%= image_tag "ale_logo.jpg" %>
-  </div>
+    <div class="logo">
+      <img src="<%= asset_path('ale_logo.jpg') %>" alt="Logo", style="border-radius: 40px;">
+    </div>
 
-  <nav>
-     <%= link_to "INICIO", inicio_path %>
-     <%= link_to "PRODUCTOS", productos_path %>
-    <a href="#">ACERCA DE</a>
-    <a href="#">CONTACTO</a>
-  </nav>
+    <nav id="main-nav">
+      <a href="inicio.html">INICIO</a>
+      <a href="productos.html">PRODUCTOS</a>
+      <a href="#">ACERCA DE</a>
+      <a href="#">CONTACTO</a>
+    </nav>
 
-  <div class="search">
-    <input type="text" placeholder="Buscar...">
-  </div>
+    <div class="search-container">
+      <input type="text" placeholder="Buscar productos...">
+      <button class="search-button">
+        <i class="fas fa-search"></i>
+      </button>
+    </div>
 
-  <div class="user-options">
-    <span id="profile-icon">👤</span>
-  </div>
+    <div class="user-options">
+      <span id="profile-icon"><i class="fas fa-user-circle"></i></span>
+      <div id="menu-perfil">
+        <ul id="ul-perfil">
+          <li><button class="cerrar_sesion">Cerrar sesión</button></li>
+        </ul>
+      </div>
+    </div>
 
-  <div class="cart">🛒</div>
+    <div class="cart-icon">
+      <i class="fas fa-shopping-bag"></i>
+      <span class="cart-count">0</span>
+    </div>
   </header>
 
   <!-- Menú desplegable -->
   <div id="dropdown-menu" class="dropdown-menu">
-  <a href="#">Mis Compras</a>
-  <a href="#">Favoritos</a>
-  <a href="#">Ajustes</a>
+    <a href="#">Mis Compras</a>
+    <a href="#">Favoritos</a>
   </div>
-  </div>
-  <script>
-  function toggleMenu() {
-    var menu = document.getElementById('dropdown-menu');
-    if (menu.style.display === 'flex') {
-      menu.style.display = 'none';
-    } else {
-      menu.style.display = 'flex';
-    }
-  }
-  </script>
-  <!-- Menu perfil -->
-  <div id="menu-perfil">
-    <ul id="ul-perfil">
-      <li class="logout-link"><%= link_to 'Mi perfil' %></li>
-      <li class="logout-link"><%= link_to 'Configuración' %></li>
-      <%= button_to "Cerrar sesión", destroy_user_session_path, method: :delete, class:"cerrar_sesion" %>
-    </ul>
-  </div>
-  <script>
-  document.addEventListener("DOMContentLoaded", function () {
-    const profileIcon = document.getElementById("profile-icon");
-    const dropdownMenu = document.getElementById("menu-perfil");
-    const userOptions = document.getElementById("user-options");
-
-    profileIcon.addEventListener("click", function (e) {
-      e.stopPropagation(); // evita cierre inmediato
-      dropdownMenu.style.display = dropdownMenu.style.display === "none" ? "block" : "none";
-    });
-
-    document.addEventListener("click", function (event) {
-      if (!userOptions.contains(event.target)) {
-        dropdownMenu.style.display = "none";
-      }
-    });
-  });
-</script>
-
-
-
-  <!-- Carrusel principal -->
-  <section class="mb-5">
-    <div id="mainCarousel" class="carousel slide rounded overflow-hidden" data-bs-ride="carousel">
-      <div class="carousel-inner">
-        <div class="carousel-item active">
-          <img src="https://www.clarel.es/blog/wp-content/uploads/2023/03/maquillaje-2yk.jpg" class="d-block w-100" style="height: 400px; object-fit: cover;" alt="Maquillaje 2YK">
-        </div>
-        <!-- Puedes agregar más imágenes -->
-      </div>
-      <button class="carousel-control-prev" type="button" data-bs-target="#mainCarousel" data-bs-slide="prev">
-        <span class="carousel-control-prev-icon"></span>
-      </button>
-      <button class="carousel-control-next" type="button" data-bs-target="#mainCarousel" data-bs-slide="next">
-        <span class="carousel-control-next-icon"></span>
-      </button>
-    </div>
-  </section>
 
   <!-- Productos destacados -->
-  <section class="mb-5">
-    <div class="d-flex justify-content-center align-items-center mb-3">
-      <h3 class="fw-bold">Productos Destacados</h3>
-    </div>
-
-      <div class="row justify-content-center">
+  <section class="productos-destacados">
+    <h2>Productos Destacados</h2>
+    <div class="productos-grid">
       <% 4.times do %>
-        <div class="col-md-3 mb-4">
-          <div class="card h-100 border-0 shadow-sm">
-            <img src="https://es.lorealparisusa.com/-/media/project/loreal/brand-sites/oap/americas/us/beauty-magazine/slideshows/makeup-product-essentials/loreal-paris-bmag-slideshow-20-makeup-product-essentials-every-woman-should-own-slide16.jpg?cx=0.49&cy=0.54&cw=1510&ch=815&hash=14A8A6A2C0F3887566415B63A676D43A"
-                class="card-img-top"
-                alt="Producto Maquillaje"
-                style="height: 200px; object-fit: cover;">
-            <div class="card-body">
-              <h5 class="card-title fw-bold text-dark">Labial Rosa</h5>
-              <p class="card-text text-dark"><strong>$20.000</strong></p>
-            </div>
+        <div class="producto-card">
+          <div class="producto-img">
+            <img src="https://es.lorealparisusa.com/-/media/project/loreal/brand-sites/oap/americas/us/beauty-magazine/slideshows/makeup-product-essentials/loreal-paris-bmag-slideshow-20-makeup-product-essentials-every-woman-should-own-slide16.jpg" alt="Producto Maquillaje">
+          </div>
+          <div class="producto-info">
+            <h3>Labial Rosa</h3>
+            <p class="price">$20.000</p>
+            <button class="add-to-cart">Añadir al carrito</button>
           </div>
         </div>
       <% end %>
     </div>
   </section>
 
-  <!-- Otra sección opcional -->
-  <section class="p-4 rounded">
-    <h4 class="fw-bold">Ofertas de la Semana</h4>
-    <p>Descubre promociones exclusivas en nuestros productos destacados.</p>
-  </section>
-
   <!-- Footer -->
-  <footer class="text-center py-4 mt-5">
-    © 2025 Tienda de Belleza - Todos los derechos reservados
+  <footer>
+    <div class="footer-content">
+      <div class="footer-section">
+        <h3>Información</h3>
+        <ul>
+          <li><a href="#">Sobre nosotros</a></li>
+          <li><a href="#">Términos y condiciones</a></li>
+          <li><a href="#">Política de privacidad</a></li>
+        </ul>
+      </div>
+      <div class="footer-section">
+        <h3>Contacto</h3>
+        <ul>
+          <li><i class="fas fa-phone"></i> +57 123 456 7890</li>
+          <li><i class="fas fa-envelope"></i> contacto@tiendabelleza.com</li>
+          <li><i class="fas fa-map-marker-alt"></i> Bogotá, Colombia</li>
+        </ul>
+      </div>
+      <div class="footer-section">
+        <h3>Síguenos</h3>
+        <div class="social-icons">
+          <a href="#"><i class="fab fa-facebook-f"></i></a>
+          <a href="#"><i class="fab fa-instagram"></i></a>
+          <a href="#"><i class="fab fa-twitter"></i></a>
+          <a href="#"><i class="fab fa-pinterest-p"></i></a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      © 2025 Tienda de Belleza - Todos los derechos reservados
+    </div>
   </footer>
-</div>
+
+  <script>
+    // Menú desplegable
+    function toggleMenu() {
+      const nav = document.getElementById('main-nav');
+      nav.classList.toggle('show');
+      
+      const dropdown = document.getElementById('dropdown-menu');
+      if (dropdown.style.display === 'flex') {
+        dropdown.style.display = 'none';
+      }
+    }
+    
+    // Menú de perfil
+    const profileIcon = document.getElementById('profile-icon');
+    const menuPerfil = document.getElementById('menu-perfil');
+    
+    profileIcon.addEventListener('click', (e) => {
+      e.stopPropagation();
+      menuPerfil.style.display = menuPerfil.style.display === 'block' ? 'none' : 'block';
+    });
+    
+    document.addEventListener('click', () => {
+      menuPerfil.style.display = 'none';
+    });
+    
+
+  </script>
 </body>
 </html>
