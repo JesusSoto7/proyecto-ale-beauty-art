@@ -1,8 +1,7 @@
-
 import 'package:flutter/material.dart';
 
-class FailureView extends StatelessWidget {
-  const FailureView({
+class ProductpageView extends StatelessWidget {
+  const ProductpageView({
     super.key,
   });
 
@@ -10,10 +9,10 @@ class FailureView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Flutter error'),
+        title: Text('aqui va un producto'),
       ),
       body: Center(
-        child: Text('Hola error'),
+        child: Text('hola pintalabio'),
       ),
     );
   }

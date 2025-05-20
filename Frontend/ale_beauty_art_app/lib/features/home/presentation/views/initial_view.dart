@@ -1,4 +1,7 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart'; //Material app
+
+import 'package:ale_beauty_art_app/features/home/presentation/bloc/home_bloc.dart';  //Importacion de home_bloc
+import 'package:flutter_bloc/flutter_bloc.dart'; //Importacion de bloc
 
 class InitialView extends StatelessWidget {
   const InitialView({
@@ -12,7 +15,18 @@ class InitialView extends StatelessWidget {
         title: Text('Flutter inicio'),
       ),
       body: Center(
-        child: Text('Hola mundo'),
+      child: Column(
+          children: [
+            Text('Bienvenido'),
+            Text('Cliente'),
+            ElevatedButton(
+              onPressed: () {
+                context.read<HomeBloc>().add(HomeVerProductosPressed());
+              },
+              child: const Text('VerProductos'),
+            ),
+          ],
+        ),
       ),
     );
   }
