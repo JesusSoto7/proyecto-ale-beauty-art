@@ -52,32 +52,6 @@
     <a href="#">Favoritos</a>
   </div>
 
-  <!-- Carrusel principal -->
-  <div class="carousel-container">
-    <div class="carousel-inner" id="carousel-inner">
-      <div class="carousel-item">
-         <%= asset_path 'img1.jpg', alt: 'Producto 1' %>
-      </div>
-      <div class="carousel-item">
-        <%= image_tag 'img2.jpg', alt: 'Producto 2' %>
-      </div>
-      <div class="carousel-item">
-        <%= image_tag 'img3.jpg', alt: 'Producto 3' %>
-      </div>
-      <div class="carousel-item">
-        <%= image_tag 'img4.jpg', alt: 'Producto 4' %>
-      </div>
-      <div class="carousel-item">
-        <%= image_tag 'img5.jpg', alt: 'Producto 5' %>
-      </div>
-    </div>
-
-    <button class="carousel-control prev" id="prevBtn">‹</button>
-    <button class="carousel-control next" id="nextBtn">›</button>
-
-    <div class="carousel-indicators" id="indicators"></div>
-  </div>
-
   <!-- Productos destacados -->
   <section class="productos-destacados">
     <h2>Productos Destacados</h2>
@@ -156,80 +130,7 @@
       menuPerfil.style.display = 'none';
     });
     
-    // Carrusel
-    const inner = document.getElementById('carousel-inner');
-    const prevBtn = document.getElementById('prevBtn');
-    const nextBtn = document.getElementById('nextBtn');
-    const indicatorsContainer = document.getElementById('indicators');
-    const totalSlides = inner.children.length;
 
-    let currentIndex = 0;
-    let intervalId;
-
-    // Crear indicadores
-    for (let i = 0; i < totalSlides; i++) {
-      const dot = document.createElement('div');
-      dot.classList.add('carousel-indicator');
-      if (i === 0) dot.classList.add('active');
-      dot.dataset.index = i;
-      dot.addEventListener('click', () => {
-        goToSlide(i);
-        resetAutoPlay();
-      });
-      indicatorsContainer.appendChild(dot);
-    }
-
-    function updateIndicators() {
-      document.querySelectorAll('.carousel-indicator').forEach((dot, i) => {
-        dot.classList.toggle('active', i === currentIndex);
-      });
-    }
-
-    function goToSlide(index) {
-      currentIndex = (index + totalSlides) % totalSlides;
-      inner.style.transform = `translateX(-${currentIndex * 100}%)`;
-      updateIndicators();
-    }
-
-    function prevSlide() {
-      goToSlide(currentIndex - 1);
-      resetAutoPlay();
-    }
-
-    function nextSlide() {
-      goToSlide(currentIndex + 1);
-      resetAutoPlay();
-    }
-
-    function startAutoPlay() {
-      intervalId = setInterval(nextSlide, 5000);
-    }
-
-    function resetAutoPlay() {
-      clearInterval(intervalId);
-      startAutoPlay();
-    }
-
-    // Eventos
-    prevBtn.addEventListener('click', prevSlide);
-    nextBtn.addEventListener('click', nextSlide);
-
-    // Soporte para touch en móvil
-    let touchStartX = 0;
-    inner.addEventListener('touchstart', (e) => {
-      touchStartX = e.touches[0].clientX;
-      clearInterval(intervalId);
-    }, { passive: true });
-
-    inner.addEventListener('touchend', (e) => {
-      const touchEndX = e.changedTouches[0].clientX;
-      if (touchEndX < touchStartX - 50) nextSlide();
-      if (touchEndX > touchStartX + 50) prevSlide();
-      startAutoPlay();
-    }, { passive: true });
-
-    // Iniciar
-    startAutoPlay();
   </script>
 </body>
 </html>
