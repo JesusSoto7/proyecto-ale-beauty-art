@@ -1,5 +1,6 @@
 class HomeController < ApplicationController
   before_action :authorize_admin!
+  layout "home"
   def index
       @products = Product.all
   end

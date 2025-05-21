@@ -1,5 +1,7 @@
 class ProductsController < ApplicationController
 
+  layout "home"
+
   def index
     @products = Product.all
   end
