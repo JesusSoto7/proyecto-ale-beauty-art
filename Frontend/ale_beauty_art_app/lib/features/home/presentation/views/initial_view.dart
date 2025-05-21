@@ -1,4 +1,3 @@
-import 'package:ale_beauty_art_app/features/products/domain/models/product.dart';
 import 'package:ale_beauty_art_app/features/products/presentation/bloc/product_bloc.dart';
 import 'package:ale_beauty_art_app/features/products/presentation/views/products_page_view.dart';
 import 'package:flutter/material.dart'; //Material app
@@ -18,7 +17,7 @@ class InitialView extends StatelessWidget {
         title: Text('Flutter inicio'),
       ),
       body: Center(
-      child: Column(
+        child: Column(
           children: [
             Text('Bienvenido'),
             Text('Cliente'),
@@ -28,17 +27,14 @@ class InitialView extends StatelessWidget {
                   MaterialPageRoute(
                     builder: (_) => BlocProvider(
                       create: (_) => ProductBloc()..add(ProductFetched()),
-                      child: ProductsPage(products: [
-                        Product(id: 1, name: "Producto A", description: "Desc A", price: 10.0, stock: 5),
-                        Product(id: 2, name: "Producto B", description: "Desc B", price: 15.5, stock: 10),
-                      ],),
+                      child: ProductsPage(),
                     ),
                   ),
                 );
               },
               child: Text('Ver productos'),
             ),
-          ]
+          ],
         ),
       ),
     );

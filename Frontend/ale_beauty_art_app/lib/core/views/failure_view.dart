@@ -9,11 +9,8 @@ class FailureView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Flutter error'),
-      ),
       body: Center(
-        child: Text('Hola error'),
+        child: Text('Error'),
       ),
     );
   }

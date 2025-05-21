@@ -1,6 +1,7 @@
 import 'package:ale_beauty_art_app/core/views/failure_view.dart';
 import 'package:ale_beauty_art_app/features/home/presentation/bloc/home_bloc.dart';
 import 'package:ale_beauty_art_app/features/home/presentation/views/initial_view.dart';
+import 'package:ale_beauty_art_app/features/products/presentation/views/products_page_view.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -18,12 +19,15 @@ class MyApp extends StatelessWidget {
     return BlocProvider(
       create: (context) => HomeBloc(),
       child: MaterialApp(
+        // Todo el árbol de widgets dentro de MaterialApp tendrá acceso al bloc
         home: BlocBuilder<HomeBloc, HomeState>(
           builder: (context, state) {
-           if (state is HomeLoadFailure) {
-              return FailureView();
+            if (state is HomeInitial) {
+              return InitialView();
+            } else if (state is HomeLoadFailure) {
+              return ProductsPage();
             }
-            return InitialView();
+            return FailureView();
           },
         ),
       ),

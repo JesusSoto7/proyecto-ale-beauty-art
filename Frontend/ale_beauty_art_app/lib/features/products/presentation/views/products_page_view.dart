@@ -1,14 +1,30 @@
+import 'package:ale_beauty_art_app/core/views/failure_view.dart';
+import 'package:ale_beauty_art_app/core/views/loading_view.dart';
+import 'package:ale_beauty_art_app/features/products/presentation/bloc/product_bloc.dart';
 import 'package:ale_beauty_art_app/features/products/presentation/views/products_list_view.dart';
 import 'package:flutter/material.dart';
-import '../../domain/models/product.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class ProductsPage extends StatelessWidget {
-  final List<Product> products;
-
-  const ProductsPage({super.key, required this.products});
+  const ProductsPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return ProductsListView(products: products);
+    return Scaffold(
+      appBar: AppBar(title: Text('Productos')),
+      body: BlocBuilder<ProductBloc, ProductState>(
+        builder: (context, state) {
+          if (state is ProductLoadInProgress) {
+            return Center(child: LoadingView());
+          } else if (state is ProductLoadSuccess) {
+            return ProductsListView(products: state.products);
+          } else if (state is ProductLoadFailure) {
+            return Center(child:FailureView());
+          } else {
+            return SizedBox.shrink();
+          }
+        },
+      ),
+    );
   }
 }
