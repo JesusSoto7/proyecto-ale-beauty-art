@@ -14,9 +14,9 @@ class InfoProduct extends StatelessWidget {
         itemBuilder: (context, index) {
           final p = products[index];
           return ListTile(
-            title: Text(p.name ?? 'Sin nombre'),
-            subtitle: Text(p.description ?? 'Sin descripción'),
-            trailing: Text('\$${p.price?.toStringAsFixed(2) ?? '0.00'}'),
+            title: Text(p.name),
+            subtitle: Text(p.description),
+            trailing: Text('\$${p.price.toStringAsFixed(2)}'),
           );
         },
       ),
