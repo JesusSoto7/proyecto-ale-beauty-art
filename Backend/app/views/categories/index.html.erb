@@ -2,12 +2,28 @@
     <%= image_tag "home.png", class: "logo-img" %>
 </article>
 
+<ul>
+    <%= link_to "Home", home_path %> / 
+    <%= link_to "Categorias", categories_path %>
+</ul>
+
 <div>
     <% content_for :title, "Categories"%>
 
     <h1> Categorias </h1>
 
     <div id="order">
+
+        <div class="card_new">
+            <div class="card-details">
+                <p class="text-title">Nuevo Categoria</p>
+                <p class="text-body">crea productos categorias</p>
+            </div>
+            <button class="card-button">
+                <%= link_to "Crear", new_category_path%>
+            </button>
+        </div>
+
         <% @categories.each do |category| %>
             <%= render category %>
         <% end %> 

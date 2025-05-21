@@ -1,9 +1,24 @@
+<ul>
+    <%= link_to "Home", home_path %> / 
+    <%= link_to "Productos", products_path %>
+</ul>
 <div>
     <% content_for :title, "Productos"%>
 
     <h1> Productos </h1>
 
     <div id="order">
+
+        <div class="card_new">
+            <div class="card-details">
+                <p class="text-title">Nuevo Producto</p>
+                <p class="text-body">crea productos facilmente</p>
+            </div>
+            <button class="card-button">
+                <%= link_to "Crear", new_product_path %>
+            </button>
+        </div>
+
         <% @products.each do |product| %>
             <%= render product %>
         <% end %> 

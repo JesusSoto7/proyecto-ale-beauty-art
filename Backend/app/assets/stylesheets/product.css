@@ -1,5 +1,5 @@
 h1{
-    margin-top: 50px;
+    margin-top: 40px;
     margin-left: 160px;
     margin-bottom: 20px;
 }
@@ -58,6 +58,74 @@ a{
     display: flex;
     flex-flow: row wrap;
 }
+
+/* nuevo producto From Uiverse.io by alexruix */ 
+.card_new{
+    width: 240px;
+    height: 391px;
+    border-radius: 20px;
+    background: #f5f5f5;
+    position: relative;
+    padding: 1.8rem;
+    border: 2px solid #c3c6ce;
+    transition: 0.5s ease-out;
+    overflow: visible;
+    margin-top: 30px;
+    margin-left: 30px;
+   }
+   
+   .card-details {
+    color: black;
+    height: 100%;
+    gap: .5em;
+    display: grid;
+    place-content: center;
+   }
+   
+   .card-button {
+    transform: translate(-50%, 125%);
+    width: 60%;
+    border-radius: 1rem;
+    border: none;
+    background-color: #f7a4cc;
+    color: #fff;
+    font-size: 1rem;
+    padding: .5rem 1rem;
+    position: absolute;
+    left: 50%;
+    bottom: 50px;
+    opacity: 0;
+    transition: 0.3s ease-out;
+    
+   }
+
+   .card-button a {
+    color: #fff;
+    font-family: inherit;
+   }
+   
+   .text-body {
+    color: rgb(134, 134, 134);
+   }
+   
+   /*Text*/
+   .text-title {
+    font-size: 1.5em;
+    font-weight: bold;
+   }
+   
+   /*Hover*/
+   .card_new:hover {
+    border-color: #ffcde9;
+    box-shadow: 0 4px 18px 0 rgba(0, 0, 0, 0.25);
+    background-color: #ffeef9;
+   }
+   
+   .card_new:hover .card-button {
+    transform: translate(-50%, 50%);
+    opacity: 1;
+   }
+
 /* ------------------------------------product---------------------------------------- */
 @media
     (min-width: 763px) and

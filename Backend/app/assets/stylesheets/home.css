@@ -12,7 +12,17 @@ main{
     background-color: #ffffff;
 }
 
+ul{
+  margin-top: 5px;
+  padding-left: 10px;
+}
 
+ul a {
+  color:#7a797e;
+}
+ul a:hover{
+  color: #fabad9;
+}
 
 #nvg{
     display: flex;

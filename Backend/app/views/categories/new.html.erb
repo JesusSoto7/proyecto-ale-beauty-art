@@ -1,3 +1,10 @@
+<ul>
+    <%= link_to "Home", home_path %> / 
+    <%= link_to "Categorias", categories_path %> /
+    <%= link_to "agregar Categoria", new_category_path%>
+</ul>
+
+
 <div>
     <h1>Nueva Categoria</h1>
     <%= render "form", category: @category%>

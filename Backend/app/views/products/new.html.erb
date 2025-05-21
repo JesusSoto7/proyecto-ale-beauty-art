@@ -1,3 +1,9 @@
+<ul>
+    <%= link_to "Home", home_path %> / 
+    <%= link_to "Productos", products_path %> /
+    <%= link_to "agregar producto", new_product_path %>
+</ul>
+
 <div>
     <h1>Nuevo Producto</h2>
     <%= render "form", product: @product%>
