@@ -27,7 +27,7 @@ class InitialView extends StatelessWidget {
                   MaterialPageRoute(
                     builder: (_) => BlocProvider(
                       create: (_) => ProductBloc()..add(ProductFetched()),
-                      child: ProductsPage(),
+                      child: ProductsPageView(),
                     ),
                   ),
                 );

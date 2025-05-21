@@ -19,15 +19,18 @@ class MyApp extends StatelessWidget {
     return BlocProvider(
       create: (context) => HomeBloc(),
       child: MaterialApp(
+        debugShowCheckedModeBanner: false,
         // Todo el árbol de widgets dentro de MaterialApp tendrá acceso al bloc
         home: BlocBuilder<HomeBloc, HomeState>(
           builder: (context, state) {
             if (state is HomeInitial) {
               return InitialView();
-            } else if (state is HomeLoadFailure) {
-              return ProductsPage();
+            } else if (state is HomeShowProducts) {
+              return ProductsPageView();
+
+            } else{
+              return FailureView();
             }
-            return FailureView();
           },
         ),
       ),

@@ -5,8 +5,8 @@ import 'package:ale_beauty_art_app/features/products/presentation/views/products
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class ProductsPage extends StatelessWidget {
-  const ProductsPage({super.key});
+class ProductsPageView extends StatelessWidget {
+  const ProductsPageView({super.key});
 
   @override
   Widget build(BuildContext context) {

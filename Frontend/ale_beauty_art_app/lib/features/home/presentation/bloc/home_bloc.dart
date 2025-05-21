@@ -6,8 +6,8 @@ part 'home_state.dart';
 
 class HomeBloc extends Bloc<HomeEvent, HomeState> {
   HomeBloc() : super(HomeInitial()) {
-    on<HomeRegresarPressed>((event, emit) {
-        emit(HomeInitial());
+    on<HomeShowProductsPressed>((event, emit) {
+      emit(HomeShowProducts());
     });
   }
 }
