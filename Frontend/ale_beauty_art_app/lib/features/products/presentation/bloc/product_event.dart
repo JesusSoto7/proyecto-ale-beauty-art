@@ -1,4 +1,4 @@
-part of 'products_bloc.dart';
+part of 'product_bloc.dart';
 
 sealed class ProductsEvent extends Equatable {
   const ProductsEvent();

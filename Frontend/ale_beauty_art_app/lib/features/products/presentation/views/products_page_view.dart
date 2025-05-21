@@ -1,6 +1,6 @@
 import 'package:ale_beauty_art_app/features/products/presentation/views/products_list_view.dart';
 import 'package:flutter/material.dart';
-import '../../domain/models/products.dart';
+import '../../domain/models/product.dart';
 
 class ProductsPage extends StatelessWidget {
   final List<Product> products;

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../domain/models/products.dart';
+import '../../domain/models/product.dart';
 
 class ProductsListView extends StatelessWidget {
   final List<Product> products;
@@ -15,9 +15,9 @@ class ProductsListView extends StatelessWidget {
         itemBuilder: (context, index) {
           final p = products[index];
           return ListTile(
-            title: Text(p.name),
-            subtitle: Text(p.description),
-            trailing: Text('\$${p.price.toStringAsFixed(2)}'),
+            title: Text(p.name!),
+            subtitle: Text(p.description!),
+            trailing: Text('\$${p.price!.toStringAsFixed(2)}'),
           );
         },
       ),

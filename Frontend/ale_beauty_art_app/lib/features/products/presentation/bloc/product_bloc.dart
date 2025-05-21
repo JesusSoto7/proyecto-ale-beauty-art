@@ -1,16 +1,16 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 
-import '../../domain/models/products.dart';
+import '../../domain/models/product.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
-part 'products_event.dart';
-part 'products_state.dart';
+part 'product_event.dart';
+part 'product_state.dart';
 
 
 
-class ProductBloc extends Bloc<ProductsEvent, ProductsState> {
+class ProductBloc extends Bloc<ProductsEvent, ProductState> {
   ProductBloc() : super(ProductInitial()) {
     on<ProductFetched>((event, emit) async {
       emit(ProductLoadInProgress());
