@@ -33,10 +33,3 @@ class InitialView extends StatelessWidget {
     );
   }
 }
-
-            // ElevatedButton(
-            //   onPressed: () {
-            //     context.read<HomeBloc>().add(HomeVerProductosPressed()); //Boton q emite el estado del bloc
-            //   },
-            //   child: const Text('VerProductos'),
-            // ),
