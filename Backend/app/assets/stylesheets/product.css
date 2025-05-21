@@ -1,6 +1,6 @@
 h1{
     margin-top: 50px;
-    margin-left: 190px;
+    margin-left: 160px;
     margin-bottom: 20px;
 }
 
@@ -53,12 +53,25 @@ a{
 }
 
 #order{
-    margin-left: 160px;
+    margin-left: 130px;
     columns: 3;
     display: flex;
     flex-flow: row wrap;
 }
+/* ------------------------------------product---------------------------------------- */
+@media
+    (min-width: 763px) and
+    (max-width: 993px) {
+        #order{
+            margin-left: 20px;
+        }
+        h1{
+            margin-left: 20px;
+        }
 
+        
+}
+/* ----------------------------------End product---------------------------------------- */
 
 /* ----------------------------------show product---------------------------------------- */
 
@@ -68,7 +81,6 @@ a{
     margin: auto;
     display: flex;
     flex-direction: row;
-    background-color: #eee;
     border-radius: 18px;
 }
 
@@ -136,11 +148,13 @@ a{
     z-index: 6;
 }
 
+
+
 /* laptop?? */
 @media
     (min-width: 1301px) and
-    (max-width: 1563px) {
-
+    (max-width: 1573px) {
+    
     #btnshow{
     display: flex;
     flex-direction: row;
@@ -160,12 +174,11 @@ a{
 
 @media
     (min-width: 0px) and
-    (max-width: 1300px) {
+    (max-width: 1570px) {
 
     #shw{
         display: flex;
         flex-direction: column;
-        background-color: #eee;
         border-radius: 18px;
         
     }
@@ -207,12 +220,49 @@ a{
     }
 }
 
+@media
+    (min-width: 777px) and
+    (max-width: 959px) {
+
+         #btnshow{
+          display: flex;
+          flex-direction: row;
+          justify-content: center;
+          align-items: center;
+          
+        }
+
+        #datashow{
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+}
+
 /* ------------------------------------form----------------------------------------- */
 
 .form-section{
     display: flex;
     flex-direction: column;
     width: 50%;
-    margin: auto;
+    margin-left: 160px;
     margin-top: 50px;
 }
+.btn-outline-primary{
+    width: 200px;
+    margin-left: 20px;
+    margin-top: 20px;
+}
+
+.btn-outline-secondary{
+    width: 200px;
+    margin-left: 20px;
+    margin-top: 20px;
+}
+
+.grid{
+    margin-left: 140px;
+}
+
+
