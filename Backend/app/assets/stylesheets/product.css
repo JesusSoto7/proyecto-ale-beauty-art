@@ -216,3 +216,18 @@ a{
     margin-left: 160px;
     margin-top: 50px;
 }
+.btn-outline-primary{
+    width: 200px;
+    margin-left: 20px;
+    margin-top: 20px;
+}
+
+.btn-outline-secondary{
+    width: 200px;
+    margin-left: 20px;
+    margin-top: 20px;
+}
+
+.grid{
+    margin-left: 140px;
+}
