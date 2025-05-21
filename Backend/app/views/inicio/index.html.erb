@@ -35,7 +35,11 @@
       <span id="profile-icon"><i class="fas fa-user-circle"></i></span>
       <div id="menu-perfil">
         <ul id="ul-perfil">
-          <li><button class="cerrar_sesion">Cerrar sesión</button></li>
+          <% if user_signed_in? %>
+            <li><%= button_to "Cerrar sesión", destroy_user_session_path, method: :delete, class:"cerrar_sesion" %></li>
+          <% else %>
+            <li><%= button_to "Inciar sesión",  new_user_session_path, class:"iniciar_sesion" %></li>
+          <% end %>
         </ul>
       </div>
     </div>

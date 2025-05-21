@@ -14,4 +14,12 @@ class ApplicationController < ActionController::Base
   def after_sign_out_path_for(resource_or_scope)
     inicio_path
   end
+
+  def after_sign_in_path_for(resource)
+    if resource.has_role?(:admin)
+      welcome_path
+    elsif resource.has_role?(:cliente)
+      inicio_path
+    end
+  end
 end

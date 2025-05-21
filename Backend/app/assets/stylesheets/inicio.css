@@ -193,6 +193,29 @@ nav a:hover::after {
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(216, 90, 127, 0.4);
 }
+.iniciar_sesion {
+  color: #ffffff !important;
+  font-weight: 600 !important;
+  background-color: #d85a7f !important;
+  border-radius: 6px;
+  margin: 8px 12px !important;
+  padding: 10px 16px !important;
+  text-align: center !important;
+  display: flex !important;
+  justify-content: center;
+  align-items: center;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(216, 90, 127, 0.3);
+  border: none;
+  width: calc(100% - 24px);
+  cursor: pointer;
+}
+
+.iniciar_sesion:hover {
+  background-color: #c04a6f !important;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(216, 90, 127, 0.4);
+}
 
 /* Icono del carrito */
 .cart-icon {
