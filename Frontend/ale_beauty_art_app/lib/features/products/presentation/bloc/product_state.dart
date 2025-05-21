@@ -20,4 +20,7 @@ class ProductLoadSuccess extends ProductState {
   List<Object> get props => [products];
 }
 
+class ProductVolver extends ProductState{}
+
 class ProductLoadFailure extends ProductState {}
+

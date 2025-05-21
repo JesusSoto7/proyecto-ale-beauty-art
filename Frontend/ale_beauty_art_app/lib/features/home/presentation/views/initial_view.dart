@@ -1,5 +1,4 @@
-import 'package:ale_beauty_art_app/features/products/presentation/bloc/product_bloc.dart';
-import 'package:ale_beauty_art_app/features/products/presentation/views/products_page_view.dart';
+import 'package:ale_beauty_art_app/features/home/presentation/bloc/home_bloc.dart';
 import 'package:flutter/material.dart'; //Material app
 
 // import 'package:ale_beauty_art_app/features/home/presentation/bloc/home_bloc.dart';  //Importacion de home_bloc
@@ -24,16 +23,9 @@ class InitialView extends StatelessWidget {
             Text('Cliente'),
             ElevatedButton(
               onPressed: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (_) => BlocProvider(
-                      create: (_) => ProductBloc()..add(ProductFetched()),
-                      child: ProductsPageView(),
-                    ),
-                  ),
-                );
+                context.read<HomeBloc>().add(HomeShowProductsPressed());
               },
-              child: Text('Ver productos'),
+              child: const Text('Ver Mas Productos'),
             ),
           ],
         ),

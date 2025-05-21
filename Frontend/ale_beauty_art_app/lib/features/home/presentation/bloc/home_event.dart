@@ -8,3 +8,5 @@ sealed class HomeEvent extends Equatable {
 }
 
 final class HomeShowProductsPressed extends HomeEvent{}
+
+final class HomeVolverPressed extends HomeEvent {}

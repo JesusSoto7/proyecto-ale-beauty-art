@@ -9,5 +9,8 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     on<HomeShowProductsPressed>((event, emit) {
       emit(HomeShowProducts());
     });
+    on<HomeVolverPressed>((event, emit) {
+      emit(HomeInitial());
+    });
   }
 }
