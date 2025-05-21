@@ -2,7 +2,7 @@
   <% if product.imagen.attached? %>
       <%= image_tag product.imagen, class: "card-img" %>
     <% else %>
-    <p>Sin imagen</p>
+      <%= image_tag "no_image.png", class: "logo-img" %>
   <% end %>
   <div class="card-body">
     <h5 class="card-title"><%= product.nombre_producto %></h5>

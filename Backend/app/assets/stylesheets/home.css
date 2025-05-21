@@ -299,3 +299,42 @@ link{
 }
 /* -----------------------aside-end--------------------------- */
 
+/* -----------------nav y aside-------------------- */
+
+@media
+    (min-width: 0px) and
+    (max-width: 776px) {
+        
+        aside{
+          width: 0px;
+          /* z-index: 3; */
+        }
+
+        /* #refesh{
+
+        } */
+        #order{
+            margin-left: 10px;
+        }
+        h1{
+            margin-left: 10px;
+        }
+
+        #btnshow{
+          display: flex;
+          flex-direction: row;
+          justify-content: center;
+          align-items: center;
+          
+        }
+
+        #datashow{
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #shw{
+          width: 100%;
+        }
+}
