@@ -15,6 +15,7 @@ class InitialView extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text('Flutter inicio'),
+        automaticallyImplyLeading: false, //quita la flechita para regresar
       ),
       body: Center(
         child: Column(

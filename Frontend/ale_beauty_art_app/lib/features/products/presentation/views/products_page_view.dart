@@ -11,7 +11,10 @@ class ProductsPageView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Productos')),
+      appBar: AppBar(title: Text('Productos'),
+      automaticallyImplyLeading: false, //quita la flechita para regresar
+      ),
+      
       body: BlocBuilder<ProductBloc, ProductState>(
         builder: (context, state) {
           if (state is ProductLoadInProgress) {
