@@ -6,6 +6,7 @@ Rails.application.routes.draw do
   get "up" => "rails/health#show", as: :rails_health_check
   devise_for :users
 
+  get 'home', to: 'home#index'
   get "home" => "home#index", as: :welcome
   get 'inicio', to: 'inicio#index'
   get 'productos' => "inicio#allProducts", as: :productos
