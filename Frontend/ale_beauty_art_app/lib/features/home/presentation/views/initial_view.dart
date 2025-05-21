@@ -21,7 +21,7 @@ class InitialView extends StatelessWidget {
             Text('Cliente'),
             ElevatedButton(
               onPressed: () {
-                context.read<HomeBloc>().add(HomeVerProductosPressed());
+                context.read<HomeBloc>().add(HomeVerProductosPressed()); //Boton q emite el estado del bloc
               },
               child: const Text('VerProductos'),
             ),
