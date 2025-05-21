@@ -11,32 +11,40 @@ class ProductsPageView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-  return Scaffold(
-    appBar: AppBar(
-      title: const Text('Productos'),
-      automaticallyImplyLeading: false, // Quita la flechita de regreso
-      actions: [
-        ElevatedButton(
-          onPressed: () {
-            context.read<HomeBloc>().add(HomeVolverPressed());
-          },
-          child: const Text('Regresar al Inicio 😎'),
-        ),
-      ],
-    ),
-    body: BlocBuilder<ProductBloc, ProductState>(
-      builder: (context, state) {
-        if (state is ProductLoadInProgress) {
-          return const Center(child: LoadingView());
-        } else if (state is ProductLoadSuccess) {
-          return ProductsListView(products: state.products);
-        } else if (state is ProductLoadFailure) {
-          return const Center(child: FailureView());
-        } else {
-          return const SizedBox.shrink(); // por si acaso
-        }
-      },
-    ),
-  );
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Productos'),
+        automaticallyImplyLeading: false,
+      ),
+      body: Column(
+        children: [
+          Expanded(
+            child: BlocBuilder<ProductBloc, ProductState>(
+              builder: (context, state) {
+                if (state is ProductLoadInProgress) {
+                  return const Center(child: LoadingView());
+                } else if (state is ProductLoadSuccess) {
+                  return ProductsListView(products: state.products);
+                } else if (state is ProductLoadFailure) {
+                  return const Center(child: FailureView());
+                } else {
+                  return const SizedBox.shrink();
+                }
+              },
+            ),
+          ),
+          const SizedBox(height: 16), // espacio antes del botón
+          Center(
+            child: ElevatedButton(
+              onPressed: () {
+                context.read<HomeBloc>().add(HomeVolverPressed());
+              },
+              child: const Text('Regresar al Inicio 😎'),
+            ),
+          ),
+          const SizedBox(height: 40), // espacio después del botón
+        ],
+      ),
+    );
   }
 }
