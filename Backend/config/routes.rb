@@ -10,6 +10,10 @@ Rails.application.routes.draw do
   get "home" => "home#index", as: :welcome
   get 'inicio', to: 'inicio#index'
   get 'productos' => "inicio#allProducts", as: :productos
+  get 'carousel' => "home#editCarousel", as: :edit_carousel
+  patch 'update_carousel' => "home#updateCarousel", as: :update_carousel
+  delete 'delete_carousel_image' => "home#deleteCarouselImage", as: :delete_carousel_image
+
   resources :products
   resources :categories
 

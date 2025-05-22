@@ -1,0 +1,7 @@
+<section class="form-section">
+    <%= form_with  url: update_carousel_path, local: true, multipart: true do |form|%>
+        <%= form.file_field :carousel_images, multiple: true %>
+        <%= form.submit "Guardar"%>
+<% end %>
+
+</section>
