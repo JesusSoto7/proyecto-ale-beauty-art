@@ -563,8 +563,8 @@ footer {
 }
 
  .carousel-container {
-  max-width: 1600px;
-  margin: 20px auto;
+  max-width: 2000px;
+  margin: 0px auto;
 }
 
 .carousel-item img {

@@ -338,3 +338,10 @@ link{
           width: 100%;
         }
 }
+
+.image-thumbnails {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px; /* espacio entre las tarjetas */
+  }
+

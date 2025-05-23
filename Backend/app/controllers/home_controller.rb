@@ -3,6 +3,7 @@ class HomeController < ApplicationController
   layout "home"
   def index
       @products = Product.all
+      @admin = User.with_role(:admin).first
   end
 
   def edit_carousel
@@ -14,12 +15,12 @@ class HomeController < ApplicationController
     if params[:user][:carousel_images]
       @admin.carousel_images.attach(params[:user][:carousel_images])
     end
-    redirect_to edit_carousel_path, notice: "Imagen agregada Correctamente"
+    redirect_to edit_carousel_path
   end
 
   def delete_carousel_image
       @admin = current_user
-      image = @admin.carousel_images.find(params[:image_id])
+      image = @admin.carousel_images.find(params[:id])
       image.purge
       redirect_to edit_carousel_path, notice: "Imagen eliminada"
   end
