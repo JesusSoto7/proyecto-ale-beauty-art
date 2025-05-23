@@ -39,7 +39,7 @@ class ProductsPageView extends StatelessWidget {
               onPressed: () {
                 context.read<HomeBloc>().add(HomeVolverPressed());
               },
-              child: const Text('Regresar al Inicio 😎'),
+              child: const Text('Regresar al Inicio'),
             ),
           ),
           const SizedBox(height: 40), // espacio después del botón
