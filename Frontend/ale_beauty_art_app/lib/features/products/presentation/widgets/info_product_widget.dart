@@ -45,6 +45,7 @@ class InfoProduct extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(width: 16), // Espacio entre imagen y texto
+
                 // Columna con texto: nombre, descripción y precio
                 Expanded(
                   child: Column(
@@ -63,7 +64,7 @@ class InfoProduct extends StatelessWidget {
                       ),
                       const SizedBox(height: 8), // Separación antes del precio
                       Text(
-                        '\$${p.price.toStringAsFixed(2)} COP', // Precio formateado con moneda
+                        '\$${p.price.toStringAsFixed(2)} COP', // Precio
                         style: AppTextStyles.price, // Estilo para el precio
                       ),
                     ],
@@ -77,7 +78,7 @@ class InfoProduct extends StatelessWidget {
     );
   }
 }
-
+//Logica de de donde se saca la inf del json
 //   @override
 //   Widget build(BuildContext context) {
 //     return Scaffold(
