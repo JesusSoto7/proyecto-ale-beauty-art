@@ -9,7 +9,11 @@ Rails.application.routes.draw do
   get 'home', to: 'home#index'
   get "home" => "home#index", as: :welcome
   get 'inicio', to: 'inicio#index'
-  get 'productos' => "inicio#allProducts", as: :productos
+  get 'productos' => "inicio#all_products", as: :productos
+  get 'carousel' => "home#edit_carousel", as: :edit_carousel
+  patch 'update_carousel' => "home#update_carousel", as: :update_carousel
+  delete 'delete_carousel_image/:id' => "home#delete_carousel_image", as: :delete_carousel_image
+
   resources :products
   resources :categories
 

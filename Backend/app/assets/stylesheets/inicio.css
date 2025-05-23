@@ -491,7 +491,7 @@ footer {
   }
   
   .carousel-item img {
-    height: 400px;
+    height: 100px;
   }
 }
 
@@ -562,3 +562,12 @@ footer {
   }
 }
 
+ .carousel-container {
+  max-width: 2000px;
+  margin: 0px auto;
+}
+
+.carousel-item img {
+  height: 550px;
+  object-fit: cover;
+}

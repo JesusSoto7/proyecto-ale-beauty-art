@@ -63,6 +63,20 @@
                         </button>
                     </div>
                 </div>
+                <div class="section">
+                    <button class="toggle-btn menu-btn">
+                        <span class="left">
+                            <i class="fa-regular fa-folder"></i>
+                            <span class="label">Inicio</span>
+                        </span>
+                        <i class="fa-solid fa-chevron-down fa-xs chevron-icon"></i>
+                    </button>
+                    <div class="content">
+                        <button class="btn-recargar" onclick="changeColor(this)">
+                        <%= link_to "| Carousel", edit_carousel_path %>
+                        </button>
+                    </div>
+                </div>
             </div>
             <div class="mt-auto p-2" id="sttgs">
                 <button class="menu-btn" id="Tema" onclick="cambiarTema()">
