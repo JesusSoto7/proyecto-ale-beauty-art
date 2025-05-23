@@ -39,32 +39,3 @@ class MyApp extends StatelessWidget {
     );
   }
 }
-
-// return MultiBlocProvider(
-//   providers: [
-//     BlocProvider(create: (_) => HomeBloc()),
-//     BlocProvider(create: (_) => ProductBloc()), // tu bloc para productos
-//   ],
-//   child: MaterialApp(
-//     home: BlocBuilder<HomeBloc, HomeState>(
-//       builder: (context, state) {
-//         if (state is HomeLoadFailure) {
-//           return FailureView();
-//         }
-//         // Aquí podrías usar ProductBloc para mostrar ProductsPage
-//         return BlocBuilder<ProductBloc, ProductState>(
-//           builder: (context, productState) {
-//             if (productState is ProductLoadInProgress) {
-//               return LoadingView();
-//             } else if (productState is ProductLoadFailure) {
-//               return FailureView();
-//             } else if (productState is ProductLoadSuccess) {
-//               return ProductsPage(products: productState.products);
-//             }
-//             return InitialView();
-//           },
-//         );
-//       },
-//     ),
-//   ),
-// );
