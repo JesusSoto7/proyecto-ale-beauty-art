@@ -16,7 +16,7 @@ class ProductBloc extends Bloc<ProductsEvent, ProductState> {
       emit(ProductLoadInProgress());
 
       try {
-        final url = Uri.parse('https://run.mocky.io/v3/a25241ce-0c33-4bb9-9cc5-2d9574e9fd0e');
+        final url = Uri.parse('https://run.mocky.io/v3/ce9ab7d2-a750-45d9-85be-bd37ea59dbfc');
         final response = await http.get(url);
 
         if (response.statusCode == 200) {
