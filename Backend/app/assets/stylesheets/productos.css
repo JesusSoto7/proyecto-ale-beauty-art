@@ -30,15 +30,16 @@ body {
 
 /* Navbar Styles */
 .navbar {
-  display: flex;
+   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1rem 2rem;
-  background-color: white;
-  box-shadow: var(--shadow);
+  padding: 15px 5%;
+  background-color: #fff;
+  box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
   position: sticky;
   top: 0;
   z-index: 1000;
+  
 }
 
 .logo img {
@@ -61,13 +62,26 @@ nav {
   display: flex;
   gap: 1.5rem;
 }
-
-nav a {
+a {
   text-decoration: none;
-  color: var(--dark-color);
-  font-weight: 500;
-  transition: color 0.3s;
+  color: inherit;
+}
+
+.main-nav {
+  display: flex;
   position: relative;
+  left: 25px;
+}
+nav a {
+  font-weight: 600;
+  padding: 0.5rem 0;
+  position: relative;
+  transition: color 0.3s;
+  color: #555;
+  font-size: 0.95rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-right: 5px;
 }
 
 nav a:hover {
@@ -179,6 +193,14 @@ nav a:hover::after {
   margin: 0;
 }
 
+.porfile-icon {
+  font-size: 1.5rem;
+  color: #555;
+  cursor: pointer;
+  transition: color 0.3s;
+  left: 20px;
+}
+
 .logout-link {
   padding: 0.75rem 1.5rem;
   transition: background-color 0.3s;
@@ -221,20 +243,34 @@ nav a:hover::after {
   background-color: var(--secondary-color);
 }
 
-.card {
-  transition: transform 0.3s, box-shadow 0.3s;
-  border-radius: 10px;
-  overflow: hidden;
+.cart {
+  position: relative;
+  cursor: pointer;
+  color: #555;
+  font-size: 1.3rem;
+  transition: color 0.3s;
+  right: auto;
+}
+.cart-count {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background-color: #d85a7f;
+  color: white;
+  border-radius: 50%;
+  width: 18px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.7rem;
+  font-weight: bold;
 }
 
-.card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+.cart:hover {
+  color: #d85a7f;
 }
 
-.card-title {
-  color: var(--primary-color);
-}
 
 /* Footer */
 .site-footer {
@@ -337,7 +373,7 @@ nav a:hover::after {
 
   .cart {
     order: 3;
-    margin-top: 19px;
+    margin-top: 14px;
   }
 
   .dropdown-menu {

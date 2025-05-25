@@ -32,20 +32,26 @@
       <!-- User Options con menú perfil corregido -->
       <div class="user-options" id="user-options" style="position: relative;">
         <span id="profile-icon">
-          <i class="fas fa-user"></i>
+          <span id="profile-icon"><i class="fas fa-user-circle"></i></span>
         </span>
 
         <!-- Menu perfil (ahora está dentro del contenedor relativo) -->
         <div id="menu-perfil" style="display: none; position: absolute; top: 100%; right: 0; background-color: white; padding: 10px; border: 1px solid #ddd; z-index: 1000; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
           <ul id="ul-perfil" style="list-style: none; margin: 0; padding: 0;">
-            <li class="logout-link" style="padding: 5px 10px;">
-              <%= link_to '<i class="fas fa-sign-out-alt"></i> Cerrar sesión'.html_safe, "https://localhost:4000/users/sign_in", method: :delete %>
-            </li>
+           <% if user_signed_in? %>
+            <li><%= button_to "Cerrar sesión", destroy_user_session_path, method: :delete, class:"cerrar_sesion" %></li>
+          <% else %>
+            <li><%= button_to "Inciar sesión",  new_user_session_path, class:"iniciar_sesion" %></li>
+          <% end %>
           </ul>
         </div>
       </div>
 
-      <div class="cart"><i class="fas fa-shopping-cart"></i></div>
+      <div class="cart" >
+       <i class="fas fa-shopping-bag" style="margin-left: 20px;"></i>
+       <span class="cart-count">0</span>
+       
+      </div>
     </header>
 
     <!-- Menú desplegable -->
