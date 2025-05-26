@@ -3,110 +3,161 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Menú desplegable</title>
-  <link rel="stylesheet" href="Backend/app/assets/stylesheets/inicio.css">
+  <title>Tienda de Belleza</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <%= stylesheet_link_tag "productos" %>
 </head>
 <body>
-<header class="navbar">
-  <div class="menu-icon" onclick="toggleMenu()">☰</div>
+  <div class="page-container">
+    <header class="navbar">
+      <div class="menu-icon" onclick="toggleMenu()"><i class="fas fa-bars"></i></div>
 
-  <div class="logo">
-    <%= image_tag "ale_logo.jpg" %>
-  </div>
+      <div class="logo">
+        <%= image_tag "ale_logo.jpg", alt: "Logo Tienda de Belleza" %>
+      </div>
 
-  <nav>
-    <%= link_to "INICIO", inicio_path %>
-     <%= link_to "PRODUCTOS", productos_path %>
-    <a href="#">ACERCA DE</a>
-    <a href="#">CONTACTO</a>
-  </nav>
+      <nav id="main-nav">
+        <%= link_to "INICIO", inicio_path %>
+        <%= link_to "PRODUCTOS", productos_path %>
+        <a href="#">ACERCA DE</a>
+        <a href="#">CONTACTO</a>
+      </nav>
 
-  <div class="search">
-    <input type="text" placeholder="Buscar...">
-  </div>
+      <div class="search" id="search-box">
+        <input type="text" placeholder="Buscar...">
+        <i class="fas fa-search search-icon"></i>
+      </div>
 
-  <div class="user-options">
-    <span id="profile-icon">👤</span>
-  </div>
+      <!-- User Options con menú perfil corregido -->
+      <div class="user-options" id="user-options" style="position: relative;">
+        <span id="profile-icon">
+          <span id="profile-icon"><i class="fas fa-user-circle"></i></span>
+        </span>
 
-  <div class="cart">🛒</div>
-  </header>
+        <!-- Menu perfil (ahora está dentro del contenedor relativo) -->
+        <div id="menu-perfil" style="display: none; position: absolute; top: 100%; right: 0; background-color: white; padding: 10px; border: 1px solid #ddd; z-index: 1000; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
+          <ul id="ul-perfil" style="list-style: none; margin: 0; padding: 0;">
+           <% if user_signed_in? %>
+            <li><%= button_to "Cerrar sesión", destroy_user_session_path, method: :delete, class:"cerrar_sesion" %></li>
+          <% else %>
+            <li><%= button_to "Inciar sesión",  new_user_session_path, class:"iniciar_sesion" %></li>
+          <% end %>
+          </ul>
+        </div>
+      </div>
 
-  <!-- Menú desplegable -->
-  <div id="dropdown-menu" class="dropdown-menu">
-  <a href="#">Mis Compras</a>
-  <a href="#">Favoritos</a>
-  <a href="#">Ajustes</a>
-  </div>
-  </div>
-  <script>
-  function toggleMenu() {
-    var menu = document.getElementById('dropdown-menu');
-    if (menu.style.display === 'flex') {
-      menu.style.display = 'none';
-    } else {
-      menu.style.display = 'flex';
-    }
-  }
-  </script>
-  <!-- Menu perfil -->
-  <div id="menu-perfil">
-    <ul id="ul-perfil">
-      <li class="logout-link"><%= link_to 'Mi perfil' %></li>
-      <li class="logout-link"><%= link_to 'Configuración' %></li>
-      <li class="logout-link"><%= link_to 'Cerrar sesión', "https://localhost:4000/users/sign_out", method: :delete %></li>
-    </ul>
-  </div>
-  <script>
-  document.addEventListener("DOMContentLoaded", function () {
-    const profileIcon = document.getElementById("profile-icon");
-    const dropdownMenu = document.getElementById("menu-perfil");
-    const userOptions = document.getElementById("user-options");
+      <div class="cart" >
+       <i class="fas fa-shopping-bag" style="margin-left: 20px;"></i>
+       <span class="cart-count">0</span>
+       
+      </div>
+    </header>
 
-    profileIcon.addEventListener("click", function (e) {
-      e.stopPropagation(); // evita cierre inmediato
-      dropdownMenu.style.display = dropdownMenu.style.display === "none" ? "block" : "none";
-    });
-
-    document.addEventListener("click", function (event) {
-      if (!userOptions.contains(event.target)) {
-        dropdownMenu.style.display = "none";
-      }
-    });
-  });
-</script>
-
-
-  <!-- Productos destacados -->
-  <section class="mb-5">
-    <div class="d-flex justify-content-center align-items-center mb-3">
-      <h3 class="fw-bold">Productos</h3>
+    <!-- Menú desplegable -->
+    <div id="dropdown-menu" class="dropdown-menu">
+      <a href="#"><i class="fas fa-shopping-bag"></i> Mis Compras</a>
+      <a href="#"><i class="fas fa-heart"></i> Favoritos</a>
+      <a href="#"><i class="fas fa-cog"></i> Ajustes</a>
     </div>
 
-      <div class="row justify-content-center">
-      <% @products.each do |product| %>
+    <!-- Contenido principal -->
+    <main class="content-wrap">
+      <!-- Productos destacados -->
+      <section class="mb-5 products-section">
+        <div class="d-flex justify-content-center align-items-center mb-3">
+          <h3 class="fw-bold section-title">Productos</h3>
+        </div>
+
+        <div class="row justify-content-center">
+          <% @products.each do |product| %>
             <div class="col-md-3 mb-4">
-            <div class="card h-100 border-0 shadow-sm">
+              <div class="card h-100 border-0 shadow-sm">
                 <% if product.imagen.attached? %>
-                    <%= image_tag product.imagen.variant(resize_to_limit: [300, 300]), class:"card-img-top", alt:"Producto Maquillaje", style:"height: 200px; object-fit: cover;"%>
-                    <% else %>
-                    <p>Sin imagen</p>
+                  <%= image_tag product.imagen.variant(resize_to_limit: [300, 300]), class:"card-img-top", alt:"Producto Maquillaje", style:"height: 200px; object-fit: cover;"%>
+                <% else %>
+                  <div class="card-img-top d-flex align-items-center justify-content-center" style="height: 200px; background-color: #f8f9fa;">
+                    <p class="text-muted">Sin imagen</p>
+                  </div>
                 <% end %>
                 <div class="card-body">
-                <h5 class="card-title fw-bold text-dark"><%= product.nombre_producto %></h5>
-                <p><strong>Categoria:</strong> <%= product.category.nombre_categoria %> </p>
-                <p class="card-text text-dark"><strong>$</strong><%= product.precio_producto%></p>
+                  <h5 class="card-title fw-bold text-dark"><%= product.nombre_producto %></h5>
+                  <p><strong>Categoria:</strong> <%= product.category.nombre_categoria %> </p>
+                  <p class="card-text text-dark"><strong>$<%= product.precio_producto %></strong></p>
                 </div>
+                <div class="card-footer bg-transparent border-0">
+                  <button class="btn btn-sm btn-outline-primary w-100">Añadir al carrito</button>
+                </div>
+              </div>
             </div>
-            </div>
-        <% end %>
-    </div>
-  </section>
+          <% end %>
+        </div>
+      </section>
+    </main>
 
-  <!-- Footer -->
-  <footer class="text-center py-4 mt-5">
-    © 2025 Tienda de Belleza - Todos los derechos reservados
-  </footer>
-</div>
+    <!-- Footer -->
+    <footer class="site-footer">
+      <div class="container">
+        <div class="social-icons mb-3">
+          <a href="#" class="text-white mx-2"><i class="fab fa-facebook-f"></i></a>
+          <a href="#" class="text-white mx-2"><i class="fab fa-instagram"></i></a>
+          <a href="#" class="text-white mx-2"><i class="fab fa-twitter"></i></a>
+          <a href="#" class="text-white mx-2"><i class="fab fa-pinterest"></i></a>
+        </div>
+        <p>© 2025 Tienda de Belleza - Todos los derechos reservados</p>
+        <p class="mb-0">
+          <a href="#" class="text-white mx-2">Términos y condiciones</a> | 
+          <a href="#" class="text-white mx-2">Política de privacidad</a>
+        </p>
+      </div>
+    </footer>
+  </div>
+
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", function() {
+      // Menú hamburguesa
+      function toggleMenu() {
+        const nav = document.getElementById("main-nav");
+        const search = document.getElementById("search-box");
+        nav.classList.toggle("active");
+        search.classList.toggle("active");
+      }
+
+      const menuIcon = document.querySelector('.menu-icon');
+      if (menuIcon) {
+        menuIcon.addEventListener('click', toggleMenu);
+      }
+
+      // Menú de perfil
+      const profileIcon = document.getElementById("profile-icon");
+      const dropdownMenu = document.getElementById("menu-perfil");
+      const userOptions = document.getElementById("user-options");
+
+      if (profileIcon) {
+        profileIcon.addEventListener("click", function(e) {
+          e.stopPropagation();
+          dropdownMenu.style.display = dropdownMenu.style.display === "none" ? "block" : "none";
+        });
+      }
+
+      document.addEventListener("click", function(event) {
+        if (userOptions && !userOptions.contains(event.target)) {
+          dropdownMenu.style.display = "none";
+        }
+      });
+
+      // Dropdown menu para móviles
+      function toggleDropdown() {
+        const menu = document.getElementById('dropdown-menu');
+        if (menu.style.display === 'flex') {
+          menu.style.display = 'none';
+        } else {
+          menu.style.display = 'flex';
+        }
+      }
+    });
+  </script>
 </body>
 </html>

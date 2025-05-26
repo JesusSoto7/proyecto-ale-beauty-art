@@ -9,7 +9,7 @@
   </head>
   <body class="body">
 
-   <section class="container">
+   <section class="container" style="width: 80vh;">
     <%= image_tag 'ale_logo.jpg', alt: 'logo', class: 'img_logo' %>
       <h2>Iniciar sesión</h2>
       <%= form_for(resource, as: resource_name, url: session_path(resource_name), html: {class: 'form'}) do |f| %>
@@ -25,12 +25,6 @@
         <div class="opcionesb">
          <%= render "devise/shared/links" %>
         </div>
-        <% if devise_mapping.rememberable? %>
-          <div class="recuerda">
-           <%= f.check_box :remember_me %>
-           <%= f.label :remember_me %>
-          </div>
-        <% end %>
 
         <div class="actions">
           <%= f.submit "Iniciar sesión" %>
