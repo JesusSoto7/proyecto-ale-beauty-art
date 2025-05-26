@@ -15,7 +15,7 @@
 // }
 
 function cargarContenido(num) {
-    fetch(`html/${num}.html`)
+    fetch(`${num}.html`)
     .then(res => res.text())
     .then(html => {
         document.getElementById('contenido-dinamico').innerHTML = html;
