@@ -35,6 +35,7 @@
       <span id="profile-icon"><i class="fas fa-user-circle"></i></span>
       <div id="menu-perfil">
         <ul id="ul-perfil">
+        <%= link_to 'Mi Perfil', user_profile_path %>
           <% if user_signed_in? %>
             <li><%= button_to "Cerrar sesión", destroy_user_session_path, method: :delete, class:"cerrar_sesion" %></li>
           <% else %>
