@@ -18,6 +18,8 @@ Rails.application.routes.draw do
   resources :categories
   get 'perfil', to: 'profiles#show', as: :user_profile
   root 'home#index'
+  get 'perfil/editar', to: 'profiles#edit', as: :edit_user_profile
+  patch 'perfil', to: 'profiles#update'
 
   # Render dynamic PWA files from app/views/pwa/* (remember to link manifest in application.html.erb)
   # get "manifest" => "rails/pwa#manifest", as: :pwa_manifest

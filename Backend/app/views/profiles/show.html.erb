@@ -1,6 +1,11 @@
 <h1>Mi Perfil</h1>
 
+<p><strong>Nombre:</strong> <%= @user.nombre %></p>
+<p><strong>Apellido:</strong> <%= @user.apellido %></p>
+<p><strong>Teléfono:</strong> <%= @user.telefono %></p>
+<p><strong>Dirección:</strong> <%= @user.direccion %></p>
 <p><strong>Email:</strong> <%= @user.email %></p>
 <p><strong>Fecha de creación:</strong> <%= @user.created_at.strftime("%d/%m/%Y") %></p>
 
-<!-- Puedes mostrar más campos si tienes -->
+<%= link_to 'Editar Perfil', edit_user_profile_path, class: 'btn btn-primary' %>
+
