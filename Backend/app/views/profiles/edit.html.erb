@@ -8,20 +8,223 @@
   <%= csp_meta_tag %>
   <%= stylesheet_link_tag 'application', media: 'editar_perfil' %>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    /* Estilos generales */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: #faf5ff;
+      color: #333;
+      line-height: 1.6;
+      padding: 20px;
+    }
+    
+    .container_editar {
+      max-width: 800px;
+      margin: 30px auto;
+      background: white;
+      border-radius: 15px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      padding: 30px;
+    }
+    
+    .titulo_edit {
+      color: #ff85a2;
+      text-align: center;
+      margin-bottom: 30px;
+      font-weight: 600;
+    }
+    
+    /* Estilos del formulario */
+    .edit_perfil {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+    
+    .input-container {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    
+    .input-container label {
+      font-weight: 500;
+      color: #666;
+      margin-left: 5px;
+    }
+    
+    .input-field {
+      padding: 12px 15px;
+      border: 2px solid #e0e0e0;
+      border-radius: 10px;
+      font-size: 16px;
+      transition: all 0.3s ease;
+      width: 100%;
+    }
+    
+    .input-field:focus {
+      outline: none;
+      border-color: #85d7ff;
+      box-shadow: 0 0 0 3px rgba(133, 215, 255, 0.2);
+    }
+    
+    /* Estilos específicos para las barras mencionadas */
+    input.barra_nana {
+      padding: 12px 15px;
+      border: 2px solid #ffb3c6;
+      border-radius: 10px;
+      font-size: 16px;
+      transition: all 0.3s ease;
+      width: 100%;
+      background-color: #fff0f3;
+    }
+    
+    input.barra_nana:focus {
+      outline: none;
+      border-color: #ff85a2;
+      box-shadow: 0 0 0 3px rgba(255, 133, 162, 0.2);
+    }
+    
+    input.barra_apeape {
+      padding: 12px 15px;
+      border: 2px solid #ffde7d;
+      border-radius: 10px;
+      font-size: 16px;
+      transition: all 0.3s ease;
+      width: 100%;
+      background-color: #fff9e6;
+    }
+    
+    input.barra_apeape:focus {
+      outline: none;
+      border-color: #ffd166;
+      box-shadow: 0 0 0 3px rgba(255, 209, 102, 0.2);
+    }
+    
+    input[type="email"].barra_corre,
+    input.barra_corre {
+      padding: 12px 15px;
+      border: 2px solid #85d7ff;
+      border-radius: 10px;
+      font-size: 16px;
+      transition: all 0.3s ease;
+      width: 100%;
+      background-color: #f0f9ff;
+    }
+    
+    input[type="email"].barra_corre:focus,
+    input.barra_corre:focus {
+      outline: none;
+      border-color: #3399ff;
+      box-shadow: 0 0 0 3px rgba(51, 153, 255, 0.2);
+    }
+    
+    /* Estilos de botones */
+    .btn-success {
+      background-color: #ff85a2;
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 10px;
+      font-size: 16px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin-top: 10px;
+      width: 100%;
+    }
+    
+    .btn-success:hover {
+      background-color: #ff6b8b;
+      transform: translateY(-2px);
+    }
+    
+    .btn-secondary {
+      display: inline-block;
+      text-align: center;
+      background-color: #f0f0f0;
+      color: #666;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 10px;
+      font-size: 16px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin-top: 10px;
+      text-decoration: none;
+      width: 100%;
+    }
+    
+    .btn-secondary:hover {
+      background-color: #e0e0e0;
+      transform: translateY(-2px);
+    }
+    
+    /* Responsive design */
+    @media (min-width: 768px) {
+      .edit_perfil {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+      }
+      
+      .input-container:nth-last-child(3),
+      .input-container:nth-last-child(2),
+      .input-container:nth-last-child(1) {
+        grid-column: span 2;
+      }
+      
+      .btn-success, .btn-secondary {
+        width: auto;
+        display: inline-block;
+      }
+      
+      .btn-secondary {
+        margin-left: 15px;
+      }
+    }
+    
+    @media (max-width: 480px) {
+      .container_editar {
+        padding: 20px;
+      }
+      
+      .titulo_edit {
+        font-size: 24px;
+      }
+      
+      .input-field, input.barra_nana, input.barra_apeape, input[type="email"].barra_corre, input.barra_corre {
+        padding: 10px 12px;
+        font-size: 14px;
+      }
+      
+      .btn-success, .btn-secondary {
+        padding: 10px 15px;
+        font-size: 14px;
+      }
+    }
+  </style>
 </head>
 <body>
-   <div class="container_editar">
-    <h1>Editar Perfil</h1>
+  <div class="container_editar">
+    <h2 class="titulo_edit">Editar Perfil</h2>
     <section class="edit_perfil">
       <%= form_with model: @user, url: user_profile_path, method: :patch, local: true do |f| %>
         <div class="input-container">
           <%= f.label :name, "Nombre" %>
-          <%= f.text_field :name, class: "input-field", placeholder: "Ingresa tu nombre" %>
+          <%= f.text_field :name, class: "barra_nana", placeholder: "Ingresa tu nombre" %>
         </div>
 
         <div class="input-container">
           <%= f.label :last_name, "Apellido" %>
-          <%= f.text_field :last_name, class: "input-field", placeholder: "Ingresa tu apellido" %>
+          <%= f.text_field :last_name, class: "barra_apeape", placeholder: "Ingresa tu apellido" %>
         </div>
 
         <div class="input-container">
@@ -36,12 +239,15 @@
 
         <div class="input-container">
           <%= f.label :email, "Correo electrónico" %>
-          <%= f.email_field :email, class: "input-field", placeholder: "Ingresa tu correo", autocomplete: "email" %>
+          <%= f.email_field :email, class: "barra_corre", placeholder: "Ingresa tu correo", autocomplete: "email" %>
         </div>
-        <%= f.submit "Guardar cambios", class: "btn-success" %>
-        <%= link_to 'Cancelar', user_profile_path, class: 'btn-secondary' %>
+        
+        <div style="grid-column: span 2; display: flex; justify-content: center; gap: 15px; margin-top: 10px;">
+          <%= f.submit "Guardar cambios", class: "btn-success" %>
+          <%= link_to 'Cancelar', user_profile_path, class: 'btn-secondary' %>
+        </div>
       <% end %>
     </section>
   </div>
-  </body>
+</body>
 </html>
