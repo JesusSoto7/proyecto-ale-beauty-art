@@ -1,33 +1,47 @@
-<h1>Editar Perfil</h1>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Editar Perfil</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <%= csrf_meta_tags %>
+  <%= csp_meta_tag %>
+  <%= stylesheet_link_tag 'application', media: 'editar_perfil' %>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+   <div class="container_editar">
+    <h1>Editar Perfil</h1>
+    <section class="edit_perfil">
+      <%= form_with model: @user, url: user_profile_path, method: :patch, local: true do |f| %>
+        <div class="input-container">
+          <%= f.label :name, "Nombre" %>
+          <%= f.text_field :name, class: "input-field", placeholder: "Ingresa tu nombre" %>
+        </div>
 
-<%= form_with model: @user, url: user_profile_path, method: :patch, local: true do |f| %>
-  <div>
-    <%= f.label :nombre %><br>
-    <%= f.text_field :nombre %>
-  </div>
+        <div class="input-container">
+          <%= f.label :last_name, "Apellido" %>
+          <%= f.text_field :last_name, class: "input-field", placeholder: "Ingresa tu apellido" %>
+        </div>
 
-  <div>
-    <%= f.label :apellido %><br>
-    <%= f.text_field :apellido %>
-  </div>
+        <div class="input-container">
+          <%= f.label :phone, "Teléfono" %>
+          <%= f.text_field :phone, type: "tel", class: "input-field", placeholder: "Ingresa tu teléfono" %>
+        </div>
 
-  <div>
-    <%= f.label :telefono %><br>
-    <%= f.text_field :telefono %>
-  </div>
+        <div class="input-container">
+          <%= f.label :address, "Dirección" %>
+          <%= f.text_field :address, class: "input-field", placeholder: "Ingresa tu dirección" %>
+        </div>
 
-  <div>
-    <%= f.label :direccion %><br>
-    <%= f.text_field :direccion %>
+        <div class="input-container">
+          <%= f.label :email, "Correo electrónico" %>
+          <%= f.email_field :email, class: "input-field", placeholder: "Ingresa tu correo", autocomplete: "email" %>
+        </div>
+        <%= f.submit "Guardar cambios", class: "btn-success" %>
+        <%= link_to 'Cancelar', user_profile_path, class: 'btn-secondary' %>
+      <% end %>
+    </section>
   </div>
- <div>
-    <%= f.label :email %><br>
-    <%= f.text_field :email %>
-  </div>
-  <div>
-    <%= f.submit "Guardar cambios", class: "btn btn-success" %>
-  </div>
-  
-<% end %>
-
-<%= link_to 'Cancelar', user_profile_path, class: 'btn btn-secondary' %>
+  </body>
+</html>
