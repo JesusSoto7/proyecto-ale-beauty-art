@@ -174,7 +174,7 @@ html, body {
 
 #user_nombre{
   width: 30vh;
-  height: 9vh;
+  height: 7vh;
   margin-right: 5vh;
   padding: 10px;
       font-size: 18px;
@@ -192,7 +192,7 @@ html, body {
 
 #user_apellido{
   width: 30vh;
-  height: 9vh;
+  height: 7vh;
   padding: 10px;
       font-size: 18px;
       border: 2px solid #000000;

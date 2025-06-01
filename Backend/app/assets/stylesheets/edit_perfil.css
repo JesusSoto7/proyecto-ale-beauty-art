@@ -1,0 +1,210 @@
+/* Reset general para evitar conflictos */
+    .container_editar input[type="text"],
+    .container_editar input[type="tel"],
+    .container_editar input[type="email"] {
+      all: initial;
+      font-family: 'Poppins', sans-serif;
+    }
+    
+    /* Estilos específicos para cada campo */
+    #user_name.barra_nana,
+    input#user_name.barra_nana {
+      padding: 12px 15px !important;
+      border: 2px solid #ffb3c6 !important;
+      border-radius: 10px !important;
+      font-size: 16px !important;
+      transition: all 0.3s ease !important;
+      width: 100% !important;
+      background-color: #fff0f3 !important;
+      margin: 0 !important;
+      box-shadow: none !important;
+      color: #333 !important;
+    }
+    
+    #user_name.barra_nana:focus,
+    input#user_name.barra_nana:focus {
+      outline: none !important;
+      border-color: #ff85a2 !important;
+      box-shadow: 0 0 0 3px rgba(255, 133, 162, 0.2) !important;
+    }
+    
+    #user_last_name.barra_apeape,
+    input#user_last_name.barra_apeape {
+      padding: 12px 15px !important;
+      border: 2px solid #ffde7d !important;
+      border-radius: 10px !important;
+      font-size: 16px !important;
+      transition: all 0.3s ease !important;
+      width: 100% !important;
+      background-color: #fff9e6 !important;
+      margin: 0 !important;
+      box-shadow: none !important;
+      color: #333 !important;
+    }
+    
+    #user_last_name.barra_apeape:focus,
+    input#user_last_name.barra_apeape:focus {
+      outline: none !important;
+      border-color: #ffd166 !important;
+      box-shadow: 0 0 0 3px rgba(255, 209, 102, 0.2) !important;
+    }
+    
+    #user_phone,
+    input#user_phone {
+      padding: 12px 15px !important;
+      border: 2px solid #e0e0e0 !important;
+      border-radius: 10px !important;
+      font-size: 16px !important;
+      transition: all 0.3s ease !important;
+      width: 100% !important;
+      background-color: white !important;
+      margin: 0 !important;
+      box-shadow: none !important;
+      color: #333 !important;
+    }
+    
+    #user_phone:focus,
+    input#user_phone:focus {
+      outline: none !important;
+      border-color: #85d7ff !important;
+      box-shadow: 0 0 0 3px rgba(133, 215, 255, 0.2) !important;
+    }
+    
+    #user_address,
+    input#user_address {
+      padding: 12px 15px !important;
+      border: 2px solid #e0e0e0 !important;
+      border-radius: 10px !important;
+      font-size: 16px !important;
+      transition: all 0.3s ease !important;
+      width: 100% !important;
+      background-color: white !important;
+      margin: 0 !important;
+      box-shadow: none !important;
+      color: #333 !important;
+    }
+    
+    #user_address:focus,
+    input#user_address:focus {
+      outline: none !important;
+      border-color: #85d7ff !important;
+      box-shadow: 0 0 0 3px rgba(133, 215, 255, 0.2) !important;
+    }
+    
+    #user_email.barra_corre,
+    input#user_email.barra_corre {
+      padding: 12px 15px !important;
+      border: 2px solid #85d7ff !important;
+      border-radius: 10px !important;
+      font-size: 16px !important;
+      transition: all 0.3s ease !important;
+      width: 100% !important;
+      background-color: #f0f9ff !important;
+      margin: 0 !important;
+      box-shadow: none !important;
+      color: #333 !important;
+    }
+    
+    #user_email.barra_corre:focus,
+    input#user_email.barra_corre:focus {
+      outline: none !important;
+      border-color: #3399ff !important;
+      box-shadow: 0 0 0 3px rgba(51, 153, 255, 0.2) !important;
+    }
+    
+    /* Estilos generales del contenedor */
+    .container_editar {
+      max-width: 800px;
+      margin: 30px auto;
+      background: white;
+      border-radius: 15px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      padding: 60px;
+      items-aling: center;
+    }
+    
+    .titulo_edit {
+      color: #ff85a2;
+      text-align: center;
+      margin-bottom: 30px;
+      font-weight: 600;
+    }
+    
+    .input-container {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 15px;
+    }
+    
+    .input-container label {
+      font-weight: 500;
+      color: #666;
+      margin-left: 5px;
+    }
+    
+    /* Estilos para los botones */
+    .btn-success {
+      background-color: #ff85a2;
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 10px;
+      font-size: 16px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin-top: 10px;
+      width: 100%;
+    }
+    
+    .btn-success:hover {
+      background-color: #ff6b8b;
+      transform: translateY(-2px);
+    }
+    
+    .btn-secondary {
+      display: inline-block;
+      text-align: center;
+      background-color: #f0f0f0;
+      color: #666;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 10px;
+      font-size: 16px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin-top: 10px;
+      text-decoration: none;
+      width: 100%;
+    }
+    
+    .btn-secondary:hover {
+      background-color: #e0e0e0;
+      transform: translateY(-2px);
+    }
+    
+    /* Responsive design */
+    @media (min-width: 768px) {
+      .edit_perfil {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+      }
+      
+      .input-container:nth-last-child(3),
+      .input-container:nth-last-child(2),
+      .input-container:nth-last-child(1) {
+        grid-column: span 2;
+      }
+      
+      .btn-success, .btn-secondary {
+        width: auto;
+        display: inline-block;
+      }
+      
+      .btn-secondary {
+        margin-left: 15px;
+      }
+    }

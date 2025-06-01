@@ -22,4 +22,7 @@ class ApplicationController < ActionController::Base
       inicio_path
     end
   end
+  def show
+    @user = current_user
+  end
 end
