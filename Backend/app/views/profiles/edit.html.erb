@@ -13,29 +13,30 @@
   <div class="container_editar">
     <h2 class="titulo_edit">Editar Perfil</h2>
     <section class="edit_perfil">
-      <%= form_with model: @user, url: user_profile_path, method: :patch, local: true do |f| %>
+      <%= form_with model: @user, url: perfil_path, method: :patch, data: {turbo: false} do |f| %>
+        
         <div class="input-container">
-          <%= f.label :name, "Nombre" %>
-          <%= f.text_field :name, class: "barra_nana", placeholder: "Ingresa tu nombre", id: "user_name" %>
+          <%= f.label :nombre,"Nombre" %>
+          <%= f.text_field :nombre, class: "barra_nana", placeholder: "Ingresa tu nombre", id: "user_name" %>
         </div>
 
         <div class="input-container">
-          <%= f.label :last_name, "Apellido" %>
-          <%= f.text_field :last_name, class: "barra_apeape", placeholder: "Ingresa tu apellido", id: "user_last_name" %>
+          <%= f.label :apellido, "Apellido" %>
+          <%= f.text_field :apellido, class: "barra_apeape", placeholder: "Ingresa tu apellido", id: "user_last_name" %>
         </div>
 
         <div class="input-container">
-          <%= f.label :phone, "Teléfono" %>
-          <%= f.text_field :phone, type: "tel", placeholder: "Ingresa tu teléfono", id: "user_phone" %>
+          <%= f.label :telefono, "Teléfono" %>
+          <%= f.text_field :telefono, type: "tel", placeholder: "Ingresa tu teléfono", id: "user_phone" %>
         </div>
 
         <div class="input-container">
-          <%= f.label :address, "Dirección" %>
-          <%= f.text_field :address, placeholder: "Ingresa tu dirección", id: "user_address" %>
+          <%= f.label :direccion, "Dirección" %>
+          <%= f.text_field :direccion, placeholder: "Ingresa tu dirección", id: "user_address" %>
         </div>
 
         <div class="input-container">
-          <%= f.label :email, "Correo electrónico" %>
+          <%= f.label :email, "email" %>
           <%= f.email_field :email, class: "barra_corre", placeholder: "Ingresa tu correo", autocomplete: "email", id: "user_email" %>
         </div>
         
