@@ -22,5 +22,11 @@ class ProfilesController < ApplicationController
   def user_params
     params.require(:user).permit(:nombre, :apellido, :telefono, :direccion, :email)
   end
-
+  def update
+  if current_user.update(user_params)
+    redirect_to user_profile_path, notice: 'Perfil actualizado correctamente'
+  else
+    render :edit
+  end
+  end
 end
