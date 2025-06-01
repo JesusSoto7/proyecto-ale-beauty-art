@@ -187,7 +187,11 @@ nav a:hover::after {
   width: calc(100% - 24px);
   cursor: pointer;
 }
-
+.texto-perfil{
+  color: #555;
+  font-weight: 600;
+  margin-left: 20px;
+}
 .cerrar_sesion:hover {
   background-color: #c04a6f !important;
   transform: translateY(-2px);
