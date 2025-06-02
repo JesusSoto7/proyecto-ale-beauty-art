@@ -9,4 +9,13 @@ class InicioController < ApplicationController
   def all_products
     @products = Product.all
   end
+
+  def showClient
+    @product = Product.find_by(id: params[:id])
+
+    unless @product
+      redirect_to root_path, alert: "Producto no encontrado"
+    end
+  end
+  
 end
