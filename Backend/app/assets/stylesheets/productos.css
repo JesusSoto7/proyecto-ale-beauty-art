@@ -339,7 +339,7 @@ nav a:hover::after {
 }
 
 /* Pantallas pequeñas (tablets en vertical) */
-@media (max-width: 768px) {
+@media (max-width: 992px) {
   .navbar {
     padding: 1rem;
     flex-wrap: wrap;
