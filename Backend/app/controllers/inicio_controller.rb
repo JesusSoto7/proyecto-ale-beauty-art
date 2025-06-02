@@ -2,7 +2,7 @@ class InicioController < ApplicationController
   skip_before_action :authenticate_user!, only: [:index, :all_products]
   layout "inicio"
   def index
-    @product = Product.all
+    @product = Product.order("RAND()").limit(9)
     @admin = User.with_role(:admin).first
   end
 
