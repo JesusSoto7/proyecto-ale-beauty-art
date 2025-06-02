@@ -77,15 +77,18 @@
 
             <div id="datashow" >
                 <div id="infoshow">
-                    <h4><%= @product.nombre_producto %></h4>
-                    <p class="card-text"><%= @product.category.nombre_categoria %></p>
-                    <h5>$<%= @product.precio_producto %></h5>
-                    <p> <strong>Stock: </strong> <%= @product.stock %> </p>
-                    <p id= "des"> <strong>DESCRIPCIÓN</strong></p>
-                    <p id= "des-prod"> <%= @product.descripcion %> </p>
+                    <div>
+                      <p class="fs-1 fw-semibold"><%= @product.nombre_producto %></p>
+                      <p class="card-text fs-5"><%= @product.category.nombre_categoria %></p>
+                    </div>
+                    <div>
+                      <p id= "des-prod"> <%= @product.descripcion %> </p>
+                    </div>
+                    <h5 id="preci1" class="fw-semibold">$<%= @product.precio_producto %></h5>
                 </div>
                 <div id="btnshow">
-                    <%= link_to "Volver", products_path, class:"btn btn-secondary" %>
+                  <h5 id="preci2" class="fw-semibold">$<%= @product.precio_producto %></h5>
+                    <%= link_to "<i class='fas fa-shopping-cart'></i> Agregar al carrito".html_safe, productos_path, class:"btn btn-primary" %>
                 </div>
 
             </div>

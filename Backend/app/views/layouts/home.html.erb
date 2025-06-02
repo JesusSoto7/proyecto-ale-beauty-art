@@ -79,14 +79,8 @@
                 </div>
             </div>
             <div class="mt-auto p-2" id="sttgs">
-                <button class="menu-btn" id="Tema" onclick="cambiarTema()">
-                    <span class="left">
-                        <i class="fa-solid fa-moon fa-xs"></i>
-                        <span class="label">Tema</span>
-                    </span>
-                </button>
                 <span class="left">
-                <%= button_to " Cerrar sesión", destroy_user_session_path, method: :delete, class:"logout" %>
+                    <%= button_to "<i class='fas fa-sign-out-alt'></i> Cerrar sesión".html_safe, destroy_user_session_path, method: :delete, class: "logout" %>
                 </span>
             </div>
         </aside>
