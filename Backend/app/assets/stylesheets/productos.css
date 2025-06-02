@@ -302,6 +302,24 @@ nav a:hover::after {
   color: white;
 }
 
+.add-to-cart {
+  background: linear-gradient(135deg, #d95d85, #e58bb1);
+  color: white;
+  font-weight: bold;
+  padding: 0.9rem 1rem;
+  border: none;
+  border-radius: 10px;
+  width: 100%;
+  font-size: 1rem;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  transition: transform 0.2s ease;
+  cursor: pointer;
+}
+
+.add-to-cart:hover {
+  transform: scale(1.03);
+}
+
 /* Responsive Styles */
 /* Tablet y pantallas medianas */
 @media (max-width: 992px) {

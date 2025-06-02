@@ -97,28 +97,35 @@
 
 
   <!-- Productos destacados -->
-  <section class="productos-destacados">
+  <section class="productos-novedosos ">
     <h2>Novedades Maquillaje</h2>
-    <div class="productos-grid">
-      <% @product.each do |product| %>
-        <div class="producto-card">
-          <div class="producto-img">
-           <% if product.imagen.attached? %>
-                  <%= image_tag product.imagen.variant(resize_to_limit: [400, 400]), class:"card-img-top", alt:"Producto Maquillaje", style:"width: 100%; max-height: 200px; object-fit: contain;"%>
-            <% else %>
-              <div class="card-img-top d-flex align-items-center justify-content-center" style="height: 200px; background-color: #f8f9fa;">
-                      <p class="text-muted">Sin imagen</p>
+      <div class="carousel-novedades-container">
+        <button class="carousel-novedades-btn left" id="btn-caroulLeft">&#10094;</button>
+
+        <div class="carousel-novedades" id="carousel-productos">
+          <% @product.each do |product| %>
+            <div class="producto-card-novedades">
+              <div class="producto-img">
+              <% if product.imagen.attached? %>
+                      <%= image_tag product.imagen.variant(resize_to_limit: [200, 200]), class:"card-img-top", alt:"Producto Maquillaje", style:"width: 100%; max-height: 200px; object-fit: contain;"%>
+                <% else %>
+                  <div class="card-img-top d-flex align-items-center justify-content-center" style="height: 200px; background-color: #f8f9fa;">
+                          <p class="text-muted">Sin imagen</p>
+                  </div>
+                <% end %>
               </div>
-            <% end %>
-          </div>
-          <div class="producto-info">
-            <h3><%= product.nombre_producto %></h3>
-            <p class="price"><strong>$<%= product.precio_producto %></strong></p>
-           <%#  <button class="add-to-cart">Añadir al carrito</button> %>
-          </div>
+              <div class="producto-info">
+                <h3><%= product.nombre_producto %></h3>
+                  <div class="producto-footer">
+                    <p class="price">$<%= product.precio_producto %></p>
+                  </div>
+               <button class="add-to-cart">Añadir al carrito</button>
+              </div>
+            </div>
+          <% end %>
         </div>
-      <% end %>
-    </div>
+            <button class="carousel-novedades-btn right" id="btn-caroulRight">&#10095;</button>
+      </div>
   </section>
 
   <!-- Footer -->
@@ -179,6 +186,31 @@
     document.addEventListener('click', () => {
       menuPerfil.style.display = 'none';
     });
+
+
+    function moveCarrousel(direccion){
+      const carousel = document.getElementById("carousel-productos");
+      const cardWidth = carousel.querySelector(".producto-card-novedades").offsetWidth + 16;
+
+      carousel.scrollBy({
+        left: direccion * cardWidth * 2,
+        behavior: 'smooth'
+
+      });
+    }
+
+
+    const buttonCaroRight = document.getElementById('btn-caroulRight');
+    buttonCaroRight.addEventListener('click', () => { 
+      moveCarrousel(1);
+    });
+
+    const buttonCaroLeft = document.getElementById('btn-caroulLeft');
+
+    buttonCaroLeft.addEventListener('click', () => {
+      moveCarrousel(-1);
+    });
+
     
 
   </script>
