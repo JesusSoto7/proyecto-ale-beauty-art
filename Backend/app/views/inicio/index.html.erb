@@ -98,17 +98,23 @@
 
   <!-- Productos destacados -->
   <section class="productos-destacados">
-    <h2>Productos Destacados</h2>
+    <h2>Novedades Maquillaje</h2>
     <div class="productos-grid">
-      <% 4.times do %>
+      <% @product.each do |product| %>
         <div class="producto-card">
           <div class="producto-img">
-            <img src="https://es.lorealparisusa.com/-/media/project/loreal/brand-sites/oap/americas/us/beauty-magazine/slideshows/makeup-product-essentials/loreal-paris-bmag-slideshow-20-makeup-product-essentials-every-woman-should-own-slide16.jpg" alt="Producto Maquillaje">
+           <% if product.imagen.attached? %>
+                  <%= image_tag product.imagen.variant(resize_to_limit: [400, 400]), class:"card-img-top", alt:"Producto Maquillaje", style:"width: 100%; max-height: 200px; object-fit: contain;"%>
+            <% else %>
+              <div class="card-img-top d-flex align-items-center justify-content-center" style="height: 200px; background-color: #f8f9fa;">
+                      <p class="text-muted">Sin imagen</p>
+              </div>
+            <% end %>
           </div>
           <div class="producto-info">
-            <h3>Labial Rosa</h3>
-            <p class="price">$20.000</p>
-            <button class="add-to-cart">Añadir al carrito</button>
+            <h3><%= product.nombre_producto %></h3>
+            <p class="price"><strong>$<%= product.precio_producto %></strong></p>
+           <%#  <button class="add-to-cart">Añadir al carrito</button> %>
           </div>
         </div>
       <% end %>

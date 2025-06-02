@@ -74,7 +74,7 @@
             <div class="col-md-3 mb-4">
               <div class="card h-100 border-0 shadow-sm">
                 <% if product.imagen.attached? %>
-                  <%= image_tag product.imagen.variant(resize_to_limit: [300, 300]), class:"card-img-top", alt:"Producto Maquillaje", style:"height: 200px; object-fit: cover;"%>
+                  <%= image_tag product.imagen.variant(resize_to_limit: [300, 300]), class:"card-img-top", alt:"Producto Maquillaje", style:"width: 100%; max-height: 200px; object-fit: contain;"%>
                 <% else %>
                   <div class="card-img-top d-flex align-items-center justify-content-center" style="height: 200px; background-color: #f8f9fa;">
                     <p class="text-muted">Sin imagen</p>
