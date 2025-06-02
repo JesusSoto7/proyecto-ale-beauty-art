@@ -277,14 +277,14 @@ nav a:hover::after {
 }
 
 /* Productos destacados */
-.productos-destacados {
+.productos-novedosos {
   padding: 3rem 5%;
   text-align: center;
   max-width: 1400px;
   margin: 0 auto;
 }
 
-.productos-destacados h2 {
+.productos-novedosos h2 {
   margin-bottom: 2.5rem;
   font-size: 2rem;
   color: #333;
@@ -292,7 +292,7 @@ nav a:hover::after {
   display: inline-block;
 }
 
-.productos-destacados h2::after {
+.productos-novedosos h2::after {
   content: '';
   position: absolute;
   bottom: -10px;
@@ -362,20 +362,24 @@ nav a:hover::after {
 }
 
 .add-to-cart {
-  background-color: #d85a7f;
+  background: linear-gradient(135deg, #d95d85, #e58bb1);
   color: white;
+  font-weight: bold;
+  padding: 0.9rem 1rem;
   border: none;
-  padding: 0.7rem;
-  border-radius: 5px;
+  border-radius: 50px;
+  width: 100%;
+  font-size: 1rem;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  transition: transform 0.2s ease;
   cursor: pointer;
-  font-weight: 600;
-  margin-top: auto;
-  transition: background-color 0.3s;
 }
 
 .add-to-cart:hover {
-  background-color: #c04a6f;
+  transform: scale(1.03);
 }
+
+
 
 /* Footer */
 footer {
@@ -566,7 +570,7 @@ footer {
   }
 }
 
- .carousel-container {
+ .carousel-novedades-container {
   max-width: 2000px;
   margin: 0px auto;
 }
@@ -574,4 +578,122 @@ footer {
 .carousel-item img {
   height: 550px;
   object-fit: cover;
+}
+
+.carousel-novedades-container {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  padding: 2rem 0;
+  max-width: 1200px;
+  margin: auto;
+}
+
+.carousel-novedades {
+  display: flex;
+  gap: 1rem;
+  overflow-x: hidden;
+  scroll-behavior: smooth;
+  padding: 1rem 0;
+  align-items: stretch;
+}
+
+.producto-card-novedades {
+  min-width: calc(33.33% - 1rem);
+  max-width: calc(33.33% - 1rem);
+  flex-shrink: 0;
+  background: #fff;
+  padding: 1rem;
+  text-align: center;
+  font-family: 'Arial', sans-serif;
+  position: relative;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 400px;
+  cursor: pointer;
+}
+
+.producto-info {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.producto-info h3 {
+  margin: 0.5rem 0;
+  font-size: 1rem;
+  flex-shrink: 0;
+}
+
+.producto-footer {
+  margin-top: auto;
+}
+
+.price {
+  font-weight: bold;
+  font-size: 1.1rem;
+  color: #333;
+}
+
+.carousel-novedades-btn {
+  position: absolute;
+  top: 40%;
+  z-index: 1;
+  background-color: transparent;
+  color: #c58c94;
+  border: 1px solid transparent;
+  width: 70px;      /* ancho fijo */
+  height: 85px;     /* alto igual al ancho */
+  border-radius: 50%; /* círculo perfecto */
+  font-size: 2.8rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.3s ease, color 0.3s ease;
+  display: flex;         /* centrado del ícono o texto */
+  align-items: center;
+  justify-content: center;
+}
+
+.carousel-novedades-btn:hover {
+  background-color: rgba(114, 102, 110, 0.082);
+  color: #a56b74;
+}
+
+.carousel-novedades-btn.left {
+  left: 0;
+}
+
+.carousel-novedades-btn.right {
+  right: 0;
+}
+
+/* Desktop (ya cubierto con 33.33%) */
+.producto-card-novedades {
+  min-width: calc(33.33% - 1rem);
+  max-width: calc(33.33% - 1rem);
+}
+
+/* Tablet: 2 tarjetas por fila */
+@media (max-width: 900px) {
+  .producto-card-novedades {
+    min-width: calc(50% - 1rem);
+    max-width: calc(50% - 1rem);
+  }
+}
+
+/* Móvil: 1 tarjeta por fila */
+@media (max-width: 600px) {
+  .producto-card-novedades {
+    min-width: 100%;
+    max-width: 100%;
+  }
+
+  .carousel-novedades-btn {
+    width: 50px;
+    height: 50px;
+    font-size: 2rem;
+    top: 45%;
+  }
 }

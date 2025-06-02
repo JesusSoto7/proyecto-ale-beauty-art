@@ -59,61 +59,92 @@
   </div>
 
 <div class="carousel-container">
-    <% if @admin.carousel_images.attached? %>
-        <div id="customCarousel" class="carousel slide" data-bs-ride="carousel" data-bs-interval="3000">
-          <div class="carousel-indicators">
-            <% @admin.carousel_images.each_with_index do |_, index|%>
-              <button type="button"
-                data-bs-target="#customCarousel"
-                data-bs-slide-to="<%= index %>"
-                class="<%= 'active' if index== 0 %>"
-                aria-current="<%= 'true' if index == 0 %>"
-                aria-label="Slide <%= index + 1%>">
-              </button>
-            <% end %>
-
-          </div>
-          <div class="carousel-inner">
-            <% @admin.carousel_images.each_with_index do |image, index| %>
-              <div class="carousel-item <%= 'active' if index == 0 %>">
-                <%= image_tag image, class: "d-block w-100"%>
-              </div>
-              
-            <% end %>
-          </div>
-          <button class="carousel-control-prev" type="button" data-bs-target="#customCarousel" data-bs-slide="prev">
-            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-            <span class="visually-hidden">Anterior</span>
+  <% if @admin&.carousel_images&.attached? %>
+    <div id="customCarousel" class="carousel slide" data-bs-ride="carousel" data-bs-interval="3000">
+      
+      <div class="carousel-indicators">
+        <% @admin.carousel_images.each_with_index do |_, index| %>
+          <button type="button"
+                  data-bs-target="#customCarousel"
+                  data-bs-slide-to="<%= index %>"
+                  class="<%= 'active' if index == 0 %>"
+                  aria-current="<%= 'true' if index == 0 %>"
+                  aria-label="Slide <%= index + 1 %>">
           </button>
-          <button class="carousel-control-next" type="button" data-bs-target="#customCarousel" data-bs-slide="next">
-            <span class="carousel-control-next-icon" aria-hidden="true"></span>
-            <span class="visually-hidden">Siguiente</span>
-          </button>
+        <% end %>
       </div>
-    <% else %>
-      <p>No hay imágenes de carrusel disponibles.</p>
-    <% end %>
-  </div>
+
+      <div class="carousel-inner">
+        <% @admin.carousel_images.each_with_index do |image, index| %>
+          <div class="carousel-item <%= 'active' if index == 0 %>">
+            <%= image_tag image, class: "d-block w-100", alt: "Slide #{index + 1}" %>
+          </div>
+        <% end %>
+      </div>
+
+      <button class="carousel-control-prev" type="button" data-bs-target="#customCarousel" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Anterior</span>
+      </button>
+      <button class="carousel-control-next" type="button" data-bs-target="#customCarousel" data-bs-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Siguiente</span>
+      </button>
+    </div>
+  <% else %>
+    <div class="text-center p-4 bg-light border rounded">
+      <p class="text-muted mb-0">No hay imágenes de carrusel disponibles por el momento.</p>
+    </div>
+  <% end %>
+</div>
+
+
 
 
   <!-- Productos destacados -->
-  <section class="productos-destacados">
-    <h2>Productos Destacados</h2>
-    <div class="productos-grid">
-      <% 4.times do %>
-        <div class="producto-card">
-          <div class="producto-img">
-            <img src="https://es.lorealparisusa.com/-/media/project/loreal/brand-sites/oap/americas/us/beauty-magazine/slideshows/makeup-product-essentials/loreal-paris-bmag-slideshow-20-makeup-product-essentials-every-woman-should-own-slide16.jpg" alt="Producto Maquillaje">
-          </div>
-          <div class="producto-info">
-            <h3>Labial Rosa</h3>
-            <p class="price">$20.000</p>
-            <button class="add-to-cart">Añadir al carrito</button>
-          </div>
-        </div>
+<section class="productos-novedosos">
+  <h2>Novedades Maquillaje</h2>
+
+  <% if @product.present? && @product.any? %>
+    <div class="carousel-novedades-container">
+
+      <% if @product.size > 3 %>
+        <button class="carousel-novedades-btn left" id="btn-caroulLeft">&#10094;</button>
       <% end %>
+
+      <div class="carousel-novedades" id="carousel-productos">
+        <% @product.each do |product| %>
+          <div class="producto-card-novedades">
+            <div class="producto-img">
+              <% if product.imagen.attached? %>
+                <%= image_tag product.imagen.variant(resize_to_limit: [200, 200]), class: "card-img-top", alt: "Producto Maquillaje", style: "width: 100%; max-height: 200px; object-fit: contain;" %>
+              <% else %>
+                <div class="card-img-top d-flex align-items-center justify-content-center" style="height: 200px; background-color: #f8f9fa;">
+                  <p class="text-muted">Sin imagen</p>
+                </div>
+              <% end %>
+            </div>
+            <div class="producto-info">
+              <h3><%= product.nombre_producto %></h3>
+              <div class="producto-footer">
+                <p class="price">$<%= product.precio_producto %></p>
+              </div>
+              <button class="add-to-cart">Añadir al carrito</button>
+            </div>
+          </div>
+        <% end %>
+      </div>
+
+      <% if @product.size > 3 %>
+        <button class="carousel-novedades-btn right" id="btn-caroulRight">&#10095;</button>
+      <% end %>
+
     </div>
-  </section>
+  <% else %>
+    <p class="text-center text-muted">No hay productos disponibles por el momento.</p>
+  <% end %>
+</section>
+
 
   <!-- Footer -->
   <footer>
@@ -173,6 +204,31 @@
     document.addEventListener('click', () => {
       menuPerfil.style.display = 'none';
     });
+
+
+    function moveCarrousel(direccion){
+      const carousel = document.getElementById("carousel-productos");
+      const cardWidth = carousel.querySelector(".producto-card-novedades").offsetWidth + 16;
+
+      carousel.scrollBy({
+        left: direccion * cardWidth * 2,
+        behavior: 'smooth'
+
+      });
+    }
+
+
+    const buttonCaroRight = document.getElementById('btn-caroulRight');
+    buttonCaroRight.addEventListener('click', () => { 
+      moveCarrousel(1);
+    });
+
+    const buttonCaroLeft = document.getElementById('btn-caroulLeft');
+
+    buttonCaroLeft.addEventListener('click', () => {
+      moveCarrousel(-1);
+    });
+
     
 
   </script>
