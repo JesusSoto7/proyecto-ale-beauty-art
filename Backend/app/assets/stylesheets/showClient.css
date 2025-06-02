@@ -1,0 +1,23 @@
+#shw{
+    display: flex;
+    flex-direction: row;
+    margin-left: 50px;
+}
+
+#fotoshow{
+    border: solid 1px;
+    display: flex;
+    flex-direction: row;
+}
+
+#galeria{
+    width: 60px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+#datashow{
+    width: 100dvh;
+    border: solid 1px;
+}

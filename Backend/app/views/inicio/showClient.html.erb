@@ -66,6 +66,8 @@
     <main class="content-wrap">
         <div id="shw">
             <div id="fotoshow">
+                <div id="galeria">
+                </div>
                 <% if @product.imagen.attached? %>
                     <%= image_tag @product.imagen, class: "show-img" %>
                     <% else %>

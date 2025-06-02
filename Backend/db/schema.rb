@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_05_14_042606) do
+ActiveRecord::Schema[8.0].define(version: 2025_06_02_181334) do
   create_table "active_storage_attachments", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
@@ -48,7 +48,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_14_042606) do
   create_table "products", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "nombre_producto"
     t.decimal "precio_producto", precision: 10
-    t.string "descripcion"
+    t.string "descripcion", limit: 400
     t.bigint "category_id", null: false
     t.integer "stock"
     t.datetime "created_at", null: false
