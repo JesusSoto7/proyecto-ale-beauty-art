@@ -66,8 +66,6 @@
     <main class="content-wrap">
         <div id="shw">
             <div id="fotoshow">
-                <div id="galeria">
-                </div>
                 <% if @product.imagen.attached? %>
                     <%= image_tag @product.imagen, class: "show-img" %>
                     <% else %>
@@ -82,12 +80,12 @@
                       <p class="card-text fs-5"><%= @product.category.nombre_categoria %></p>
                     </div>
                     <div>
-                      <p id= "des-prod"> <%= @product.descripcion %> </p>
+                      <p class="fw-semibold">DESCRIPCIÓN</p>
+                      <p id="des-prod"> <%= @product.descripcion %> </p>
                     </div>
-                    <h5 id="preci1" class="fw-semibold">$<%= @product.precio_producto %></h5>
                 </div>
                 <div id="btnshow">
-                  <h5 id="preci2" class="fw-semibold">$<%= @product.precio_producto %></h5>
+                    <h5 id="preci2" class="fw-semibold fs-2">$<%= @product.precio_producto %></h5>
                     <%= link_to "<i class='fas fa-shopping-cart'></i> Agregar al carrito".html_safe, productos_path, class:"btn btn-primary" %>
                 </div>
 
