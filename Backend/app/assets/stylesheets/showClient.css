@@ -74,6 +74,7 @@
 }
 
 #preci2{
+    display: none;
     margin-top: 8px;
 }
 
@@ -113,6 +114,9 @@
         #preci2{
             display: block;
             margin-top: 8px;
+        }
+        #preci1{
+            display: none;
         }
 
         #des-prod{
@@ -163,6 +167,10 @@
         #preci2{
             display: block;
             margin-top: 8px;
+        }
+        
+        #preci1{
+            display: none;
         }
 
         #des-prod{
