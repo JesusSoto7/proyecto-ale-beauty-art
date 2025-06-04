@@ -135,12 +135,12 @@ a{
 
 /* ----------------------fin show product--------------------------- */
 
-.alert{
+/* .alert{
     position: absolute;
     top: 200px;
     left: 800px;
     z-index: 6;
-}
+} */
 
 .add-to-cart {
   background: linear-gradient(135deg, #d95d85, #e58bb1);
