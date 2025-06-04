@@ -272,6 +272,14 @@ nav a:hover::after {
 }
 
 
+.btn-outline-primary{
+  width: 100%;
+  border-color: #d85a7f;
+  color: #d85a7f;
+  --bs-btn-hover-bg: #d85a7f;
+  --bs-btn-hover-border-color: #d85a7f;
+}
+
 /* Footer */
 .site-footer {
   background-color: var(--dark-color);

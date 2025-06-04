@@ -1,4 +1,4 @@
-<div class="card" style="width: 15rem;">
+<div class="card" style="width: 18rem;">
   <% if product.imagen.attached? %>
       <%= image_tag product.imagen, class: "card-img" %>
     <% else %>
@@ -8,7 +8,7 @@
     <h5 class="card-title"><%= product.nombre_producto %></h5>
     <p class="card-text"><%= product.category.nombre_categoria %>
     </p>
-    <div class="d-flex justify-content-between align-items-center">
+    <div class="d-flex justify-content-between align-items-center ">
       <strong id="preci">$<%= product.precio_producto %></strong>
       <%= link_to "Ver", product, class: "btn btn-primary" %>
     </div>
