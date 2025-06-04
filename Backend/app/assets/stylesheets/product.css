@@ -141,6 +141,8 @@ a{
     margin-left: 5px;
 }
 
+/* ----------------------fin show product--------------------------- */
+
 .alert{
     position: absolute;
     top: 200px;
@@ -148,7 +150,19 @@ a{
     z-index: 6;
 }
 
-
+.add-to-cart {
+  background: linear-gradient(135deg, #d95d85, #e58bb1);
+  color: white;
+  font-weight: bold;
+  padding: 0.9rem 1rem;
+  border: none;
+  border-radius: 10px;
+  width: 100%;
+  font-size: 1rem;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  transition: transform 0.2s ease;
+  cursor: pointer;
+}
 
 /* laptop?? */
 @media

@@ -1,19 +1,19 @@
-<div class="card" style="width: 18rem;">
+<div class="card shadow-sm h-100" style="width: 18rem;">
   <% if product.imagen.attached? %>
-      <%= image_tag product.imagen, class: "card-img" %>
-    <% else %>
-      <%= image_tag "no_image.png", class: "logo-img" %>
+    <%= image_tag product.imagen.variant(resize_to_limit: [500, 500]), class:"card-img-top", alt:"Producto Maquillaje", style:"width: 100%; max-height: 190px; object-fit: contain;" %>
+  <% else %>
+    <div class="card-img-top d-flex align-items-center justify-content-center" style="height: 190px; background-color: #f8f9fa;">
+      <p class="text-muted">Sin imagen</p>
+    </div>
   <% end %>
   <div class="card-body">
-    <h5 class="card-title"><%= product.nombre_producto %></h5>
-    <p class="card-text"><%= product.category.nombre_categoria %>
-    </p>
-    <div class="d-flex justify-content-between align-items-center ">
-      <strong id="preci">$<%= product.precio_producto %></strong>
-      <%= link_to "Ver", product, class: "btn btn-primary" %>
-    </div>
-
-    
-    
+    <h5 class="card-title fw-bold text-dark"><%= product.nombre_producto %></h5>
+    <p><strong>Categoria:</strong> <%= product.category.nombre_categoria %></p>
+    <p class="card-text text-dark"><strong>$<%= product.precio_producto %></strong></p>
   </div>
+  <%= link_to product do%>
+    <div class="card-footer bg-transparent border-0">
+      <button class="add-to-cart">Ver producto</button>
+    </div>
+  <% end %>
 </div>
