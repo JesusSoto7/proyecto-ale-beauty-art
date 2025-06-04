@@ -15,6 +15,7 @@
 }
 
 #fotoshow img{
+   object-fit: contain;
    width: 600px;
    height: 540px;
    border-radius: 20px;
