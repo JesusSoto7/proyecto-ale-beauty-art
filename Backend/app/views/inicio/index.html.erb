@@ -102,50 +102,50 @@
 
 
   <!-- Productos destacados -->
-<section class="productos-novedosos">
-  <h2>Novedades Maquillaje</h2>
+  <section class="productos-novedosos">
+    <h2>Novedades Maquillaje</h2>
 
-  <% if @product.present? && @product.any? %>
-    <div class="carousel-novedades-container">
+    <% if @product.present? && @product.any? %>
+      <div class="carousel-novedades-container">
 
-      <% if @product.size > 3 %>
-        <button class="carousel-novedades-btn left" id="btn-caroulLeft">&#10094;</button>
-      <% end %>
-
-      <div class="carousel-novedades" id="carousel-productos">
-        <% @product.each do |product| %>
-          <div class="card shadow-sm h-100" style="width: 18rem;">
-              <% if product.imagen.attached? %>
-                <%= image_tag product.imagen.variant(resize_to_limit: [500, 500]), class:"card-img-top", alt:"Producto Maquillaje", style:"width: 100%; max-height: 190px; object-fit: contain;" %>
-              <% else %>
-                <div class="card-img-top d-flex align-items-center justify-content-center" style="height: 190px; background-color: #f8f9fa;">
-                  <p class="text-muted">Sin imagen</p>
-                </div>
-              <% end %>
-              <div class="card-body">
-                <h5 class="card-title fw-bold text-dark"><%= product.nombre_producto %></h5>
-                <p><strong>Categoria:</strong> <%= product.category.nombre_categoria %></p>
-                <p class="card-text text-dark"><strong>$<%= product.precio_producto %></strong></p>
-              </div>
-              <div class="card-footer bg-transparent border-0">
-                <button class="add-to-cart">Añadir al carrito</button>
-              </div>
-              <div class="card-footer bg-transparent border-0">
-                <%= link_to "Ver", show_product_client_path(product), class: "btn btn-outline-primary" %>
-              </div>
-            </div>
+        <% if @product.size > 3 %>
+          <button class="carousel-novedades-btn left" id="btn-caroulLeft">&#10094;</button>
         <% end %>
+
+        <div class="carousel-novedades" id="carousel-productos">
+          <% @product.each do |product| %>
+              <div class="producto-card-novedades">
+                <div class="producto-img">
+                  <% if product.imagen.attached? %>
+                    <%= image_tag product.imagen.variant(resize_to_limit: [200, 200]), class: "card-img-top", alt: "Producto Maquillaje", style: "width: 100%; max-height: 200px; object-fit: contain;" %>
+                  <% else %>
+                    <div class="card-img-top d-flex align-items-center justify-content-center" style="height: 200px; background-color: #f8f9fa;">
+                      <p class="text-muted">Sin imagen</p>
+                    </div>
+                  <% end %>
+                </div>
+                <div class="producto-info">
+                  <h3><%= product.nombre_producto %></h3>
+                  <div class="producto-footer">
+                    <p class="price">$<%= product.precio_producto %></p>
+                  </div>
+                  <button class="add-to-cart">Añadir al carrito</button>
+                  <%= link_to "Ver", show_product_client_path(product), class: "btn btn-outline-primary", style:"margin-top:10px;"%>
+                </div>
+              </div>
+          <% end %>
+        </div>
+
+        <% if @product.size > 3 %>
+          <button class="carousel-novedades-btn right" id="btn-caroulRight">&#10095;</button>
+        <% end %>
+
       </div>
+    <% else %>
+      <p class="text-center text-muted">No hay productos disponibles por el momento.</p>
+    <% end %>
+  </section>
 
-      <% if @product.size > 3 %>
-        <button class="carousel-novedades-btn right" id="btn-caroulRight">&#10095;</button>
-      <% end %>
-
-    </div>
-  <% else %>
-    <p class="text-center text-muted">No hay productos disponibles por el momento.</p>
-  <% end %>
-</section>
 
 
   <!-- Footer -->
