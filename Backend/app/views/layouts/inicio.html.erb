@@ -1,25 +1,141 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <title>Inicio</title>
-    <%= csrf_meta_tags %>
-    <%= csp_meta_tag %>
+<html lang="es">
+<head>
+  <%= csrf_meta_tags %>
+  <%= csp_meta_tag %>
 
-    <%= stylesheet_link_tag "bootstrap", media: "all" %>
-    <%= stylesheet_link_tag "inicio", media: "all" %>
-    <%= stylesheet_link_tag "productos", media: "all" %>
-    <%= javascript_include_tag "application", defer: true %>
-  </head>
+  <%= stylesheet_link_tag "bootstrap", media: "all" %>
+  <%= stylesheet_link_tag "inicio", media: "all" %>
+  <%= stylesheet_link_tag "productos", media: "all" %>
+  <%= javascript_include_tag "application", defer: true %>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ale beauty Cosmetics</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="Backend/app/assets/stylesheets/inicio.css">
+</head>
+<body>
+  <div class="page-container">
+    <header class="navbar">
+      <div class="menu-icon" onclick="toggleMenu()"><i class="fas fa-bars"></i></div>
 
-  <body class="pagina-inicio">
-    <% if flash[:notice] %>
-      <div class="alert alert-success"><%= flash[:notice] %></div>
-    <% end %>
+      <div class="logo">
+        <%= image_tag "ale_logo.jpg", alt: "Logo Tienda de Belleza" %>
+      </div>
 
-    <% if flash[:alert] %>
-      <div class="alert alert-danger"><%= flash[:alert] %></div>
-    <% end %>
+      <nav id="main-nav">
+        <%= link_to "INICIO", inicio_path %>
+        <%= link_to "PRODUCTOS", productos_path %>
+        <a href="#">ACERCA DE</a>
+        <a href="#">CONTACTO</a>
+      </nav>
 
-    <%= yield %>
-  </body>
+      <div class="search" id="search-box">
+        <input type="text" placeholder="Buscar...">
+        <i class="fas fa-search search-icon"></i>
+      </div>
+
+      <!-- User Options con menú perfil corregido -->
+
+  <div class="user-options">
+      <span id="profile-icon"><i class="fas fa-user-circle"></i></span>
+      <div id="menu-perfil">
+        <ul id="ul-perfil">
+        <%= link_to 'Mi Perfil', user_profile_path, class: "texto-perfil" %>
+          <% if user_signed_in? %>
+            <li><%= button_to "Cerrar sesión", destroy_user_session_path, method: :delete, class:"cerrar_sesion" %></li>
+          <% else %>
+            <li><%= button_to "Inciar sesión",  new_user_session_path, class:"iniciar_sesion" %></li>
+          <% end %>
+        </ul>
+      </div>
+    </div>
+
+      <div class="cart">
+        <%= link_to current_cart_path do%>
+          <i class="fas fa-shopping-bag" style="margin-left: 20px;"></i>
+          <span class="cart-count">0</span>
+       <% end%>
+      </div>
+    </header>
+
+    <!-- Menú desplegable -->
+    <div id="dropdown-menu" class="dropdown-menu">
+      <a href="#"><i class="fas fa-shopping-bag"></i> Mis Compras</a>
+      <a href="#"><i class="fas fa-heart"></i> Favoritos</a>
+      <a href="#"><i class="fas fa-cog"></i> Ajustes</a>
+    </div>
+
+    <!-- Contenido principal -->
+    <main class="content-wrap">
+      <%= yield%>
+    </main>
+
+    <!-- Footer -->
+<footer>
+    <div class="footer-content">
+      <div class="footer-section">
+        <h3>Información</h3>
+        <ul>
+          <li><a href="#">Sobre nosotros</a></li>
+          <li><a href="#">Términos y condiciones</a></li>
+          <li><a href="#">Política de privacidad</a></li>
+        </ul>
+      </div>
+      <div class="footer-section">
+        <h3>Contacto</h3>
+        <ul>
+          <li><i class="fas fa-phone"></i> +57 123 456 7890</li>
+          <li><i class="fas fa-envelope"></i> contacto@tiendabelleza.com</li>
+          <li><i class="fas fa-map-marker-alt"></i> Barranquilla, Colombia</li>
+        </ul>
+      </div>
+      <div class="footer-section">
+        <h3>Síguenos</h3>
+        <div class="social-icons">
+          <a href="#"><i class="fab fa-facebook-f"></i></a>
+          <a href="https://www.instagram.com/ale.beautyart/"><i class="fab fa-instagram"></i></a>
+          <a href="#"><i class="fab fa-twitter"></i></a>
+          <a href="#"><i class="fab fa-pinterest-p"></i></a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      © 2025 Tienda de Cosmeticos - Todos los derechos reservados
+    </div>
+  </footer>
+  </div>
+
+  <!-- Footer -->
+  
+
+  <script>
+// Menú desplegable
+    function toggleMenu() {
+      const nav = document.getElementById('main-nav');
+      nav.classList.toggle('show');
+      
+      const dropdown = document.getElementById('dropdown-menu');
+      if (dropdown.style.display === 'flex') {
+        dropdown.style.display = 'none';
+      }
+    }
+    
+    // Menú de perfil
+    const profileIcon = document.getElementById('profile-icon');
+    const menuPerfil = document.getElementById('menu-perfil');
+    
+    profileIcon.addEventListener('click', (e) => {
+      e.stopPropagation();
+      menuPerfil.style.display = menuPerfil.style.display === 'block' ? 'none' : 'block';
+    });
+    
+    document.addEventListener('click', () => {
+      menuPerfil.style.display = 'none';
+    });
+
+
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
 </html>
