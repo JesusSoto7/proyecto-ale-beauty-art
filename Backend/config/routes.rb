@@ -18,6 +18,10 @@ Rails.application.routes.draw do
     resources :cart_products
   end
   get '/cart', to: 'carts#show_current', as: 'current_cart'
+  post "/cart/add", to: "carts#add", as: 'add_to_cart'
+  get "/cart/count", to: "carts#count"
+
+
   resources :products
   resources :categories
   get 'perfil', to: 'profiles#show', as: :user_profile

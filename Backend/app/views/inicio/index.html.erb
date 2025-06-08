@@ -69,7 +69,11 @@
                   <div class="producto-footer">
                     <p class="price">$<%= product.precio_producto %></p>
                   </div>
-                  <button class="add-to-cart">Añadir al carrito</button>
+                  <div>
+                    <%=button_to "Añadir al carrito", add_to_cart_path(@cart),
+                                  method: :post,
+                                  params: { product_id: product.id, cantidad: 1 }, class:"add-to-cart"%>
+                  </div>
                   <%= link_to "Ver", show_product_client_path(product), class: "btn btn-outline-primary", style:"margin-top:10px;"%>
                 </div>
               </div>
@@ -111,8 +115,6 @@
     buttonCaroLeft.addEventListener('click', () => {
       moveCarrousel(-1);
     });
-
-    
 
   </script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>

@@ -1,0 +1,6 @@
+<div>
+    <% @cart.cart_products.each do |item| %>
+        <p><%= item.product.nombre_producto %> - Cantidad: <%= item.cantidad%></p>
+        <p><strong>Precio: </strong><%= item.product.precio_producto%></p>
+    <%end%>
+</div>
