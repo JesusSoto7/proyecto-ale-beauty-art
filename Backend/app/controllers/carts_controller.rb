@@ -2,6 +2,7 @@ class CartsController < ApplicationController
   before_action :initialize_cart
   layout "inicio"
   def show_current
+    @cart = current_cart
   end
 
   def add
@@ -27,6 +28,5 @@ class CartsController < ApplicationController
   def initialize_cart
     @cart = current_user&.cart || Cart.create(user: current_user)
   end
-
 
 end

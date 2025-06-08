@@ -1,6 +1,27 @@
-<div>
-    <% @cart.cart_products.each do |item| %>
-        <p><%= item.product.nombre_producto %> - Cantidad: <%= item.cantidad%></p>
-        <p><strong>Precio: </strong><%= item.product.precio_producto%></p>
-    <%end%>
-</div>
+<% if @cart.cart_products.empty? %>
+  <div class="text-center text-gray-500 mt-10">
+    Tu carrito está vacío.
+  </div>
+<% else %>
+  <% @cart.cart_products.each do |item| %>
+    <div style="display: flex; align-items: center; gap: 20px; margin-bottom: 20px;">
+      <% if item.product.imagen.attached? %>
+        <%= image_tag item.product.imagen, style: "width: 100px; height: auto;" %>
+      <% else %>
+        <p>Sin imagen</p>
+      <% end %>
+      <div>
+        <p><strong><%= item.product.nombre_producto %></strong></p>
+        <p>Cantidad: <%= item.cantidad %></p>
+        <p><strong>Precio:</strong> <%= number_to_currency(item.product.precio_producto, unit: "$", separator: ",", delimiter: ".") %></p>
+        <%= button_to "Eliminar", cart_cart_product_path(@cart.id, item.id), method: :delete, class: "btn btn-danger" %>
+      </div>
+    </div>
+  <% end %>
+
+  <div>
+    <h5>Resumen de compra:</h5>
+    <p><strong>Total: </strong><%= number_to_currency(current_cart.cart_products.joins(:product).sum("products.precio_producto * cart_products.cantidad"), unit: "$", separator: ",", delimiter: "." )%></p>
+    <button class="btn btn-success">Continuar compra</button>
+  </div>
+<% end %>

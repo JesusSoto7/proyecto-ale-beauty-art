@@ -53,30 +53,31 @@
         <% end %>
 
         <div class="carousel-novedades" id="carousel-productos">
-          <% @product.each do |product| %>
-              <div class="producto-card-novedades">
-                <div class="producto-img">
-                  <% if product.imagen.attached? %>
-                    <%= image_tag product.imagen.variant(resize_to_limit: [200, 200]), class: "card-img-top", alt: "Producto Maquillaje", style: "width: 100%; max-height: 200px; object-fit: contain;" %>
-                  <% else %>
-                    <div class="card-img-top d-flex align-items-center justify-content-center" style="height: 200px; background-color: #f8f9fa;">
-                      <p class="text-muted">Sin imagen</p>
+            <% @product.each do |product| %>
+                <div class="producto-card-novedades">
+              <%= link_to show_product_client_path(product) do%>
+                  <div class="producto-img">
+                    <% if product.imagen.attached? %>
+                      <%= image_tag product.imagen.variant(resize_to_limit: [200, 200]), class: "card-img-top", alt: "Producto Maquillaje", style: "width: 100%; max-height: 200px; object-fit: contain;" %>
+                    <% else %>
+                      <div class="card-img-top d-flex align-items-center justify-content-center" style="height: 200px; background-color: #f8f9fa;">
+                        <p class="text-muted">Sin imagen</p>
+                      </div>
+                    <% end %>
+                  </div>
+                  <div class="producto-info">
+                    <h3><%= product.nombre_producto %></h3>
+                    <div class="producto-footer">
+                      <p class="price">$<%= product.precio_producto %></p>
                     </div>
-                  <% end %>
-                </div>
-                <div class="producto-info">
-                  <h3><%= product.nombre_producto %></h3>
-                  <div class="producto-footer">
-                    <p class="price">$<%= product.precio_producto %></p>
+                    <div>
+                      <%=button_to "Añadir al carrito", add_to_cart_path(@cart),
+                                    method: :post,
+                                    params: { product_id: product.id, cantidad: 1 }, class:"add-to-cart"%>
+                    </div>
                   </div>
-                  <div>
-                    <%=button_to "Añadir al carrito", add_to_cart_path(@cart),
-                                  method: :post,
-                                  params: { product_id: product.id, cantidad: 1 }, class:"add-to-cart", method: :post%>
-                  </div>
-                  <%= link_to "Ver", show_product_client_path(product), class: "btn btn-outline-primary", style:"margin-top:10px;"%>
                 </div>
-              </div>
+              <%end%>
           <% end %>
         </div>
 
