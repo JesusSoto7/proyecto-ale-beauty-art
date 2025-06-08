@@ -40,92 +40,187 @@ nav{
     overflow-y: scroll;
 }
 
+/* navegacion */
+
+/* ul{
+  margin-top: 5px;
+  padding-left: 10px;
+}
+
+
+ul a {
+  color:#7a797e;
+}
+ul a:hover{
+  color: #fabad9;
+} */
 
 /* --------------------------home---------------------------- */
+
 #banner-home{
-    width: 100%;
+    width: 95%;
     height: 300px;
-    background-color: #eee;
-    
-    
+    margin-left: 2.5%;
+    margin-top: 10px;
+    border-radius: 18px;
 }
 #banner-home img{
     width: 100%;
     height: 300px;
+    border-radius: 18px;
     object-fit: cover;
 }
-
-
-
-.card {
-  --border-radius: 0.75rem;
-  --primary-color: #7257fa;
-  --secondary-color: #3c3852;
-  width: 210px;
-  font-family: "Arial";
-  padding: 1rem;
-  cursor: pointer;
-  border-radius: var(--border-radius);
-  background: #f1f1f3;
-  box-shadow: 0px 8px 16px 0px rgb(0 0 0 / 3%);
-  position: relative;
-  margin-top: 30px;
-  margin-left: 30px;
+#banner-home h1{
+    position: absolute;
+    top: 100px;
 }
 
-.card > * + * {
-  margin-top: 1.1em;
+#overview{
+    width: 95%;
+    margin: auto;
+    margin-top: 20px;
+    justify-content: center;
 }
 
-.card .card__content {
-  color: var(--secondary-color);
-  font-size: 0.86rem;
+#links{
+    display: flex;
+    flex-flow: wrap row;
+    padding: 10px;
+    gap: 20px;
 }
 
-.card .card__title {
-  padding: 0;
-  font-size: 1.3rem;
-  font-weight: bold;
+#links a{
+  text-decoration: none;
+  color: rgb(255, 255, 255);
 }
 
-.card .card__date {
-  color: #6e6b80;
-  font-size: 0.8rem;
+#lnks a{
+  color: #111;
+  text-decoration: none;
 }
 
-.card .card__arrow {
-  position: absolute;
-  background: var(--primary-color);
-  padding: 0.4rem;
-  border-top-left-radius: var(--border-radius);
-  border-bottom-right-radius: var(--border-radius);
-  bottom: 0;
-  right: 0;
-  transition: 0.2s;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+#graficas{
+    width: 95%;
+    display: flex;
+    margin: auto;
+    justify-content: start;
+    align-items: center;
+    flex-flow: row wrap;
 }
 
-.card svg {
-  transition: 0.2s;
-}
-
-/* hover */
-.card:hover .card__title {
-  color: var(--primary-color);
-  text-decoration: underline;
-}
-
-.card:hover .card__arrow {
-  background: #111;
-}
-
-.card:hover .card__arrow svg {
-  transform: translateX(3px);
+/* grafica barras */
+.chart-container {
+    max-width: 400px;
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 20px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    margin: auto;
 }
 
 
+#graficas .container{
+  width: 333px;
+  margin-right: 0;
+  margin-left: 0;
+}
+
+.card{
+    --bs-border-width: none;
+}
+
+/* grafica circular */
+
+.card-custom {
+    max-width: 300px;
+    margin: auto;
+    padding: 20px;
+    border-radius: 20px;
+    background: #fff;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+    text-align: center;
+}
+
+.chart-container {
+    position: relative;
+    width: 100%;
+    height: 250px;
+}
+
+.chart-center-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-weight: bold;
+    font-size: 18px;
+}
+
+.legend-circle {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    font-size: 14px;
+    margin-top: 15px;
+}
+
+.legend-circle span {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+/* links */
+.pages{
+    width: 200px;
+    height: 60px;
+    /* border: #141414 solid 1px; */
+    border-radius: 5px;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+    background-color: rgb(255, 166, 0);
+    transition: 100ms;
+    padding: 5px;
+}
+
+.pages i{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: rgb(247, 207, 158);
+    width: 30px;
+    height: 30px;
+    border-radius: 5px;
+}
+
+.pages a{
+    text-decoration: none;
+    color: rgb(255, 255, 255);
+}
+
+.pages:hover{
+    scale: 1.1;
+    background-color: rgb(224, 150, 13);
+}
+
+/* grafica */
+
+
+.gráfico-contenedor {
+    width: 50%; 
+    height: 50%; 
+    margin: auto;
+}
 
 /* -------------------------home-end-------------------------- */
 

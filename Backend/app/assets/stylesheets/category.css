@@ -25,3 +25,12 @@
 .category img{
     z-index: 2;
 }
+
+
+#banner-cate img {
+    width: 95%;
+    height: 300px;
+    background-color: #eee;
+    margin: auto;
+    border-radius: 18px;
+}

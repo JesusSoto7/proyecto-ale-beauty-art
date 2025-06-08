@@ -1,26 +1,30 @@
-<div class="form-section">
+<div class="container my-4">
+
   <% if notice %>
-  <div class="alert alert-success">
-    <%= notice %>
-  </div>
-<% end %>
-  <div class="mb-3">
+    <div class="alert alert-success">
+      <%= notice %>
+    </div>
+  <% end %>
+
+  <div class="card p-4 mb-4 shadow-sm">
     <%= form_with url: update_carousel_path, method: :patch, local: true, multipart: true, scope: :user do |form| %>
-      <h3><%= form.label :Agregar_Imagenes, class: "form-label" %></h3>
-      <%= form.file_field :carousel_images, multiple: true, class: "form-control" %>
+      <h4 class="mb-3"><%= form.label :Agregar_Imagenes, class: "form-label" %></h4>
+      <%= form.file_field :carousel_images, multiple: true, class: "form-control mb-3" %>
       <%= form.submit "Guardar", class: "btn btn-primary" %>
     <% end %>
   </div>
-</div>
 
-<div class="carousel-preview">
-  
-  <div class= "image-thumbnails">
-    <% @admin.carousel_images.each do |image|%>
-      <div  class="card" style="width: 20rem;">
-        <%= image_tag image.variant(resize_to_limit: [350, 350]), class:"img-thumbnails"%>
-        <%= button_to "Eliminar Imagen", delete_carousel_image_path(image), method: :delete, class:"btn btn-danger" %>
+  <div class="row">
+    <% @admin.carousel_images.each do |image| %>
+      <div class="col-md-4 mb-4">
+        <div class="card h-100 shadow-sm">
+          <%= image_tag image.variant(resize_to_limit: [350, 350]), class: "card-img-top" %>
+          <div class="card-body text-center">
+            <%= button_to "Eliminar Imagen", delete_carousel_image_path(image), method: :delete, class: "btn btn-danger btn-sm" %>
+          </div>
+        </div>
       </div>
     <% end %>
   </div>
+
 </div>

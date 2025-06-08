@@ -2,38 +2,63 @@
     <%= image_tag "home.png", class: "logo-img" %>
 </article>
 
-
-<section>
-
-    <div class="card">
-        <h3>
-            <%= link_to "Ir a productos", products_path, class: "card__title" %>
-        </h3>
+<section id="home">
     
-        <div class="card__date">
-            April 15, 2022
-        </div>
-        <div class="card__arrow">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" height="15" width="15">
-                <path fill="#fff" d="M13.4697 17.9697C13.1768 18.2626 13.1768 18.7374 13.4697 19.0303C13.7626 19.3232 14.2374 19.3232 14.5303 19.0303L20.3232 13.2374C21.0066 12.554 21.0066 11.446 20.3232 10.7626L14.5303 4.96967C14.2374 4.67678 13.7626 4.67678 13.4697 4.96967C13.1768 5.26256 13.1768 5.73744 13.4697 6.03033L18.6893 11.25H4C3.58579 11.25 3.25 11.5858 3.25 12C3.25 12.4142 3.58579 12.75 4 12.75H18.6893L13.4697 17.9697Z"></path>
-            </svg>
-        </div>
-        
-    </div>
+    <section id="overview">
+        <h5 style="color: #b4b4b4;">Overview</h5>
+        <div id="links">
+            <%= link_to products_path, class: "card__title" do%>
+                <div class="pages">
+                    <i class="fa fa-bandcamp" style="color:#202020;"></i>
+                    <h5>
+                        Productos
+                    </h5>
 
-    <div class="card">
-        <h3>
-        <%= link_to "Ir a categorias", categories_path, class: "card__title" %>
-        </h3>
-    
-        <div class="card__date">
-            April 15, 2022
+                </div>
+            <% end %>
+
+            <%= link_to categories_path, class: "card__title" do%>
+                <div class="pages" style="background-color: rgb(0, 153, 255);">
+                    <i class="fa fa-bandcamp" style="background-color: rgb(127, 225, 255); color:#202020;"></i>
+                    <h5>
+                        Categorias
+                    </h5>
+
+                </div>
+            <% end %>
+            <div class="pages" style="background-color: rgb(255, 0, 140);">
+                <i class="fa fa-bandcamp" style="background-color: rgb(255, 127, 206);"></i>
+                <h5>
+                    <!-- <%= link_to "Productos", products_path, class: "card__title" %> -->
+                    <a href="#">Banners</a>
+                </h5>
+
+            </div>
         </div>
-        <div class="card__arrow">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" height="15" width="15">
-                <path fill="#fff" d="M13.4697 17.9697C13.1768 18.2626 13.1768 18.7374 13.4697 19.0303C13.7626 19.3232 14.2374 19.3232 14.5303 19.0303L20.3232 13.2374C21.0066 12.554 21.0066 11.446 20.3232 10.7626L14.5303 4.96967C14.2374 4.67678 13.7626 4.67678 13.4697 4.96967C13.1768 5.26256 13.1768 5.73744 13.4697 6.03033L18.6893 11.25H4C3.58579 11.25 3.25 11.5858 3.25 12C3.25 12.4142 3.58579 12.75 4 12.75H18.6893L13.4697 17.9697Z"></path>
-            </svg>
+    </section>
+
+    <article id="graficas">
+        <div class="container" style="max-width: 333px;">
+            <div class="card shadow-sm mx-auto" style="max-width: 333px;">
+                <div class="card-body">
+                    <canvas id="graficoBarras" height="320"></canvas>
+                </div>
+            </div>
         </div>
-        
-    </div>
+
+        <div class="container py-5">
+            <div class="card-custom">
+                <div class="chart-container">
+                    <canvas id="donutChart"></canvas>
+                    <div class="chart-center-text">94,304</div>
+                </div>
+                <div class="legend-circle">
+                    <span><span class="dot" style="background:#6f42c1;"></span> Bases</span>
+                    <span><span class="dot" style="background:#d63384;"></span> Labial</span>
+                    <span><span class="dot" style="background:#000;"></span> Pestañina</span>
+                </div>
+            </div>
+        </div>
+    </article>
+
 </section>
