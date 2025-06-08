@@ -26,14 +26,15 @@
 
                 </div>
             <% end %>
-            <div class="pages" style="background-color: rgb(255, 0, 140);">
-                <i class="fa fa-bandcamp" style="background-color: rgb(255, 127, 206);"></i>
-                <h5>
-                    <!-- <%= link_to "Productos", products_path, class: "card__title" %> -->
-                    <a href="#">Banners</a>
-                </h5>
+            <%= link_to edit_carousel_path do%>
+                <div class="pages" style="background-color: rgb(255, 0, 140);">
+                    <i class="fa fa-bandcamp" style="background-color: rgb(255, 127, 206); color:#202020;"></i>
+                    <h5>
+                        Banners
+                    </h5>
 
-            </div>
+                </div>
+            <% end %>
         </div>
     </section>
 

@@ -1,0 +1,13 @@
+#carrito{
+    display: flex;
+    flex-direction: row;
+    gap: 30px;
+    width: 100%;
+    justify-content: center;
+    padding-top: 20px;
+}
+
+#itemsCar{
+    display: flex;
+    flex-direction: column;
+}
