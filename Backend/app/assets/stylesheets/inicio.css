@@ -422,6 +422,7 @@ footer {
 
 .footer-section ul li {
   margin-bottom: 0.8rem;
+
 }
 
 .footer-section ul li a {
@@ -454,6 +455,7 @@ footer {
   border-radius: 50%;
   color: #fff;
   transition: all 0.3s;
+  padding: 2px;
 }
 
 .social-icons a:hover {
