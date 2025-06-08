@@ -29,14 +29,16 @@
               </small>
             </div>
 
-            <!-- Control de cantidad -->
             <div class="input-group" style="width: 100px;">
-              <button class="btn btn-outline-secondary btn-sm" type="button">−</button>
-              <input type="text" class="form-control text-center" value="<%= item.cantidad %>" style="max-width: 40px;">
-              <button class="btn btn-outline-secondary btn-sm" type="button">+</button>
+              <%= button_to cart_add_path(product_id: item.product.id, cantidad: -1), method: :post, form: { data: { turbo_stream: true } }, class: "btn btn-outline-secondary btn-m" do %>
+                -
+              <% end %>
+              <input type="text" readonly class="form-control text-center" value="<%= item.cantidad %>" style="max-width: 40px; border-left: none; border-right: none">
+              <%= button_to cart_add_path(product_id: item.product.id, cantidad: 1), method: :post, form: { data: { turbo_stream: true } }, class: "btn btn-outline-secondary btn-m" do %>
+                +
+              <% end %>
             </div>
 
-            <!-- Precio -->
             <div class="ms-3 text-end" style="min-width: 80px;">
               <strong><%= number_to_currency(item.product.precio_producto, unit: "$", separator: ",", delimiter: ".") %></strong>
             </div>
