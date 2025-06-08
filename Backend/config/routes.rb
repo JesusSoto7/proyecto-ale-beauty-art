@@ -14,6 +14,18 @@ Rails.application.routes.draw do
   get 'carousel' => "home#edit_carousel", as: :edit_carousel
   patch 'update_carousel' => "home#update_carousel", as: :update_carousel
   delete 'delete_carousel_image/:id' => "home#delete_carousel_image", as: :delete_carousel_image
+  resources :carts, except: [:show] do
+    resources :cart_products, only: [:destroy] do
+      member do
+        patch :increase
+        patch :decrease
+      end
+    end
+  end
+  get '/cart', to: 'carts#show_current', as: 'current_cart'
+  post "/cart/add", to: "carts#add", as: 'add_to_cart'
+  get "/cart/count", to: "carts#count", as: 'count_cart'
+
 
   resources :products
   resources :categories

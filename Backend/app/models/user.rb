@@ -1,6 +1,7 @@
 class User < ApplicationRecord
   has_many_attached :carousel_images
-  
+  has_one :cart, dependent: :destroy
+
   rolify
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable

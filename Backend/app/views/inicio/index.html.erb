@@ -1,63 +1,3 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Tienda de Belleza</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <link rel="stylesheet" href="Backend/app/assets/stylesheets/inicio.css">
-</head>
-<body>
-  <header class="navbar">
-    <div class="menu-icon" onclick="toggleMenu()">
-      <i class="fas fa-bars"></i>
-    </div>
-
-    <div class="logo">
-      <img src="<%= asset_path('ale_logo.jpg') %>" alt="Logo", style="border-radius: 40px;">
-    </div>
-
-    <nav id="main-nav">
-      <%= link_to "INICIO", inicio_path %>
-      <%= link_to "PRODUCTOS", productos_path %>
-      <a href="#">ACERCA DE</a>
-      <a href="#">CONTACTO</a>
-    </nav>
-
-    <div class="search-container">
-      <input type="text" placeholder="Buscar productos...">
-      <button class="search-button">
-        <i class="fas fa-search"></i>
-      </button>
-    </div>
-
-    <div class="user-options">
-      <span id="profile-icon"><i class="fas fa-user-circle"></i></span>
-      <div id="menu-perfil">
-        <ul id="ul-perfil">
-        <%= link_to 'Mi Perfil', user_profile_path, class: "texto-perfil" %>
-          <% if user_signed_in? %>
-            <li><%= button_to "Cerrar sesión", destroy_user_session_path, method: :delete, class:"cerrar_sesion" %></li>
-          <% else %>
-            <li><%= button_to "Inciar sesión",  new_user_session_path, class:"iniciar_sesion" %></li>
-          <% end %>
-        </ul>
-      </div>
-    </div>
-
-
-    <div class="cart-icon">
-      <i class="fas fa-shopping-bag"></i>
-      <span class="cart-count">0</span>
-    </div>
-  </header>
-
-  <!-- Menú desplegable -->
-  <div id="dropdown-menu" class="dropdown-menu">
-    <a href="#">Mis Compras</a>
-    <a href="#">Favoritos</a>
-  </div>
-
 <div class="carousel-container">
   <% if @admin&.carousel_images&.attached? %>
     <div id="customCarousel" class="carousel slide" data-bs-ride="carousel" data-bs-interval="3000">
@@ -113,26 +53,31 @@
         <% end %>
 
         <div class="carousel-novedades" id="carousel-productos">
-          <% @product.each do |product| %>
-              <div class="producto-card-novedades">
-                <div class="producto-img">
-                  <% if product.imagen.attached? %>
-                    <%= image_tag product.imagen.variant(resize_to_limit: [200, 200]), class: "card-img-top", alt: "Producto Maquillaje", style: "width: 100%; max-height: 200px; object-fit: contain;" %>
-                  <% else %>
-                    <div class="card-img-top d-flex align-items-center justify-content-center" style="height: 200px; background-color: #f8f9fa;">
-                      <p class="text-muted">Sin imagen</p>
-                    </div>
-                  <% end %>
-                </div>
-                <div class="producto-info">
-                  <h3><%= product.nombre_producto %></h3>
-                  <div class="producto-footer">
-                    <p class="price">$<%= product.precio_producto %></p>
+            <% @product.each do |product| %>
+                <div class="producto-card-novedades">
+              <%= link_to show_product_client_path(product) do%>
+                  <div class="producto-img">
+                    <% if product.imagen.attached? %>
+                      <%= image_tag product.imagen.variant(resize_to_limit: [200, 200]), class: "card-img-top", alt: "Producto Maquillaje", style: "width: 100%; max-height: 200px; object-fit: contain;" %>
+                    <% else %>
+                      <div class="card-img-top d-flex align-items-center justify-content-center" style="height: 200px; background-color: #f8f9fa;">
+                        <p class="text-muted">Sin imagen</p>
+                      </div>
+                    <% end %>
                   </div>
-                  <button class="add-to-cart">Añadir al carrito</button>
-                  <%= link_to "Ver", show_product_client_path(product), class: "btn btn-outline-primary", style:"margin-top:10px;"%>
+                  <div class="producto-info">
+                    <h3><%= product.nombre_producto %></h3>
+                    <div class="producto-footer">
+                      <p class="price">$<%= product.precio_producto %></p>
+                    </div>
+                    <div>
+                      <%=button_to "Añadir al carrito", add_to_cart_path(@cart),
+                                    method: :post,
+                                    params: { product_id: product.id, cantidad: 1 }, class:"add-to-cart"%>
+                    </div>
+                  </div>
                 </div>
-              </div>
+              <%end%>
           <% end %>
         </div>
 
@@ -148,66 +93,7 @@
 
 
 
-  <!-- Footer -->
-  <footer>
-    <div class="footer-content">
-      <div class="footer-section">
-        <h3>Información</h3>
-        <ul>
-          <li><a href="#">Sobre nosotros</a></li>
-          <li><a href="#">Términos y condiciones</a></li>
-          <li><a href="#">Política de privacidad</a></li>
-        </ul>
-      </div>
-      <div class="footer-section">
-        <h3>Contacto</h3>
-        <ul>
-          <li><i class="fas fa-phone"></i> +57 123 456 7890</li>
-          <li><i class="fas fa-envelope"></i> contacto@tiendabelleza.com</li>
-          <li><i class="fas fa-map-marker-alt"></i> Bogotá, Colombia</li>
-        </ul>
-      </div>
-      <div class="footer-section">
-        <h3>Síguenos</h3>
-        <div class="social-icons">
-          <a href="#"><i class="fab fa-facebook-f"></i></a>
-          <a href="https://www.instagram.com/ale.beautyart/"><i class="fab fa-instagram"></i></a>
-          <a href="#"><i class="fab fa-twitter"></i></a>
-          <a href="#"><i class="fab fa-pinterest-p"></i></a>
-        </div>
-      </div>
-    </div>
-    <div class="footer-bottom">
-      © 2025 Tienda de Belleza - Todos los derechos reservados
-    </div>
-  </footer>
-
   <script>
-    // Menú desplegable
-    function toggleMenu() {
-      const nav = document.getElementById('main-nav');
-      nav.classList.toggle('show');
-      
-      const dropdown = document.getElementById('dropdown-menu');
-      if (dropdown.style.display === 'flex') {
-        dropdown.style.display = 'none';
-      }
-    }
-    
-    // Menú de perfil
-    const profileIcon = document.getElementById('profile-icon');
-    const menuPerfil = document.getElementById('menu-perfil');
-    
-    profileIcon.addEventListener('click', (e) => {
-      e.stopPropagation();
-      menuPerfil.style.display = menuPerfil.style.display === 'block' ? 'none' : 'block';
-    });
-    
-    document.addEventListener('click', () => {
-      menuPerfil.style.display = 'none';
-    });
-
-
     function moveCarrousel(direccion){
       const carousel = document.getElementById("carousel-productos");
       const cardWidth = carousel.querySelector(".producto-card-novedades").offsetWidth + 16;
@@ -231,9 +117,6 @@
       moveCarrousel(-1);
     });
 
-    
-
   </script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
+

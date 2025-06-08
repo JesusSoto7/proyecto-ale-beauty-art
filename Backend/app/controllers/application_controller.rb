@@ -3,6 +3,7 @@ class ApplicationController < ActionController::Base
   allow_browser versions: :modern
   before_action :authenticate_user!
   before_action :configure_permitted_parameters, if: :devise_controller?
+  helper_method :current_cart
 
   protected
 
@@ -24,5 +25,19 @@ class ApplicationController < ActionController::Base
   end
   def show
     @user = current_user
+  end
+
+  def current_cart
+    if user_signed_in?
+      current_user.cart || current_user.create_cart
+    else
+      Cart.find_by(id: session[:cart_id]) || create_guest_cart
+    end
+  end
+
+  def create_guest_cart
+    cart = Cart.create
+    session[:cart_id] = cart.id
+    cart
   end
 end
