@@ -54,7 +54,7 @@
       <div class="cart">
         <%= link_to current_cart_path do%>
           <i class="fas fa-shopping-bag" style="margin-left: 20px;"></i>
-          <span class="cart-count" id="count-cart">0</span>
+          <span class="cart-count" id="count-cart"><%= current_cart.cart_products.sum(:cantidad) %></span>
        <% end%>
       </div>
     </header>

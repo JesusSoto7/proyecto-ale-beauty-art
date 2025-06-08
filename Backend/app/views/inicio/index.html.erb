@@ -72,7 +72,7 @@
                   <div>
                     <%=button_to "Añadir al carrito", add_to_cart_path(@cart),
                                   method: :post,
-                                  params: { product_id: product.id, cantidad: 1 }, class:"add-to-cart"%>
+                                  params: { product_id: product.id, cantidad: 1 }, class:"add-to-cart", method: :post%>
                   </div>
                   <%= link_to "Ver", show_product_client_path(product), class: "btn btn-outline-primary", style:"margin-top:10px;"%>
                 </div>

@@ -19,7 +19,7 @@ Rails.application.routes.draw do
   end
   get '/cart', to: 'carts#show_current', as: 'current_cart'
   post "/cart/add", to: "carts#add", as: 'add_to_cart'
-  get "/cart/count", to: "carts#count"
+  get "/cart/count", to: "carts#count", as: 'count_cart'
 
 
   resources :products

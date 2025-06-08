@@ -11,13 +11,22 @@ class CartsController < ApplicationController
     cantidad = 1 if cantidad <= 0
     @cart.agregar_producto(product_id, cantidad)
 
-    redirect_to current_cart_path
+    respond_to do |format|
+      format.html { redirect_to current_cart_path, notice: "Producto agregado" }
+      format.turbo_stream
+    end
   end
 
   def count
+    cart = current_user&.cart || Cart.find_by(id: session[:cart_id]) || Cart.create
+    total = cart.cart_products.sum(:cantidad)
+
+    render json: { count: total }
   end
 
   def initialize_cart
     @cart = current_user&.cart || Cart.create(user: current_user)
   end
+
+
 end
