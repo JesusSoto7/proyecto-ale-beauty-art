@@ -6,7 +6,7 @@
     </div>
   <% end %>
 
-  <div class="card p-4 mb-4 shadow-sm">
+  <div class="form-section">
     <%= form_with url: update_carousel_path, method: :patch, local: true, multipart: true, scope: :user do |form| %>
       <h4 class="mb-3"><%= form.label :Agregar_Imagenes, class: "form-label" %></h4>
       <%= form.file_field :carousel_images, multiple: true, class: "form-control mb-3" %>

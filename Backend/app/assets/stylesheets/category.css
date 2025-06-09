@@ -1,36 +1,22 @@
-.category{
-    width: 300px;
-    height: 200px;
-    object-fit: cover;
-    margin-top: 30px;
-    margin-left: 30px;
-    background-color: #eee;
-    border-radius: 8px;
-}
-
-.category h3{
-    z-index: 5;
-}
-
-.category:hover{
-    background-color: #20202018;
-    
-}
-.category img:hover{
-    opacity: 0.5;
-    transition: 0.5s;
-    display: block;
-}
-
-.category img{
-    z-index: 2;
-}
-
-
 #banner-cate img {
     width: 95%;
     height: 300px;
     background-color: #eee;
     margin: auto;
     border-radius: 18px;
+}
+
+#pro-categ{
+    width: 90%;
+    display: flex;
+    margin-left: 30px;
+}
+
+#tabla{
+    display: flex;
+    justify-content: center;
+}
+
+#categ img{
+    max-height: 160px;
 }

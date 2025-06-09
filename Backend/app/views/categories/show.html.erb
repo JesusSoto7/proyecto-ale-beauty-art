@@ -1,10 +1,58 @@
-<div>
-    <%= render @category%>
+<div class="container" style="max-width: 1000px;">
+    <h2 class="text-left mb-4">Productos en <%= @category.nombre_categoria %></h2>
 
-    <div>
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <input type="text" class="form-control w-50" placeholder="Buscar producto...">
+        <%= link_to 'Agregar Producto', new_product_path, class: "btn btn-primary ms-3" %>
+    </div>
+
+    <table class="table table-hover align-middle">
+        <thead class="table-light">
+        <tr>
+            <th>Imagen</th>
+            <th>Nombre</th>
+            <th>Código</th>
+            <th>Precio</th>
+            <th>Stock</th>
+            <th>Categoría</th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        <% @products.each do |product| %>
+            <tr>
+            <td>
+                <% if product.imagen.attached? %>
+                <%= image_tag product.imagen.variant(resize_to_fill: [40, 40]), class: "rounded-circle", alt: product.nombre_producto %>
+                <% else %>
+                <div class="bg-secondary rounded-circle text-white d-flex justify-content-center align-items-center" style="width: 40px; height: 40px;">
+                    <%= product.nombre_producto.first.upcase %>
+                </div>
+                <% end %>
+            </td>
+            <td><strong><%= product.nombre_producto %></strong></td>
+            <td><%= product.id %></td>
+            <td><%= number_to_currency(product.precio_producto, unit: "$") %></td>
+            <td><%= product.stock %> piezas</td>
+            <td><%= product.category.nombre_categoria %></td>
+            <td>
+                <%= link_to "Ver", product_path(product), class: "btn btn-sm btn-outline-primary" %>
+            </td>
+            </tr>
+        <% end %>
+        </tbody>
+    </table>
+
+    <div id="comd">
         <%= link_to "Editar Categoria", edit_category_path(@category), class:"btn btn-info"%>
         <%= link_to "Volver", categories_path, class:"btn btn-secondary"%>
 
         <%= button_to "Eliminar Categoria", @category, method: :delete, class:"btn btn-danger" %>
     </div>
+
 </div>
+
+
+
+
+    
