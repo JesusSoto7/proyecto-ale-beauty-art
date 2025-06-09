@@ -294,17 +294,6 @@ nav a:hover::after {
   text-align: center;
 }
 
-.social-icons a {
-  display: inline-block;
-  width: 36px;
-  height: 36px;
-  line-height: 36px;
-  border-radius: 50%;
-  background-color: rgba(255, 255, 255, 0.1);
-  margin: 0 5px;
-  transition: background-color 0.3s;
-}
-
 .social-icons a:hover {
   background-color: var(--primary-color);
   color: white;

@@ -9,11 +9,14 @@ class CartsController < ApplicationController
     @cart = current_user&.cart || Cart.create(user: current_user)
     product_id = params[:product_id]
     cantidad = params[:cantidad].to_i
-    cantidad = 1 if cantidad <= 0
-    @cart.agregar_producto(product_id, cantidad)
-
+  
+    # Aceptar cantidad negativa para disminuir
+    if cantidad != 0
+      @cart.agregar_producto(product_id, cantidad)
+    end
+  
     respond_to do |format|
-      format.html { redirect_to current_cart_path, notice: "Producto agregado" }
+      format.html { redirect_to current_cart_path, notice: "Producto actualizado" }
       format.turbo_stream
     end
   end

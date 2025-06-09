@@ -1,28 +1,17 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-  <meta charset="UTF-8">
-  <title>Mi Perfil</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <%= csrf_meta_tags %>
-  <%= csp_meta_tag %>
-  <%= stylesheet_link_tag 'application', media: 'perfil' %>
+<h2 class="titulo_perfil">Mi Perfil</h2>
 
-</head>
-<body>
-  <div class="container_perfil">
-    <div class="titulo_wrapper">
-      <h2 class="titulo_perfil">Mi Perfil</h2>
-    </div>
-    <section class="informacion">
-      <p class="campos"><strong>Nombre:</strong> <%= @user.nombre %></p>
-      <p class="campos"><strong>Apellido:</strong> <%= @user.apellido %></p>
-      <p class="campos"><strong>Teléfono:</strong> <%= @user.telefono %></p>
-      <p class="campos"><strong>Dirección:</strong> <%= @user.direccion %></p>
-      <p class="campos"><strong>Email:</strong> <%= @user.email %></p>
-    </section>
-
-    <%= link_to 'Editar Perfil', edit_user_profile_path, class: 'buton' %>
+<div class="container_perfil">
+  <div class="titulo_wrapper">
+    <%= image_tag "user.jpeg", class: "UserP-img" %>
   </div>
-</body>
-</html>
+  <section class="informacion">
+    <p class="campos"><strong>Nombre:</strong> <%= @user.nombre %></p>
+    <p class="campos"><strong>Apellido:</strong> <%= @user.apellido %></p>
+    <p class="campos"><strong>Teléfono:</strong> <%= @user.telefono %></p>
+    <p class="campos"><strong>Dirección:</strong> <%= @user.direccion %></p>
+    <p class="campos"><strong>Email:</strong> <%= @user.email %></p>
+    <%= link_to 'Editar Perfil', edit_user_profile_path, class: 'buton' %>
+  </section>
+
+  
+</div>

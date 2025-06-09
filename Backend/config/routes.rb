@@ -25,6 +25,7 @@ Rails.application.routes.draw do
   get '/cart', to: 'carts#show_current', as: 'current_cart'
   post "/cart/add", to: "carts#add", as: 'add_to_cart'
   get "/cart/count", to: "carts#count", as: 'count_cart'
+  post 'cart/add', to: 'cart#add', as: 'cart_add'
 
 
   resources :products

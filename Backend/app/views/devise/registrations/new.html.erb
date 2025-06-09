@@ -12,7 +12,7 @@
    <section class="container" style="width: 80vh;">
       <%= image_tag 'ale_logo.jpg', alt: 'logo', class: 'img_logo' %>
       <br>
-      <h2>Resgistrarse</h2>
+      <h2>Registrarse</h2>
       <%= form_for(resource, as: resource_name, url: registration_path(resource_name)) do |f| %>
         <%= render "devise/shared/error_messages", resource: resource %>
       <div id="form-errors" class="error-box" style="color: red;"></div>

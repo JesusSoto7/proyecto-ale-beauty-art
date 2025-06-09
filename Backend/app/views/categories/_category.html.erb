@@ -1,13 +1,14 @@
-<div class="card" style="width: 18rem;">
+<div id="categ" class="card" style="width: 18rem; border:solid 1px #eee;">
   <% if category.imagen.attached? %>
-      <%= image_tag category.imagen, class: "card-img-top"%>
-    <% else %>
+    <%= image_tag category.imagen, class: "card-img-top"%>
+  <% else %>
     <p>Sin imagen</p>
   <% end %>
-  <div class="card-body">
+  <div class="card-body text-center">
+    <h5 class="card-title"><%= category.nombre_categoria %></h5>
     <p class="card-text">
-    <%= category.nombre_categoria%>.
-    <%= link_to "Ver Categoria",  category %>
+      Productos: <%= category.products.count %> <br>
     </p>
+    <%= link_to "Ver Categoría", category, class: "btn btn-outline-primary" %>
   </div>
 </div>

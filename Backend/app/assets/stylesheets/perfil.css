@@ -1,37 +1,48 @@
-body {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  margin: 0;
-  padding: 0;
-  background: linear-gradient(135deg, #e0eafc, #cfdef3);
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #333;
-}
-
 .container_perfil {
+  margin: auto;
   background: rgba(255, 255, 255, 0.85);
   backdrop-filter: blur(10px);
+  display: flex;
+  flex-direction: row;
   border-radius: 16px;
   padding: 2.5rem;
   width: 90%;
-  max-width: 600px;
+  max-width: 800px;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease-in-out;
+  gap: 30px;
+}
+
+.container_perfil img {
+  display: flex;
+  flex-direction: row;
+  border-radius: 16px;
+  width: 300px;
   box-shadow: 0 12px 30px rgba(0, 0, 0, 0.1);
   transition: all 0.3s ease-in-out;
 }
+
 .titulo_wrapper {
   display: flex;
+  flex-direction: column;
   justify-content: center;
   margin-bottom: 2rem;
 }
+
 .titulo_perfil {
+  display: flex;
+  justify-self: center;
+  align-self: center;
   color: #2c3e50;
-  font-size: 3.0rem;
+  font-size: 2.0rem;
   font-weight: 700;
   padding: 0.5rem 2rem;
   text-align: center;
-  display: inline-block;
+}
+
+#informacion{
+  display: flex;
+  margin-top: 20px;
 }
 
 .campos {
@@ -71,9 +82,15 @@ body {
 }
 
 /* Responsive */
-@media (max-width: 600px) {
+@media (max-width: 770px) {
   .container_perfil {
     padding: 1.5rem;
+    flex-direction: column;
+  }
+
+  .container_perfil img {
+    justify-self: center;
+    align-self: center;
   }
 
   .titulo_perfil {

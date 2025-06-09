@@ -1,5 +1,7 @@
 class ProfilesController < ApplicationController
-    before_action :authenticate_user!
+  before_action :authenticate_user!
+  layout "inicio"
+  
   def show
     @user = current_user
   end

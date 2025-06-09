@@ -6,6 +6,14 @@
       font-family: 'Poppins', sans-serif;
     }
     
+
+    .edit_perfil{
+      max-width: 400px;
+      display: flex;
+      justify-self: center;
+      align-self: center;
+    }
+
     /* Estilos específicos para cada campo */
     #user_name.barra_nana,
     input#user_name.barra_nana {
@@ -120,7 +128,7 @@
       border-radius: 15px;
       box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
       padding: 60px;
-      items-aling: center;
+      align-items: center;
     }
     
     .titulo_edit {
@@ -189,12 +197,12 @@
     @media (min-width: 768px) {
       .edit_perfil {
         display: grid;
-        grid-template-columns: 1fr 1fr;
         gap: 20px;
       }
       
       .input-container:nth-last-child(3),
       .input-container:nth-last-child(2),
+      
       .input-container:nth-last-child(1) {
         grid-column: span 2;
       }

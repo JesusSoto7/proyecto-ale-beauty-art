@@ -1,27 +1,22 @@
-.category{
-    width: 300px;
-    height: 200px;
-    object-fit: cover;
-    margin-top: 30px;
-    margin-left: 30px;
+#banner-cate img {
+    width: 95%;
+    height: 300px;
     background-color: #eee;
-    border-radius: 8px;
+    margin: auto;
+    border-radius: 18px;
 }
 
-.category h3{
-    z-index: 5;
+#pro-categ{
+    width: 90%;
+    display: flex;
+    margin-left: 30px;
 }
 
-.category:hover{
-    background-color: #20202018;
-    
-}
-.category img:hover{
-    opacity: 0.5;
-    transition: 0.5s;
-    display: block;
+#tabla{
+    display: flex;
+    justify-content: center;
 }
 
-.category img{
-    z-index: 2;
+#categ img{
+    max-height: 160px;
 }
