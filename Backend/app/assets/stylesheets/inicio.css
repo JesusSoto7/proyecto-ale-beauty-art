@@ -1,4 +1,19 @@
 /* Reset y estilos base */
+#inicial{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 30px; 
+  height: 30px;
+  border-radius: 50%; 
+  background-color: #f7a4cc;
+  color: #ffff;
+  padding: 3px;
+  margin-bottom: 0;
+  font-size: 15px;
+}
+
+
 * {
   margin: 0;
   padding: 0;

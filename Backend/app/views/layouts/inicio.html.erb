@@ -42,7 +42,15 @@
       <!-- User Options con menú perfil corregido -->
 
   <div class="user-options">
-      <span id="profile-icon"><i class="fas fa-user-circle"></i></span>
+      <span id="profile-icon">
+        <% if user_signed_in? %>
+          <p id="inicial">
+            <%= current_user.nombre[0].upcase%><%= current_user.apellido[0].upcase%>
+          </p>
+        <% else %>
+          <i class="fas fa-user-circle"></i>
+        <% end %>
+      </span>
       <div id="menu-perfil">
         <ul id="ul-perfil">
         <%= link_to 'Mi Perfil', user_profile_path, class: "texto-perfil" %>

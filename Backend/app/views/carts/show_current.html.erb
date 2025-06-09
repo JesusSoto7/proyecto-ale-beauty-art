@@ -29,7 +29,7 @@
               </small>
             </div>
 
-            <div class="input-group" style="width: 100px;">
+            <div id="input1" class="input-group" style="width: 100px;">
               <%= button_to cart_add_path(product_id: item.product.id, cantidad: -1), method: :post, form: { data: { turbo_stream: true } }, class: "btn btn-outline-secondary btn-m" do %>
                 -
               <% end %>
@@ -39,15 +39,27 @@
               <% end %>
             </div>
 
-            <div class="ms-3 text-end" style="min-width: 80px;">
-              <strong><%= number_to_currency(item.product.precio_producto, unit: "$", separator: ",", delimiter: ".") %></strong>
+            <div id="pre-imp">
+              <div id="input2" class="input-group" style="width: 100px;">
+                <%= button_to cart_add_path(product_id: item.product.id, cantidad: -1), method: :post, form: { data: { turbo_stream: true } }, class: "btn btn-outline-secondary btn-m" do %>
+                  -
+                <% end %>
+                <input type="text" readonly class="form-control text-center" value="<%= item.cantidad %>" style="max-width: 40px; border-left: none; border-right: none">
+                <%= button_to cart_add_path(product_id: item.product.id, cantidad: 1), method: :post, form: { data: { turbo_stream: true } }, class: "btn btn-outline-secondary btn-m" do %>
+                  +
+                <% end %>
+              </div>
+              <div id="preci" class="ms-3 text-end" style="min-width: 80px;">
+                <strong><%= number_to_currency(item.product.precio_producto, unit: "$", separator: ",", delimiter: ".") %></strong>
+              </div>
             </div>
+            
           </div>
         </div>
       <% end %>
     </div>
 
-    <div class="card p-3" style="max-width: 400px; height: fit-content;">
+    <div id="resCar"class="card p-3">
       <h5 class="mb-3 border-bottom pb-2">Resumen de compra</h5>
       
       <div class="d-flex justify-content-between mb-2">
@@ -56,9 +68,7 @@
           <%= number_to_currency(@cart.cart_products.joins(:product).sum("products.precio_producto * cart_products.cantidad"), unit: "$", separator: ",", delimiter: "." ) %>
         </span>
       </div>
-
-      <a href="#" class="text-primary mb-3" style="font-size: 0.9rem;">Cupones</a>
-
+      <br>
       <div class="d-flex justify-content-between border-top pt-2 mb-3">
         <strong>Total</strong>
         <strong>

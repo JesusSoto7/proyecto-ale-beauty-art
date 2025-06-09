@@ -11,3 +11,58 @@
     display: flex;
     flex-direction: column;
 }
+#resCar{
+    max-width: 400px; 
+    height: fit-content;
+}
+
+#input2{
+    display: none;
+}
+
+@media
+    (min-width: 570px) and
+    (max-width: 811px) {
+
+        #carrito{
+            flex-direction: column;
+            padding:10px;
+        }
+
+        #resCar{
+            max-width: 100%;
+        }
+}
+
+@media
+    (min-width: 0px) and
+    (max-width: 569px) {
+
+        #carrito{
+            flex-direction: column;
+            padding:10px;
+        }
+
+        #resCar{
+            max-width: 100%;
+        }
+        .input-group{
+            display: flex;
+            align-self: end;
+        }
+
+        #input1{
+            display: none;
+        }
+
+        #input2{
+            display: block;
+            display: flex;
+            flex-direction: row;
+        }
+        #pre-imp{
+            display: flex;
+            flex-direction: column-reverse;
+            align-items: center;
+        }
+}
