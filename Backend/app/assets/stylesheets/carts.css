@@ -11,6 +11,10 @@
     display: flex;
     flex-direction: column;
 }
+
+#pro{
+    background-color: white;
+}
 #resCar{
     max-width: 400px; 
     height: fit-content;

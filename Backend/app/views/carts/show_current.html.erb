@@ -6,7 +6,7 @@
   <% else %>
     <div id="itemsCar">
       <% @cart.cart_products.each do |item| %>
-        <div class="border rounded p-3 mb-3" style="display: flex; flex-direction: column;">
+        <div id="pro" class="border rounded p-3 mb-3" style="display: flex; flex-direction: column;">
           <div class="d-flex align-items-center mt-2" style="gap: 20px;">
             <div>
               <% if item.product.imagen.attached? %>
