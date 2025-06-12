@@ -10,6 +10,7 @@
   <%= stylesheet_link_tag "carts", media: "all" %>
   <%= stylesheet_link_tag "perfil", media: "all" %>
   <%= stylesheet_link_tag "edit_perfil", media: "all" %>
+  <%= stylesheet_link_tag "about", media: "all" %>
   <%= javascript_include_tag "application", defer: true %>
 
   <meta charset="UTF-8">
@@ -30,7 +31,7 @@
       <nav id="main-nav">
         <%= link_to "INICIO", inicio_path %>
         <%= link_to "PRODUCTOS", productos_path %>
-        <a href="#">ACERCA DE</a>
+        <%= link_to "ACERCA DE", about_path %>
         <a href="#">CONTACTO</a>
       </nav>
 
