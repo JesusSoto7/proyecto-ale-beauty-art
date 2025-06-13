@@ -1,0 +1,19 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  pago_total: 9.99
+  fecha_pago: 2025-06-13 00:43:34
+  correo_cliente: MyString
+  estado: MyString
+  numero_de_orden: MyString
+  user: one
+  payment_method: one
+
+two:
+  pago_total: 9.99
+  fecha_pago: 2025-06-13 00:43:34
+  correo_cliente: MyString
+  estado: MyString
+  numero_de_orden: MyString
+  user: two
+  payment_method: two

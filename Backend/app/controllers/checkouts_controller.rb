@@ -1,5 +1,5 @@
 class CheckoutsController < ApplicationController
-  layout 'inicio'
+  layout 'checkout'
   def new
   end
 
