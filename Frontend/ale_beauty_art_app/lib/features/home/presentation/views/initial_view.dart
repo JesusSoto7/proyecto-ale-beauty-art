@@ -1,9 +1,11 @@
-import 'package:ale_beauty_art_app/styles/colors.dart'; 
+import 'package:ale_beauty_art_app/features/products/presentation/bloc/product_bloc.dart';
+import 'package:ale_beauty_art_app/features/products/presentation/views/products_page_view.dart';
+
+import 'package:ale_beauty_art_app/styles/colors.dart'; //Styless
 import 'package:ale_beauty_art_app/styles/text_styles.dart';//Styless
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:ale_beauty_art_app/features/home/presentation/bloc/home_bloc.dart';
 
 class InitialView extends StatelessWidget {
   const InitialView({super.key});
@@ -72,8 +74,14 @@ class InitialView extends StatelessWidget {
                   ),
                 ),
                 onPressed: () {
-                  context.read<HomeBloc>().add(HomeShowProductsPressed());
-                },
+                // carga productos
+                context.read<ProductBloc>().add(ProductFetched());
+                //vista de productos
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const ProductsPageView()),
+                );
+              },
                 child: const Text(
                   'Ver Productos',
                   style: TextStyle(color: AppColors.buttonText, fontSize: 16),
