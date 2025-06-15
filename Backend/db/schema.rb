@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_06_13_020000) do
+ActiveRecord::Schema[8.0].define(version: 2025_06_15_013012) do
   create_table "active_storage_attachments", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
@@ -66,7 +66,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_13_020000) do
     t.decimal "pago_total", precision: 10, scale: 2
     t.datetime "fecha_pago"
     t.string "correo_cliente"
-    t.string "estado", default: "pendiente"
+    t.integer "status", default: 0
     t.string "numero_de_orden"
     t.bigint "user_id"
     t.bigint "payment_method_id"
@@ -110,13 +110,13 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_13_020000) do
   create_table "shipping_addresses", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "nombre", null: false
     t.string "apellido", null: false
-    t.string "telefono", null: false
+    t.string "telefono", limit: 10, null: false
     t.string "direccion", null: false
     t.string "municipio", null: false
     t.string "barrio", null: false
     t.string "apartamento"
     t.string "codigo_postal"
-    t.string "indicaciones_adicionales"
+    t.text "indicaciones_adicionales"
     t.boolean "predeterminada", default: false
     t.bigint "order_id", null: false
     t.bigint "user_id"

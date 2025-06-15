@@ -4,7 +4,7 @@ class CreateOrders < ActiveRecord::Migration[8.0]
       t.decimal :pago_total, precision: 10, scale: 2
       t.datetime :fecha_pago
       t.string :correo_cliente
-      t.string :estado, default: "pendiente"
+      t.integer :status, default: 0
       t.string :numero_de_orden
       t.references :user, null: true, foreign_key: true
       t.references :payment_method, null: true, foreign_key: true
