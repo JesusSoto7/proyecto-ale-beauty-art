@@ -1,0 +1,142 @@
+<h2>Formulario de Pago</h2>
+
+<%= form_with url: procesar_pago_orders_path, method: :post, id: "payment-form", local: true do |form| %>
+ <div>
+    <label>Nombre del titular</label>
+    <input type="text" name="cardholderName" id="form-cardholderName" required>
+  </div>
+
+  <div>
+    <label>Número de tarjeta</label>
+    <input type="text" id="cardNumber" data-checkout="cardNumber" required>
+  </div>
+
+  <div>
+    <label>Mes de vencimiento</label>
+    <input type="text" id="cardExpirationMonth" data-checkout="cardExpirationMonth" required>
+    <label>Año de vencimiento</label>
+    <input type="text" id="cardExpirationYear" data-checkout="cardExpirationYear" required>
+  </div>
+
+  <div>
+    <label>Código de seguridad</label>
+    <input type="text" id="securityCode" data-checkout="securityCode" required>
+  </div>
+
+  <div>
+    <label>Tipo de documento</label>
+    <select id="docType" data-checkout="docType" required></select>
+
+    <label>Número de documento</label>
+    <input type="text" id="docNumber" data-checkout="docNumber" required>
+  </div>
+
+  <div>
+    <label>Email del comprador</label>
+    <input type="email" name="cardholderEmail" id="cardholderEmail" required>
+  </div>
+
+  <div>
+    <label>Banco emisor</label>
+    <select id="issuer" name="issuer_id" required></select>
+  </div>
+
+  <div>
+    <label>Cuotas</label>
+    <select id="installments" name="installments" required></select>
+  </div>
+
+  <input type="hidden" name="token" id="token">
+  <input type="hidden" name="paymentMethodId" id="paymentMethodId">
+
+  <button type="submit" id="submit-button">Pagar</button>
+<%end%>
+
+<script>
+  const mp = new MercadoPago('<%= ENV["MERCADOPAGO_PUBLIC_KEY"] %>');
+
+  const cardNumberElement = mp.fields.create('cardNumber', {
+    placeholder: 'Numero de la tarjeta',
+  }).mount('cardNumber');
+
+  const expirationDateElement = mp.fields.create('expirationDate', {
+    placeholder: 'MM/YY',
+  }).mount('cardExpirationMonth');
+
+  const securityCodeElement = mp.fields.create('securityCode', {
+    placeholder: 'CVV',
+  }).mount('securityCode');
+  
+  mp.getIdentificationTypes().then(types => {
+    const docType = document.getElementById('docType');
+    types.forEach(type => {
+      const option = document.createElement('option');
+      option.value = type.id;
+      option.textContent = type.name;
+      docType.appendChild(option);
+    });
+  });
+
+
+
+  document.getElementById('cardNumber').addEventListener('input', guessPaymenMethod);
+
+  function guessPaymenMethod() {
+    const cardNumber = document.getElementById('cardNumber').value;
+    if(cardNumber.length >= 6){
+      const bin = cardNumber.substring(0, 6);
+      mp.getPaymentMethod({ bin })
+        .then(response => {
+          const method = response.results[0];
+          document.getElementById('paymentMethodId').value = method.id;
+          getIssuers(method.id);
+          getInstallments(method.id, bin);
+        });
+    }
+  }
+
+  function getIssuers(paymentMethodId){
+    mp.getIssuers({ paymentMethodId }).then(response => {
+      const issuerSelect = document.getElementById('issuer');
+      issuerSelect.options.length = 0;
+      response.forEach(issuer => {
+        const option = document.createElement('option');
+        option.value = issuer.id;
+        option.textContent = issuer.name;
+        issuerSelect.appendChild(option);
+      });
+    });
+  }
+
+  function getInstallments(paymentMethodId, bin){
+   mp.getInstallments({ amount: 1000, bin, paymentTypeId: 'credit_card' })
+      .then(response => {
+        const installmentSelect = document.getElementById('installments');
+        installmentSelect.innerHTML = "";
+      response[0].payer_costs.forEach(installment => {
+        const option = document.createElement('option');
+        option.value = installment.installments;
+        option.textContent = installment.recommended_message;
+        installmentSelect.appendChild(option);
+      });
+
+      });
+  }
+
+  document.getElementById('payment-form').addEventListener('submit', function (e) {
+    e.preventDefault();
+
+    mp.createCardToken({
+      cardholderName: document.getElementById('form-cardholderName').value,
+      identificationType: document.getElementById('docType').value,
+      identificationNumber: document.getElementById('docNumber').value,
+    }).then(response => {
+      document.getElementById('token').value = response.id;
+      e.target.submit();
+    }).catch(error => {
+      alert("Error al generar el token: " + error.message);
+    });
+  });
+
+</script>
+<script src="https://sdk.mercadopago.com/js/v2"></script>

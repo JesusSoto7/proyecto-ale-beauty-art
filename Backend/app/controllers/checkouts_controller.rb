@@ -21,7 +21,7 @@ class CheckoutsController < ApplicationController
     @shipping_address.order = current_order
 
     if @shipping_address.save
-      redirect_to new_checkouts_path, notice: "Dirección creada con éxito"
+      redirect_to checkout_api_orders_path
     else
       render :new, status: :unprocessable_entity
     end
