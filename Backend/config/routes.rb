@@ -26,9 +26,9 @@ Rails.application.routes.draw do
   post "/cart/add", to: "carts#add", as: 'add_to_cart'
   get "/cart/count", to: "carts#count", as: 'count_cart'
   post 'cart/add', to: 'cart#add', as: 'cart_add'
+
+  get '/checkout/:id', to: 'checkouts#show', as: :checkout
   resource :checkouts, only: [:new] do
-    get :crear_pago
-    post :start_checkout
     post :create_address, on: :collection
   end
 
@@ -43,14 +43,8 @@ Rails.application.routes.draw do
 
   get 'about', to: 'pages_about#about', as: :about
 
-  resources :orders do
-    collection do
-      get 'checkout_api'
-      post 'procesar_pago'
-      get 'success'
-      get 'failure'
-    end
-  end
+  resources :orders, only: [:create]
+  resources :payments, only: [:create, :new]
 
     # Render dynamic PWA files from app/views/pwa/* (remember to link manifest in application.html.erb)
   # get "manifest" => "rails/pwa#manifest", as: :pwa_manifest

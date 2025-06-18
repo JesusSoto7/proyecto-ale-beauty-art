@@ -1,16 +1,6 @@
 class CheckoutsController < ApplicationController
   layout 'checkout'
 
-  def start_checkout
-    order = Order.create(
-      user: current_user,
-      status: :pendiente
-    )
-
-    session[:order_id] = order.id
-    redirect_to new_checkouts_path
-  end
-
   def new
      @shipping_address = ShippingAddress.new
   end
@@ -21,10 +11,15 @@ class CheckoutsController < ApplicationController
     @shipping_address.order = current_order
 
     if @shipping_address.save
-      redirect_to checkout_api_orders_path
+      redirect_to checkout_path(current_order.id)
     else
       render :new, status: :unprocessable_entity
     end
+  end
+
+  def show
+    @order = Order.find(params[:id])
+    @shipping_address = @order.shipping_address || current_user&.shipping_addresses&.last
   end
 
   private
