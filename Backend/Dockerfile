@@ -29,4 +29,4 @@ COPY . .
 
 EXPOSE 4000
 
-ENTRYPOINT ["bash", "-c", "rm -f tmp/pids/server.pid && bundle exec rails server -b 0.0.0.0 -p 4000"]
+ENTRYPOINT ["bash", "-c", "rm -f tmp/pids/server.pid && bundle exec rails server -b 'ssl://0.0.0.0:4000?key=config/ssl/server.key&cert=config/ssl/server.crt'"]

@@ -12,7 +12,7 @@
         const renderCardPaymentBrick = async (bricksBuilder) => {
           const settings = {
             initialization: {
-              amount: 100, // monto a ser pago
+              amount: 10000, // monto a ser pago
               payer: {
                 email: "",
               },
@@ -41,21 +41,27 @@
                     method: "POST",
                     headers: {
                       "Content-Type": "application/json",
+                      "X-CSRF-Token": document.querySelector("meta[name='csrf-token']").content
                     },
                     body: JSON.stringify(cardFormData)
                   })
                     .then((response) => {
-                      // recibir el resultado del pago
+                      const order_id = localStorage.getItem("current_order_id");
                       resolve();
+                      window.location.href = "/pago_realizado/" + order_id;
+
                     })
                     .catch((error) => {
                       // tratar respuesta de error al intentar crear el pago
+                      console.error("Error al procesar el pago:", error);
+                      alert("Hubo un error al procesar el pago");
                       reject();
                     })
                 });
               },
               onError: (error) => {
                 // callback llamado para todos los casos de error de Brick
+                console.error("Error en el formulario:", error)
               },
             },
           };
@@ -63,15 +69,9 @@
         };
         renderCardPaymentBrick(bricksBuilder);
       </script>
+      <script>
+        localStorage.setItem("current_order_id", "<%= session[:order_id] %>");
+      </script>
+  
     </body>
 </html>
-    
-
-
-
-
-
-
-
-
-

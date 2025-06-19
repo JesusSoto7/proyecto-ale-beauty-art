@@ -1,5 +1,6 @@
 class CheckoutsController < ApplicationController
   layout 'checkout'
+  skip_before_action :authenticate_user!, only: [:success]
 
   def new
      @shipping_address = ShippingAddress.new
@@ -20,6 +21,28 @@ class CheckoutsController < ApplicationController
   def show
     @order = Order.find(params[:id])
     @shipping_address = @order.shipping_address || current_user&.shipping_addresses&.last
+    if @order.nil?
+      redirect_to root_path, alert: "Orden no encontrada."
+      return
+    end
+  end
+
+  def success
+    @order = Order.find(params[:id])
+
+    if @order.nil?
+      redirect_to inicio_path, alert: "Orden no encontrada."
+      return
+    end
+
+    @shipping_address = @order.shipping_address || current_user&.shipping_addresses&.last
+
+    if current_user&.cart.present?
+      current_user.cart.cart_products.destroy_all
+      puts "Carrito borrado tras pago exitoso"
+    end
+
+    render :success
   end
 
   private

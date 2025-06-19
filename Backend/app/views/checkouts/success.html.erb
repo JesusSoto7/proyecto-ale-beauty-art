@@ -1,0 +1,25 @@
+<h2>¡Gracias por tu compra!</h2>
+<p>Número de orden: <%= @order.numero_de_orden %></p>
+<p>Total pagado: $<%= number_to_currency(@order.pago_total, unit: "", separator: ",", delimiter: ".") %></p>
+
+<h3>Detalle de productos:</h3>
+<table>
+  <thead>
+    <tr>
+      <th>Producto</th>
+      <th>Cantidad</th>
+      <th>Precio unitario</th>
+      <th>Subtotal</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @order.order_details.each do |detalle| %>
+      <tr>
+        <td><%= detalle.product.nombre_producto %></td>
+        <td><%= detalle.cantidad %></td>
+        <td>$<%= detalle.precio_unitario %></td>
+        <td>$<%= detalle.precio_unitario * detalle.cantidad %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
