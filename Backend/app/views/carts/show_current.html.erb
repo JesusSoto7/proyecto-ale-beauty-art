@@ -79,7 +79,7 @@
         </strong>
       </div>
 
-      <button class="btn btn-primary w-100">Continuar compra</button>
+      <%= button_to 'Continuar compra', orders_path, method: :post,  class: 'btn btn-primary w-100'%>
     </div>
   <% end %>
 </section>

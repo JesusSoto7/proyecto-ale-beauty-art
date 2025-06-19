@@ -1,30 +1,30 @@
 <section class="form-section">
     <%= form_with(model: @category, local: true, html: { multipart: true, class: "needs-validation", novalidate: true }) do |form| %>
 
-    <% if @category.errors.any? %>
-        <div class="alert alert-danger">
-        <h4><%= pluralize(@category.errors.count, "error") %> la categoría no pudo ser creada:</h4>
-        <ul>
-            <% @category.errors.each do |error| %>
-            <li><%= error.full_message %></li>
-            <% end %>
-        </ul>
+        <% if @category.errors.any? %>
+            <div class="alert alert-danger">
+            <h4><%= pluralize(@category.errors.count, "error") %> la categoría no pudo ser creada:</h4>
+            <ul>
+                <% @category.errors.each do |error| %>
+                <li><%= error.full_message %></li>
+                <% end %>
+            </ul>
+            </div>
+        <% end %>
+
+        <div class="mb-3">
+            <%= form.label :nombre_categoria, class: "form-label" %>
+            <%= form.text_field :nombre_categoria, class: "form-control" %>
         </div>
-    <% end %>
 
-    <div class="mb-3">
-        <%= form.label :nombre_categoria, class: "form-label" %>
-        <%= form.text_field :nombre_categoria, class: "form-control" %>
-    </div>
+        <div class="mb-3">
+            <%= form.label :imagen, class: "form-label" %>
+            <%= form.file_field :imagen, class: "form-control" %>
+        </div>
 
-    <div class="mb-3">
-        <%= form.label :imagen, class: "form-label" %>
-        <%= form.file_field :imagen, class: "form-control" %>
-    </div>
-
-    <div class="mt-4">
-        <%= form.submit "Guardar Categoría", class: "btn btn-primary" %>
-    </div>
+        <div class="mt-4">
+            <%= form.submit "Guardar Categoría", class: "btn btn-primary" %>
+        </div>
 
     <% end %>
 

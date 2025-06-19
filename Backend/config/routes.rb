@@ -27,6 +27,11 @@ Rails.application.routes.draw do
   get "/cart/count", to: "carts#count", as: 'count_cart'
   post 'cart/add', to: 'cart#add', as: 'cart_add'
 
+  get '/checkout/:id', to: 'checkouts#show', as: :checkout
+  resource :checkouts, only: [:new] do
+    post :create_address, on: :collection
+  end
+
 
   resources :products
   resources :categories
@@ -37,8 +42,13 @@ Rails.application.routes.draw do
   resource :profile, only: [:show, :edit, :update], controller: 'profiles'
 
   get 'about', to: 'pages_about#about', as: :about
-  
-  # Render dynamic PWA files from app/views/pwa/* (remember to link manifest in application.html.erb)
+
+  resources :orders, only: [:create]
+  resources :payments, only: [:create, :new]
+  get '/pago_realizado/:id', to: 'checkouts#success', as: :pago_realizado
+
+
+    # Render dynamic PWA files from app/views/pwa/* (remember to link manifest in application.html.erb)
   # get "manifest" => "rails/pwa#manifest", as: :pwa_manifest
   # get "service-worker" => "rails/pwa#service_worker", as: :pwa_service_worker
 

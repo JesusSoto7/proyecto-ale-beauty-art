@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_06_07_182312) do
+ActiveRecord::Schema[8.0].define(version: 2025_06_19_034932) do
   create_table "active_storage_attachments", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
@@ -62,6 +62,41 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_07_182312) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "order_details", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.bigint "order_id", null: false
+    t.bigint "product_id", null: false
+    t.integer "cantidad", null: false
+    t.decimal "precio_unitario", precision: 10, scale: 2, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["order_id"], name: "index_order_details_on_order_id"
+    t.index ["product_id"], name: "index_order_details_on_product_id"
+  end
+
+  create_table "orders", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.decimal "pago_total", precision: 10, scale: 2, null: false
+    t.datetime "fecha_pago"
+    t.string "correo_cliente", null: false
+    t.integer "status", default: 0
+    t.string "numero_de_orden", null: false
+    t.decimal "costo_de_envio", precision: 10, scale: 2
+    t.bigint "user_id"
+    t.bigint "payment_method_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["numero_de_orden"], name: "index_orders_on_numero_de_orden", unique: true
+    t.index ["payment_method_id"], name: "index_orders_on_payment_method_id"
+    t.index ["user_id"], name: "index_orders_on_user_id"
+  end
+
+  create_table "payment_methods", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.string "nombre_metodo"
+    t.boolean "activo", default: true
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["nombre_metodo"], name: "index_payment_methods_on_nombre_metodo", unique: true
+  end
+
   create_table "products", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "nombre_producto"
     t.decimal "precio_producto", precision: 10
@@ -82,6 +117,25 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_07_182312) do
     t.index ["name", "resource_type", "resource_id"], name: "index_roles_on_name_and_resource_type_and_resource_id"
     t.index ["name"], name: "index_roles_on_name"
     t.index ["resource_type", "resource_id"], name: "index_roles_on_resource"
+  end
+
+  create_table "shipping_addresses", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.string "nombre", null: false
+    t.string "apellido", null: false
+    t.string "telefono", limit: 10, null: false
+    t.string "direccion", null: false
+    t.string "municipio", null: false
+    t.string "barrio", null: false
+    t.string "apartamento"
+    t.string "codigo_postal"
+    t.text "indicaciones_adicionales"
+    t.boolean "predeterminada", default: false
+    t.bigint "order_id", null: false
+    t.bigint "user_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["order_id"], name: "index_shipping_addresses_on_order_id"
+    t.index ["user_id"], name: "index_shipping_addresses_on_user_id"
   end
 
   create_table "users", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
@@ -113,5 +167,11 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_07_182312) do
   add_foreign_key "cart_products", "carts"
   add_foreign_key "cart_products", "products"
   add_foreign_key "carts", "users"
+  add_foreign_key "order_details", "orders"
+  add_foreign_key "order_details", "products"
+  add_foreign_key "orders", "payment_methods"
+  add_foreign_key "orders", "users"
   add_foreign_key "products", "categories"
+  add_foreign_key "shipping_addresses", "orders"
+  add_foreign_key "shipping_addresses", "users"
 end

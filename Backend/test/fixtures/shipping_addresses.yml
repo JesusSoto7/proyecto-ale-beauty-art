@@ -1,0 +1,29 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  nombre: MyString
+  apellido: MyString
+  telefono: MyString
+  direccion: MyString
+  municipio: MyString
+  barrio: MyString
+  apartamento: MyString
+  codigo_postal: MyString
+  indicaciones_adicionales: MyString
+  predeterminada: false
+  order: one
+  user: one
+
+two:
+  nombre: MyString
+  apellido: MyString
+  telefono: MyString
+  direccion: MyString
+  municipio: MyString
+  barrio: MyString
+  apartamento: MyString
+  codigo_postal: MyString
+  indicaciones_adicionales: MyString
+  predeterminada: false
+  order: two
+  user: two

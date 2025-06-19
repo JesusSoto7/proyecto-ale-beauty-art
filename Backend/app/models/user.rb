@@ -1,6 +1,9 @@
 class User < ApplicationRecord
   has_many_attached :carousel_images
   has_one :cart, dependent: :destroy
+  has_many :shipping_addresses
+  has_many :orders
+
 
   rolify
   # Include default devise modules. Others available are:

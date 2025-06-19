@@ -4,6 +4,7 @@ class ApplicationController < ActionController::Base
   before_action :authenticate_user!
   before_action :configure_permitted_parameters, if: :devise_controller?
   helper_method :current_cart
+  helper_method :current_order
 
   protected
 
@@ -39,5 +40,23 @@ class ApplicationController < ActionController::Base
     cart = Cart.create
     session[:cart_id] = cart.id
     cart
+  end
+
+  def current_order
+    @current_order ||= find_or_create_order
+  end
+
+  def find_or_create_order
+    if session[:order_id]
+      Order.find_by(id: session[:order_id]) || create_guest_order
+    else
+      create_guest_order
+    end
+  end
+
+  def create_guest_order
+    order = Order.create(user: current_user.presence, status: :pendiente)
+    session[:order_id] = order.id
+    order
   end
 end
