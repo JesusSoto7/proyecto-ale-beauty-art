@@ -12,86 +12,89 @@ class InitialView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.background,
-      appBar: AppBar(
-        backgroundColor: AppColors.primaryPink,
-        automaticallyImplyLeading: false,
-        elevation: 0,
-        title: Row(
-          children: [
-            // Logo redondeado
-            ClipRRect(
-              borderRadius: BorderRadius.circular(20),
-              child: Image.asset(
-                'assets/images/ale_logo.jpg',
-                height: 40,
-                width: 40, // para que quede cuadrado
-                fit: BoxFit.cover, // para que se ajuste bien
-              ),
-            ),
-
-            const SizedBox(width: 12), // espacio entre logo y barra
-
-            // Barra de búsqueda
-            Expanded(
-              child: Container(
-                height: 36,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(18),
-                ),
-                child: TextField(
-                  //enabled: false, // deshabilitada la escritura
-                  decoration: InputDecoration(
-                    hintText: 'Buscar...',
-                    prefixIcon: Icon(Icons.search, color: AppColors.primaryPink),
-                    border: InputBorder.none,
-                    contentPadding: const EdgeInsets.symmetric(vertical: 8),
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-      body: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(24.0),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
+    return WillPopScope(
+      onWillPop: () async {
+        // Si estás en esta vista, retornar false evita cerrar la app accidentalmente
+        final canPop = Navigator.of(context).canPop();
+        return !canPop; // solo permite salir si no hay nada más en la pila
+      },
+      child: Scaffold(
+        backgroundColor: AppColors.background,
+        appBar: AppBar(
+          backgroundColor: AppColors.primaryPink,
+          automaticallyImplyLeading: false,
+          elevation: 0,
+          title: Row(
             children: [
-              Text('¡Bienvenid@ a Ale Beauty Art!',
-              style: AppTextStyles.title.copyWith(fontSize: 24),
-              textAlign: TextAlign.center),
-              const SizedBox(height: 30), // espacio antes del botón
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.accentPink,
-                  padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 12),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20),
-                  ),
+              ClipRRect(
+                borderRadius: BorderRadius.circular(20),
+                child: Image.asset(
+                  'assets/images/ale_logo.jpg',
+                  height: 40,
+                  width: 40,
+                  fit: BoxFit.cover,
                 ),
-                onPressed: () {
-                // carga productos
-                context.read<ProductBloc>().add(ProductFetched());
-                //vista de productos
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (_) => const ProductsPageView()),
-                );
-              },
-                child: const Text(
-                  'Ver Productos',
-                  style: TextStyle(color: AppColors.buttonText, fontSize: 16),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Container(
+                  height: 36,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(18),
+                  ),
+                  child: TextField(
+                    decoration: InputDecoration(
+                      hintText: 'Buscar...',
+                      prefixIcon: Icon(Icons.search, color: AppColors.primaryPink),
+                      border: InputBorder.none,
+                      contentPadding: const EdgeInsets.symmetric(vertical: 8),
+                    ),
+                  ),
                 ),
               ),
             ],
+          ),
+        ),
+        body: Center(
+          child: Padding(
+            padding: const EdgeInsets.all(24.0),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  '¡Bienvenid@ a Ale Beauty Art!',
+                  style: AppTextStyles.title.copyWith(fontSize: 24),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 30),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.accentPink,
+                    padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 12),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                  ),
+                  onPressed: () {
+                    context.read<ProductBloc>().add(ProductFetched());
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => const ProductsPageView()),
+                    );
+                  },
+                  child: const Text(
+                    'Ver Productos',
+                    style: TextStyle(color: AppColors.buttonText, fontSize: 16),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
     );
   }
 }
+
 
