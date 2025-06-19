@@ -14,7 +14,7 @@ class ProductsPageView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
-      appBar: AppBar(
+      // appBar: AppBar(
         // automaticallyImplyLeading: false,
         // leading: GestureDetector(
         //   onTap: () {
@@ -28,14 +28,14 @@ class ProductsPageView extends StatelessWidget {
         //     ),
         //   ),
         // ),
-        title: const Text(
-        'Productos',
-        style: AppTextStyles.appBarTitle,
-        ),
-        centerTitle: true, 
-        backgroundColor: AppColors.primaryPink,
-        elevation: 4,
-      ),
+      //   title: const Text(
+      //   'Productos',
+      //   style: AppTextStyles.appBarTitle,
+      //   ),
+      //   centerTitle: true, 
+      //   backgroundColor: AppColors.primaryPink,
+      //   elevation: 4,
+      // ),
 
         body: BlocBuilder<ProductBloc, ProductState>(
         builder: (context, state) {
