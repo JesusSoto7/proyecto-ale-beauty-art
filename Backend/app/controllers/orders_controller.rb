@@ -1,8 +1,11 @@
 class OrdersController < ApplicationController
 
   def create
+    correo_cliente = current_user.present? ? current_user.email : params[:email]
+
     order = Order.create(
       user: current_user,
+      correo_cliente: correo_cliente,
       status: :pendiente,
       pago_total: calcular_monto_actual.to_f
     )

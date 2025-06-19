@@ -13,4 +13,8 @@ class Order < ApplicationRecord
     end
   end
 
+  def total_con_envio
+    pago_total.to_f + shipping_cost.to_f
+  end
+
 end

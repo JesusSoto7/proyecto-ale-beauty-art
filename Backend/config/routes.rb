@@ -47,8 +47,6 @@ Rails.application.routes.draw do
   resources :payments, only: [:create, :new]
   get '/pago_realizado/:id', to: 'checkouts#success', as: :pago_realizado
 
-  post "/webhooks/mercadopago", to: "webhooks#mercadopago"
-
 
     # Render dynamic PWA files from app/views/pwa/* (remember to link manifest in application.html.erb)
   # get "manifest" => "rails/pwa#manifest", as: :pwa_manifest
