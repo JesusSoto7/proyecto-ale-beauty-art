@@ -37,6 +37,13 @@ dependencies:
   http: ^1.4.0
   equatable: ^2.0.7
   flutter_bloc: ^9.1.1
+  flutter_native_splash: ^2.4.0
+
+flutter_native_splash:
+  color: "#ffffff"
+  image: assets/images/ale_logo.png
+  android_gravity: center
+  fullscreen: true
 
 dev_dependencies:
   flutter_test:
