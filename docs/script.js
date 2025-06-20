@@ -30,7 +30,7 @@ function cargarContenido(num) {
 // document.getElementById('btn-recargar').addEventListener('click', cargarContenido);
 
 document.addEventListener('DOMContentLoaded', () => {
-    cargarContenido('diagramas'); //aqui puedes agregar la pagina que estas trabajando :D
+    cargarContenido('estructura'); //aqui puedes agregar la pagina que estas trabajando :D
 });
 
 function changeColor(selectedButton) {
