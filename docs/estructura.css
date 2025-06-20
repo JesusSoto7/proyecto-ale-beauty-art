@@ -23,3 +23,14 @@ h4{
     height: 478px;
     overflow-y: scroll
 }
+
+ul{
+    position: fixed;
+    top: 60px;
+    right: 4%;
+    
+}
+
+a{
+    margin-left: 0;
+}
