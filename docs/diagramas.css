@@ -16,4 +16,10 @@ p{
 .Dimg{
     width: 80%;
     margin-left: 100px;
+    cursor: pointer;
+}
+
+
+a{
+    margin-left: 100px;
 }

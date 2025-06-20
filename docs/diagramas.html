@@ -1,7 +1,7 @@
 <link rel="stylesheet" href="diagramas.css">
 
 <h1>Diagramas</h1>
-<p>Estos son los diagramas que se an utilizado para elaborar nuestros aplicativo web</p>
+<p>Estos son los diagramas que se han utilizado para elaborar nuestros aplicativo web</p>
 
 <h4>Diagrama de clases</h4>
 <img class="Dimg imagen" src="img_Docs/clases.png" alt="Diagrama de clases">
@@ -13,3 +13,30 @@
     <span id="cerrar">&times;</span>
     <img id="popup-img" src="" style="width: 80%;">
 </div>
+
+<h1>Descargar Diagramas</h1>
+<a href="../Diagramas/diagramas.pdf" download>Descargar</a>
+
+<script>
+    const imagenes = document.querySelectorAll('.imagen');
+    const popup = document.getElementById('popup');
+    const popupImg = document.getElementById('popup-img');
+    const cerrar = document.getElementById('cerrar');
+
+    imagenes.forEach(img => {
+      img.addEventListener('click', () => {
+        popupImg.src = img.src;
+        popup.style.display = 'flex';
+      });
+    });
+
+    cerrar.addEventListener('click', () => {
+      popup.style.display = 'none';
+    });
+
+    popup.addEventListener('click', (e) => {
+      if (e.target === popup) {
+        popup.style.display = 'none';
+      }
+    });
+  </script>

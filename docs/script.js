@@ -47,30 +47,4 @@ document.querySelectorAll('.toggle-btn').forEach(button => {
       content.classList.toggle('open');
     });
 
-  });
-
-
-
-
-
-const imagenes = document.querySelectorAll('.imagen');
-const popup = document.getElementById('popup');
-const popupImg = document.getElementById('popup-img');
-const cerrar = document.getElementById('cerrar');
-
-imagenes.forEach(img => {
-    img.addEventListener('click', () => {
-    popupImg.src = img.src;
-    popup.style.display = 'flex';
-    });
-});
-
-cerrar.addEventListener('click', () => {
-    popup.style.display = 'none';
-});
-
-popup.addEventListener('click', (e) => {
-    if (e.target === popup) {
-    popup.style.display = 'none';
-    }
 });
