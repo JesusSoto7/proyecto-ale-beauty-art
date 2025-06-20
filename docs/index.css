@@ -1,3 +1,61 @@
+<<<<<<< Updated upstream
+.sect{
+    width: 90%;
+}
+
+=======
+/* cargando */
+
+#cargar{
+    display: flex;
+    justify-content: center;
+}
+
+svg {
+ width: 3.25em;
+ transform-origin: center;
+ animation: rotate4 2s linear infinite;
+ display: flex;
+ align-self: center;
+ justify-self: center;
+}
+
+circle {
+ fill: none;
+ stroke: hsl(214, 97%, 59%);
+ stroke-width: 2;
+ stroke-dasharray: 1, 200;
+ stroke-dashoffset: 0;
+ stroke-linecap: round;
+ animation: dash4 1.5s ease-in-out infinite;
+}
+
+@keyframes rotate4 {
+ 100% {
+  transform: rotate(360deg);
+ }
+}
+
+@keyframes dash4 {
+ 0% {
+  stroke-dasharray: 1, 200;
+  stroke-dashoffset: 0;
+ }
+
+ 50% {
+  stroke-dasharray: 90, 200;
+  stroke-dashoffset: -35px;
+ }
+
+ 100% {
+  stroke-dashoffset: -125px;
+ }
+}
+
+
+/* fin cargando */
+
+>>>>>>> Stashed changes
 
 #copy{
     margin: 20px;
@@ -39,6 +97,10 @@ aside{
 }
 
 /* ---------inicio carpetas---------- */
+
+.sect{
+    width: 90%;
+}
 
 .content button {
     width: 100%;
@@ -85,7 +147,7 @@ a{
 
 
 .btn-recargar {
-    width: 100%;
+    width: 90%;
     background: none;
     border: none;
     text-align: left;
@@ -142,7 +204,11 @@ a{
 aside label{
     margin-top: 66px;
     margin-left: -165px;
-    font-size: 17px;
+<<<<<<< Updated upstream
+    font-size: 16px;
+=======
+    font-size: 15px;
+>>>>>>> Stashed changes
     color: #778088;
     margin-bottom: 8px;
 }
