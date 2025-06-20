@@ -8,4 +8,18 @@ pre{
     background-color: #eee;
     margin-left: 130px;
     width: 800px;
+    border-radius: 5px;
+}
+
+p{
+    margin-left: 130px;
+}
+
+h4{
+    margin-left: 130px;
+}
+
+.txs{
+    height: 478px;
+    overflow-y: scroll
 }
