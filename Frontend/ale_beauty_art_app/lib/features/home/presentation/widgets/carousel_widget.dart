@@ -28,7 +28,7 @@ class ProductCarousel extends StatelessWidget {
                 url,
                 fit: BoxFit.cover,
                 width: double.infinity,
-                errorBuilder: (_, __, ___) => Container(
+                errorBuilder: (_, __, ___,) => Container(
                   color: Colors.grey[300],
                   child: const Center(child: Icon(Icons.broken_image)),
                 ),

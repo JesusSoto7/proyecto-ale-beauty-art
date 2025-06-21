@@ -25,7 +25,7 @@ class InitialView extends StatelessWidget {
       },
       child: Scaffold(
         backgroundColor: AppColors.background,
-
+        
         // AppBar con logo y barra de búsqueda
         appBar: AppBar(
           backgroundColor: AppColors.primaryPink,
@@ -35,11 +35,10 @@ class InitialView extends StatelessWidget {
             children: [
               // Logo redondeado a la izquierda
               ClipRRect(
-                borderRadius: BorderRadius.circular(20),
                 child: Image.asset(
-                  'assets/images/ale_logo.jpg',
-                  height: 40,
-                  width: 40,
+                  'assets/images/ale_logo.png',
+                  height: 55,
+                  width: 55,
                   fit: BoxFit.cover,
                 ),
               ),
@@ -102,11 +101,30 @@ class InitialView extends StatelessWidget {
                   context.read<ProductBloc>().add(ProductFetched());
                 }
               },
+              
+              type: BottomNavigationBarType.fixed,
+              backgroundColor: Colors.white,
               selectedItemColor: AppColors.primaryPink,
+              unselectedItemColor: Colors.grey[400],
+              selectedFontSize: 12,
+              unselectedFontSize: 12,
+              elevation: 0,
               items: const [
-                BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Inicio'),
-                BottomNavigationBarItem(icon: Icon(Icons.list), label: 'Productos'),
-                BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Perfil'),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.home_rounded),
+                  activeIcon: Icon(Icons.home),
+                  label: 'Inicio',
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.grid_view_rounded),
+                  activeIcon: Icon(Icons.grid_view),
+                  label: 'Productos',
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.person_outline_rounded),
+                  activeIcon: Icon(Icons.person),
+                  label: 'Perfil',
+                ),
               ],
             );
           },
@@ -116,28 +134,56 @@ class InitialView extends StatelessWidget {
   }
 
   // Contenido para la pestaña de Inicio
-  Widget _homeContent(BuildContext context) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(24.0),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              '¡Bienvenid@ a Ale Beauty Art!',
-              style: AppTextStyles.title.copyWith(fontSize: 24),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 30),
-            ProductCarousel(
-              imageUrls: [
-                'https://link-de-tu-imagen-1.jpg',
-                'https://link-de-tu-imagen-2.jpg',
-                'https://link-de-tu-imagen-3.jpg',
-              ],
-            ),
+Widget _homeContent(BuildContext context) {
+  return SingleChildScrollView(
+    padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 20),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Bienvenida fija
+        Center(
+          child: Text(
+            '¡Bienvenid@ a Ale Beauty Art!',
+            style: AppTextStyles.title.copyWith(fontSize: 24),
+            textAlign: TextAlign.center,
+          ),
+        ),
 
-            // ElevatedButton(
+        const SizedBox(height: 60), // espacio después de bienvenida
+
+        // Carrusel de productos
+        ProductCarousel(
+          imageUrls: [
+            'https://www.shutterstock.com/image-vector/makeup-products-realistic-vector-illustration-260nw-2220636093.jpg',
+            'https://www.shutterstock.com/image-photo/makeup-professional-cosmetics-on-pink-600nw-1398700589.jpg',
+            'https://st2.depositphotos.com/1026029/9075/i/450/depositphotos_90754482-stock-photo-cosmetics-set-for-make-up.jpg',
+            'https://st1.uvnimg.com/dims4/default/5d6bda0/2147483647/thumbnail/1024x576/quality/75/?url=https%3A%2F%2Fuvn-brightspot.s3.amazonaws.com%2Fassets%2Fvixes%2Fp%2Fproductos-de-maquillaje-look.jpg',
+          ],
+        ),
+
+        const SizedBox(height: 80), // espacio entre carrusel y sección destacada
+
+        // Título sección productos destacados
+        Text(
+          'Productos Destacados',
+          style: AppTextStyles.title.copyWith(fontSize: 20),
+        ),
+
+        const SizedBox(height: 20), // Espacio para donde irán los productos luego
+
+        // Aquí irán los productos destacados (por ahora en blanco)
+        Container(
+          height: 150, // puedes ajustarlo o eliminarlo luego
+          color: Colors.transparent,
+        ),
+      ],
+    ),
+  );
+}
+
+}
+
+     // ElevatedButton(
             //   style: ElevatedButton.styleFrom(
             //     backgroundColor: AppColors.accentPink,
             //     padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 12),
@@ -155,13 +201,6 @@ class InitialView extends StatelessWidget {
             //     style: TextStyle(color: AppColors.buttonText, fontSize: 16),
             //   ),
             // ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
 
 
 
