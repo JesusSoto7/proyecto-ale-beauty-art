@@ -2,40 +2,18 @@
 
 <h1>Diagramas</h1>
 <p>Estos son los diagramas que se han utilizado para elaborar nuestros aplicativo web</p>
-<a href="https://raw.githubusercontent.com/JesusSoto7/proyecto-ale-beauty-art/main/Diagramas/diagramas.pdf
+<a id="desc" href="https://raw.githubusercontent.com/JesusSoto7/proyecto-ale-beauty-art/main/Diagramas/diagramas.pdf
 ">Descargar PDF</a>
 
-<h4>Diagrama de clases</h4>
-<img class="Dimg imagen" src="img_Docs/clases.png" alt="Diagrama de clases">
+<h4>Diagrama de clases <a href="/docs/img_Docs/clases.png" target="_blank">ver</a></h4>
+<img class="Dimg" src="img_Docs/clases.png" alt="Diagrama de clases">
 
-<h4>Diagrama de entidad relacion</h4>
-<img class="Dimg imagen" src="img_Docs/entidad relacion.png" alt="Diagrama de clases">
+<h4>Diagrama de entidad relacion<a href="/docs/img_Docs/entidad relacion.png" target="_blank">Ver</a></h4>
+<img class="Dimg" src="img_Docs/entidad relacion.png" alt="Diagrama de clases">
 
-<div class="popup" id="popup">
-    <span id="cerrar">&times;</span>
-    <img id="popup-img" src="" style="width: 80%;">
-</div>
 
-<script>
-    const imagenes = document.querySelectorAll('.imagen');
-    const popup = document.getElementById('popup');
-    const popupImg = document.getElementById('popup-img');
-    const cerrar = document.getElementById('cerrar');
+<h4>Diagrama caso de uso agregar producto y categoria</h4>
+<img class="Dimg" src="img_Docs/admin_agregar.png" alt="caso de uso agregar producto y categoria">
 
-    imagenes.forEach(img => {
-      img.addEventListener('click', () => {
-        popupImg.src = img.src;
-        popup.style.display = 'flex';
-      });
-    });
-
-    cerrar.addEventListener('click', () => {
-      popup.style.display = 'none';
-    });
-
-    popup.addEventListener('click', (e) => {
-      if (e.target === popup) {
-        popup.style.display = 'none';
-      }
-    });
-  </script>
+<h4>Diagrama caso de uso comprar producto</h4>
+<img class="Dimg" src="img_Docs/cliente_compra.png" alt="caso de uso comprar producto">
