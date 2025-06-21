@@ -1,0 +1,67 @@
+main{
+    display: flex;
+    flex-direction: row;
+}
+
+.content-wrap{
+  margin-top: 20px;
+  margin: auto;
+}
+
+.stp1{
+
+    max-width: 40%;
+}
+
+
+/* movile */
+@media
+    (min-width: 0px) and
+    (max-width: 480px) {
+    
+        .stp1{
+            max-width: 100%;
+        }
+
+}
+
+/* tablet */
+@media
+    (min-width: 481px) and
+    (max-width: 768px) {
+
+        .stp1{
+            max-width: 80%;
+        }
+
+        main{
+            flex-direction: column;
+        }
+
+}
+
+/* laptop */
+@media
+    (min-width: 769px) and
+    (max-width: 1024px) {
+
+        .stp1{
+            max-width: 80%;
+        }
+        
+        main{
+            flex-direction: column;
+        }
+
+}
+
+/* Desktop */
+@media
+    (min-width: 1025px) and
+    (max-width: 1600px) {
+
+        .stp1{
+            max-width: 50%;
+        }
+
+}
