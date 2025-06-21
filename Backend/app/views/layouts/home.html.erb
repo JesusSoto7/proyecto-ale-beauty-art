@@ -25,13 +25,17 @@
                 <label class="">Ale beauty art</label>
             </div>
             <div class="p-2" id="lnks">
-                <button class="btn-recargar active menu-btn" class="btn-recargar" onclick="changeColor(this)">
-                    <span class="left">
-                        <i class="fa-solid fa-house"></i>
-                        <span class="label"><%= link_to "Home", home_path %></span>
-                        
-                    </span>
-                </button>
+
+                <%= link_to home_path do%>
+                    <button class="btn-recargar active menu-btn" class="btn-recargar" onclick="changeColor(this)">
+                        <span class="left">
+                            <i class="fa-solid fa-house"></i>
+                            <span class="label">Home</span>
+                            
+                        </span>
+                    </button>
+                <% end %>
+                
                 <div class="sect">
                     <button class="toggle-btn menu-btn">
                         <span class="left">
@@ -41,13 +45,17 @@
                         <i class="fa-solid fa-chevron-down fa-xs chevron-icon"></i>
                     </button>
                     <div class="content">
-                        <button class="btn-recargar" onclick="changeColor(this)">
-                        <%= link_to "| Ver Productos", products_path %>
-                        </button>
+                        <%= link_to products_path do%>
+                            <button class="btn-recargar" onclick="changeColor(this)">
+                                | Ver Productos
+                            </button>
+                        <% end %>
                         
-                        <button class="btn-recargar" onclick="changeColor(this)">
-                        <%= link_to "| Agregar Producto", new_product_path %>
-                        </button>
+                        <%= link_to new_product_path do%>
+                            <button class="btn-recargar" onclick="changeColor(this)">
+                                | Agregar Producto
+                            </button>
+                        <% end %>
                     </div>
                 </div>
                 <div class="section">
@@ -59,12 +67,17 @@
                         <i class="fa-solid fa-chevron-down fa-xs chevron-icon"></i>
                     </button>
                     <div class="content">
-                        <button class="btn-recargar" onclick="changeColor(this)">
-                        <%= link_to "| Ver Categorias", categories_path %>
-                        </button>
-                        <button class="btn-recargar" onclick="changeColor(this)">
-                        <%= link_to "| Agregar Categoria", new_category_path%>
-                        </button>
+                        <%= link_to categories_path do%>
+                            <button class="btn-recargar" onclick="changeColor(this)">
+                                | Ver Categorias
+                            </button>
+                        <% end %>
+
+                        <%= link_to new_category_path do%>
+                            <button class="btn-recargar" onclick="changeColor(this)">
+                                | Agregar Categoria
+                            </button>
+                        <% end %>
                     </div>
                 </div>
                 <div class="section">
@@ -76,9 +89,13 @@
                         <i class="fa-solid fa-chevron-down fa-xs chevron-icon"></i>
                     </button>
                     <div class="content">
-                        <button class="btn-recargar" onclick="changeColor(this)">
-                        <%= link_to "| Carousel", edit_carousel_path %>
-                        </button>
+
+                        <%= link_to edit_carousel_path do%>
+                            <button class="btn-recargar" onclick="changeColor(this)">
+                                | Carousel
+                            </button>
+                        <% end %>
+
                     </div>
                 </div>
             </div>
