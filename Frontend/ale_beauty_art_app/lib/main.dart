@@ -1,4 +1,5 @@
 import 'package:ale_beauty_art_app/features/navigation/bloc/navigation_bloc.dart';
+import 'package:ale_beauty_art_app/features/profile/presentation/bloc/profile_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ale_beauty_art_app/features/home/presentation/bloc/home_bloc.dart';
@@ -19,7 +20,8 @@ class MyApp extends StatelessWidget {
       providers: [
         BlocProvider(create: (_) => HomeBloc()),
         BlocProvider(create: (_) => ProductBloc()),
-        BlocProvider(create: (_) => NavigationBloc())
+        BlocProvider(create: (_) => NavigationBloc()),
+        BlocProvider(create: (_) => ProfileBloc()),
       ],
       child: const MaterialApp(
         debugShowCheckedModeBanner: false,
