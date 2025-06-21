@@ -1,24 +1,151 @@
 .banner1{
- background-image: url("banner1.jpg.jpg");
+ background-image: url("banner1.png");
   background-size: cover;
   background-position: center;
   height: 100vh;
   display: flex;
-  justify-content: center;
-  align-items: center;
   position: relative;
 }
-.slogan {
-  color: rgb(0, 0, 0);
-  text-align: center;
-  font-family:monospace;
+.btn1{
+  float:left;
+  background-color: #ff6565; 
+  color: rgb(255, 255, 255);
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  font-size: 20px;
+  cursor: pointer;
+  padding: 10px 20px;
+  width: 200px;
+  height: 70px; 
+  margin-left: 40px;
+  margin-top: 395px;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: bold;
+   
 }
 
-.slogan h1 {
- background-color: darksalmon; 
-  color: white; 
-  padding: 15px 30px; 
-  display: inline-block; 
-  margin: 15px 0;
-  display: inline-block;
+.banner2{
+  background-image: url("banner2.png");
+  background-size: cover;
+  background-position: center;
+  height: 100vh;
+  width: 120vh;
+  justify-content: flex-end;
+  display: flex;
+  padding: 30px;
+  position: relative;
+  margin-left: 25px;
 }
+
+.texto {
+  padding: 40px;
+  text-align: left;
+  flex: 1;
+  margin-left: 50px;
+  font-family: 'Montserrat', sans-serif;
+}
+
+.texto h1 {
+  font-size: 2.2rem;
+  margin-bottom: 20px;
+  color: #c2185b;
+}
+
+.texto p {
+  font-size: 1.1rem;
+  line-height: 1.6;
+  color: #333;
+}
+.seccion-banner {
+  display: flex;
+  align-items: center;
+  height: 100vh;
+  width: 100%;
+}
+
+.btn2{
+  float: right;
+  margin-top: 5px;
+  margin-right: 400px;
+  border: 1px solid black;
+  padding: 10px 20px;
+  width: 200px;
+  height: 50px;
+}
+
+.banner3{
+  background-image: url("banner3.png");
+  background-size: cover;
+  background-position: center;
+  height: 100vh;
+  display: flex;
+  position: relative;
+  margin-top: 30px;
+}
+
+.banner4{
+  background-image: url("banner4.png");
+  background-size: cover;
+  background-position: center;
+  height: 100vh;
+  width: 120vh;
+  justify-content: flex-end;
+  display: flex;
+  padding: 30px;
+  position: relative;
+  margin-right: 25px;
+  margin-top: 40px;
+  margin-left: 25px;
+}
+.seccion-banner2 {
+  display: flex;
+  align-items: center;
+  height: 100vh;
+  width: 100%;
+}
+
+.texto2 {
+  padding: 40px;
+  text-align: left;
+  flex: 1;
+  margin-left: 50px;
+  font-family: 'Montserrat', sans-serif;
+}
+
+.texto2 h1 {
+  font-size: 2.2rem;
+  margin-bottom: 20px;
+  color: #c2185b;
+}
+
+.texto2 p {
+  font-size: 1.1rem;
+  line-height: 1.6;
+  color: #333;
+}
+
+.texto3 {
+  padding: 40px;
+  text-align: center;
+  flex: 1;
+  margin-left: 50px;
+  font-family: 'Montserrat', sans-serif;
+  margin-top: 50px;
+  
+}
+
+.btn3{
+  float: right;
+  margin-top: 5px;
+  margin-right: 400px;
+  border: 1px solid black;
+  padding: 10px 20px;
+  width: 200px;
+  height: 50px;
+}
+
+
+
+
+
