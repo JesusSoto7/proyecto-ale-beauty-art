@@ -1,74 +1,77 @@
-<section class="form-section">
-	<%= form_with(url: create_address_checkouts_path, model: @shipping_address, local: true) do |form| %>
+<section class="stp1  container py-5">
+  <h6 class="text-primary mb-1 fw-semibold">Step 01</h6>
+  <h2 class="mb-4 fw-bold">Shipping</h2>
 
-		<% if @shipping_address.errors.any? %>
-        <div class="alert alert-danger">
-          <h4><%= pluralize(@shipping_address.errors.count, "error") %> La dirrecion no pudo ser agregada</h4>
-          <ul>
-              <% @shipping_address.errors.each do |error| %>
-              <li><%= error.full_message %></li>
-              <% end %>
-          </ul>
-        </div>
+  <%= form_with(url: create_address_checkouts_path, model: @shipping_address, local: true, class: "needs-validation") do |form| %>
+    
+    <% if @shipping_address.errors.any? %>
+      <div class="alert alert-danger">
+        <h4><%= pluralize(@shipping_address.errors.count, "error") %> La dirección no pudo ser agregada</h4>
+        <ul>
+          <% @shipping_address.errors.each do |error| %>
+            <li><%= error.full_message %></li>
+          <% end %>
+        </ul>
+      </div>
     <% end %>
 
+    <div class="row g-3">
+      <div class="col-md-6">
+        <%= form.label :nombre, "Nombre", class: "form-label" %>
+        <%= form.text_field :nombre, class: "form-control rounded-pill", placeholder: "John" %>
+      </div>
+      <div class="col-md-6">
+        <%= form.label :apellido, "Apellido", class: "form-label" %>
+        <%= form.text_field :apellido, class: "form-control rounded-pill", placeholder: "Terner" %>
+      </div>
 
-     <div class="mb-3">
-            <%= form.label :nombre, class: "form-label" %>
-            <%= form.text_field :nombre, class: "form-control" %>
+      <div class="col-md-6">
+        <%= form.label :telefono, "Telefono", class: "form-label" %>
+        <%= form.text_field :telefono, class: "form-control rounded-pill", placeholder: "123-456-7890" %>
+      </div>
+
+      <% unless user_signed_in? %>
+        <div class="col-md-6">
+          <label for="email" class="form-label">Correo electrónico</label>
+          <input type="email" name="email" id="email" class="form-control rounded-pill" required>
         </div>
+      <% end %>
 
-        <div class="mb-3">
-            <%= form.label :apellido, class: "form-label" %>
-            <%= form.text_field :apellido, class: "form-control" %>
-        </div>
+      <div class="col-12">
+        <%= form.label :direccion, "Dirección", class: "form-label" %>
+        <%= form.text_field :direccion, class: "form-control rounded-pill", placeholder: "380-394 11th Ave, NY 10001" %>
+        <a href="#" class="small text-primary mt-1 d-block">Add another line</a>
+      </div>
 
-        <div class="mb-3">
-            <%= form.label :telefono, class: "form-label" %>
-            <%= form.text_field :telefono, class: "form-control" %>
-        </div>
+      <div class="col-md-6">
+        <%= form.label :municipio, "Municipio", class: "form-label" %>
+        <%= form.text_field :municipio, class: "form-control rounded-pill" %>
+      </div>
 
-        <% unless user_signed_in? %>
-                <div class="form-group">
-                    <label for="email">Correo electrónico</label>
-                    <input type="email" name="email" id="email" class="form-control" required>
-                </div>
-        <% end %>
+      <div class="col-md-6">
+        <%= form.label :barrio, "Barrio", class: "form-label" %>
+        <%= form.text_field :barrio, class: "form-control rounded-pill" %>
+      </div>
 
+      <div class="col-md-6">
+        <%= form.label :apartamento, "Apartamento (optional)", class: "form-label" %>
+        <%= form.text_field :apartamento, class: "form-control rounded-pill" %>
+      </div>
 
-        <div class="mb-3">
-            <%= form.label :direccion, class: "form-label" %>
-            <%= form.text_field :direccion, class: "form-control" %>
-        </div>
+      <div class="col-md-6">
+        <%= form.label :codigo_postal, "Codigo Postal (optional)", class: "form-label" %>
+        <%= form.number_field :codigo_postal, class: "form-control rounded-pill" %>
+      </div>
 
-        <div class="mb-3">
-            <%= form.label :municipio, class: "form-label" %>
-            <%= form.text_field :municipio, class: "form-control" %>
-        </div>
+      <div class="col-12">
+        <%= form.label :inidicacion_adicionales, "informacion adicional (optional)", class: "form-label" %>
+        <%= form.text_field :inidicacion_adicionales, class: "form-control rounded-pill" %>
+      </div>
 
-        <div class="mb-3">
-            <%= form.label :barrio, class: "form-label" %>
-            <%= form.text_field :barrio, class: "form-control" %>
-        </div>
+      <div class="col-12 mt-4">
+        <%= form.submit "Continuar Compra", class: "btn btn-primary w-100 rounded-pill" %>
+      </div>
+    </div>
 
-        <div class="mb-3">
-            <%= form.label :apartamento, "Apartamento (opcional)", class: "form-label" %>
-            <%= form.text_field :apartamento, class: "form-control" %>
-        </div>
-        <div class="mb-3">
-            <%= form.label :codigo_postal, "Codigo postal (opcional)", class: "form-label" %>
-            <%= form.number_field :codigo_postal, class: "form-control" %>
-        </div>
-        <div class="mb-3">
-            <%= form.label :inidicacion_adicionales, "Indicaciones adicionales (opcional)", class: "form-label" %>
-            <%= form.text_field :inidicacion_adicionales, class: "form-control" %>
-        </div>
-
-
-
-        <div class="mt-4">
-            <%= form.submit "Continuar Compra", class: "btn btn-primary" %>
-        </div>
-
-	<% end %>
+  <% end %>
 </section>
