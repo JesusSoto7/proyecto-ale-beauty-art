@@ -1,12 +1,16 @@
+
 import 'package:ale_beauty_art_app/features/navigation/bloc/navigation_bloc.dart';
 import 'package:ale_beauty_art_app/features/products/presentation/bloc/product_bloc.dart';
 import 'package:ale_beauty_art_app/features/products/presentation/views/products_page_view.dart';
+import 'package:ale_beauty_art_app/features/profile/presentation/views/profile_view.dart';
 
 import 'package:ale_beauty_art_app/styles/colors.dart'; // Estilos
 import 'package:ale_beauty_art_app/styles/text_styles.dart'; // Tipografías
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
+import '../widgets/carousel_widget.dart';
 
 class InitialView extends StatelessWidget {
   const InitialView({super.key});
@@ -73,7 +77,7 @@ class InitialView extends StatelessWidget {
                 case 1:
                   return const ProductsPageView(); // Vista de productos
                 case 2:
-                  return const Center(child: Text('Perfil (próximamente)')); // Vista perfil
+                  return const ProfileView(); // Vista perfil
                 default:
                   return _homeContent(context); // Fallback
               }
@@ -125,6 +129,14 @@ class InitialView extends StatelessWidget {
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 30),
+            ProductCarousel(
+              imageUrls: [
+                'https://link-de-tu-imagen-1.jpg',
+                'https://link-de-tu-imagen-2.jpg',
+                'https://link-de-tu-imagen-3.jpg',
+              ],
+            ),
+
             // ElevatedButton(
             //   style: ElevatedButton.styleFrom(
             //     backgroundColor: AppColors.accentPink,

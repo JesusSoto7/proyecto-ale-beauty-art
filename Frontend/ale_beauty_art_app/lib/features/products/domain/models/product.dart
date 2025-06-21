@@ -24,7 +24,7 @@ class Product extends Equatable {
       description: json['description'],
       price: (json['price'] as num).toDouble(),
       stock: json['stock'],
-      imageUrl: json['image_url'],  // Extraer desde el JSON
+      imageUrl: json['imageUrl'],  // Extraer desde el JSON
     );
   }
 
@@ -34,7 +34,7 @@ class Product extends Equatable {
         'description': description,
         'price': price,
         'stock': stock,
-        'image_url': imageUrl,
+        'imageUrl': imageUrl,
       };
 
   @override
