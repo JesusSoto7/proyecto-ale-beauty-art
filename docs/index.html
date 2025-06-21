@@ -3,22 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Docs: inicio</title>
+    <title>Docs - inicio</title>
     <link rel="stylesheet" href="index.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <script src="https://kit.fontawesome.com/ca178badbf.js" crossorigin="anonymous"></script>
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Rubik:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet">
 </head>
 <body class="rubik-park-fuente">
     <main>
         <aside>
-            <!-- From Uiverse.io by Cevorob -->  
-            <!-- <label class="burger" for="burger">
-                <input type="checkbox" id="burger">
-                <span></span>
-                <span></span>
-                <span></span>
-            </label> -->
             <div id="logo">
                 <img src="/Backend/app/assets/images/ale_logo.jpg" alt="" width="40" style="border-radius: 50px;">
                 <h4>Ale beauty art</h4>
@@ -27,16 +21,16 @@
             <button class="btn-recargar active" class="btn-recargar" onclick="cargarContenido('inicio'), changeColor(this)">Introducción</button>
             <button class="btn-recargar" onclick="cargarContenido('estructura'), changeColor(this)">Estructura</button>
             <div class="sect">
-                <button class="toggle-btn">📁 Introducción</button>
+                <button class="toggle-btn"><i class="fa-solid fa-folder"></i> Introducción</button>
                 <div class="content">
-                    <button class="btn-recargar" onclick="cargarContenido('pag3'), changeColor(this)">| Recargar sección 3</button>
+                    <button class="btn-recargar" onclick="cargarContenido('diagramas'), changeColor(this)">| Diagramas</button>
                     <button class="btn-recargar" onclick="cargarContenido('pag3'), changeColor(this)">| Recargar sección 3</button>
                     <button class="btn-recargar" onclick="cargarContenido('pag3'), changeColor(this)">| Recargar sección 3</button>
                 </div>
             </div>
             <button class="btn-recargar" onclick="cargarContenido('pag3'), changeColor(this)">Recargar sección 3</button>
-            <div class="section">
-                <button class="toggle-btn">📁 dir2</button>
+            <div class="sect">
+                <button class="toggle-btn"><i class="fa-solid fa-folder"></i> Ruby on Rails</button>
                 <div class="content">
                     <button class="btn-recargar" onclick="cargarContenido('pag3'), changeColor(this)">| Recargar sección 3</button>
                     <button class="btn-recargar" onclick="cargarContenido('pag3'), changeColor(this)">| Recargar sección 3</button>
@@ -47,12 +41,14 @@
         </aside>
         <div id="contenido">
             <nav>
-                <button id="tema">
+                <!-- <button id="tema">
                     🌙
-                </button>
+                </button> -->
             </nav>
             <section id="contenido-dinamico">
-                <h1>Cargar Contenido...</h1>
+                <svg viewBox="25 25 50 50">
+                    <circle r="20" cy="50" cx="50"></circle>
+                </svg>
             </section>
         </div>
     </main>

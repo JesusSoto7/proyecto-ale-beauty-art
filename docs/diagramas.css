@@ -1,0 +1,31 @@
+h1{
+    margin-left: 100px;
+    margin-top: 50px;
+}
+
+h4{
+    margin-left: 100px;
+    margin-top: 30px;
+}
+
+p{
+    margin-top: 5px;
+    margin-left: 100px;
+}
+
+.Dimg{
+    width: 80%;
+    margin-left: 100px;
+    cursor: pointer;
+    border-bottom: 1px solid #ccc;
+}
+
+a{
+    margin-left: 10px;
+}
+
+#desc{
+    margin-left: 100px;
+    margin-bottom: 10px;
+}
+

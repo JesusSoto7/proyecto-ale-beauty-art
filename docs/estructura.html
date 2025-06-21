@@ -1,8 +1,108 @@
 <head><link rel="stylesheet" href="estructura.css"></head>
 
-<p id="ti">Esta es <strong>pagina 2</strong></p>
+<p id="ti"><strong>Estructuras del Proyecto</strong></p>
+<p>Aqui encontrarás la estructura base de nuestro proyecto como las estructruras generales de cada proceso.</p>
 
+<ul>
+    <h3>navegar</h3>
+    <li><a href="#backend">Backend</a></li>
+</ul>
 
 <pre>
-    hola mundo
+    
+    ├── 📁Backend                              <em># aqui se encuentra el servidor y las funciones principales</em>
+    |
+    ├── 📁Frontend                             <em># aqui se encuentra principalmente la aplicación movil</em>
+    │   └── 📁ale_beauty_art_app/              <em># aplicación movil</em>
+    |
+    ├── 📁Diagramas                            <em># Diagramas entidad relación y clases</em>
+    |
+    ├── 📁Mockup                               <em># diseño de interfaz grafica antes de implementarse</em>
+    |
+    ├── 📁docs                                 <em># informacion detallada de los procesos, 
+    |                                            elementos, clases, etc... del aplicativo</em>
+    |
+    └── 📄README.md                            <em># Este archivo README normalmente documenta todos los pasos 
+                                                necesarios para poner la aplicación en funcionamiento.</em>
+
+</pre>
+
+<h4 id="backend">Backend</h4>
+
+<pre class="txs">
+    |── 📁.github
+    │   ├── 📁workflows
+    │   └── 📄dependabot.yml
+    |
+    |── 📁.kamal
+    │   ├── 📁hooks
+    │   └── 📄secrets
+    |
+    |── 📁app
+    |   ├── 📁assets
+    │   ├── 📁controllers
+    |   ├── 📁helpers
+    |   ├── 📁javascript
+    |   ├── 📁jobs
+    |   ├── 📁mailers
+    │   ├── 📁models
+    │   └── 📁views
+    |
+    ├── 📁config
+    │   ├── 📄routes.rb
+    │   └── 📄database.yml
+    |
+    ├── 📁db
+    │   ├── 📁migrate
+    │   └── 📄schema.rb
+    |
+    ├── 📁lib
+    │   └── 📁tasks
+    │       └── 📄.keep
+    |
+    ├── 📁log
+    │   ├── 📄.keep
+    │   └── 📄development.log
+    |
+    ├── 📁public
+    │   ├── <> 400.html
+    │   ├── <> 404.html
+    │   ├── <> 406-unsupported-browser.html
+    │   ├── <> 422.html
+    │   ├── <> 500.html
+    │   ├── 📄icon.png
+    │   ├── 📄icon.svg
+    │   └── 📄robots.txt
+    |
+    ├── 📁script
+    │   └── 📄.keep
+    |
+    ├── 📁storage
+    |
+    ├── 📁test
+    │   ├── 📁controllers
+    │   ├── 📁fixtures
+    |   ├── 📁helpers
+    |   ├── 📁integration
+    |   ├── 📁mailers
+    │   ├── 📁models
+    │   ├── 📁system
+    │   ├── 📄aplication_system_test_case.rb
+    │   └── 📄test_helper.rb
+    |
+    ├── 📁tmp
+    |
+    ├── 📁test
+    │   ├── 📁javascript
+    │   └── 📄.keep
+    |
+    ├── 📄.rubocop.yml
+    ├── 📄.ruby-version
+    ├── 📄config.ru
+    ├── 📄docker-compose.yml
+    ├── 📄Dockerfile
+    ├── 📄Gemfile
+    ├── 📄Gemfile.lock 
+    └── 📄Rakefile
+
 </pre>

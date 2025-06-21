@@ -19,7 +19,7 @@ function cargarContenido(num) {
     .then(res => res.text())
     .then(html => {
         document.getElementById('contenido-dinamico').innerHTML = html;
-        document.querySelector('title').innerHTML = `Docs: ${num}`;
+        document.querySelector('title').innerHTML = `Docs - ${num}`;
     })
     .catch(err => {
         console.error("Error al cargar el fragmento:", err);
@@ -28,8 +28,9 @@ function cargarContenido(num) {
 
 
 // document.getElementById('btn-recargar').addEventListener('click', cargarContenido);
+
 document.addEventListener('DOMContentLoaded', () => {
-    cargarContenido('inicio');
+    cargarContenido('inicio'); //aqui puedes agregar la pagina en la que estas trabajando :D
 });
 
 function changeColor(selectedButton) {
@@ -46,4 +47,4 @@ document.querySelectorAll('.toggle-btn').forEach(button => {
       content.classList.toggle('open');
     });
 
-  });
+});
