@@ -18,57 +18,57 @@
     <div class="row g-3">
       <div class="col-md-6">
         <%= form.label :nombre, "Nombre", class: "form-label" %>
-        <%= form.text_field :nombre, class: "form-control rounded-pill", placeholder: "John" %>
+        <%= form.text_field :nombre, class: "form-control", placeholder: "John" %>
       </div>
       <div class="col-md-6">
         <%= form.label :apellido, "Apellido", class: "form-label" %>
-        <%= form.text_field :apellido, class: "form-control rounded-pill", placeholder: "Terner" %>
+        <%= form.text_field :apellido, class: "form-control", placeholder: "Terner" %>
       </div>
 
       <div class="col-md-6">
         <%= form.label :telefono, "Telefono", class: "form-label" %>
-        <%= form.text_field :telefono, class: "form-control rounded-pill", placeholder: "123-456-7890" %>
+        <%= form.text_field :telefono, class: "form-control", placeholder: "123-456-7890" %>
       </div>
 
       <% unless user_signed_in? %>
         <div class="col-md-6">
           <label for="email" class="form-label">Correo electrónico</label>
-          <input type="email" name="email" id="email" class="form-control rounded-pill" required>
+          <input type="email" name="email" id="email" class="form-control" required>
         </div>
       <% end %>
 
       <div class="col-12">
         <%= form.label :direccion, "Dirección", class: "form-label" %>
-        <%= form.text_field :direccion, class: "form-control rounded-pill", placeholder: "380-394 11th Ave, NY 10001" %>
+        <%= form.text_field :direccion, class: "form-control", placeholder: "380-394 11th Ave, NY 10001" %>
       </div>
 
       <div class="col-md-6">
         <%= form.label :municipio, "Municipio", class: "form-label" %>
-        <%= form.text_field :municipio, class: "form-control rounded-pill" %>
+        <%= form.text_field :municipio, class: "form-control" %>
       </div>
 
       <div class="col-md-6">
         <%= form.label :barrio, "Barrio", class: "form-label" %>
-        <%= form.text_field :barrio, class: "form-control rounded-pill" %>
+        <%= form.text_field :barrio, class: "form-control" %>
       </div>
 
       <div class="col-md-6">
         <%= form.label :apartamento, "Apartamento (optional)", class: "form-label" %>
-        <%= form.text_field :apartamento, class: "form-control rounded-pill" %>
+        <%= form.text_field :apartamento, class: "form-control" %>
       </div>
 
       <div class="col-md-6">
         <%= form.label :codigo_postal, "Codigo Postal (optional)", class: "form-label" %>
-        <%= form.number_field :codigo_postal, class: "form-control rounded-pill" %>
+        <%= form.number_field :codigo_postal, class: "form-control" %>
       </div>
 
       <div class="col-12">
         <%= form.label :inidicacion_adicionales, "informacion adicional (optional)", class: "form-label" %>
-        <%= form.text_field :inidicacion_adicionales, class: "form-control rounded-pill" %>
+        <%= form.text_field :inidicacion_adicionales, class: "form-control" %>
       </div>
 
       <div class="col-12 mt-4">
-        <%= form.submit "Continuar Compra", class: "btn btn-primary w-100 rounded-pill" %>
+        <%= form.submit "Continuar Compra", class: "btn btn-primary w-100" %>
       </div>
     </div>
 
