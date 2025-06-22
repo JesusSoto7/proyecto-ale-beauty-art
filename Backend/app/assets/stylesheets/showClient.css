@@ -40,6 +40,8 @@
 
 #des-prod{
     width: 50vh;
+    height: 340px;
+    overflow-y: auto;
 }
 
 #infoshow .card-text{
