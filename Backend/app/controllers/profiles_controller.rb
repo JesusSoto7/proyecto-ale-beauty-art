@@ -24,7 +24,7 @@ end
 private
 
 def user_params
-  params.require(:user).permit(:nombre, :apellido, :telefono, :direccion, :email)
+  params.require(:user).permit(:nombre, :apellido, :telefono, :email)
 end
   
 end
