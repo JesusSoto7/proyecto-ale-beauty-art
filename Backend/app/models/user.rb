@@ -14,13 +14,12 @@ class User < ApplicationRecord
   validates :nombre, presence: true
   validates :apellido, presence: true
   validates :telefono, length: { minimum: 6 }, allow_blank: true
-validates :direccion, length: { maximum: 100 }, allow_blank: true
   after_create :assign_default_role
 
   def assign_default_role
     self.add_role(:cliente) if self.roles.blank?
   end
   def self.accessible_attributes
-    [:nombre, :apellido, :telefono, :direccion, :email]
+    [:nombre, :apellido, :telefono, :email]
   end
 end
