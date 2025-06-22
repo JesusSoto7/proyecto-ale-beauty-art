@@ -30,7 +30,7 @@ nav{
     color: #f7a4cc;
 }
 
-#refesh{
+#refresh{
     display: flex;
     width: 100%;
     height: calc(100% - 63px);
@@ -405,9 +405,6 @@ link{
           /* z-index: 3; */
         }
 
-        /* #refesh{
-
-        } */
         #order{
             margin-left: 10px;
         }

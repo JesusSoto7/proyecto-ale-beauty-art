@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_06_19_034932) do
+ActiveRecord::Schema[8.0].define(version: 2025_06_22_033655) do
   create_table "active_storage_attachments", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
@@ -100,7 +100,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_19_034932) do
   create_table "products", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "nombre_producto"
     t.decimal "precio_producto", precision: 10
-    t.string "descripcion", limit: 400
+    t.text "descripcion"
     t.bigint "category_id", null: false
     t.integer "stock"
     t.datetime "created_at", null: false
@@ -149,7 +149,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_19_034932) do
     t.string "nombre", limit: 25
     t.string "apellido", limit: 25
     t.string "telefono", limit: 10
-    t.string "direccion", limit: 50
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
