@@ -26,7 +26,7 @@
     display: flex;
     flex-direction: column;
     padding: 50px;
-    gap: 80px;
+    gap: 40px;
 }
 
 #infoshow{
@@ -40,7 +40,7 @@
 
 #des-prod{
     width: 50vh;
-    height: 340px;
+    max-height: 340px;
     overflow-y: auto;
 }
 
@@ -106,7 +106,8 @@
         }
 
         #datashow{
-            flex-direction: row;
+            flex-direction: column-reverse;
+            gap: 18px;
         }
 
         #btnshow{
@@ -148,6 +149,7 @@
             width: 100%;
             gap: 8px;
             align-items: center;
+            /* margin-top: 50px; */
         }
         #fotoshow img{
             width: 100%;
@@ -160,6 +162,7 @@
         #datashow{
             flex-direction: column-reverse;
             width: 100%;
+            gap: 20px;
         }
 
         #btnshow{
@@ -179,5 +182,6 @@
 
         #des-prod{
             width: auto;
+            overflow-y: visible;
         }
 }
