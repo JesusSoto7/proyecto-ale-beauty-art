@@ -1,12 +1,4 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-  <%= stylesheet_link_tag "productos" %>
-  <%= stylesheet_link_tag "showClient.css" %>
-</head>
 
-    <!-- Contenido principal -->
-    <main class="content-wrap">
         <div id="shw">
             <div id="fotoshow">
                 <% if @product.imagen.attached? %>
@@ -42,21 +34,3 @@
 
         </div>
       
-    </main>
-  <!-- Scripts -->
-
-  <script>
-    document.addEventListener("DOMContentLoaded", function() {
-
-      // Dropdown menu para móviles
-      function toggleDropdown() {
-        const menu = document.getElementById('dropdown-menu');
-        if (menu.style.display === 'flex') {
-          menu.style.display = 'none';
-        } else {
-          menu.style.display = 'flex';
-        }
-      }
-    });
-    
-  </script>

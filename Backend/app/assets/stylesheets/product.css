@@ -109,6 +109,11 @@ a{
     gap: 10px;
 }
 
+#des-prod{
+    height: 340px;
+    overflow-y: auto;
+}
+
 @media
     (min-width: 889px) and
     (max-width: 1178px) {
