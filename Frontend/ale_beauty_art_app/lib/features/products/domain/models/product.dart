@@ -1,43 +1,61 @@
+
 import 'package:equatable/equatable.dart';
 
 class Product extends Equatable {
   final int id;
-  final String name;
-  final String description;
-  final double price;
+  final String nombreProducto;
+  final double precioProducto;
+  final String descripcion;
+  final int categoryId;
   final int stock;
-  final String imageUrl;
+  final String nombreCategoria;
+  final String? imagenUrl;
 
   const Product({
     required this.id,
-    required this.name,
-    required this.description,
-    required this.price,
+    required this.nombreProducto,
+    required this.precioProducto,
+    required this.descripcion,
+    required this.categoryId,
     required this.stock,
-    required this.imageUrl,  //constructor
+    required this.nombreCategoria,
+    required this.imagenUrl
   });
 
   factory Product.fromJson(Map<String, dynamic> json) {
     return Product(
       id: json['id'],
-      name: json['name'],
-      description: json['description'],
-      price: (json['price'] as num).toDouble(),
+      nombreProducto: json['nombre_producto'],
+      descripcion: json['descripcion'],
+      categoryId: json['category_id'],
+      precioProducto: json['precio_producto'],
       stock: json['stock'],
-      imageUrl: json['imageUrl'],  // Extraer desde el JSON
+      nombreCategoria: json['category']['nombre_categoria'],
+      imagenUrl: json['imagen_url']
     );
   }
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'name': name,
-        'description': description,
-        'price': price,
-        'stock': stock,
-        'imageUrl': imageUrl,
-      };
+    'id': id,
+    'nombre_producto': nombreProducto,
+    'description': descripcion,
+    'category_id': categoryId,
+    'precio_producto': precioProducto,
+    'stock': stock,
+    'category': {
+      'nombre_categoria': nombreCategoria
+    },
+    'imagen_url': imagenUrl
+  };
 
   @override
-  List<Object?> get props => [id, name, description, price, stock, imageUrl];
+  List<Object?> get props => [
+    id,
+    nombreProducto,
+    descripcion,
+    precioProducto,
+    stock,
+    nombreCategoria,
+    imagenUrl
+  ];
 }
-

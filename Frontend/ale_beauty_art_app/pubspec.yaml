@@ -39,8 +39,8 @@ dependencies:
   flutter_bloc: ^9.1.1
   flutter_native_splash: ^2.4.0
   carousel_slider: ^5.1.1
-
-
+  flutter_dotenv: ^5.1.0
+  
 flutter_native_splash:
   color: "#ffffff"
   image: assets/images/ale_logo.png
@@ -75,6 +75,7 @@ flutter:
   #   - images/a_dot_ham.jpeg
   assets:
     - assets/images/  
+    - .env
     
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

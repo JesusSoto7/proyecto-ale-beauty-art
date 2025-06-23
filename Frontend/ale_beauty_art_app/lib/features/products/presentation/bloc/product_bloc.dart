@@ -3,12 +3,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../domain/models/product.dart';
 import 'dart:convert';
-import 'package:http/http.dart' as http;
-
+import '../../../../core/http/custom_http_client.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 part 'product_event.dart';
 part 'product_state.dart';
-
-
 
 class ProductBloc extends Bloc<ProductsEvent, ProductState> {
   ProductBloc() : super(ProductInitial()) {
@@ -16,8 +14,10 @@ class ProductBloc extends Bloc<ProductsEvent, ProductState> {
       emit(ProductLoadInProgress());
 
       try {
-        final url = Uri.parse('https://raw.githubusercontent.com/JesusSoto7/Sotomayor/main/db.json');
-        final response = await http.get(url);
+        // CAMBIA localhost o 127.0.0.1 por la IP real de tu PC (ej: 192.168.1.100)
+        final url = Uri.parse('${dotenv.env['API_BASE_URL']}/api/v1/products');
+
+        final response = await CustomHttpClient.client.get(url);
 
         if (response.statusCode == 200) {
           final List<dynamic> jsonList = jsonDecode(response.body);
@@ -27,7 +27,8 @@ class ProductBloc extends Bloc<ProductsEvent, ProductState> {
         } else {
           emit(ProductLoadFailure());
         }
-      } catch (_) {
+      } catch (e) {
+        print("Error al obtener productos: $e"); // te ayudará a depurar
         emit(ProductLoadFailure());
       }
     });

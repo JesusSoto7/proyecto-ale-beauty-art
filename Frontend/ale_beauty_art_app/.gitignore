@@ -33,6 +33,10 @@ migrate_working_dir/
 .pub/
 /build/
 
+# Flutter env file
+.env
+
+
 # Symbolication related
 app.*.symbols
 

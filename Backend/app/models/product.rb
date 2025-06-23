@@ -7,4 +7,9 @@ class Product < ApplicationRecord
 
   validates :nombre_producto, presence: true
   validates :precio_producto, numericality: { greater_than: 0 }
+
+
+  def imagen_url
+    Rails.application.routes.url_helpers.url_for(imagen) if imagen.attached?
+  end
 end
