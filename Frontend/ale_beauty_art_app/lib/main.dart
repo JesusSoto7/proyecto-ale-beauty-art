@@ -5,8 +5,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ale_beauty_art_app/features/home/presentation/bloc/home_bloc.dart';
 import 'package:ale_beauty_art_app/features/products/presentation/bloc/product_bloc.dart';
 import 'package:ale_beauty_art_app/features/home/presentation/views/initial_view.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-void main() {
+void main() async {
+  await dotenv.load(fileName: ".env");
   runApp(const MyApp());
 }
 
@@ -40,7 +42,7 @@ class MyApp extends StatelessWidget {
 //           builder: (context, state) {
 //             if (state is HomeInitial) {
 //               return InitialView();
-//             } else if (state is HomeLoadInProgress){  
+//             } else if (state is HomeLoadInProgress){
 //               return LoadingView();
 //             } else if (state is HomeShowProducts) {
 //               return BlocProvider(

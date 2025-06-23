@@ -40,7 +40,7 @@ class InfoProduct extends StatelessWidget {
                   ClipRRect(
                     borderRadius: BorderRadius.circular(12),
                     child: Image.network(
-                      product.imageUrl, // URL de la imagen del producto
+                      product.imagenUrl ?? 'https://via.placeholder.com/150',// URL de la imagen del producto
                       width: 80,
                       height: 80,
                       fit: BoxFit.cover, // Cubrir toda el área sin distorsionar
@@ -62,19 +62,19 @@ class InfoProduct extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start, // Alineado a la izquierda
                       children: [
                         Text(
-                          product.name, // Llamo al nombre del producto
+                          product.nombreProducto, // Llamo al nombre del producto
                           style: AppTextStyles.title,
                         ),
                         const SizedBox(height: 4), // Espacio pequeño entre textos
                         Text(
-                          product.description, //descripcion del prodcuto
+                          product.descripcion, //descripcion del prodcuto
                           style: AppTextStyles.subtitle, // Estilo para descripción
                           maxLines: 2, // Máximo 2 líneas para que no ocupe mucho espacio
                           overflow: TextOverflow.ellipsis, // Si es más largo, poner "..."
                         ),
                         const SizedBox(height: 8), // Separación antes del precio
                         Text(
-                          '\$${product.price.toStringAsFixed(2)} COP', // Precio del producto
+                          '\$${product.precioProducto} COP', // Precio del producto
                           style: AppTextStyles.price, // Estilo para el precio
                         ),
                       ],
