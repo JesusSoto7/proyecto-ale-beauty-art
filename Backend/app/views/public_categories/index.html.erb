@@ -12,19 +12,16 @@
 
 <div class="row">
   <% @categories.each do |category| %>
-    <div class="col-md-4 mb-4">
-      <div class="card">
-        <%= link_to categoria_publica_path(category) do %>
-          <% if category.imagen.attached? %>
-            <%= image_tag category.imagen, class: "card-img-top", alt: category.nombre_categoria %>
-          <% end %>
-          <div class="card-body">
-            <h5 class="card-title"><%= category.nombre_categoria %></h5>
-          </div>
-        <% end %>
+    <%= link_to categoria_publica_path(category), class: "card" do %>
+      <% if category.imagen.attached? %>
+        <%= image_tag category.imagen, class: "card-img-top", alt: category.nombre_categoria %>
+      <% end %>
+      <div class="card-body">
+        <h5 class="card-title"><%= category.nombre_categoria %></h5>
       </div>
-    </div>
+    <% end %>
   <% end %>
 </div>
+
 </body>
 </html>
