@@ -1,6 +1,14 @@
-layout: "all_products"
-
-<h1>Productos en <%= @category.nombre_categoria %></h1>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <%= stylesheet_link_tag "Pshow", media: "all", "data-turbo-track": "reload" %>
+  <title>Categorías</title>
+</head>
+<body>
+<div class="products-section">
+<h1 class="titulo">Productos en <%= @category.nombre_categoria %></h1>
 
 <% if @products.any? %>
   <div class="row">
@@ -14,6 +22,13 @@ layout: "all_products"
             <h5 class="card-title"><%= product.nombre_producto %></h5>
             <p class="card-text"><%= number_to_currency(product.precio_producto) %></p>
           </div>
+          <div class="card-footer bg-transparent border-0">
+            <div>
+              <%=button_to "Añadir al carrito", add_to_cart_path(@cart),
+                   method: :post,
+                   params: { product_id: product.id, cantidad: 1 }, class:"add-to-cart"%>
+               </div>
+            </div>
         </div>
       </div>
     <% end %>
@@ -21,3 +36,6 @@ layout: "all_products"
 <% else %>
   <p>No hay productos en esta categoría.</p>
 <% end %>
+</div>
+</body>
+</html>
