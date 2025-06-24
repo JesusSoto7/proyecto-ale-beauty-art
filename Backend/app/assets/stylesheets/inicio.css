@@ -341,8 +341,7 @@ nav a:hover::after {
 }
 
 .producto-img {
-  height: 280px;
-  overflow: hidden;
+  vertical-align: top;
 }
 
 .producto-img img {
@@ -350,6 +349,7 @@ nav a:hover::after {
   height: 100%;
   object-fit: cover;
   transition: transform 0.5s;
+  vertical-align: top;
 }
 
 .producto-card:hover .producto-img img {

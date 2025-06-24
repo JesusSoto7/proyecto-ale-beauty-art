@@ -230,7 +230,8 @@
   }
 }
 
-@media (max-width: 1939px ) {
+
+/* @media (max-width: 1939px ),  (max-height: 1080px) {
   .btn1{
     float:left;
     background-color: #ff6565; 
@@ -244,12 +245,12 @@
     width: 200px;
     height: 70px; 
     margin-left: 40px;
-    margin-top: 500px;
+    margin-top: 550px;
     font-family: 'Montserrat', sans-serif;
     font-weight: bold;
      
   }
-}
+} */
 @media (max-width: 576px) {
   .btn1 {
     width: 130px;
