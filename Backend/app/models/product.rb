@@ -12,4 +12,15 @@ class Product < ApplicationRecord
   def imagen_url
     Rails.application.routes.url_helpers.url_for(imagen) if imagen.attached?
   end
+  def name
+    nombre_producto
+  end
+
+  def price
+    precio_producto
+  end
+
+  def image
+    imagen
+  end
 end

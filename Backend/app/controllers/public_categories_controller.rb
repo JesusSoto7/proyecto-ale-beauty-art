@@ -8,5 +8,6 @@ class PublicCategoriesController < ApplicationController
   def show
     @category = Category.find(params[:id])
     @products = @category.products
+    render layout: "all_products", template: "public_categories/show"
   end
 end

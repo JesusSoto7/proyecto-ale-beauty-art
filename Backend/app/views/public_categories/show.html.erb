@@ -1,14 +1,18 @@
-<h1>Productos en <%= @category.name %></h1>
+layout: "all_products"
+
+<h1>Productos en <%= @category.nombre_categoria %></h1>
 
 <% if @products.any? %>
   <div class="row">
     <% @products.each do |product| %>
       <div class="col-md-4 mb-4">
         <div class="card">
-          <%= image_tag product.image.url, class: "card-img-top", alt: product.name if product.image.attached? %>
+          <% if product.imagen.attached? %>
+            <%= image_tag product.imagen, class: "card-img-top", alt: product.nombre_producto %>
+          <% end %>
           <div class="card-body">
-            <h5 class="card-title"><%= product.name %></h5>
-            <p class="card-text"><%= number_to_currency(product.price) %></p>
+            <h5 class="card-title"><%= product.nombre_producto %></h5>
+            <p class="card-text"><%= number_to_currency(product.precio_producto) %></p>
           </div>
         </div>
       </div>

@@ -90,6 +90,32 @@
       <p class="text-center text-muted">No hay productos disponibles por el momento.</p>
     <% end %>
   </section>
+   
+  <!-- Categorias -->
+    <div class="categories">
+      <div class="container">
+        <div class="row">
+          <div class="col-12">
+            <h2>Categorias</h2>
+            <div class="row">
+              <% @categories.each do |category| %>
+                <div class="col-4">
+                  <%= link_to categoria_publica_path(category) do %>
+                    <% if category.imagen.attached? %>
+                      <%= image_tag category.imagen, class: "card-img-top", alt: category.nombre_categoria %>
+                    <% end %>
+                    <div class="card-body">
+                      <h5 class="card-title"><%= category.nombre_categoria %></h5>
+                    </div>
+                  <% end %>
+                </div>
+              <% end %>
+            </div>
+          </div>
+        </div>
+      </div>
+      </div>
+    </div>
 
 
 
