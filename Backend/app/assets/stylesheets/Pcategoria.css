@@ -13,7 +13,7 @@ h1 {
   color: #333;
 }
 
-.row {
+.row2 {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
   gap: 20px;
@@ -22,8 +22,8 @@ h1 {
   margin: 0 auto;
 }
 
-/* Tarjeta tipo círculo con título debajo */
-.card {
+
+.card2 {
   background-color: transparent;
   border: none;
   text-align: center;
@@ -34,12 +34,12 @@ h1 {
   transition: transform 0.3s ease;
 }
 
-.card:hover {
+.card2:hover {
   transform: scale(1.05);
 }
 
-/* Imagen circular */
-.card-img-top {
+
+.card-img-top2 {
   width: 120px;
   height: 120px;
   object-fit: cover;
@@ -48,12 +48,11 @@ h1 {
   transition: transform 0.3s ease;
 }
 
-/* Título de categoría */
-.card-body {
+.card-body2 {
   padding-top: 10px;
 }
 
-.card-title {
+.card-title2 {
   font-size: 0.95rem;
   font-weight: 600;
   color: #444;
@@ -61,47 +60,47 @@ h1 {
 }
 
 
-/* Responsive media queries */
+
 
 @media (max-width: 360px) {
-  .card {
+  .card2 {
     flex: 1 1 100%;
   }
-  .card-img-top {
+  .card-img-top2 {
     width: 100px;
     height: 100px;
   }
-  .card-title {
+  .card-title2 {
     font-size: 1rem;
   }
 }
 
 @media (min-width: 361px) and (max-width: 576px) {
-  .card {
+  .card2 {
     flex: 1 1 100%;
   }
 }
 
 @media (min-width: 577px) and (max-width: 768px) {
-  .card {
+  .card2 {
     flex: 1 1 calc(50% - 30px);
   }
 }
 
 @media (min-width: 769px) and (max-width: 992px) {
-  .card {
+  .card2 {
     flex: 1 1 calc(33.33% - 30px);
   }
 }
 
 @media (min-width: 993px) and (max-width: 1200px) {
-  .card {
+  .card2 {
     flex: 1 1 calc(25% - 30px);
   }
 }
 
 @media (min-width: 1201px) {
-  .card {
+  .card2 {
     flex: 1 1 calc(20% - 30px);
   }
 }

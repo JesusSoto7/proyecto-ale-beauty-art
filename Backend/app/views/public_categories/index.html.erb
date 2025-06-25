@@ -10,14 +10,14 @@
 
 <h1>Categorías disponibles</h1>
 
-<div class="row">
+<div class="row2">
   <% @categories.each do |category| %>
-    <%= link_to categoria_publica_path(category), class: "card" do %>
+    <%= link_to categoria_publica_path(category), class: "card2" do %>
       <% if category.imagen.attached? %>
-        <%= image_tag category.imagen, class: "card-img-top", alt: category.nombre_categoria %>
+        <%= image_tag category.imagen, class: "card-img-top2", alt: category.nombre_categoria %>
       <% end %>
-      <div class="card-body">
-        <h5 class="card-title"><%= category.nombre_categoria %></h5>
+      <div class="card-body2">
+        <h5 class="card-title2"><%= category.nombre_categoria %></h5>
       </div>
     <% end %>
   <% end %>
