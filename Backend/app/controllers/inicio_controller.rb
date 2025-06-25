@@ -4,6 +4,7 @@ class InicioController < ApplicationController
   def index
     @product = Product.order("RAND()").limit(9)
     @admin = User.with_role(:admin).first
+    @categories = Category.all
   end
 
   def all_products

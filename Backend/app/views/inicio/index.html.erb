@@ -90,6 +90,49 @@
       <p class="text-center text-muted">No hay productos disponibles por el momento.</p>
     <% end %>
   </section>
+   
+  <!-- Categorías -->
+  <!-- Categorías -->
+<div class="categories">
+  <div class="container">
+    <div class="row">
+      <div class="col-12">
+        <h2 class="text-center mb-4">Categorías</h2>
+        
+        <% if @categories.any? %>
+          <div class="categories-carousel-container">
+            <button class="categories-carousel-btn left" id="btn-categoriesLeft">&#10094;</button>
+            
+            <div class="categories-carousel" id="carousel-categories">
+              <% @categories.each do |category| %>
+                <div class="category-card">
+                  <%= link_to categoria_publica_path(category), class: "category-link" do %>
+                    <div class="category-img-container">
+                      <% if category.imagen.attached? %>
+                        <%= image_tag category.imagen, class: "category-img", alt: category.nombre_categoria %>
+                      <% else %>
+                        <div class="category-img-placeholder">
+                          <i class="fas fa-box-open"></i>
+                        </div>
+                      <% end %>
+                    </div>
+                    <div class="category-title">
+                      <h5><%= category.nombre_categoria %></h5>
+                    </div>
+                  <% end %>
+                </div>
+              <% end %>
+            </div>
+            
+            <button class="categories-carousel-btn right" id="btn-categoriesRight">&#10095;</button>
+          </div>
+        <% else %>
+          <p class="text-center text-muted">No hay categorías disponibles por el momento.</p>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>
 
 
 
@@ -118,5 +161,89 @@
     });
 
   </script>
+  <script>
+    // Versión mejorada del JavaScript para el carrusel de categorías
+document.addEventListener('DOMContentLoaded', function() {
+  // Configuración del carrusel de categorías
+  const setupCategoriesCarousel = () => {
+    const carousel = document.getElementById('carousel-categories');
+    const btnLeft = document.getElementById('btn-categoriesLeft');
+    const btnRight = document.getElementById('btn-categoriesRight');
+    
+    if (!carousel || !btnLeft || !btnRight) return;
+    
+    const items = carousel.querySelectorAll('.category-card');
+    if (items.length === 0) return;
+    
+    // Calcular el desplazamiento
+    const itemWidth = items[0].offsetWidth;
+    const gap = 24; // Debe coincidir con el gap de tu CSS
+    const scrollAmount = itemWidth + gap;
+    
+    // Configurar botones
+    const updateButtons = () => {
+      const maxScroll = carousel.scrollWidth - carousel.clientWidth;
+      btnLeft.classList.toggle('hidden', carousel.scrollLeft <= 10);
+      btnRight.classList.toggle('hidden', carousel.scrollLeft >= maxScroll - 10);
+    };
+    
+    btnRight.addEventListener('click', () => {
+      carousel.scrollBy({ left: scrollAmount * 3, behavior: 'smooth' });
+    });
+    
+    btnLeft.addEventListener('click', () => {
+      carousel.scrollBy({ left: -scrollAmount * 3, behavior: 'smooth' });
+    });
+    
+    carousel.addEventListener('scroll', updateButtons);
+    updateButtons();
+    
+    // Ocultar botones si no hay overflow
+    if (carousel.scrollWidth <= carousel.clientWidth) {
+      btnLeft.classList.add('hidden');
+      btnRight.classList.add('hidden');
+    }
+  };
+  
+  // Configuración del carrusel de productos novedosos
+  const setupProductsCarousel = () => {
+    const carousel = document.getElementById('carousel-productos');
+    const btnLeft = document.getElementById('btn-caroulLeft');
+    const btnRight = document.getElementById('btn-caroulRight');
+    
+    if (!carousel || !btnLeft || !btnRight) return;
+    
+    const items = carousel.querySelectorAll('.producto-card-novedades');
+    if (items.length === 0) return;
+    
+    // Calcular el desplazamiento
+    const itemWidth = items[0].offsetWidth;
+    const gap = 16; // Ajustar según tu diseño
+    const scrollAmount = itemWidth + gap;
+    
+    // Configurar botones
+    const updateButtons = () => {
+      const maxScroll = carousel.scrollWidth - carousel.clientWidth;
+      btnLeft.style.visibility = carousel.scrollLeft <= 10 ? 'hidden' : 'visible';
+      btnRight.style.visibility = carousel.scrollLeft >= maxScroll - 10 ? 'hidden' : 'visible';
+    };
+    
+    btnRight.addEventListener('click', () => {
+      carousel.scrollBy({ left: scrollAmount * 2, behavior: 'smooth' });
+    });
+    
+    btnLeft.addEventListener('click', () => {
+      carousel.scrollBy({ left: -scrollAmount * 2, behavior: 'smooth' });
+    });
+    
+    carousel.addEventListener('scroll', updateButtons);
+    updateButtons();
+  };
+  
+  // Inicializar ambos carruseles
+  setupCategoriesCarousel();
+  setupProductsCarousel();
+});
+</script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 

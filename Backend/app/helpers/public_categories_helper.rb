@@ -1,0 +1,2 @@
+module PublicCategoriesHelper
+end

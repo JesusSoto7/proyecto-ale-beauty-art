@@ -270,7 +270,12 @@ nav a:hover::after {
 .cart:hover {
   color: #d85a7f;
 }
-
+.card img {
+  display: block;
+  width: 100%;
+  height: auto;
+  margin-top: 10px;
+}
 
 .btn-outline-primary{
   width: 100%;

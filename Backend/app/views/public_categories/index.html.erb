@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <%= stylesheet_link_tag "Pcategoria", media: "all", "data-turbo-track": "reload" %>
+  <title>Categorías</title>
+</head>
+<body>
+
+<h1>Categorías disponibles</h1>
+
+<div class="row2">
+  <% @categories.each do |category| %>
+    <%= link_to categoria_publica_path(category), class: "card2" do %>
+      <% if category.imagen.attached? %>
+        <%= image_tag category.imagen, class: "card-img-top2", alt: category.nombre_categoria %>
+      <% end %>
+      <div class="card-body2">
+        <h5 class="card-title2"><%= category.nombre_categoria %></h5>
+      </div>
+    <% end %>
+  <% end %>
+</div>
+
+</body>
+</html>
