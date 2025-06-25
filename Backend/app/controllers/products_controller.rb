@@ -16,6 +16,11 @@ class ProductsController < ApplicationController
 
   def showClient
     @product = Product.find_by(id: params[:id])
+    render "products/showClient"
+  end
+  
+  def action_methods
+    super.add("showClient")
   end
 
   def edit
