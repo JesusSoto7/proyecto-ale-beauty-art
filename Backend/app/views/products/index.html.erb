@@ -1,16 +1,16 @@
 <div>
-    <section id="filtro" class="filtro oculto">
+    <section id="filtro">
+    
         <%= form_with url: products_path, method: :get, local: true do %>
 
-            <%= label_tag :min_price, "Precios" %>
+            <%= label_tag :min_price, "Precio:" %>
             <%= number_field_tag :min_price, params[:min_price],  placeholder: "Minimo" %>
-
+            <%= label_tag :max_price, " - " %>
             <%= number_field_tag :max_price, params[:max_price], placeholder: "Maximo" %>
 
-            <%= label_tag :category_id, "Categoría" %>
-            <%= select_tag :category, options_from_collection_for_select(Category.all, :id, :nombre_categoria, params[:category]), include_blank: true %>
+            <%= select_tag :category, options_from_collection_for_select(Category.all, :id, :nombre_categoria, params[:category]), include_blank: "categoría" %>
 
-            <%= submit_tag "Buscar" %>
+            <%= submit_tag "Filtrar", style: "padding-right: 3px;", id: "filtro-submit" %>
         <% end %>
     </section>
 

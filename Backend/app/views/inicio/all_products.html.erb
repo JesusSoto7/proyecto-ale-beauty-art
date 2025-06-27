@@ -1,6 +1,25 @@
 
     <!-- Contenido principal -->
     <main class="content-wrap">
+
+      <section style="display: flex; flex-direction: row-reverse; justify-content: start; padding: 10px;">
+        <div id="filtro">
+          <%= form_with url: productos_path, method: :get, local: true do %>
+            <%= label_tag :min_price, "Precio:" %>
+            <%= number_field_tag :min_price, params[:min_price],  placeholder: "Minimo" %>
+            <%= label_tag :max_price, " - " %>
+            <%= number_field_tag :max_price, params[:max_price], placeholder: "Maximo" %>
+
+            <%= select_tag :category, options_from_collection_for_select(Category.all, :id, :nombre_categoria, params[:category]), include_blank: "categoría" %>
+
+            <%= submit_tag "Filtrar", style: "padding-right: 3px;", id: "filtro-submit" %>
+          <% end %>
+        </div>
+        <div style="display: flex; justify-content: end;">
+          <button id="Verfiltro"><i class="fa-solid fa-filter"></i></button>
+        </div>
+      </section>
+
       <!-- Productos destacados -->
       <section class="mb-5 products-section">
         <div class="d-flex justify-content-center align-items-center mb-3">
@@ -8,7 +27,7 @@
         </div>
 
         <div class="d-flex flex-wrap justify-content-center gap-3">
-          
+
           <% @products.each do |product| %>
             <%= link_to show_product_client_path(product) do%>
               <div class="card shadow-sm h-100" style="width: 18rem;">

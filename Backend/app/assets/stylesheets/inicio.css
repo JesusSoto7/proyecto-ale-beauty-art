@@ -141,6 +141,52 @@ nav a:hover::after {
   color: #d85a7f;
 }
 
+/* ver filtro */
+#Verfiltro{
+  border: none;
+  width: 30px;
+  height: 30px;
+  color: #adadad;
+  background-color: transparent;
+  transition: 400ms;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#Verfiltro:hover{
+    color: #797979;
+    transition: 400ms;
+}
+
+#filtro{
+  display: none;
+  justify-content: center;
+  margin: auto;
+  color: #797979;
+}
+
+#filtro-submit{
+  background-color: transparent;
+  border: none;
+  color: #f36992;
+  /* transition: 400ms; */
+}
+
+input{
+  padding-left: 5px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
+
+select{
+  color: #797979;
+  height: 28px;
+  padding-left: 5px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
+
 /* Menú de perfil */
 .user-options {
   position: relative;
@@ -712,6 +758,10 @@ footer {
     height: 50px;
     font-size: 2rem;
     top: 45%;
+  }
+
+  input{
+    width: 100px;
   }
 }
 

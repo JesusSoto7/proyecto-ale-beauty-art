@@ -117,18 +117,43 @@ a{
 #Verfiltro{
     color: #adadad;
     border: none;
-    background-color: #f8f9fa;
+    background-color: transparent;
     transition: 400ms;
     display: flex;
     justify-self: end;
 }
 
 #filtro{
+    padding: 10px;
     display: none;
-    background-color: #eee;
     justify-content: center;
+    color: #797979;
 }
 
+#filtro-submit{
+  background-color: transparent;
+  border: none;
+  color: #f36992;
+  /* transition: 400ms; */
+}
+
+
+input{
+    padding-left: 5px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+
+select{
+  color: #797979;
+  height: 28px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
+
+select option:hover{
+    background-color: #cccccc;
+}
 
 #Verfiltro:hover{
     color: #797979;
