@@ -407,6 +407,7 @@ link{
 
         #order{
             margin-left: 10px;
+            justify-content: center;
         }
         h1{
             margin-left: 10px;

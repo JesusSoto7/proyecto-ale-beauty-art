@@ -1,4 +1,19 @@
 <div>
+    <section id="filtro">
+    
+        <%= form_with url: products_path, method: :get, local: true do %>
+
+            <%= label_tag :min_price, "Precio:" %>
+            <%= number_field_tag :min_price, params[:min_price],  placeholder: "Minimo", class: "input-filter" %>
+            <%= label_tag :max_price, " - " %>
+            <%= number_field_tag :max_price, params[:max_price], placeholder: "Maximo", class: "input-filter" %>
+
+            <%= select_tag :category, options_from_collection_for_select(Category.all, :id, :nombre_categoria, params[:category]), include_blank: "categoría", id: "category-select" %>
+
+            <%= submit_tag "Filtrar", style: "padding-right: 3px;", id: "filtro-submit" %>
+        <% end %>
+    </section>
+
     <% content_for :title, "Productos"%>
 
     <h1> Productos </h1>
@@ -9,3 +24,26 @@
         <% end %> 
     </div>
 </div>
+
+
+<script>
+  const filterButton = document.getElementById('Verfiltro');
+  const filterSection = document.getElementById('filtro');
+
+  // Al cargar la página, revisar si se debe mostrar
+  document.addEventListener('DOMContentLoaded', () => {
+    const estadoFiltro = localStorage.getItem('filtroVisible');
+    if (estadoFiltro === 'true') {
+      filterSection.style.display = 'flex';
+    } else {
+      filterSection.style.display = 'none';
+    }
+  });
+
+  // Al hacer click, cambiar el estado y guardarlo
+  filterButton.addEventListener('click', () => {
+    const visible = filterSection.style.display === 'none' || filterSection.style.display === '';
+    filterSection.style.display = visible ? 'flex' : 'none';
+    localStorage.setItem('filtroVisible', visible); // Guarda true si se mostró, false si se ocultó
+  });
+</script>
