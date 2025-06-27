@@ -46,6 +46,17 @@ document.addEventListener("DOMContentLoaded", () => {
       chevronIcon.classList.toggle("fa-chevron-up", open);
     }
   }
+
+  // Manejo del botón de filtro
+  const filterButton = document.getElementById('Verfiltro');
+  const filterSection = document.getElementById('filtro');
+
+  if (filterButton && filterSection) {
+    filterButton.addEventListener('click', () => {
+      filterSection.classList.toggle('oculto');
+    });
+  }
+
 });
 
 

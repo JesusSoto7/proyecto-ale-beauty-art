@@ -114,6 +114,30 @@ a{
     overflow-y: auto;
 }
 
+#Verfiltro{
+    color: #adadad;
+    border: none;
+    background-color: #f8f9fa;
+    transition: 400ms;
+    display: flex;
+    justify-self: end;
+}
+
+#filtro{
+    display: flex;
+    background-color: #eee;
+    justify-content: center;
+}
+
+.oculto {
+  display: none;
+}
+
+#Verfiltro:hover{
+    color: #797979;
+    transition: 400ms;
+}
+
 @media
     (min-width: 889px) and
     (max-width: 1178px) {
