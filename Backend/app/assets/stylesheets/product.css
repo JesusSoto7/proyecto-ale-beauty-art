@@ -138,20 +138,20 @@ a{
 }
 
 
-input{
+.input-filter{
     padding-left: 5px;
     border-radius: 5px;
     border: 1px solid #ccc;
 }
 
-select{
+#category-select{
   color: #797979;
   height: 28px;
   border-radius: 5px;
   border: 1px solid #ccc;
 }
 
-select option:hover{
+#category-select option:hover{
     background-color: #cccccc;
 }
 

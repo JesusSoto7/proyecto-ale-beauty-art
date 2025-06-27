@@ -155,8 +155,15 @@ nav a:hover::after {
 }
 
 #Verfiltro:hover{
-    color: #797979;
-    transition: 400ms;
+  color: #797979;
+  transition: 400ms;
+}
+
+#filter{
+  display: flex; 
+  flex-direction: row-reverse; 
+  justify-content: start; 
+  padding: 10px;
 }
 
 #filtro{
@@ -173,13 +180,13 @@ nav a:hover::after {
   /* transition: 400ms; */
 }
 
-input{
+.input-filter{
   padding-left: 5px;
   border-radius: 5px;
   border: 1px solid #ccc;
 }
 
-select{
+#category-select{
   color: #797979;
   height: 28px;
   padding-left: 5px;
@@ -760,7 +767,7 @@ footer {
     top: 45%;
   }
 
-  input{
+  .input-filter {
     width: 100px;
   }
 }
