@@ -124,14 +124,11 @@ a{
 }
 
 #filtro{
-    display: flex;
+    display: none;
     background-color: #eee;
     justify-content: center;
 }
 
-.oculto {
-  display: none;
-}
 
 #Verfiltro:hover{
     color: #797979;
