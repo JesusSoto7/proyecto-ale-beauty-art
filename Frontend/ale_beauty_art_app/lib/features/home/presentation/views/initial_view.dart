@@ -106,7 +106,7 @@ class InitialView extends StatelessWidget {
                 } 
                 if (index == 2) {
                   context.read<ProductBloc>().add(ProductFetched());
-                  context.read<CategoriesBloc>().add(CategoriesFetched());
+                  context.read<CategoriesBloc>().add(CategoriesFetched()); // Activa los eventos para q cargen las categorias con sus respectivos productos
                 }
               },
               type: BottomNavigationBarType.fixed,
