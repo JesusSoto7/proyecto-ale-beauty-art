@@ -1,6 +1,6 @@
 import 'package:ale_beauty_art_app/features/products/presentation/views/products_Detail_View.dart';
 import 'package:flutter/material.dart';
-import 'package:ale_beauty_art_app/features/products/domain/models/product.dart';
+import 'package:ale_beauty_art_app/models/product.dart';
 import 'package:ale_beauty_art_app/styles/text_styles.dart';
 
 class InfoProduct extends StatelessWidget {

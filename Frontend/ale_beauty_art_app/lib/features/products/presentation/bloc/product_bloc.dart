@@ -1,7 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../domain/models/product.dart';
+import '../../../../models/product.dart';
 import 'dart:convert';
 import '../../../../core/http/custom_http_client.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';

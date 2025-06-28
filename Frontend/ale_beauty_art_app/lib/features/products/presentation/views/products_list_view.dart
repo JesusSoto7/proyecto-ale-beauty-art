@@ -1,6 +1,6 @@
 import 'package:ale_beauty_art_app/features/products/presentation/widgets/info_product_widget.dart';
 import 'package:flutter/material.dart';
-import '../../domain/models/product.dart';
+import '../../../../models/product.dart';
 
 class ProductsListView extends StatelessWidget {
   final List<Product> products;

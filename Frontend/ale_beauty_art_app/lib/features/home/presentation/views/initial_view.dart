@@ -1,4 +1,6 @@
 
+import 'package:ale_beauty_art_app/features/categories/bloc/categories_bloc.dart';
+import 'package:ale_beauty_art_app/features/categories/views/categories_page_view.dart';
 import 'package:ale_beauty_art_app/features/navigation/bloc/navigation_bloc.dart';
 import 'package:ale_beauty_art_app/features/products/presentation/bloc/product_bloc.dart';
 import 'package:ale_beauty_art_app/features/products/presentation/views/products_page_view.dart';
@@ -76,9 +78,9 @@ class InitialView extends StatelessWidget {
                 case 1:
                   return const ProductsPageView(); // Vista de productos
                 case 2:
-                  return const ProfileView();  // Vista perfil
+                  return const CategoriesPageView();  // Vista categorias
                 case 3:
-                  return const ProfileView();  // Vista categorias
+                  return const ProfileView();  // Vista perfil  
                 default:
                   return _homeContent(context); // Fallback
               }
@@ -98,12 +100,14 @@ class InitialView extends StatelessWidget {
               onTap: (index) {
                 context.read<NavigationBloc>().add(NavigationTabChanged(index));
 
-                // Cargar productos si se navega a la pestaña de productos
+                // Cargar productos o categorias si se navega a su respectiva vista
                 if (index == 1) {
                   context.read<ProductBloc>().add(ProductFetched());
+                } 
+                if (index == 2) {
+                  context.read<CategoriesBloc>().add(CategoriesFetched());
                 }
               },
-              
               type: BottomNavigationBarType.fixed,
               backgroundColor: Colors.white,
               selectedItemColor: AppColors.primaryPink,
@@ -123,14 +127,14 @@ class InitialView extends StatelessWidget {
                   label: 'Productos',
                 ),
                 BottomNavigationBarItem(
-                  icon: Icon(Icons.person_outline_rounded),
-                  activeIcon: Icon(Icons.person),
-                  label: 'Perfil',
-                ),
-                BottomNavigationBarItem(
                   icon: Icon(Icons.spa),
                   activeIcon: Icon(Icons.spa_outlined),
                   label: 'Categorías',
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.person_outline_rounded),
+                  activeIcon: Icon(Icons.person),
+                  label: 'Perfil',
                 ),
               ],
             );
@@ -141,53 +145,52 @@ class InitialView extends StatelessWidget {
   }
 
   // Contenido para la pestaña de Inicio
-Widget _homeContent(BuildContext context) {
-  return SingleChildScrollView(
-    padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 20),
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        // Bienvenida fija
-        Center(
-          child: Text(
-            '¡Bienvenid@ a Ale Beauty Art!',
-            style: AppTextStyles.title.copyWith(fontSize: 24),
-            textAlign: TextAlign.center,
+  Widget _homeContent(BuildContext context) {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Bienvenida fija
+          Center(
+            child: Text(
+              '¡Bienvenid@ a Ale Beauty Art!',
+              style: AppTextStyles.title.copyWith(fontSize: 24),
+              textAlign: TextAlign.center,
+            ),
           ),
-        ),
 
-        const SizedBox(height: 60), // espacio después de bienvenida
+          const SizedBox(height: 60), // espacio después de bienvenida
 
-        // Carrusel de productos
-        ProductCarousel(
-          imageUrls: [
-            'https://www.shutterstock.com/image-vector/makeup-products-realistic-vector-illustration-260nw-2220636093.jpg',
-            'https://www.shutterstock.com/image-photo/makeup-professional-cosmetics-on-pink-600nw-1398700589.jpg',
-            'https://st2.depositphotos.com/1026029/9075/i/450/depositphotos_90754482-stock-photo-cosmetics-set-for-make-up.jpg',
-            'https://st1.uvnimg.com/dims4/default/5d6bda0/2147483647/thumbnail/1024x576/quality/75/?url=https%3A%2F%2Fuvn-brightspot.s3.amazonaws.com%2Fassets%2Fvixes%2Fp%2Fproductos-de-maquillaje-look.jpg',
-          ],
-        ),
+          // Carrusel de productos
+          ProductCarousel(
+            imageUrls: [
+              'https://www.shutterstock.com/image-vector/makeup-products-realistic-vector-illustration-260nw-2220636093.jpg',
+              'https://www.shutterstock.com/image-photo/makeup-professional-cosmetics-on-pink-600nw-1398700589.jpg',
+              'https://st2.depositphotos.com/1026029/9075/i/450/depositphotos_90754482-stock-photo-cosmetics-set-for-make-up.jpg',
+              'https://st1.uvnimg.com/dims4/default/5d6bda0/2147483647/thumbnail/1024x576/quality/75/?url=https%3A%2F%2Fuvn-brightspot.s3.amazonaws.com%2Fassets%2Fvixes%2Fp%2Fproductos-de-maquillaje-look.jpg',
+            ],
+          ),
 
-        const SizedBox(height: 80), // espacio entre carrusel y sección destacada
+          const SizedBox(height: 80), // espacio entre carrusel y sección destacada
 
-        // Título sección productos destacados
-        Text(
-          'Productos Destacados',
-          style: AppTextStyles.title.copyWith(fontSize: 20),
-        ),
+          // Título sección productos destacados
+          Text(
+            'Productos Destacados',
+            style: AppTextStyles.title.copyWith(fontSize: 20),
+          ),
 
-        const SizedBox(height: 20), // Espacio para donde irán los productos luego
+          const SizedBox(height: 20), // Espacio para donde irán los productos luego
 
-        // Aquí irán los productos destacados (por ahora en blanco)
-        Container(
-          height: 150, // puedes ajustarlo o eliminarlo luego
-          color: Colors.transparent,
-        ),
-      ],
-    ),
-  );
-}
-
+          // Aquí irán los productos destacados (por ahora en blanco)
+          Container(
+            height: 150, // puedes ajustarlo o eliminarlo luego
+            color: Colors.transparent,
+          ),
+        ],
+      ),
+    );
+  }
 }
 
      // ElevatedButton(

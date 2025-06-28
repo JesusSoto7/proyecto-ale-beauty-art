@@ -1,6 +1,23 @@
 part of 'categories_bloc.dart';
 
-@immutable
-sealed class CategoriesState {}
+abstract class CategoriesState extends Equatable {
+  const CategoriesState();
 
-final class CategoriesInitial extends CategoriesState {}
+  @override
+  List<Object> get props => [];
+}
+
+class CategoriesInitial extends CategoriesState {}
+
+class CategoriesLoadInProgress extends CategoriesState {}
+
+class CategoriesLoadSuccess extends CategoriesState {
+  final List<Category> categories;
+
+  const CategoriesLoadSuccess(this.categories);
+
+  @override
+  List<Object> get props => [categories];
+}
+
+class CategoriesLoadFailure extends CategoriesState {}
