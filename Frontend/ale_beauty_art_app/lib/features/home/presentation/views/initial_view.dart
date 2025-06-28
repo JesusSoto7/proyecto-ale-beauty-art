@@ -76,7 +76,9 @@ class InitialView extends StatelessWidget {
                 case 1:
                   return const ProductsPageView(); // Vista de productos
                 case 2:
-                  return const ProfileView(); // Vista perfil
+                  return const ProfileView();  // Vista perfil
+                case 3:
+                  return const ProfileView();  // Vista categorias
                 default:
                   return _homeContent(context); // Fallback
               }
@@ -124,6 +126,11 @@ class InitialView extends StatelessWidget {
                   icon: Icon(Icons.person_outline_rounded),
                   activeIcon: Icon(Icons.person),
                   label: 'Perfil',
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.spa),
+                  activeIcon: Icon(Icons.spa_outlined),
+                  label: 'Categorías',
                 ),
               ],
             );
