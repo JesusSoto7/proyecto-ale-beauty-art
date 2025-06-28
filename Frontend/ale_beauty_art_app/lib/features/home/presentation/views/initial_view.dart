@@ -105,6 +105,7 @@ class InitialView extends StatelessWidget {
                   context.read<ProductBloc>().add(ProductFetched());
                 } 
                 if (index == 2) {
+                  context.read<ProductBloc>().add(ProductFetched());
                   context.read<CategoriesBloc>().add(CategoriesFetched());
                 }
               },
