@@ -71,6 +71,18 @@ Rails.application.configure do
   # config.generators.apply_rubocop_autocorrect_after_generate!
   config.action_mailer.default_url_options = { host: 'localhost', port: 4000 }
 
+  config.action_mailer.delivery_method = :smtp
+  config.action_mailer.smtp_settings = {
+    address: "smtp.gmail.com",
+    port: 587,
+    domain: "gmail.com",
+    user_name: ENV["GMAIL_USER"],          
+    password: ENV["GMAIL_PASSWORD"],
+    authentication: "plain",
+    enable_starttls_auto: true
+  }
+
+
   Rails.application.routes.default_url_options[:host] = 'localhost:4000'
   Rails.application.routes.default_url_options[:protocol] = 'https'
 

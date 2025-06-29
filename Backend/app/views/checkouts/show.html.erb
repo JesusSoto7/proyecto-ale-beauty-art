@@ -12,7 +12,7 @@
         const renderCardPaymentBrick = async (bricksBuilder) => {
           const settings = {
             initialization: {
-              amount: 10000, // monto a ser pago
+              amount: <%= @order.total_con_envio.to_f.round(2) %>, // monto a ser pago
               payer: {
                 email: "",
               },
@@ -37,19 +37,27 @@
                 //  callback llamado cuando el usuario haga clic en el botón enviar los datos
                 //  ejemplo de envío de los datos recolectados por el Brick a su servidor
                 return new Promise((resolve, reject) => {
+                  const orderId = <%= @order.id %>; // Rails interpolará aquí el ID real
+                  const data = {
+                        ...cardFormData,
+                        order_id: orderId
+                  };
                   fetch("/payments", {
                     method: "POST",
                     headers: {
                       "Content-Type": "application/json",
-                      "X-CSRF-Token": document.querySelector("meta[name='csrf-token']").content
                     },
-                    body: JSON.stringify(cardFormData)
+                    body: JSON.stringify(data)
                   })
-                    .then((response) => {
-                      const order_id = localStorage.getItem("current_order_id");
-                      resolve();
-                      window.location.href = "/pago_realizado/" + order_id;
+                    .then((response) => response.json())
+                    .then((result) => {
+                      if(result.redirect_url){
+                        window.location.href = result.redirect_url;
+                      }else{
+                        alert("Pago realizado, pero no se recibió URL de redirección.");
+                      }
 
+                      resolve()
                     })
                     .catch((error) => {
                       // tratar respuesta de error al intentar crear el pago
@@ -68,9 +76,6 @@
           window.cardPaymentBrickController = await bricksBuilder.create('cardPayment', 'cardPaymentBrick_container', settings);
         };
         renderCardPaymentBrick(bricksBuilder);
-      </script>
-      <script>
-        localStorage.setItem("current_order_id", "<%= session[:order_id] %>");
       </script>
   
     </body>

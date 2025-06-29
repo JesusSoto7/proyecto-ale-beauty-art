@@ -18,11 +18,15 @@
                       <p class="fw-semibold">DESCRIPCIÓN</p>
                       <p id="des-prod"> <%= @product.descripcion %> </p>
                     </div>
-                    <h5 id="preci1" class="fw-semibold fs-2">$<%= @product.precio_producto %></h5>
+                    <h5 id="preci1" class="fw-semibold fs-2">
+                        <%= number_to_currency(@product.precio_producto, unit: "$", delimiter: ".", separator: ",", precision: (@product.precio_producto.to_f % 1 == 0 ? 0 : 2)) %>
+                    </h5>
                 </div>
                 
                 <div id="btnshow">
-                    <h5 id="preci2" class="fw-semibold fs-2">$<%= @product.precio_producto %></h5>
+                    <h5 id="preci2" class="fw-semibold fs-2">
+                        <%= number_to_currency(@product.precio_producto, unit: "$", delimiter: ".", separator: ",", precision: (@product.precio_producto.to_f % 1 == 0 ? 0 : 2)) %>
+                    </h5>
                    <div>
                       <%=button_to "Añadir al carrito", add_to_cart_path(@cart),
                                     method: :post,

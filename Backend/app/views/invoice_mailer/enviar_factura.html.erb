@@ -1,0 +1,10 @@
+<p>Hola <%= @order.user.nombre %></p>
+<p>Estos son los detalles de tu pedido:</p>
+
+<ul>
+  <% @order.order_details.each do |item| %>
+    <li><%= item.product.nombre_producto %> - $<%= item.precio_unitario %> x <%= item.cantidad %></li>
+  <% end %>
+</ul>
+
+<p><strong>Total: $<%= @order.total_con_envio %></strong></p>
