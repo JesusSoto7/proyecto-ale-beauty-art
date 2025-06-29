@@ -1,10 +1,11 @@
-
 import 'package:ale_beauty_art_app/features/categories/bloc/categories_bloc.dart';
 import 'package:ale_beauty_art_app/features/categories/views/categories_page_view.dart';
 import 'package:ale_beauty_art_app/features/navigation/bloc/navigation_bloc.dart';
 import 'package:ale_beauty_art_app/features/products/presentation/bloc/product_bloc.dart';
 import 'package:ale_beauty_art_app/features/products/presentation/views/products_page_view.dart';
+import 'package:ale_beauty_art_app/features/products/presentation/widgets/products_carousel.dart';
 import 'package:ale_beauty_art_app/features/profile/presentation/views/profile_view.dart';
+
 
 import 'package:ale_beauty_art_app/styles/colors.dart'; // Estilos
 import 'package:ale_beauty_art_app/styles/text_styles.dart'; // Tipografías
@@ -74,7 +75,8 @@ class InitialView extends StatelessWidget {
             if (state is NavigationUpdated) {
               switch (state.selectedIndex) {
                 case 0:
-                  return _homeContent(context); // Vista principal
+                  return 
+                  _homeContent(context); // Vista principal
                 case 1:
                   return const ProductsPageView(); // Vista de productos
                 case 2:
@@ -93,6 +95,7 @@ class InitialView extends StatelessWidget {
         // Barra de navegación inferior
         bottomNavigationBar: BlocBuilder<NavigationBloc, NavigationState>(
           builder: (context, state) {
+            context.read<ProductBloc>().add(ProductFetched());
             final currentIndex = (state is NavigationUpdated) ? state.selectedIndex : 0;
 
             return BottomNavigationBar(
@@ -174,19 +177,16 @@ class InitialView extends StatelessWidget {
           ),
 
           const SizedBox(height: 80), // espacio entre carrusel y sección destacada
-
+  
           // Título sección productos destacados
           Text(
             'Productos Destacados',
             style: AppTextStyles.title.copyWith(fontSize: 20),
           ),
-
           const SizedBox(height: 20), // Espacio para donde irán los productos luego
-
-          // Aquí irán los productos destacados (por ahora en blanco)
-          Container(
-            height: 150, // puedes ajustarlo o eliminarlo luego
-            color: Colors.transparent,
+          SizedBox(
+            height: 180,
+            child: ProductsCarousel(),
           ),
         ],
       ),

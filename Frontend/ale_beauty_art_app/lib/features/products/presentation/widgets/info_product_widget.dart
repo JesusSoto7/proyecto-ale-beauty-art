@@ -40,7 +40,7 @@ class InfoProduct extends StatelessWidget {
                   ClipRRect(
                     borderRadius: BorderRadius.circular(12),
                     child: Image.network(
-                      product.imagenUrl ?? 'https://via.placeholder.com/150',// URL de la imagen del producto
+                      product.imagenUrl ?? '',// URL de la imagen del producto
                       width: 80,
                       height: 80,
                       fit: BoxFit.cover, // Cubrir toda el área sin distorsionar
