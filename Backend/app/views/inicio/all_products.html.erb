@@ -41,7 +41,11 @@
                 <div class="card-body">
                   <h5 class="card-title fw-bold text-dark"><%= product.nombre_producto %></h5>
                   <p><strong>Categoria:</strong> <%= product.category.nombre_categoria %></p>
-                  <p class="card-text text-dark"><strong>$<%= product.precio_producto %></strong></p>
+                  <p class="card-text text-dark">
+                    <strong>
+                      <%= number_to_currency(product.precio_producto, unit: "$", delimiter: ".", separator: ",", precision: (product.precio_producto.to_f % 1 == 0 ? 0 : 2)) %>
+                    </strong>
+                  </p>
                 </div>
                 <div class="card-footer bg-transparent border-0">
                   <div>

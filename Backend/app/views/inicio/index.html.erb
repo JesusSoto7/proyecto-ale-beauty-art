@@ -68,7 +68,9 @@
                   <div class="producto-info">
                     <h3><%= product.nombre_producto %></h3>
                     <div class="producto-footer">
-                      <p class="price">$<%= product.precio_producto %></p>
+                      <p class="price">
+                        <%= number_to_currency(product.precio_producto, unit: "$", delimiter: ".", separator: ",", precision: (product.precio_producto.to_f % 1 == 0 ? 0 : 2)) %>
+                      </p>
                     </div>
                     <div>
                       <%=button_to "Añadir al carrito", add_to_cart_path(@cart),

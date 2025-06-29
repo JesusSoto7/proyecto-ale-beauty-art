@@ -12,7 +12,7 @@
         const renderCardPaymentBrick = async (bricksBuilder) => {
           const settings = {
             initialization: {
-              amount: 10000, // monto a ser pago
+              amount: <%= @order.total_con_envio.to_f.round(2) %>, // monto a ser pago
               payer: {
                 email: "",
               },

@@ -43,14 +43,21 @@ class PaymentsController < ApplicationController
 
     order = Order.find(params[:order_id])
     if payment["status"] == "approved"
-      order.update(status: :pagada)
+      order.update(status: :pagada,  fecha_pago: Time.current)
       puts "Orden actualizada exitosamente"
+      InvoiceMailer.enviar_factura(order).deliver_now
 
-      render json: { redirect_url: pago_realizado_path(order.id, payment_id: payment["id"]) }
+      render json: {
+        message: "Pago exitoso y factura enviada",
+        redirect_url: pago_realizado_path(order.id, payment_id: payment["id"])
+      }
     else
       order.update(status: :cancelada)
       puts "Orden marcada como cancelada"
-      render json: { redirect_url: pago_cancelado_path(order.id,  payment_id: payment["id"]) }
+       render json: {
+        error: "Pago rechazado",
+        redirect_url: pago_cancelado_path(order.id, payment_id: payment["id"])
+      }, status: :unprocessable_entity
     end
 
   end
