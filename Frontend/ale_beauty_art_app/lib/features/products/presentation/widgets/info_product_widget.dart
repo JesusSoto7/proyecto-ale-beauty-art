@@ -1,6 +1,6 @@
 import 'package:ale_beauty_art_app/features/products/presentation/views/products_Detail_View.dart';
 import 'package:flutter/material.dart';
-import 'package:ale_beauty_art_app/features/products/domain/models/product.dart';
+import 'package:ale_beauty_art_app/models/product.dart';
 import 'package:ale_beauty_art_app/styles/text_styles.dart';
 
 class InfoProduct extends StatelessWidget {
@@ -40,7 +40,7 @@ class InfoProduct extends StatelessWidget {
                   ClipRRect(
                     borderRadius: BorderRadius.circular(12),
                     child: Image.network(
-                      product.imagenUrl ?? 'https://via.placeholder.com/150',// URL de la imagen del producto
+                      product.imagenUrl ?? '',// URL de la imagen del producto
                       width: 80,
                       height: 80,
                       fit: BoxFit.cover, // Cubrir toda el área sin distorsionar

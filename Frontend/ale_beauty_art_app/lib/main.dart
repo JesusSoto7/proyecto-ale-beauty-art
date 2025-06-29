@@ -1,3 +1,4 @@
+import 'package:ale_beauty_art_app/features/categories/bloc/categories_bloc.dart';
 import 'package:ale_beauty_art_app/features/navigation/bloc/navigation_bloc.dart';
 import 'package:ale_beauty_art_app/features/profile/presentation/bloc/profile_bloc.dart';
 import 'package:flutter/material.dart';
@@ -22,6 +23,7 @@ class MyApp extends StatelessWidget {
       providers: [
         BlocProvider(create: (_) => HomeBloc()),
         BlocProvider(create: (_) => ProductBloc()),
+        BlocProvider(create: (_) => CategoriesBloc()),
         BlocProvider(create: (_) => NavigationBloc()),
         BlocProvider(create: (_) => ProfileBloc()),
       ],
