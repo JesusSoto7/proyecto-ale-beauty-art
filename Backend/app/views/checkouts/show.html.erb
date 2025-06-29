@@ -49,11 +49,15 @@
                     },
                     body: JSON.stringify(data)
                   })
-                    .then((response) => {
-                      const order_id = localStorage.getItem("current_order_id");
-                      resolve();
-                      window.location.href = "/pago_realizado/" + order_id;
+                    .then((response) => response.json())
+                    .then((result) => {
+                      if(result.redirect_url){
+                        window.location.href = result.redirect_url;
+                      }else{
+                        alert("Pago realizado, pero no se recibió URL de redirección.");
+                      }
 
+                      resolve()
                     })
                     .catch((error) => {
                       // tratar respuesta de error al intentar crear el pago

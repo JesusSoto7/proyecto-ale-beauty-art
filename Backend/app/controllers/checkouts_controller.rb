@@ -29,7 +29,7 @@ class CheckoutsController < ApplicationController
 
   def success
     @order = Order.find(params[:id])
-
+    @payment_id = params[:payment_id]
     if @order.nil?
       redirect_to inicio_path, alert: "Orden no encontrada."
       return
@@ -43,6 +43,18 @@ class CheckoutsController < ApplicationController
     end
 
     render :success
+  end
+
+  def rejected
+    @order = Order.find(params[:id])
+    @payment_id = params[:payment_id]
+    if @order.nil?
+      redirect_to inicio_path, alert: "Orden no encontrada."
+      return
+    end
+
+    render :rejected
+
   end
 
   private

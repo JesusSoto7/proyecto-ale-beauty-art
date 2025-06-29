@@ -46,6 +46,7 @@ Rails.application.routes.draw do
   resources :orders, only: [:create]
   resources :payments, only: [:create, :new]
   get '/pago_realizado/:id', to: 'checkouts#success', as: :pago_realizado
+  get '/pago_cancelado/:id', to: 'checkouts#rejected', as: :pago_cancelado
 
   namespace :api do
     namespace :v1 do
