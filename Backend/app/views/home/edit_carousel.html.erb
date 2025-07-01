@@ -1,11 +1,5 @@
 <div class="container my-4">
 
-  <% if notice %>
-    <div class="alert alert-success">
-      <%= notice %>
-    </div>
-  <% end %>
-
   <div class="form-section">
     <%= form_with url: update_carousel_path, method: :patch, local: true, multipart: true, scope: :user do |form| %>
       <h4 class="mb-3"><%= form.label :Agregar_Imagenes, class: "form-label" %></h4>

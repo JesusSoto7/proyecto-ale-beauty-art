@@ -59,6 +59,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
 });
 
+// Animaciones con GSAP
+let alerta = document.getElementById('flash-message');
+
+gsap.from(alerta, {
+    x: 300
+})
+
+// fin de animaciones con GSAP
 
 // graficas home
 
