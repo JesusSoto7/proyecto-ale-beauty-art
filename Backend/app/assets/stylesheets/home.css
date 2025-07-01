@@ -494,6 +494,10 @@ link{
         #shw{
           width: 100%;
         }
+
+        .input-filter {
+          width: 100px;
+        }
 }
 
 .image-thumbnails {
