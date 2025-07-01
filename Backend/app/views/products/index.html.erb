@@ -14,6 +14,11 @@
         <% end %>
     </section>
 
+    <ul class="ubi">
+      <%= link_to "Home", home_path %> / 
+      <%= link_to "productos", products_path, class: "ubi-active" %>
+    </ul>
+
     <% content_for :title, "Productos"%>
 
     <h1> Productos </h1>

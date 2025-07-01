@@ -43,19 +43,26 @@ nav{
 
 /* navegacion */
 
-/* ul{
+.ubi{
   margin-top: 5px;
   padding-left: 10px;
+  /* border: solid 1px #ebeaef; */
+  margin-left: 2.5%;
+  color: #7a797e;
 }
 
 
-ul a {
+.ubi a {
   color:#7a797e;
+  text-decoration: none;
 }
-ul a:hover{
+.ubi a:hover{
   color: #fabad9;
-} */
+}
 
+.ubi .ubi-active{
+  color: #f7a4cc;
+}
 /* --------------------------home---------------------------- */
 
 #banner-home{
@@ -238,10 +245,6 @@ ul a:hover{
     margin-bottom: 15px;
 }
 
-/* .alerta span{
-  color: #111;
-} */
-
 
 .closebtn:hover {
   color: rgb(112, 112, 112);
@@ -277,13 +280,10 @@ ul a:hover{
   color: rgb(19, 19, 19);
 }
 
-/* Estilos para el contenedor del mensaje flash si es necesario */
 #flash-message {
-  /* Puedes añadir estilos específicos para el ID si lo necesitas,
-  pero generalmente las clases son más flexibles */
-  max-width: 800px; /* Ancho máximo para el mensaje */
+  max-width: 800px;
   margin-left: auto;
-  margin-right: auto; /* Centrar el mensaje */
+  margin-right: auto;
 }
 
 /* -------------------------home-end-------------------------- */
