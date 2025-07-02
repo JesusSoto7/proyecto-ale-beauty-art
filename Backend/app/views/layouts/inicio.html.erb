@@ -34,9 +34,7 @@
       <nav id="main-nav">
         <%= link_to "INICIO", inicio_path %>
         <%= link_to "PRODUCTOS", productos_path %>
-        <%= link_to "ACERCA DE", about_path %>
         <%= link_to "CATEGORIAS", categorias_publicas_path %>
-        <a href="#">CONTACTO</a>
       </nav>
       
       <div class="search" id="search-box">
@@ -100,7 +98,7 @@
       <div class="footer-section">
         <h3>Información</h3>
         <ul>
-          <li><a href="#">Sobre nosotros</a></li>
+          <li><%= link_to "Sobre nosotros", about_path %></li>
           <li><a href="#">Términos y condiciones</a></li>
           <li><a href="#">Política de privacidad</a></li>
         </ul>
