@@ -1,5 +1,10 @@
+<ul class="ubi">
+    <%= link_to "Home", home_path %> / 
+    <%= link_to "Productos", new_product_path, class: "ubi-active" %>
+</ul>
+
 <div>
-    <h1>Nuevo Producto</h2>
+    <h1>Nuevo Producto</h1>
     <%= render "form", product: @product%>
 
 </div>

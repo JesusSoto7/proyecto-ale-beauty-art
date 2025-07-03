@@ -15,7 +15,7 @@ class HomeController < ApplicationController
     if params[:user][:carousel_images]
       @admin.carousel_images.attach(params[:user][:carousel_images])
     end
-    redirect_to edit_carousel_path
+    redirect_to edit_carousel_path, notice: "Carrusel actualizado"
   end
 
   def delete_carousel_image

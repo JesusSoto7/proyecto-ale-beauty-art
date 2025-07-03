@@ -2,6 +2,11 @@
     <%= image_tag "home.png", class: "logo-img" %>
 </article>
 
+<ul class="ubi">
+    <%= link_to "Home", home_path %> / 
+    <%= link_to "Categorias", categories_path, class: "ubi-active" %>
+</ul>
+
 <div>
     <% content_for :title, "Categories"%>
 

@@ -1,10 +1,9 @@
-<div class="container my-4">
+<ul class="ubi">
+  <%= link_to "Home", home_path %> / 
+  <%= link_to "Carousel", edit_carousel_path, class: "ubi-active" %>
+</ul>
 
-  <% if notice %>
-    <div class="alert alert-success">
-      <%= notice %>
-    </div>
-  <% end %>
+<div class="container my-4">
 
   <div class="form-section">
     <%= form_with url: update_carousel_path, method: :patch, local: true, multipart: true, scope: :user do |form| %>
