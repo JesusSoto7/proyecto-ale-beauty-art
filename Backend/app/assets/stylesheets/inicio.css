@@ -202,9 +202,15 @@ nav a:hover::after {
 
 #profile-icon {
   font-size: 1.5rem;
+  margin-left: 10px;
+  z-index: 1;
+  position: relative;
   color: #555;
   cursor: pointer;
   transition: color 0.3s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 #profile-icon:hover {
@@ -291,12 +297,16 @@ nav a:hover::after {
 
 /* Icono del carrito */
 .cart-icon {
-  position: relative;
-  cursor: pointer;
-  color: #555;
+   display: flex;
+  align-items: center;
+  justify-content: center;
   font-size: 1.3rem;
+  position: relative;
+  color: #555;
+  cursor: pointer;
   transition: color 0.3s;
-  margin-left: 15px;
+  margin-left: 10px;
+  flex-shrink: 0;
 }
 
 .cart-icon:hover {
@@ -571,9 +581,169 @@ footer {
   .carousel-item img {
     height: 100px;
   }
+  
 }
 
 @media (max-width: 768px) {
+  .navbar {
+    padding: 1rem;
+    flex-wrap: wrap;
+  }
+  
+  .logo {
+    order: 2;
+    flex: none;
+    width: 100px;
+    border-radius: 40px;
+  }
+  
+  .menu-icon {
+    order: 1;
+  }
+  .top-right-icons {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    display: flex;
+    align-items: center;
+    justify-content:flex-end;
+    gap: 15px;
+    width: 100%;
+  }
+  .user-options,
+  .cart-icon {
+    position: relative;
+    order: unset;
+  }
+  .search-container {
+    order: 4;
+    margin-top: 1rem;
+  }
+  
+  .user-options {
+    order: 3;
+    right: 29px;
+    top: 7px;
+  }
+  
+  .carousel-item img {
+    height: 300px;
+  }
+  
+  .productos-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+  
+  .producto-img {
+    height: 200px;
+  }
+  
+  #menu-perfil {
+    right: auto;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+}
+
+@media (max-width: 576px) {
+  .top-right-icons {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 15px;
+    width: 100%;
+  }
+
+  .user-options,
+  .cart-icon {
+    position: relative;
+  }
+  .carousel-item img {
+    height: 250px;
+  }
+
+  .search-container {
+    order: 3;
+    width: 100%;
+    margin: 1rem 0;
+  }
+  
+  .productos-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .footer-content {
+    grid-template-columns: 1fr;
+  }
+}
+
+ .carousel-novedades-container {
+  max-width: 2000px;
+  margin: 0px auto;
+}
+
+@media (max-width: 375px), (max-width: 280px) {
+  .search-container {
+    width: 100%;
+    margin-top: 1rem;
+    order: 3;
+  }
+  .navbar {
+    padding: 1rem;
+    flex-wrap: wrap;
+  }
+  
+  .logo {
+    order: 2;
+    flex: none;
+    width: 100px;
+    border-radius: 40px;
+  }
+   .top-right-icons {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 15px;
+  }
+  .menu-icon {
+    order: 1;
+  }
+  
+  .search-container {
+    order: 4;
+    margin-top: 1rem;
+  }
+  
+  .user-options,
+  .cart-icon {
+    position: relative;
+    top: unset;
+    right: unset;
+    order: unset;
+  }
+
+  
+  .carousel-item img {
+    height: 300px;
+  }
+  
+  .productos-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .footer-content {
+    grid-template-columns: 1fr;
+  }
+
+}
+
+@media (max-width: 280px) {
   .navbar {
     padding: 1rem;
     flex-wrap: wrap;
@@ -612,38 +782,14 @@ footer {
   }
   
   .productos-grid {
-    grid-template-columns: 1fr 1fr;
-  }
-  
-  .producto-img {
-    height: 200px;
-  }
-  
-  #menu-perfil {
-    right: auto;
-    left: 50%;
-    transform: translateX(-50%);
-  }
-}
-
-@media (max-width: 576px) {
-  .carousel-item img {
-    height: 250px;
-  }
-  
-  .productos-grid {
     grid-template-columns: 1fr;
   }
   
   .footer-content {
     grid-template-columns: 1fr;
-  }
-}
+  } 
+} 
 
- .carousel-novedades-container {
-  max-width: 2000px;
-  margin: 0px auto;
-}
 
 .carousel-item img {
   height: 550px;
@@ -892,3 +1038,24 @@ footer {
   .categories-carousel-btn.hidden {
     display: none;
   }
+
+.top-right-icons {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 15px;
+  z-index: 9999;
+  margin-left: 1rem;
+  flex-shrink: 0;
+}
+
+.user-options {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+}

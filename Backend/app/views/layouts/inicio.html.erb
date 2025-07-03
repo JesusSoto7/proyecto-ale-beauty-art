@@ -37,7 +37,7 @@
         <%= link_to "CATEGORIAS", categorias_publicas_path %>
       </nav>
       
-      <div class="search" id="search-box">
+      <div class="search-container" id="search-box">
         <%= form_with url: productos_path, method: :get, local: true do %>
           <%= text_field_tag :name, params[:name], placeholder: "Search" %>
           <i class="fas fa-search search-icon"></i>
@@ -45,36 +45,36 @@
       </div>
 
       <!-- User Options con menú perfil corregido -->
-
-      <div class="user-options">
-        <span id="profile-icon">
-          <% if user_signed_in? %>
-            <p id="inicial">
-              <%= current_user.nombre[0].upcase%><%= current_user.apellido[0].upcase%>
-            </p>
-          <% else %>
-            <i class="fas fa-user-circle"></i>
-          <% end %>
-        </span>
-        <div id="menu-perfil">
-          <ul id="ul-perfil">
-          <%= link_to 'Mi Perfil', user_profile_path, class: "texto-perfil" %>
+      <div class="top-right-icons">
+        <div class="user-options">
+          <span id="profile-icon">
             <% if user_signed_in? %>
-              <li><%= button_to "Cerrar sesión", destroy_user_session_path, method: :delete, class:"cerrar_sesion" %></li>
+              <p id="inicial">
+                <%= current_user.nombre[0].upcase%><%= current_user.apellido[0].upcase%>
+              </p>
             <% else %>
-              <li><%= button_to "Inciar sesión",  new_user_session_path, class:"iniciar_sesion" %></li>
+              <i class="fas fa-user-circle"></i>
             <% end %>
-          </ul>
+          </span>
+          <div id="menu-perfil">
+            <ul id="ul-perfil">
+              <%= link_to 'Mi Perfil', user_profile_path, class: "texto-perfil" %>
+              <% if user_signed_in? %>
+                <li><%= button_to "Cerrar sesión", destroy_user_session_path, method: :delete, class:"cerrar_sesion" %></li>
+              <% else %>
+                <li><%= button_to "Iniciar sesión", new_user_session_path, class:"iniciar_sesion" %></li>
+              <% end %>
+            </ul>
+          </div>
+        </div>
+
+        <div class="cart cart-icon">
+          <%= link_to current_cart_path do %>
+            <i class="fas fa-shopping-bag"></i>
+            <span class="cart-count" id="count-cart"><%= current_cart.cart_products.sum(:cantidad) %></span>
+          <% end %>
         </div>
       </div>
-
-      <div class="cart">
-        <%= link_to current_cart_path do%>
-          <i class="fas fa-shopping-bag" style="margin-left: 20px;"></i>
-          <span class="cart-count" id="count-cart"><%= current_cart.cart_products.sum(:cantidad) %></span>
-       <% end%>
-      </div>
-
       
 
     </header>
