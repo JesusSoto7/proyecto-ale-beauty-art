@@ -1,0 +1,75 @@
+<section class="stp1  container py-5">
+  <h2 class="mb-4 fw-bold">Shipping</h2>
+
+  <%= form_with(url: shipping_addresses_path, model: @shipping_address, local: true, class: "needs-validation") do |form| %>
+    
+    <% if @shipping_address.errors.any? %>
+      <div class="alert alert-danger">
+        <h4><%= pluralize(@shipping_address.errors.count, "error") %> La dirección no pudo ser agregada</h4>
+        <ul>
+          <% @shipping_address.errors.each do |error| %>
+            <li><%= error.full_message %></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+
+    <div class="row g-3">
+      <div class="col-md-6">
+        <%= form.label :nombre, "Nombre", class: "form-label" %>
+        <%= form.text_field :nombre, class: "form-control", placeholder: "John" %>
+      </div>
+      <div class="col-md-6">
+        <%= form.label :apellido, "Apellido", class: "form-label" %>
+        <%= form.text_field :apellido, class: "form-control", placeholder: "Terner" %>
+      </div>
+
+      <div class="col-md-6">
+        <%= form.label :telefono, "Telefono", class: "form-label" %>
+        <%= form.text_field :telefono, class: "form-control", placeholder: "123-456-7890" %>
+      </div>
+
+      <% unless user_signed_in? %>
+        <div class="col-md-6">
+          <label for="email" class="form-label">Correo electrónico</label>
+          <input type="email" name="email" id="email" class="form-control" required>
+        </div>
+      <% end %>
+
+      <div class="col-12">
+        <%= form.label :direccion, "Dirección", class: "form-label" %>
+        <%= form.text_field :direccion, class: "form-control", placeholder: "380-394 11th Ave, NY 10001" %>
+      </div>
+
+      <div class="col-md-6">
+        <%= form.label :municipio, "Municipio", class: "form-label" %>
+        <%= form.text_field :municipio, class: "form-control" %>
+      </div>
+
+      <div class="col-md-6">
+        <%= form.label :barrio, "Barrio", class: "form-label" %>
+        <%= form.text_field :barrio, class: "form-control" %>
+      </div>
+
+      <div class="col-md-6">
+        <%= form.label :apartamento, "Apartamento (optional)", class: "form-label" %>
+        <%= form.text_field :apartamento, class: "form-control" %>
+      </div>
+
+      <div class="col-md-6">
+        <%= form.label :codigo_postal, "Codigo Postal (optional)", class: "form-label" %>
+        <%= form.number_field :codigo_postal, class: "form-control" %>
+      </div>
+
+      <div class="col-12">
+        <%= form.label :inidicacion_adicionales, "informacion adicional (optional)", class: "form-label" %>
+        <%= form.text_field :inidicacion_adicionales, class: "form-control" %>
+      </div>
+
+      <div class="col-12 mt-4">
+        <%= form.submit "Continuar Compra", class: "btn btn-primary w-100" %>
+      </div>
+    </div>
+
+  <% end %>
+</section>

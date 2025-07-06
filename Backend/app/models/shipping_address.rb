@@ -1,12 +1,10 @@
 class ShippingAddress < ApplicationRecord
-  belongs_to :order
   belongs_to :user, optional: true
+  has_many :orders
 
-  validates :indicaciones_adicionales, length: { maximum: 500 }
-  validates :nombre, presence: true
-  validates :apellido, presence: true
-  validates :telefono, presence: true
-  validates :direccion, presence: true
-  validates :municipio, presence: true
-  validates :barrio, presence: true
+  validates :nombre, :apellido, :telefono, :direccion,
+            :municipio, :barrio, presence: true
+
+  validates :telefono, length: { is: 10 }, numericality: { only_integer: true }
+  validates :indicaciones_adicionales, length: { maximum: 500 }, allow_blank: true
 end

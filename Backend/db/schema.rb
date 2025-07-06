@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_06_22_033655) do
+ActiveRecord::Schema[8.0].define(version: 2025_07_06_042744) do
   create_table "active_storage_attachments", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
@@ -82,10 +82,12 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_22_033655) do
     t.decimal "costo_de_envio", precision: 10, scale: 2
     t.bigint "user_id"
     t.bigint "payment_method_id"
+    t.bigint "shipping_address_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["numero_de_orden"], name: "index_orders_on_numero_de_orden", unique: true
     t.index ["payment_method_id"], name: "index_orders_on_payment_method_id"
+    t.index ["shipping_address_id"], name: "index_orders_on_shipping_address_id"
     t.index ["user_id"], name: "index_orders_on_user_id"
   end
 
@@ -130,11 +132,9 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_22_033655) do
     t.string "codigo_postal"
     t.text "indicaciones_adicionales"
     t.boolean "predeterminada", default: false
-    t.bigint "order_id", null: false
     t.bigint "user_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["order_id"], name: "index_shipping_addresses_on_order_id"
     t.index ["user_id"], name: "index_shipping_addresses_on_user_id"
   end
 
@@ -169,8 +169,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_22_033655) do
   add_foreign_key "order_details", "orders"
   add_foreign_key "order_details", "products"
   add_foreign_key "orders", "payment_methods"
+  add_foreign_key "orders", "shipping_addresses"
   add_foreign_key "orders", "users"
   add_foreign_key "products", "categories"
-  add_foreign_key "shipping_addresses", "orders"
   add_foreign_key "shipping_addresses", "users"
 end

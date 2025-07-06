@@ -59,7 +59,7 @@
           <div id="menu-perfil">
             <ul id="ul-perfil">
               <%= link_to 'Mi Perfil', user_profile_path, class: "texto-perfil" %>
-              <%= link_to 'Mi Dirreciones', direcciones_path, class: "texto-perfil"%>
+              <%= link_to 'Mis Direciones', direcciones_path, class: "texto-perfil"%>
               <% if user_signed_in? %>
                 <li><%= button_to "Cerrar sesión", destroy_user_session_path, method: :delete, class:"cerrar_sesion" %></li>
               <% else %>

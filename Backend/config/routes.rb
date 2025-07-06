@@ -58,7 +58,7 @@ Rails.application.routes.draw do
   get 'categorias_publicas/:id', to: 'public_categories#show', as: :categoria_publica
 
   get '/direcciones', to: 'shipping_addresses#index', as: :direcciones
-  resources :shipping_addresses, only: [:create, :update]
+  resources :shipping_addresses, only: [:new, :create, :update, :destroy, :edit, :show]
 
     # Render dynamic PWA files from app/views/pwa/* (remember to link manifest in application.html.erb)
   # get "manifest" => "rails/pwa#manifest", as: :pwa_manifest

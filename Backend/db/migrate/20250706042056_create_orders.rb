@@ -9,6 +9,7 @@ class CreateOrders < ActiveRecord::Migration[8.0]
       t.decimal :costo_de_envio, precision: 10, scale: 2, null: true
       t.references :user, null: true, foreign_key: true
       t.references :payment_method, null: true, foreign_key: true
+      t.references :shipping_address, null: false, foreign_key: true
 
       t.timestamps
     end
