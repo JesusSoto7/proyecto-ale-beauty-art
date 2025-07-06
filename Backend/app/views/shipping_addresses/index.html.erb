@@ -12,9 +12,16 @@
                         <div class="list-group-item">
                             <p><strong>Dirección:</strong> <%= address.direccion %>, <%= address.municipio %>, <%= address.barrio %></p>
                               <%= link_to 'Editar', edit_shipping_address_path(address), class: "btn btn-warning btn-sm me-2" %>
-                            <%= link_to 'Eliminar', shipping_address_path(address), method: :delete, class: "btn btn-danger btn-sm" %>
+                                <%= button_to 'Eliminar', shipping_address_path(address),
+                                            method: :delete,
+                                            class: 'btn btn-danger btn-sm' %>
                         </div>
+
                         <% end %>
+                    </div>
+
+                     <div>
+                        <%= link_to 'Agregar nueva direccion',  new_shipping_address_path, class: "btn btn-warning btn-sm me-2"%>
                     </div>
                 <% end %>
             </div>

@@ -1,7 +1,7 @@
 <section class="stp1  container py-5">
   <h2 class="mb-4 fw-bold">Shipping</h2>
 
-  <%= form_with(url: shipping_addresses_path, model: @shipping_address, local: true, class: "needs-validation") do |form| %>
+  <%= form_with(model: @shipping_address, local: true, class: "needs-validation") do |form| %>
     
     <% if @shipping_address.errors.any? %>
       <div class="alert alert-danger">
@@ -62,8 +62,8 @@
       </div>
 
       <div class="col-12">
-        <%= form.label :inidicacion_adicionales, "informacion adicional (optional)", class: "form-label" %>
-        <%= form.text_field :inidicacion_adicionales, class: "form-control" %>
+        <%= form.label :indicaciones_adicionales, "informacion adicional (optional)", class: "form-label" %>
+        <%= form.text_area :indicaciones_adicionales, class: "form-control" %>
       </div>
 
       <div class="col-12 mt-4">
