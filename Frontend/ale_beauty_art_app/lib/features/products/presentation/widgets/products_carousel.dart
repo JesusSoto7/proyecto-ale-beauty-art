@@ -1,5 +1,6 @@
 import 'package:ale_beauty_art_app/core/views/loading_view.dart';
 import 'package:ale_beauty_art_app/features/products/presentation/bloc/product_bloc.dart';
+import 'package:ale_beauty_art_app/features/products/presentation/views/products_Detail_View.dart';
 import 'package:ale_beauty_art_app/styles/colors.dart';
 import 'package:ale_beauty_art_app/styles/text_styles.dart';
 import 'package:flutter/material.dart';
@@ -13,7 +14,7 @@ class ProductsCarousel extends StatefulWidget {
 }
 
 class _ProductsCarouselState extends State<ProductsCarousel> {
-  final PageController _pageController = PageController(viewportFraction: 0.38);// 👈 Ajusta visibilidad de productos
+  final PageController _pageController = PageController(viewportFraction: 0.38);// Ajusta visibilidad de productos
   int _currentPage = 0;
   late List<dynamic> _productosDestacados;
 
@@ -69,38 +70,104 @@ class _ProductsCarouselState extends State<ProductsCarousel> {
                   onPageChanged: (index) => setState(() => _currentPage = index),
                   itemBuilder: (context, index) {
                     final product = _productosDestacados[index];
-                    return Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 4),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          ClipRRect(
-                            borderRadius: BorderRadius.circular(12),
-                            child: Image.network(
-                              product.imagenUrl ?? '',
-                              height: 110,
-                              width: 150,
-                              fit: BoxFit.cover,
-                              errorBuilder: (context, error, stackTrace) => Container(
-                                height: 110,
-                                width: 150,
-                                color: Colors.grey[300],
-                                child: const Icon(Icons.broken_image, color: Colors.grey),
-                              ),
+                    return Container(
+                      width: 140,
+                      margin: const EdgeInsets.symmetric(horizontal: 6),
+                      child: GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => ProductDetailView(product: product),
                             ),
+                          );
+                        },
+                        child: Card(
+                          elevation: 4,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
                           ),
-                          const SizedBox(height: 8),
-                          Text(
-                            product.nombreProducto,
-                            style: AppTextStyles.subtitle,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              // Imagen con fondo degradado
+                              Stack(
+                                children: [
+                                  Container(
+                                    height: 100,
+                                    margin: const EdgeInsets.all(8), // margen de la imagen
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(12),
+                                      gradient: LinearGradient(
+                                        begin: Alignment.topLeft,
+                                        end: Alignment.bottomRight,
+                                        colors: [
+                                          Colors.pink.shade100,
+                                          Colors.pinkAccent.shade100,
+                                        ],
+                                      ),
+                                    ),
+                                    child: product.imagenUrl != null && product.imagenUrl!.isNotEmpty
+                                        ? ClipRRect(
+                                            borderRadius: const BorderRadius.vertical(
+                                              top: Radius.circular(12),
+                                            ),
+                                            child: Image.network(
+                                              product.fullImageUrl,
+                                              fit: BoxFit.cover,
+                                              errorBuilder: (context, error, stackTrace) {
+                                                return const Center(
+                                                  child: Text(
+                                                    '💋',
+                                                    style: TextStyle(fontSize: 32),
+                                                  ),
+                                                );
+                                              },
+                                            ),
+                                          )
+                                        : const Center(
+                                            child: Text(
+                                              '💋',
+                                              style: TextStyle(fontSize: 32),
+                                            ),
+                                          ),
+                                  ),
+                                ],
+                              ),
+                              // Texto y precio
+                              Expanded(
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 8, vertical: 4), // mismo margen lateral que la imagen
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        product.nombreProducto,
+                                        style: const TextStyle(
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 16,
+                                          color: Color(0xFF1F2937),
+                                        ),
+                                        maxLines: 2,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                      const SizedBox(height: 4),
+                                      Text(
+                                        '\$${product.precioProducto.toStringAsFixed(2)}',
+                                        style: AppTextStyles.price.copyWith(
+                                          color: Colors.pinkAccent,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 14,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
-                          Text(
-                            '\$${product.precioProducto}',
-                            style: AppTextStyles.price,
-                          ),
-                        ],
+                        ),
                       ),
                     );
                   },
@@ -134,7 +201,7 @@ class _ProductsCarouselState extends State<ProductsCarousel> {
   Widget _arrowButton({required IconData icon, required VoidCallback onPressed}) {
     return Container(
       decoration: BoxDecoration(
-        color: AppColors.primaryPink, // 👈 Rosado clarito
+        color: AppColors.primaryPink, //  Rosado clarito
         shape: BoxShape.circle,
         border: Border.all(color: Colors.white, width: 1.5),
         boxShadow: const [

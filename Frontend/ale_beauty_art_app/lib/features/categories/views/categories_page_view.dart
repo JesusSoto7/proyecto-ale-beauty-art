@@ -1,8 +1,10 @@
+import 'package:ale_beauty_art_app/core/views/loading_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../products/presentation/bloc/product_bloc.dart';
 import '../../products/presentation/views/products_by_category_view.dart';
 import '../bloc/categories_bloc.dart';
+import '../../../styles/colors.dart';
 
 class CategoriesPageView extends StatelessWidget {
   const CategoriesPageView({super.key});
@@ -10,22 +12,24 @@ class CategoriesPageView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppColors.background,
       body: BlocBuilder<CategoriesBloc, CategoriesState>(
         builder: (context, state) {
           if (state is CategoriesLoadInProgress) {
-            return const Center(child: CircularProgressIndicator());
+            return const Center(child: LoadingView());
           } else if (state is CategoriesLoadSuccess) {
             final categories = state.categories;
 
             return Padding(
-              padding: const EdgeInsets.all(16.0),
+              padding: const EdgeInsets.all(12.0), // Menos padding general
               child: GridView.builder(
+                padding: const EdgeInsets.only(top: 40),
                 itemCount: categories.length,
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2, // 🟣 2 tarjetas por fila
-                  mainAxisSpacing: 16,
-                  crossAxisSpacing: 16,
-                  childAspectRatio: 3 / 2, // 🟢 proporción de tamaño
+                  crossAxisCount: 2, // 2 círculos por fila
+                  mainAxisSpacing: 20, // Menos espacio vertical
+                  crossAxisSpacing: 12, // Menos espacio horizontal
+                  childAspectRatio: 1.2, // Más ajustado
                 ),
                 itemBuilder: (context, index) {
                   final category = categories[index];
@@ -57,52 +61,41 @@ class CategoriesPageView extends StatelessWidget {
                         );
                       }
                     },
-                    child: Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(20),
-                        color: Colors.white,
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black12,
-                            blurRadius: 8,
-                            offset: Offset(0, 4),
-                          ),
-                        ],
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          ClipRRect(
-                            borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
-                            child: Image.network(
-                              category.imagen,
-                              height: 120,
-                              width: double.infinity,
-                              fit: BoxFit.cover,
-                              errorBuilder: (context, error, stackTrace) => Container(
-                                height: 120,
-                                width: 200,
-                                color: Colors.grey[300],
-                                child: const Icon(Icons.broken_image, color: Colors.grey, size: 40),
-                              ),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        // Imagen circular
+                       CircleAvatar(
+                        radius: 60, // tamaño 
+                        backgroundColor: Colors.pink.shade50,
+                        // Muestra siempre el emoji por ahora
+                        child: const Center(
+                          child: Text(
+                            '💄', // Emoji por defecto
+                            style: TextStyle(
+                              fontSize: 34,
+                              color: AppColors.primaryPink,
                             ),
                           ),
-                          const SizedBox(height: 10),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                            child: Text(
-                              category.nombreCategoria,
-                              textAlign: TextAlign.center,
-                              style: const TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.w600,
-                              ),
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                        ],
+                        ),
+                        // Cambiar a NetworkImage(category.imagen) cuando la API tenga las imágenes funcionales
+                        // backgroundImage: category.imagen.isNotEmpty ? NetworkImage(category.imagen) : null,
                       ),
+
+                        const SizedBox(height: 8),
+                        // Nombre de la categoría
+                        Text(
+                          category.nombreCategoria,
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.w600,
+                            color: Color(0xFF374151),
+                          ),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ],
                     ),
                   );
                 },
@@ -116,5 +109,3 @@ class CategoriesPageView extends StatelessWidget {
     );
   }
 }
-
-
