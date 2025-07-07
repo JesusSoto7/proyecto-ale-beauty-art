@@ -2,7 +2,6 @@ import 'package:ale_beauty_art_app/core/views/failure_view.dart';
 import 'package:ale_beauty_art_app/core/views/loading_view.dart';
 import 'package:ale_beauty_art_app/features/products/presentation/bloc/product_bloc.dart';
 import 'package:ale_beauty_art_app/features/products/presentation/views/products_list_view.dart';
-import 'package:ale_beauty_art_app/styles/colors.dart';
 // import 'package:ale_beauty_art_app/styles/text_styles.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -13,7 +12,6 @@ class ProductsPageView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.background,
       // appBar: AppBar(
         // automaticallyImplyLeading: false,
         // leading: GestureDetector(

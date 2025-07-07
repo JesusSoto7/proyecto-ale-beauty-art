@@ -1,4 +1,5 @@
 import 'package:ale_beauty_art_app/features/products/presentation/widgets/info_product_widget.dart';
+import 'package:ale_beauty_art_app/styles/colors.dart';
 import 'package:flutter/material.dart';
 import '../../../../models/product.dart';
 
@@ -10,6 +11,7 @@ class ProductsListView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppColors.background,
       body: InfoProduct(products: products),
     );
   }

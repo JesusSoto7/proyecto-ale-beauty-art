@@ -18,10 +18,27 @@ class ProductsByCategoryView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Productos de $categoryName'),
-        backgroundColor: AppColors.primaryPink,
+     appBar: AppBar(
+      title: Text(
+        categoryName,
+        style: const TextStyle(
+          color: Colors.white, // texto blanco
+          fontWeight: FontWeight.bold,
+          fontSize: 20,
+        ),
       ),
+      backgroundColor: AppColors.primaryPink,
+      automaticallyImplyLeading: false, // quita el back automático
+      centerTitle: true, // centra el título
+      leading: IconButton(
+        icon: const Icon(Icons.arrow_back, color: Colors.white),
+        tooltip: '', // quita el texto flotante
+        onPressed: () {
+          Navigator.pop(context);
+        },
+      ),
+    ),
+
       body: InfoProduct(products: products),
     );
   }

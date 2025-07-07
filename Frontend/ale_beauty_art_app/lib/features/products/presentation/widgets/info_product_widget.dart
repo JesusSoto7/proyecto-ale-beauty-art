@@ -10,78 +10,103 @@ class InfoProduct extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-      padding: const EdgeInsets.all(16), //Espacio Al rededor de la lista
+    return GridView.builder(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2, //  2 productos por fila
+        mainAxisSpacing: 10, // Espacio vertical reducido
+        crossAxisSpacing: 10, // Espacio horizontal reducido
+        childAspectRatio: 1.1, //  Ajusta proporción alto/ancho
+      ),
       itemCount: products.length,
       itemBuilder: (context, index) {
-        final product = products[index]; // Producto actual en el índice
+        final product = products[index];
 
-          return GestureDetector(
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (_) => ProductDetailView(product: product),
-                ),
-              );
-            },
-            child: Card(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16),
-                ),
-            color: Colors.white, // Fondo blanco para cada tarjeta
-            margin: const EdgeInsets.symmetric(vertical: 8), // Separación vertical entre tarjetas
-            elevation: 4, // Sombra
-            child: Padding(
-              padding: const EdgeInsets.all(12), // Espacio interno dentro de la tarjeta
-              child: Row(
-                children: [
-                  // Imagen del producto con bordes redondeados
-                  ClipRRect(
+        return GestureDetector(
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => ProductDetailView(product: product),
+              ),
+            );
+          },
+          child: Card(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+            color: Colors.white,
+            elevation: 3,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Imagen con tamaño limitado y centrada
+                Container(
+                  height: 130,
+                  margin: const EdgeInsets.all(8), // 👈 margen para centrar
+                  decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(12),
-                    child: Image.network(
-                      product.imagenUrl ?? '',// URL de la imagen del producto
-                      width: 80,
-                      height: 80,
-                      fit: BoxFit.cover, // Cubrir toda el área sin distorsionar
-                      // Si la imagen falla, muestra un contenedor gris con ícono de error
-                      errorBuilder: (context, error, stackTrace) =>
-                          Container(
-                        width: 80,
-                        height: 80,
-                        color: Colors.grey[300],
-                        child: const Icon(Icons.broken_image, color: Colors.grey),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 16), // Espacio entre imagen y texto
-
-                  // Columna con texto: nombre, descripción y precio
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start, // Alineado a la izquierda
-                      children: [
-                        Text(
-                          product.nombreProducto, // Llamo al nombre del producto
-                          style: AppTextStyles.title,
-                        ),
-                        const SizedBox(height: 4), // Espacio pequeño entre textos
-                        Text(
-                          product.descripcion, //descripcion del prodcuto
-                          style: AppTextStyles.subtitle, // Estilo para descripción
-                          maxLines: 2, // Máximo 2 líneas para que no ocupe mucho espacio
-                          overflow: TextOverflow.ellipsis, // Si es más largo, poner "..."
-                        ),
-                        const SizedBox(height: 8), // Separación antes del precio
-                        Text(
-                          '\$${product.precioProducto} COP', // Precio del producto
-                          style: AppTextStyles.price, // Estilo para el precio
-                        ),
+                    gradient: LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: [
+                        Colors.pink.shade100,
+                        Colors.pinkAccent.shade100,
                       ],
                     ),
                   ),
-                ],
-              ),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(12),
+                    child:product.fullImageUrl.isNotEmpty
+                        ? Image.network(
+                            product.fullImageUrl,
+                            fit: BoxFit.cover,
+                            errorBuilder: (context, error, stackTrace) =>
+                                const Center(
+                              child: Text(
+                                '💋',
+                                style: TextStyle(fontSize: 28),
+                              ),
+                            ),
+                          )
+                        : const Center(
+                            child: Text(
+                              '💋',
+                              style: TextStyle(fontSize: 28),
+                            ),
+                          ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Nombre del producto (máximo 2 líneas)
+                      Text(
+                        product.nombreProducto,
+                        style: const TextStyle(
+                          fontWeight: FontWeight.w600,
+                          fontSize: 16,
+                          color: Color(0xFF1F2937),
+                        ),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      const SizedBox(height: 4),
+
+                      Text(
+                        '\$${product.precioProducto.toStringAsFixed(2)}',
+                        style: AppTextStyles.price.copyWith(
+                          color: Colors.pinkAccent,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 14,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
             ),
           ),
         );
@@ -89,6 +114,10 @@ class InfoProduct extends StatelessWidget {
     );
   }
 }
+
+
+
+
 //Logica de de donde se saca la informacion del json
 //   @override
 //   Widget build(BuildContext context) {
