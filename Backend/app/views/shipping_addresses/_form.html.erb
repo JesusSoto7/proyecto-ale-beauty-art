@@ -1,15 +1,7 @@
 <section class="stp1  container py-5">
-  <h6 class="text-primary mb-1 fw-semibold">Step 01</h6>
-  <h2 class="mb-4 fw-bold">Shipping</h2>
+  <h2 class="mb-4 fw-bold">Tu Dirección</h2>
 
- <%= form_with(
-      model: @shipping_address,
-      url: @shipping_address.persisted? ? editar_direccion_checkout_path(@shipping_address) : create_address_checkouts_path,
-      method: @shipping_address.persisted? ? :patch : :post,
-      local: true,
-      class: "needs-validation"
-    ) do |form| %>
-
+  <%= form_with(model: @shipping_address, local: true, class: "needs-validation") do |form| %>
     
     <% if @shipping_address.errors.any? %>
       <div class="alert alert-danger">

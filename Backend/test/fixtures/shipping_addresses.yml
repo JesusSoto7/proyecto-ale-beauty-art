@@ -9,9 +9,8 @@ one:
   barrio: MyString
   apartamento: MyString
   codigo_postal: MyString
-  indicaciones_adicionales: MyString
+  indicaciones_adicionales: MyText
   predeterminada: false
-  order: one
   user: one
 
 two:
@@ -23,7 +22,6 @@ two:
   barrio: MyString
   apartamento: MyString
   codigo_postal: MyString
-  indicaciones_adicionales: MyString
+  indicaciones_adicionales: MyText
   predeterminada: false
-  order: two
   user: two

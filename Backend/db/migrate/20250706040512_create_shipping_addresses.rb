@@ -11,7 +11,6 @@ class CreateShippingAddresses < ActiveRecord::Migration[8.0]
       t.string :codigo_postal
       t.text :indicaciones_adicionales
       t.boolean :predeterminada, default: false
-      t.references :order, null: false, foreign_key: true
       t.references :user, null: true, foreign_key: true
 
       t.timestamps

@@ -60,6 +60,7 @@
             <ul id="ul-perfil">
               <%= link_to 'Mi Perfil', user_profile_path, class: "texto-perfil" %>
               <% if user_signed_in? %>
+                <li><%= link_to 'Mis Direciones', direcciones_path, class: "texto-perfil"%></li>
                 <li><%= button_to "Cerrar sesión", destroy_user_session_path, method: :delete, class:"cerrar_sesion" %></li>
               <% else %>
                 <li><%= button_to "Iniciar sesión", new_user_session_path, class:"iniciar_sesion" %></li>

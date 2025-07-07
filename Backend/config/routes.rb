@@ -27,10 +27,24 @@ Rails.application.routes.draw do
   get "/cart/count", to: "carts#count", as: 'count_cart'
   post 'cart/add', to: 'cart#add', as: 'cart_add'
 
+
   get '/checkout/:id', to: 'checkouts#show', as: :checkout
-  resource :checkouts, only: [:new] do
-    post :create_address, on: :collection
+
+
+  resources :checkouts do
+    member do
+      get :edit_direccion
+      get :direccion_envio
+      patch :editar_direccion
+    end
+
+    collection do
+      post :create_address
+      get :seleccionar_direccion
+    end
   end
+
+
 
 
   resources :products
@@ -56,6 +70,13 @@ Rails.application.routes.draw do
   end
   get 'categorias_publicas', to: 'public_categories#index', as: :categorias_publicas
   get 'categorias_publicas/:id', to: 'public_categories#show', as: :categoria_publica
+
+  get '/direcciones', to: 'shipping_addresses#index', as: :direcciones
+  resources :shipping_addresses do
+    member do
+      patch :set_predeterminada
+    end
+  end
 
     # Render dynamic PWA files from app/views/pwa/* (remember to link manifest in application.html.erb)
   # get "manifest" => "rails/pwa#manifest", as: :pwa_manifest
