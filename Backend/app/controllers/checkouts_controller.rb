@@ -2,20 +2,46 @@ class CheckoutsController < ApplicationController
   layout 'checkout'
   skip_before_action :authenticate_user!, only: [:success]
 
-  def new
-     @shipping_address = ShippingAddress.new
+  def direccion_envio
+    @order = Order.find(session[:order_id])
+    @shipping_addresses = current_user&.shipping_addresses || []
+    @shipping_address = @order.shipping_address.presence ||
+                    current_user&.shipping_addresses&.find_by(predeterminada: true) ||
+                    current_user&.shipping_addresses&.last ||
+                    ShippingAddress.new
+
   end
+
+  def edit_direccion
+    @shipping_address = current_user.shipping_addresses.find(params[:id])
+  end
+
+  def editar_direccion
+    @shipping_address = current_user.shipping_addresses.find(params[:id])
+
+    if @shipping_address.update(shipping_address_params)
+      redirect_to seleccionar_direccion_checkouts_path
+    else
+      render :edit_direccion
+    end
+  end
+
 
   def create_address
     @shipping_address = ShippingAddress.new(shipping_address_params)
     @shipping_address.user = current_user if current_user.present?
-    @shipping_address.order = current_order
 
     if @shipping_address.save
-      redirect_to checkout_path(current_order.id)
+      current_order.update(shipping_address: @shipping_address)
+      redirect_to checkout_path(current_cart.id)
     else
       render :new, status: :unprocessable_entity
     end
+  end
+
+  def seleccionar_direccion
+    @order = Order.find(session[:order_id])
+    @shipping_addresses = current_user.shipping_addresses
   end
 
   def show
@@ -56,6 +82,7 @@ class CheckoutsController < ApplicationController
     render :rejected
 
   end
+
 
   private
 

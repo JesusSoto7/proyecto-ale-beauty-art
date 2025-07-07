@@ -11,8 +11,13 @@
                         <% @shipping_addresses.each do |address| %>
                         <div class="list-group-item">
                             <p><strong>Dirección:</strong> <%= address.direccion %>, <%= address.municipio %>, <%= address.barrio %></p>
+
+                              <%= form_with url: set_predeterminada_shipping_address_path(address), method: :patch, local: true do %>
+                                <%= check_box_tag "predeterminada", "1", address.predeterminada, onchange: "this.form.submit()"%>
+                                <%= label_tag "predeterminada", "Usar como predeterminada"%>
+                              <% end %>
                               <%= link_to 'Editar', edit_shipping_address_path(address), class: "btn btn-warning btn-sm me-2" %>
-                                <%= button_to 'Eliminar', shipping_address_path(address),
+                              <%#= button_to 'Eliminar', shipping_address_path(address),
                                             method: :delete,
                                             class: 'btn btn-danger btn-sm' %>
                         </div>

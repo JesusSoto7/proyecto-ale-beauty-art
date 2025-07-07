@@ -4,7 +4,8 @@ class Order < ApplicationRecord
   belongs_to :payment_method, optional: true
   has_many :order_details, dependent: :destroy
   before_create :generar_numero_de_orden
-  belongs_to :shipping_address
+  belongs_to :shipping_address, optional: true
+
 
   def generar_numero_de_orden
     loop do

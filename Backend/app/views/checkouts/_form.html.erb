@@ -2,7 +2,14 @@
   <h6 class="text-primary mb-1 fw-semibold">Step 01</h6>
   <h2 class="mb-4 fw-bold">Shipping</h2>
 
-  <%= form_with(url: create_address_checkouts_path, model: @shipping_address, local: true, class: "needs-validation") do |form| %>
+ <%= form_with(
+      model: @shipping_address,
+      url: @shipping_address.persisted? ? editar_direccion_checkout_path(@shipping_address) : create_address_checkouts_path,
+      method: @shipping_address.persisted? ? :patch : :post,
+      local: true,
+      class: "needs-validation"
+    ) do |form| %>
+
     
     <% if @shipping_address.errors.any? %>
       <div class="alert alert-danger">
@@ -63,12 +70,12 @@
       </div>
 
       <div class="col-12">
-        <%= form.label :inidicacion_adicionales, "informacion adicional (optional)", class: "form-label" %>
-        <%= form.text_field :inidicacion_adicionales, class: "form-control" %>
+        <%= form.label :indicaciones_adicionales, "informacion adicional (optional)", class: "form-label" %>
+        <%= form.text_area :indicaciones_adicionales, class: "form-control" %>
       </div>
 
       <div class="col-12 mt-4">
-        <%= form.submit "Continuar Compra", class: "btn btn-primary w-100" %>
+        <%= form.submit "Continuar", class: "btn btn-primary w-100" %>
       </div>
     </div>
 

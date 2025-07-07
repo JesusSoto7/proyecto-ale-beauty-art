@@ -1,0 +1,34 @@
+<section>
+    <div>
+
+            <div>
+                <% if @shipping_addresses.empty? %>
+                    <%= render 'form',  shipping_address: @shipping_address%>
+                <% else %>
+                    <h4>Escoge en donde vas a recibir tus pedidos</h4>
+                    <h5>Tus Direcciones</h5>
+                    <div class="list-group mb-4">
+                        <% @shipping_addresses.each do |address| %>
+                        <div class="list-group-item">
+                            <p><strong>Dirección:</strong> <%= address.direccion %>, <%= address.municipio %>, <%= address.barrio %></p>
+
+                        <%= form_with url: set_predeterminada_shipping_address_path(address, from_checkout: true), method: :patch, local: true do %>
+                        <%= check_box_tag "predeterminada", "1", address.predeterminada, onchange: "this.form.submit()" %>
+                        <%= label_tag "predeterminada", "Usar como predeterminada" %>
+                        <% end %>
+
+
+                              <%= link_to 'Editar', edit_direccion_checkout_path(address), class: "btn btn-warning btn-sm me-2" %>
+                        </div>
+
+                        <% end %>
+                    </div>
+
+                     <div>
+                        <%#= link_to 'Agregar nueva direccion',  new_shipping_address_path, class: "btn btn-warning btn-sm me-2"%>
+                        <%= link_to 'Continuar', direccion_envio_checkout_path(@order.id), class: "btn btn-warning btn-sm me-2"%>
+                    </div>
+                <% end %>
+            </div>
+    </div>
+</section>
