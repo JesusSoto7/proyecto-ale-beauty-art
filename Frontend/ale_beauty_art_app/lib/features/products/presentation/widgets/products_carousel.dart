@@ -107,13 +107,11 @@ class _ProductsCarouselState extends State<ProductsCarousel> {
                                         ],
                                       ),
                                     ),
-                                    child: product.imagenUrl != null && product.imagenUrl!.isNotEmpty
+                                    child: (product.imagenUrl != null && product.imagenUrl!.isNotEmpty)
                                         ? ClipRRect(
-                                            borderRadius: const BorderRadius.vertical(
-                                              top: Radius.circular(12),
-                                            ),
+                                            borderRadius: const BorderRadius.all(Radius.circular(12)),
                                             child: Image.network(
-                                              product.fullImageUrl,
+                                              product.imagenUrl!,
                                               fit: BoxFit.cover,
                                               errorBuilder: (context, error, stackTrace) {
                                                 return const Center(

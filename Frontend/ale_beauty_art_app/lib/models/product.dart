@@ -10,19 +10,6 @@ class Product extends Equatable {
   final String nombreCategoria;
   final String? imagenUrl;
 
-String get fullImageUrl {
-  if (imagenUrl == null || imagenUrl!.isEmpty) {
-    return '';
-  }
-  //Aqui colocan la ip de su pc para q les cargen las imagenes q agregen a los productos
-  const String localIp = 'xxx.xxx.xx.xxx';
-
-  if (imagenUrl!.contains('localhost')) {
-    return imagenUrl!.replaceFirst('localhost', localIp);
-  }
-  return imagenUrl!;
-}
-
   const Product({
     required this.id,
     required this.nombreProducto,
