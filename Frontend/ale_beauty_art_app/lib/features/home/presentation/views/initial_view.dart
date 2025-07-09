@@ -96,6 +96,8 @@ class InitialView extends StatelessWidget {
           width: 60,
           child: FloatingActionButton(
             backgroundColor: Colors.white,
+            hoverColor: Colors.grey.withOpacity(0.1), 
+            splashColor: AppColors.primaryPink.withOpacity(0.1),
             elevation: 4,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(50),
