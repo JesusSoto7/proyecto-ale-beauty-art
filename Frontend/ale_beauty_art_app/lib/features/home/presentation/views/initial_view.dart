@@ -1,5 +1,6 @@
-import 'package:ale_beauty_art_app/features/categories/bloc/categories_bloc.dart';
-import 'package:ale_beauty_art_app/features/categories/views/categories_page_view.dart';
+import 'package:ale_beauty_art_app/features/categories/presentation/bloc/categories_bloc.dart';
+import 'package:ale_beauty_art_app/features/categories/presentation/views/categories_page_view.dart';
+import 'package:ale_beauty_art_app/features/login/presentation/view/login_view.dart';
 import 'package:ale_beauty_art_app/features/navigation/bloc/navigation_bloc.dart';
 import 'package:ale_beauty_art_app/features/products/presentation/bloc/product_bloc.dart';
 import 'package:ale_beauty_art_app/features/products/presentation/views/products_page_view.dart';
@@ -80,7 +81,7 @@ class InitialView extends StatelessWidget {
                 case 2:
                   return const CategoriesPageView();
                 case 3:
-                  return const ProfileView();
+                  return LoginView();
                 default:
                   return _homeContent(context);
               }

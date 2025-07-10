@@ -5,6 +5,15 @@ Rails.application.routes.draw do
   # Can be used by load balancers and uptime monitors to verify that the app is live.
   get "up" => "rails/health#show", as: :rails_health_check
   devise_for :users
+  
+  namespace :api do
+    namespace :v1, defaults: { format: :json } do
+      mount_devise_token_auth_for 'User', at: 'auth', controllers: {
+        sessions: 'api/v1/auth/sessions'
+      }
+    end
+  end
+
 
   get 'home', to: 'home#index'
   get "home" => "home#index", as: :welcome

@@ -1,10 +1,10 @@
 import 'package:ale_beauty_art_app/core/views/loading_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../products/presentation/bloc/product_bloc.dart';
-import '../../products/presentation/views/products_by_category_view.dart';
+import '../../../products/presentation/bloc/product_bloc.dart';
+import '../../../products/presentation/views/products_by_category_view.dart';
 import '../bloc/categories_bloc.dart';
-import '../../../styles/colors.dart';
+import '../../../../styles/colors.dart';
 
 class CategoriesPageView extends StatelessWidget {
   const CategoriesPageView({super.key});
