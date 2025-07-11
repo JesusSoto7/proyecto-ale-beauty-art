@@ -175,3 +175,47 @@
   }
 }
 
+@media (max-width: 576px) {
+  .seccion-banner, .seccion-banner2 {
+    flex-direction: column;
+    height: auto;
+    padding: 0;
+  }
+
+  .banner1, .banner2, .banner3 {
+    width: 100%;
+    height: 60vh;
+    background-size: cover;
+    background-position: center;
+    position: relative;
+  }
+
+  .texto, .texto2, .texto3 {
+    margin-left: 0;
+    padding: 10px 20px;
+    text-align: center;
+    font-size: 1rem;
+    line-height: 1.4;
+  }
+
+  .texto h1, .texto2 h1, .texto3 h1 {
+    font-size: 1.4rem;
+    line-height: 1.2;
+  }
+
+  .btn1, .btn2, .btn3 {
+    width: 80%;
+    max-width: 250px;
+    height: 50px;
+    font-size: 1rem;
+    margin: 20px auto;
+    display: block;
+    position: relative;
+  }
+
+  .btn1 {
+    margin-top: 160px;
+    margin-left: 20px;
+    width: 200px;
+  }
+}
