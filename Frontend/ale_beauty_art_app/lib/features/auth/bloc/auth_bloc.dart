@@ -66,7 +66,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
             'email': event.email,
             'password': event.password,
             'password_confirmation': event.password,
-            'name': event.name,
+            'nombre': event.name,
+            'apellido': event.lastname,
+            'telefono': event.phone != 0 ? event.phone : null, //Opcional
           }),
         );
 
@@ -105,3 +107,4 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     });
   }
 }
+

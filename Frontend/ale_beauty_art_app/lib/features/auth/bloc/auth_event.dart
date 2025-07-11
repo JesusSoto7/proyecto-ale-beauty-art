@@ -13,8 +13,16 @@ class RegisterSubmitted extends AuthEvent {
   final String email;
   final String password;
   final String name;
+  final String lastname;
+  final String? phone;
 
-  RegisterSubmitted(this.email, this.password, this.name);
+  RegisterSubmitted({
+    required this.email,
+    required this.password,
+    required this.name,
+    required this.lastname,
+    this.phone, 
+  });
 }
 
 class LogoutRequested extends AuthEvent {}
