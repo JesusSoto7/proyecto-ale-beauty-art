@@ -10,7 +10,7 @@ class CartBloc extends Bloc<CartEvent, CartState> {
   final String apiUrl = '${dotenv.env['API_BASE_URL']}/api/v1';
   final FlutterSecureStorage secureStorage = const FlutterSecureStorage();
 
-  String? _token; // Guarda en memoria
+  String? _token;
   String? _client;
   String? _uid;
 
@@ -18,13 +18,22 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     on<LoadCart>(_onLoadCart);
     on<AddProductToCart>(_onAddProduct);
     on<RemoveProductFromCart>(_onRemoveProduct);
+
+    on<UpdateCartCredentials>((event, emit) {
+      _token = event.token;
+      _client = event.client;
+      _uid = event.uid;
+    });
   }
 
-  /// 🔐 Recupera y devuelve headers de autenticación
+  /// 🔐 Obtiene y actualiza los headers
   Future<Map<String, String>?> _getAuthHeaders() async {
-    _token ??= await secureStorage.read(key: 'access-token');
-    _client ??= await secureStorage.read(key: 'client');
-    _uid ??= await secureStorage.read(key: 'uid');
+    if (_token == null || _client == null || _uid == null) {
+      // Si falta algo, intenta leerlo desde storage
+      _token ??= await secureStorage.read(key: 'access-token');
+      _client ??= await secureStorage.read(key: 'client');
+      _uid ??= await secureStorage.read(key: 'uid');
+    }
 
     if (_token == null || _client == null || _uid == null) {
       return null; // No autenticado
@@ -38,23 +47,7 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     };
   }
 
-  /// 🔄 Actualiza los tokens en memoria y en storage
-  Future<void> _updateAuthHeaders(http.Response response) async {
-    final newToken = response.headers['access-token'];
-    final newClient = response.headers['client'];
-    final newUid = response.headers['uid'];
-
-    if (newToken != null && newClient != null && newUid != null) {
-      _token = newToken;
-      _client = newClient;
-      _uid = newUid;
-
-      await secureStorage.write(key: 'access-token', value: newToken);
-      await secureStorage.write(key: 'client', value: newClient);
-      await secureStorage.write(key: 'uid', value: newUid);
-    }
-  }
-
+  /// 🛒 Cargar carrito
   Future<void> _onLoadCart(LoadCart event, Emitter<CartState> emit) async {
     emit(state.copyWith(isLoading: true, error: null));
     try {
@@ -64,17 +57,20 @@ class CartBloc extends Bloc<CartEvent, CartState> {
         return;
       }
 
-      final response = await http.get(
-        Uri.parse('$apiUrl/cart'),
-        headers: headers,
-      );
+      final response = await http.get(Uri.parse('$apiUrl/cart'), headers: headers);
 
       if (response.statusCode == 200) {
-        await _updateAuthHeaders(response); // 🔄 Actualiza tokens
+        // Actualiza headers nuevos si Devise Token Auth los manda
+        _updateAuthHeaders(response);
+
         final data = json.decode(response.body);
+
+        final List<Map<String, dynamic>> products =
+            List<Map<String, dynamic>>.from(data['carrito']);
+
         emit(state.copyWith(
           isLoading: false,
-          products: List<Map<String, dynamic>>.from(data['products']),
+          products: products,
         ));
       } else {
         emit(state.copyWith(
@@ -87,6 +83,7 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     }
   }
 
+  /// ➕ Agregar producto
   Future<void> _onAddProduct(AddProductToCart event, Emitter<CartState> emit) async {
     try {
       final headers = await _getAuthHeaders();
@@ -96,27 +93,23 @@ class CartBloc extends Bloc<CartEvent, CartState> {
       }
 
       final response = await http.post(
-        Uri.parse('$apiUrl/cart/add'),
+        Uri.parse('$apiUrl/cart/add_product'),
         headers: headers,
         body: json.encode({
           'product_id': event.productId,
-          'quantity': event.quantity,
+          'cantidad': event.quantity,
         }),
       );
 
-      if (response.statusCode == 200) {
-        await _updateAuthHeaders(response); // 🔄 Actualiza tokens
-        add(LoadCart()); // Recarga carrito después de agregar
-      } else {
-        emit(state.copyWith(
-          error: 'Error al agregar producto: ${response.statusCode}',
-        ));
-      }
+      _updateAuthHeaders(response);
+
+      add(LoadCart());
     } catch (e) {
       emit(state.copyWith(error: e.toString()));
     }
   }
 
+  /// ❌ Quitar producto
   Future<void> _onRemoveProduct(RemoveProductFromCart event, Emitter<CartState> emit) async {
     try {
       final headers = await _getAuthHeaders();
@@ -126,23 +119,37 @@ class CartBloc extends Bloc<CartEvent, CartState> {
       }
 
       final response = await http.delete(
-        Uri.parse('$apiUrl/cart/remove'),
+        Uri.parse('$apiUrl/cart/remove_product'),
         headers: headers,
         body: json.encode({'product_id': event.productId}),
       );
 
-      if (response.statusCode == 200) {
-        await _updateAuthHeaders(response); // 🔄 Actualiza tokens
-        add(LoadCart()); // Recarga carrito después de eliminar
-      } else {
-        emit(state.copyWith(
-          error: 'Error al eliminar producto: ${response.statusCode}',
-        ));
-      }
+      _updateAuthHeaders(response);
+
+      add(LoadCart());
     } catch (e) {
       emit(state.copyWith(error: e.toString()));
     }
   }
+
+  /// 🔄 Actualiza tokens si la API los renueva
+  void _updateAuthHeaders(http.Response response) async {
+    final newToken = response.headers['access-token'];
+    final newClient = response.headers['client'];
+    final newUid = response.headers['uid'];
+
+    if (newToken != null && newClient != null && newUid != null) {
+      await secureStorage.write(key: 'access-token', value: newToken);
+      await secureStorage.write(key: 'client', value: newClient);
+      await secureStorage.write(key: 'uid', value: newUid);
+
+      _token = newToken;
+      _client = newClient;
+      _uid = newUid;
+    }
+  }
 }
+
+
 
 

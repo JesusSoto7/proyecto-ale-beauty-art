@@ -8,13 +8,18 @@ class AuthInProgress extends AuthState {}
 
 class AuthSuccess extends AuthState {
   final Map<String, dynamic> user;
-  final String token; // token
+  final String token;
+  final String client;
+  final String uid;
 
   AuthSuccess({
     required this.user,
     required this.token,
+    required this.client,
+    required this.uid,
   });
 }
+
 
 class AuthFailure extends AuthState {
   final String message;

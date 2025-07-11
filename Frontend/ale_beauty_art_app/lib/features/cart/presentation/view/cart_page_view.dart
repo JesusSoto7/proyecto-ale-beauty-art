@@ -55,17 +55,17 @@ class CartPageView extends StatelessWidget {
                   child: const Icon(Icons.shopping_bag, color: AppColors.primaryPink),
                 ),
                 title: Text(
-                  product['name'] ?? 'Producto sin nombre',
+                  product['nombre_producto'] ?? 'Producto sin nombre',
                   style: AppTextStyles.body,
                 ),
-                subtitle: Text('Cantidad: ${product['quantity'] ?? 1}'),
+                subtitle: Text('Cantidad: ${product['cantidad'] ?? 1}'),
                 trailing: IconButton(
                   icon: const Icon(Icons.delete, color: Colors.red),
                   onPressed: () {
                     // 👉 Elimina producto y recarga carrito
                     context
                         .read<CartBloc>()
-                        .add(RemoveProductFromCart(productId: product['id']));
+                        .add(RemoveProductFromCart(productId: product['product_id']));
                   },
                 ),
               );

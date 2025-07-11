@@ -21,3 +21,15 @@ class UpdateCartToken extends CartEvent {
 
   UpdateCartToken(this.token);
 }
+
+class UpdateCartCredentials extends CartEvent {
+  final String token;
+  final String client;
+  final String uid;
+
+  UpdateCartCredentials({
+    required this.token,
+    required this.client,
+    required this.uid,
+  });
+}

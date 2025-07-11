@@ -124,10 +124,14 @@ class InitialView extends StatelessWidget {
 
                 if (result == true) {
                   // ✅ Si inició sesión correctamente
-                  final token = (context.read<AuthBloc>().state as AuthSuccess).token;
+                  final auth = context.read<AuthBloc>().state as AuthSuccess;
 
-                  // 🔥 Actualiza token del CartBloc
-                  context.read<CartBloc>().add(UpdateCartToken(token));
+                  // 🔥 Actualiza credenciales del CartBloc
+                  context.read<CartBloc>().add(UpdateCartCredentials(
+                    token: auth.token,
+                    client: auth.client,
+                    uid: auth.uid,
+                  ));
 
                   // 🛒 Abre carrito y carga
                   Navigator.push(
@@ -139,16 +143,22 @@ class InitialView extends StatelessWidget {
                 }
               } else {
                 // Ya autenticado
-                final token = (authState).token;
+              
+                final auth = authState;
 
-                // Actualiza token del CartBloc
-                context.read<CartBloc>().add(UpdateCartToken(token));
+                // 🔥 Actualiza credenciales del CartBloc
+                context.read<CartBloc>().add(UpdateCartCredentials(
+                  token: auth.token,
+                  client: auth.client,
+                  uid: auth.uid,
+                ));
 
-                // Abre carrito y carga
+                // 🛒 Abre carrito y carga
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (_) => const CartPageView()),
                 );
+
                 context.read<CartBloc>().add(LoadCart());
               }
             },
@@ -397,25 +407,6 @@ class InitialView extends StatelessWidget {
     );
   }
 }
-
-     // ElevatedButton(
-            //   style: ElevatedButton.styleFrom(
-            //     backgroundColor: AppColors.accentPink,
-            //     padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 12),
-            //     shape: RoundedRectangleBorder(
-            //       borderRadius: BorderRadius.circular(20),
-            //     ),
-            //   ),
-            //   onPressed: () {
-            //     // Al presionar "Ver Productos", cargamos productos y cambiamos de vista
-            //     context.read<ProductBloc>().add(ProductFetched());
-            //     context.read<NavigationBloc>().add(const NavigationTabChanged(1));
-            //   },
-            //   child: const Text(
-            //     'Ver Productos',
-            //     style: TextStyle(color: AppColors.buttonText, fontSize: 16),
-            //   ),
-            // ),
 
 
 
