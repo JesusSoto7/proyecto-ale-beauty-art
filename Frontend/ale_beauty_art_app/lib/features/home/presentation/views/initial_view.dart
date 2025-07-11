@@ -1,6 +1,6 @@
+import 'package:ale_beauty_art_app/features/auth/bloc/auth_bloc.dart';
 import 'package:ale_beauty_art_app/features/categories/presentation/bloc/categories_bloc.dart';
 import 'package:ale_beauty_art_app/features/categories/presentation/views/categories_page_view.dart';
-import 'package:ale_beauty_art_app/features/login/presentation/view/login_view.dart';
 import 'package:ale_beauty_art_app/features/navigation/bloc/navigation_bloc.dart';
 import 'package:ale_beauty_art_app/features/products/presentation/bloc/product_bloc.dart';
 import 'package:ale_beauty_art_app/features/products/presentation/views/products_page_view.dart';
@@ -81,7 +81,7 @@ class InitialView extends StatelessWidget {
                 case 2:
                   return const CategoriesPageView();
                 case 3:
-                  return LoginView();
+                  return const ProfileView();
                 default:
                   return _homeContent(context);
               }
@@ -228,7 +228,7 @@ class InitialView extends StatelessWidget {
                         child: InkWell(
                           customBorder: const CircleBorder(),
                           splashColor: AppColors.primaryPink.withOpacity(0.1), //  Ripple
-                          radius: 25, // 📏 Radio más grande para cubrir ícono + texto
+                          radius: 25, //  Radio más grande para cubrir ícono + texto
                           onTap: () {
                             context.read<NavigationBloc>().add(NavigationTabChanged(2));
                             context.read<ProductBloc>().add(ProductFetched());
@@ -273,6 +273,7 @@ class InitialView extends StatelessWidget {
                           radius: 25, // 📏 Radio más grande para cubrir ícono + texto
                           onTap: () {
                             context.read<NavigationBloc>().add(NavigationTabChanged(3));
+                            context.read<AuthBloc>();
                           },
                           child: Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6), //  Espacio para ícono + texto
