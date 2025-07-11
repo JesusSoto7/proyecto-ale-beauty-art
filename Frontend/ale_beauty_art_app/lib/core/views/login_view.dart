@@ -34,18 +34,40 @@ class _LoginPageState extends State<LoginPage> {
       backgroundColor: AppColors.background,
       appBar: AppBar(
         title: const Text('Iniciar Sesión',
-        
             style: TextStyle(color: Colors.white)), 
         backgroundColor: AppColors.primaryPink,
-        
+        automaticallyImplyLeading: false, // Elimina la flecha por defecto
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.white), // Color blanco
+          tooltip: '', // Quita el tooltip “Back”
+          onPressed: () {
+            Navigator.pop(context); // Vuelve atrás
+          },
+        ),
         centerTitle: true,
       ),
       body: BlocConsumer<AuthBloc, AuthState>(
         listener: (context, state) {
           if (state is AuthSuccess) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('✅ Sesión iniciada correctamente')),
-            );
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: const Text(
+                'Sesión iniciada correctamente',
+                style: TextStyle(
+                  color: Colors.white, // Texto blanco
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              backgroundColor: AppColors.primaryPink, //  Fondo personalizado
+              behavior: SnackBarBehavior.floating, // Flotante
+              margin: const EdgeInsets.fromLTRB(20, 0, 20, 30), // de separación abajo
+              shape: RoundedRectangleBorder( //Bordes redondeados
+                borderRadius: BorderRadius.circular(16),
+              ),
+              elevation: 6, // Sombra
+              duration: const Duration(seconds: 3),
+            ),
+          );
             Navigator.pop(context); // Regresa a la vista anterior
           } else if (state is AuthFailure) {
             ScaffoldMessenger.of(context).showSnackBar(
@@ -65,7 +87,7 @@ class _LoginPageState extends State<LoginPage> {
                     const Icon(
                       Icons.lock_outline,
                       size: 80,
-                      color: AppColors.primaryPink,
+                      color: AppColors.textPrimary,
                     ),
                     const SizedBox(height: 16),
                     const Text(
@@ -73,7 +95,7 @@ class _LoginPageState extends State<LoginPage> {
                       style: TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
-                        color: AppColors.primaryPink,
+                        color: AppColors.textPrimary,
                       ),
                     ),
                     const SizedBox(height: 32),
@@ -125,7 +147,9 @@ class _LoginPageState extends State<LoginPage> {
                               )
                             : const Text(
                                 'Iniciar Sesión',
-                                style: TextStyle(fontSize: 18),
+                                style: TextStyle(fontSize: 18,
+                                color: Colors.white
+                                ),
                               ),
                       ),
                     ),
@@ -142,7 +166,7 @@ class _LoginPageState extends State<LoginPage> {
                       child: const Text(
                         '¿No tienes cuenta? Regístrate',
                         style: TextStyle(
-                          color: AppColors.primaryPink,
+                          color: AppColors.textPrimary,
                           fontWeight: FontWeight.bold,
                         ),
                       ),

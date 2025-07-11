@@ -45,7 +45,15 @@ class _RegisterPageState extends State<RegisterPage> {
       backgroundColor: AppColors.background,
       appBar: AppBar(
         backgroundColor: AppColors.primaryPink,
-        iconTheme: const IconThemeData(color: Colors.white),
+
+        automaticallyImplyLeading: false, // Elimina la flecha por defecto
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.white), // Color blanco
+          tooltip: '', // Quita el tooltip “Back”
+          onPressed: () {
+            Navigator.pop(context); // Vuelve atrás
+          },
+        ),
         title: const Text('Crear cuenta',
             style: TextStyle(color: Colors.white)),
         centerTitle: true,
@@ -53,11 +61,25 @@ class _RegisterPageState extends State<RegisterPage> {
       body: BlocConsumer<AuthBloc, AuthState>(
         listener: (context, state) {
           if (state is AuthSuccess) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('✅ Registro exitoso e inicio de sesión'),
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: const Text(
+                'Registro exitoso e inicio de sesión',
+                style: TextStyle(
+                  color: Colors.white, // Texto blanco
+                  fontWeight: FontWeight.bold,
+                ),
               ),
-            );
+              backgroundColor: AppColors.primaryPink, //  Fondo personalizado
+              behavior: SnackBarBehavior.floating, // Flotante
+              margin: const EdgeInsets.fromLTRB(20, 0, 20, 30), // de separación abajo
+              shape: RoundedRectangleBorder( //Bordes redondeados
+                borderRadius: BorderRadius.circular(16),
+              ),
+              elevation: 6, // Sombra
+              duration: const Duration(seconds: 3),
+            ),
+          );
             Navigator.pop(context);
           } else if (state is AuthFailure) {
             ScaffoldMessenger.of(context).showSnackBar(
@@ -81,7 +103,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     Text(
                       '¡Únete a Ale Beauty Art!',
                       style: AppTextStyles.title.copyWith(
-                        color: AppColors.primaryPink,
+                        color: AppColors.textPrimary,
                         fontSize: 24,
                       ),
                     ),

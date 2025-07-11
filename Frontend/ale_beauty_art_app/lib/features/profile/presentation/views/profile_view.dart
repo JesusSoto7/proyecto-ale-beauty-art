@@ -12,79 +12,141 @@ class ProfileView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
-      body: SingleChildScrollView( // 🔥 Envuelve todo para evitar overflow
-        child: Padding(
-          padding: const EdgeInsets.all(24.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Center(
-                child: CircleAvatar(
-                  radius: 50,
-                  backgroundColor: AppColors.accentPink,
-                  child: const Icon(Icons.person, size: 50, color: Colors.white),
-                ),
-              ),
-              const SizedBox(height: 20),
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            Container(
+              padding: const EdgeInsets.symmetric(vertical: 30),
+              child: Column(
+                children: [
+                  const SizedBox(height: 40),
+                  // 🌸 Avatar
+                  CircleAvatar(
+                    radius: 50,
+                    backgroundColor: AppColors.primaryPink,
+                    child: const Icon(Icons.person, size: 60, color: Colors.white),
+                  ),
+                  const SizedBox(height: 12),
 
-              // 🔥 Cambia según el estado de autenticación
-              BlocBuilder<AuthBloc, AuthState>(
-                builder: (context, state) {
-                  if (state is AuthSuccess) {
-                    return Column(
-                      children: [
-                        Center(
-                          child: Text(
-                            '${state.user['nombre'] ?? ''} ${state.user['apellido'] ?? ''}', // ✅ usa los campos correctos
-                            style: AppTextStyles.title.copyWith(fontSize: 20),
+                  // 🌸 Nombre o invitado
+                  BlocBuilder<AuthBloc, AuthState>(
+                    builder: (context, state) {
+                      if (state is AuthSuccess) {
+                        return Text(
+                          '${state.user['nombre'] ?? 'Usuario'} ${state.user['apellido'] ?? ''}',
+                          style: AppTextStyles.title.copyWith(
+                            color: AppColors.textPrimary,
+                            fontSize: 22,
                           ),
-                        ),
-                        const SizedBox(height: 20),
-                        ElevatedButton.icon(
-                          onPressed: () {
-                            context.read<AuthBloc>().add(LogoutRequested());
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(content: Text('✅ Sesión cerrada')),
-                            );
-                          },
-                          icon: const Icon(Icons.logout),
-                          label: const Text('Cerrar Sesión'),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.redAccent,
+                        );
+                      } else {
+                        return const Text(
+                          'Invitado',
+                          style: TextStyle(
+                            color: AppColors.textPrimary,
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
                           ),
+                        );
+                      }
+                    },
+                  ),
+                  const SizedBox(height: 6),
+                ],
+              ),
+            ),
+            // 🌸 Botón de acción (Login / Logout)
+            BlocBuilder<AuthBloc, AuthState>(
+              builder: (context, state) {
+                if (state is AuthSuccess) {
+                  return ElevatedButton.icon(
+                    onPressed: () {
+                      context.read<AuthBloc>().add(LogoutRequested());
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: const Text(
+                            'Sesión cerrada',
+                            style: TextStyle(
+                              color: Colors.white, // Texto blanco
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          backgroundColor: AppColors.primaryPink, //  Fondo personalizado
+                          behavior: SnackBarBehavior.floating, // Flotante
+                          margin: const EdgeInsets.fromLTRB(20, 0, 20, 30), // de separación abajo
+                          shape: RoundedRectangleBorder( //Bordes redondeados
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                          elevation: 6, // Sombra
+                          duration: const Duration(seconds: 3),
                         ),
-                      ],
-                    );
-                  } else {
-                    return Center(
-                      child: ElevatedButton.icon(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (_) => const LoginPage()),
-                          );
-                        },
-                        icon: const Icon(Icons.login),
-                        label: const Text('Iniciar Sesión'),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.primaryPink,
-                        ),
+                      );
+                    },
+                    icon: const Icon(Icons.logout, color: Colors.white),
+                    label: const Text('Cerrar Sesión',
+                    style: TextStyle(color: Colors.white)),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.redAccent,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
                       ),
-                    );
-                  }
-                },
-              ),
+                      padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 12),
+                    ),
+                  );
+                } else {
+                  return ElevatedButton.icon(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (_) => const LoginPage()),
+                      );
+                    },
+                    icon: const Icon(Icons.login, color: Colors.white),
+                    label: const Text('Iniciar Sesión',
+                    style: TextStyle(color: Colors.white)),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.primaryPink,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 12),
+                    ),
+                  );
+                }
+              },
+            ),
+            const SizedBox(height: 20),
 
-              const SizedBox(height: 40),
-              const Text('Tus pedidos'),
-              const Divider(),
-              const Text('Favoritos'),
-              const Divider(),
-              const Text('Configuración'),
-              const Divider(),
-            ],
-          ),
+            // 🌸 Opciones de perfil
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Column(
+                children: [
+                  _buildOptionTile(Icons.shopping_bag, 'Mis pedidos', () {
+                    // TODO: Navegar a pedidos
+                  }),
+                  _buildOptionTile(Icons.favorite, 'Favoritos', () {
+                    // TODO: Navegar a favoritos
+                  }),
+                ],
+              ),
+            ),
+          ],
         ),
+      ),
+    );
+  }
+
+  // 🌸 Widget reutilizable para las opciones
+  Widget _buildOptionTile(IconData icon, String title, VoidCallback onTap) {
+    return Card(
+      elevation: 2,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      child: ListTile(
+        leading: Icon(icon, color: AppColors.primaryPink),
+        title: Text(title, style: const TextStyle(fontWeight: FontWeight.w500)),
+        trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+        onTap: onTap,
       ),
     );
   }
