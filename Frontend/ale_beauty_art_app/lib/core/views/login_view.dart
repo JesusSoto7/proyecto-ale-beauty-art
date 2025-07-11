@@ -68,7 +68,7 @@ class _LoginPageState extends State<LoginPage> {
               duration: const Duration(seconds: 3),
             ),
           );
-            Navigator.pop(context); // Regresa a la vista anterior
+            Navigator.pop(context, true); // Regresa a la vista anterior
           } else if (state is AuthFailure) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(content: Text('❌ ${state.message}')),

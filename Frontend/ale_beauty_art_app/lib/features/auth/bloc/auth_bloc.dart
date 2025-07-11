@@ -39,7 +39,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
             await secureStorage.write(key: 'uid', value: uid);
 
             final data = jsonDecode(response.body);
-            emit(AuthSuccess(user: data['data']));
+            emit(AuthSuccess(
+              user: data['data'],
+              token: token, // ✅ Guarda el token
+            ));
           } else {
             emit(AuthFailure('No se recibieron los tokens de autenticación'));
           }
@@ -78,13 +81,16 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           final uid = response.headers['uid'];
 
           if (token != null && client != null && uid != null) {
-            // Guardar tokens
+            // Guardar tokens en almacenamiento seguro
             await secureStorage.write(key: 'access-token', value: token);
             await secureStorage.write(key: 'client', value: client);
             await secureStorage.write(key: 'uid', value: uid);
 
             final data = jsonDecode(response.body);
-            emit(AuthSuccess(user: data['data']));
+            emit(AuthSuccess(
+              user: data['data'],
+              token: token, // ✅ Guarda el token
+            ));
           } else {
             emit(AuthFailure('No se recibieron los tokens de autenticación'));
           }

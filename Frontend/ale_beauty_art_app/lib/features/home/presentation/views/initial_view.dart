@@ -1,4 +1,8 @@
+import 'package:ale_beauty_art_app/core/views/login_view.dart';
 import 'package:ale_beauty_art_app/features/auth/bloc/auth_bloc.dart';
+import 'package:ale_beauty_art_app/features/cart/presentation/bloc/cart_bloc.dart';
+import 'package:ale_beauty_art_app/features/cart/presentation/bloc/cart_event.dart';
+import 'package:ale_beauty_art_app/features/cart/presentation/view/cart_page_view.dart';
 import 'package:ale_beauty_art_app/features/categories/presentation/bloc/categories_bloc.dart';
 import 'package:ale_beauty_art_app/features/categories/presentation/views/categories_page_view.dart';
 import 'package:ale_beauty_art_app/features/navigation/bloc/navigation_bloc.dart';
@@ -69,7 +73,7 @@ class InitialView extends StatelessWidget {
           ),
         ),
 
-        // ✅ Contenido según la pestaña seleccionada
+        // Contenido según la pestaña seleccionada
         body: BlocBuilder<NavigationBloc, NavigationState>(
           builder: (context, state) {
             if (state is NavigationUpdated) {
@@ -108,9 +112,45 @@ class InitialView extends StatelessWidget {
               color: AppColors.primaryPink,
               size: 28,
             ),
-            onPressed: () {
-              print("Carrito presionado");
-              // Navegar al carrito
+            onPressed: () async {
+              final authState = context.read<AuthBloc>().state;
+
+              if (authState is! AuthSuccess) {
+                // 🚨 No autenticado: abre LoginPage
+                final result = await Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const LoginPage()),
+                );
+
+                if (result == true) {
+                  // ✅ Si inició sesión correctamente
+                  final token = (context.read<AuthBloc>().state as AuthSuccess).token;
+
+                  // 🔥 Actualiza token del CartBloc
+                  context.read<CartBloc>().add(UpdateCartToken(token));
+
+                  // 🛒 Abre carrito y carga
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => const CartPageView()),
+                  );
+
+                  context.read<CartBloc>().add(LoadCart());
+                }
+              } else {
+                // Ya autenticado
+                final token = (authState).token;
+
+                // Actualiza token del CartBloc
+                context.read<CartBloc>().add(UpdateCartToken(token));
+
+                // Abre carrito y carga
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const CartPageView()),
+                );
+                context.read<CartBloc>().add(LoadCart());
+              }
             },
           ),
         ),
