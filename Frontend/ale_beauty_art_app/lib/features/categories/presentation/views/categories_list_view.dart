@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import '../../../../models/category.dart';
-import '../../../../models/product.dart';
-import '../../products/presentation/views/products_by_category_view.dart';
+import '../../../../../models/category.dart';
+import '../../../../../models/product.dart';
+import '../../../products/presentation/views/products_by_category_view.dart';
 
 class CategoriesListView extends StatelessWidget {
   final List<Category> categories;

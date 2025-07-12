@@ -48,9 +48,9 @@ class ProductDetailView extends StatelessWidget {
                     ),
                     borderRadius: BorderRadius.circular(16),
                   ),
-                  child: product.imagenUrl != null && product.imagenUrl!.isNotEmpty
-                      ? Image.network(
-                          product.fullImageUrl,
+                  child: (product.imagenUrl != null && product.imagenUrl!.isNotEmpty)
+                  ? Image.network(
+                          product.imagenUrl!,
                           fit: BoxFit.cover,
                           errorBuilder: (context, error, stackTrace) => const Center(
                             child: Text(

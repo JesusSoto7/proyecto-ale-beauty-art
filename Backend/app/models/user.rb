@@ -10,7 +10,18 @@ class User < ApplicationRecord
   # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :validatable
+         
+  include DeviseTokenAuth::Concerns::User
+  
+  # Generar token para API automáticamente al crear usuario
+  after_create :generate_api_tokens
 
+  private
+
+  def generate_api_tokens
+    # Esto crea un token válido para la API
+    self.create_new_auth_token
+  end
   validates :nombre, presence: true
   validates :apellido, presence: true
   validates :telefono, length: { minimum: 6 }, allow_blank: true

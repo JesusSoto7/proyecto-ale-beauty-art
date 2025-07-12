@@ -21,6 +21,8 @@ gem "rolify"
 
 gem "devise"
 
+gem 'devise_token_auth'
+
 gem "image_processing", "~> 1.2"
 
 gem 'mercadopago-sdk', '~> 2.3'

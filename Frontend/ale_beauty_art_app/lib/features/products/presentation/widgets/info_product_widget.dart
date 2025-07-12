@@ -57,9 +57,9 @@ class InfoProduct extends StatelessWidget {
                   ),
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(12),
-                    child:product.fullImageUrl.isNotEmpty
+                  child: (product.imagenUrl != null && product.imagenUrl!.isNotEmpty)
                         ? Image.network(
-                            product.fullImageUrl,
+                            product.imagenUrl!,
                             fit: BoxFit.cover,
                             errorBuilder: (context, error, stackTrace) =>
                                 const Center(

@@ -33,4 +33,6 @@ class AppTextStyles {
   );
 
   static var body;
+
+  static var error;
 }

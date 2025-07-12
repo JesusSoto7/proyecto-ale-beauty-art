@@ -1,4 +1,6 @@
-import 'package:ale_beauty_art_app/features/categories/bloc/categories_bloc.dart';
+import 'package:ale_beauty_art_app/features/auth/bloc/auth_bloc.dart';
+import 'package:ale_beauty_art_app/features/cart/presentation/bloc/cart_bloc.dart';
+import 'package:ale_beauty_art_app/features/categories/presentation/bloc/categories_bloc.dart';
 import 'package:ale_beauty_art_app/features/navigation/bloc/navigation_bloc.dart';
 import 'package:ale_beauty_art_app/features/profile/presentation/bloc/profile_bloc.dart';
 import 'package:flutter/material.dart';
@@ -26,6 +28,8 @@ class MyApp extends StatelessWidget {
         BlocProvider(create: (_) => CategoriesBloc()),
         BlocProvider(create: (_) => NavigationBloc()),
         BlocProvider(create: (_) => ProfileBloc()),
+        BlocProvider(create: (_) => AuthBloc()),
+        BlocProvider(create: (_) => CartBloc())
       ],
       child: const MaterialApp(
         debugShowCheckedModeBanner: false,

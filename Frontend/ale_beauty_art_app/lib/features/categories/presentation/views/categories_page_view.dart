@@ -1,10 +1,10 @@
 import 'package:ale_beauty_art_app/core/views/loading_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../products/presentation/bloc/product_bloc.dart';
-import '../../products/presentation/views/products_by_category_view.dart';
+import '../../../products/presentation/bloc/product_bloc.dart';
+import '../../../products/presentation/views/products_by_category_view.dart';
 import '../bloc/categories_bloc.dart';
-import '../../../styles/colors.dart';
+import '../../../../styles/colors.dart';
 
 class CategoriesPageView extends StatelessWidget {
   const CategoriesPageView({super.key});
@@ -65,23 +65,24 @@ class CategoriesPageView extends StatelessWidget {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         // Imagen circular
-                       CircleAvatar(
-                        radius: 60, // tamaño 
-                        backgroundColor: Colors.pink.shade50,
-                        // Muestra siempre el emoji por ahora
-                        child: const Center(
-                          child: Text(
-                            '💄', // Emoji por defecto
-                            style: TextStyle(
-                              fontSize: 34,
-                              color: AppColors.primaryPink,
-                            ),
-                          ),
+                        CircleAvatar(
+                          radius: 60, // tamaño 
+                          backgroundColor: Colors.pink.shade50,
+                          backgroundImage: category.imagen.isNotEmpty
+                              ? NetworkImage(category.imagen)
+                              : null, // Si no hay imagen, se usa el emoji
+                          child: category.imagen.isEmpty
+                              ? const Center(
+                                  child: Text(
+                                    '💄', // Emoji por defecto
+                                    style: TextStyle(
+                                      fontSize: 34,
+                                      color: AppColors.primaryPink,
+                                    ),
+                                  ),
+                                )
+                              : null, // No se muestra el emoji si hay imagen
                         ),
-                        // Cambiar a NetworkImage(category.imagen) cuando la API tenga las imágenes funcionales
-                        // backgroundImage: category.imagen.isNotEmpty ? NetworkImage(category.imagen) : null,
-                      ),
-
                         const SizedBox(height: 8),
                         // Nombre de la categoría
                         Text(

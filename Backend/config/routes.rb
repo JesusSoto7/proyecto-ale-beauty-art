@@ -5,6 +5,26 @@ Rails.application.routes.draw do
   # Can be used by load balancers and uptime monitors to verify that the app is live.
   get "up" => "rails/health#show", as: :rails_health_check
   devise_for :users
+  
+  namespace :api do
+    namespace :v1, defaults: { format: :json } do
+      # Autenticación con Devise Token Auth
+      mount_devise_token_auth_for 'User', at: 'auth', controllers: {
+        sessions: 'api/v1/auth/sessions',
+        registrations: 'api/v1/auth/registrations'
+      }
+
+      # Carrito
+      get 'cart', to: 'cart#show'                    # Ver carrito
+      post 'cart/add', to: 'cart#add_product'        # Agregar producto
+      delete 'cart/remove', to: 'cart#remove_product' # Quitar producto
+
+      # Categorías y productos
+      resources :products, only: [:index, :show]
+      resources :categories, only: [:index, :show]
+    end
+  end
+
 
   get 'home', to: 'home#index'
   get "home" => "home#index", as: :welcome
@@ -62,12 +82,6 @@ Rails.application.routes.draw do
   get '/pago_realizado/:id', to: 'checkouts#success', as: :pago_realizado
   get '/pago_cancelado/:id', to: 'checkouts#rejected', as: :pago_cancelado
 
-  namespace :api do
-    namespace :v1 do
-      resources :products
-      resources :categories
-    end
-  end
   get 'categorias_publicas', to: 'public_categories#index', as: :categorias_publicas
   get 'categorias_publicas/:id', to: 'public_categories#show', as: :categoria_publica
 
