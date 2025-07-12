@@ -219,3 +219,147 @@
     width: 200px;
   }
 }
+
+
+/* no funciona
+@media (max-width: 375px) and (max-height: 667px) {
+  html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    width: 100%;
+    overflow-x: hidden;
+  }
+
+  .seccion-banner, .seccion-banner2 {
+    flex-direction: column;
+    height: auto;
+    width: 100%;
+  }
+
+  .banner1, .banner3 {
+    width: 100% !important;
+    height: 100% !important;
+    min-height: 100vh;
+    background-size: cover !important;
+    background-position: center;
+    background-repeat: no-repeat;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .banner2, .banner4 {
+    width: 100% !important;
+    height: 30vh !important;
+    background-size: cover !important;
+    background-position: center;
+    background-repeat: no-repeat;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  .texto, .texto2, .texto3 {
+    padding: 10px 20px;
+    margin: 0 auto;
+    text-align: center;
+    font-size: 0.95rem;
+    line-height: 1.4;
+  }
+
+  .btn1, .btn2, .btn3 {
+    width: 80%;
+    max-width: 250px;
+    height: 50px;
+    font-size: 1rem;
+    margin: 20px auto;
+    display: block;
+    float: none;
+    position: relative;
+  }
+
+  .btn1 {
+    margin-top: 30px !important;
+    margin-left: 0 !important;
+  }
+}
+ */
+
+ @media (max-width: 414px) {
+  .seccion-banner, .seccion-banner2 {
+    flex-direction: column !important;
+    height: auto !important;
+    width: 100% !important;
+    align-items: center !important;
+    padding: 0 !important;
+  }
+
+  .banner1, .banner3 {
+    width: 420px !important;
+    height:  220px !important;
+    background-size: cover !important;
+    background-position: center !important;
+    position: relative !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: center !important;
+    align-items: center !important;
+    margin: 0 !important;
+  }
+
+  .banner2, .banner4 {
+    width: 100% !important;
+    height: 39vh !important;
+    background-size: cover !important;
+    background-position: center !important;
+    padding: 20px !important;
+    margin: 0 auto !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    margin-top: 10px !important;
+  }
+
+  .texto, .texto2, .texto3 {
+    padding: 20px 15px !important;
+    margin: 0 auto !important;
+    text-align: center !important;
+    font-size: 1rem !important;
+    line-height: 1.5 !important;
+  }
+
+  .texto h1, .texto2 h1, .texto3 h1 {
+    font-size: 1.5rem !important;
+    line-height: 1.2 !important;
+  }
+
+  .texto p, .texto2 p {
+    font-size: 1rem !important;
+    line-height: 1.6 !important;
+  }
+
+  .btn1, .btn2, .btn3 {
+    width: 80% !important;
+    max-width: 250px !important;
+    height: 50px !important;
+    font-size: 1rem !important;
+    margin: 20px auto !important;
+    display: block !important;
+    float: none !important;
+    position: relative !important;
+    align-items: center !important;
+  }
+
+  .btn1 {
+    margin-top: 75px !important;
+    margin-left: 10px !important;
+    width:200px !important;
+    height: 700px;
+  }
+
+  .btn2, .btn3 {
+    margin-right: 0 !important;
+    margin-right: 55px !important;
+  }
+}
