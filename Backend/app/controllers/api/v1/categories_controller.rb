@@ -1,5 +1,5 @@
 class Api::V1::CategoriesController < ActionController::API
-  include Rails.application.routes.url_helpers # 👈 Necesario para usar `url_for`
+  include Rails.application.routes.url_helpers # pa usar `url_for`
 
   before_action :set_category, only: [:show]
 
