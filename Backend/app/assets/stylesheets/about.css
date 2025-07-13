@@ -57,9 +57,9 @@
   line-height: 1.6;
   color: #333;
 }
-.seccion-banner {
+.seccion-banner, .seccion-banner2, .seccion-banner3 {
   display: flex;
-  align-items: center;
+  justify-content: center;
   height: 100vh;
   width: 100%;
 }
@@ -74,15 +74,18 @@
   height: 50px;
 }
 
-.banner3{
-  background-image: url("banner3.png");
+.banner3 {
+ background-image: url("banner3.png");
   background-size: cover;
   background-position: center;
   height: 100vh;
   display: flex;
   position: relative;
   margin-top: 30px;
+  margin-bottom: 30px;
 }
+
+
 
 .banner4{
   background-image: url("banner4.png");
@@ -94,15 +97,7 @@
   display: flex;
   padding: 30px;
   position: relative;
-  margin-right: 25px;
-  margin-top: 40px;
   margin-left: 25px;
-}
-.seccion-banner2 {
-  display: flex;
-  align-items: center;
-  height: 100vh;
-  width: 100%;
 }
 
 .texto2 {
@@ -151,7 +146,7 @@
     height: auto;
   }
 
-  .banner1, .banner2, .banner3{
+  .banner1, .banner3{
     width: 100%;
     height: 60vh;
     background-size: cover;
@@ -172,6 +167,12 @@
   .btn1{
     margin-top: 190px;
     
+  }
+  .banner2, .banner4{
+    margin: 20px auto;
+    display: block;
+    float: none;
+
   }
 }
 
@@ -219,115 +220,123 @@
     width: 200px;
   }
 }
-
-
-
-@media (max-width: 375px){
-  html, body {
-    margin: 0;
-    padding: 0;
-    height: 100%;
-    width: 100%;
-    overflow-x: hidden;
-  }
-
-  .seccion-banner, .seccion-banner2 {
-    flex-direction: column;
-    height: auto;
-    width: 100%;
-  }
-
+ 
+@media (max-width: 414px) {
   .banner1, .banner3 {
-    width: 50px !important; /* no lo puedo ajustar */
-    height: 50px !important;
-    background-size: cover !important;
-    background-position: center;
-    background-repeat: no-repeat;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-  }
-
-  /* ...lo demás está bien... */
-}
-
-
-
- @media (max-width: 414px) {
-  .seccion-banner, .seccion-banner2 {
-    flex-direction: column !important;
-    height: auto !important;
-    width: 100% !important;
-    align-items: center !important;
-    padding: 0 !important;
-  }
-
-  .banner1, .banner3 {
-    width: 420px !important;
-    height:  220px !important;
-    background-size: cover !important;
-    background-position: center !important;
-    position: relative !important;
-    display: flex !important;
-    flex-direction: column !important;
-    justify-content: center !important;
-    align-items: center !important;
-    margin: 0 !important;
+    width: 100% ;
+    height: 20vh;
+    background-size: cover ;
+    background-position: center ;
+    position: relative ;
+    display: flex ;
+    flex-direction: column ;
+    justify-content: center ;
+    align-items: center ;
+    margin: 0 ;
   }
 
   .banner2, .banner4 {
-    width: 100% !important;
-    height: 39vh !important;
-    background-size: cover !important;
-    background-position: center !important;
-    padding: 20px !important;
-    margin: 0 auto !important;
-    display: flex !important;
-    justify-content: center !important;
-    align-items: center !important;
-    margin-top: 10px !important;
+    width: 95% ;
+    height: 39vh ;
+    background-size: cover ;
+    background-position: center ;
+    padding: 20px ;
+    margin: 0 auto ;
+    margin-left: 6px;
+    margin-right: 5px;
+    display: flex ;
+    justify-content: center ;
+    align-items: center ;
+    margin-top: 10px ;
   }
 
   .texto, .texto2, .texto3 {
-    padding: 20px 15px !important;
-    margin: 0 auto !important;
-    text-align: center !important;
-    font-size: 1rem !important;
-    line-height: 1.5 !important;
+    padding: 20px 15px;
+    margin: 0 auto;
+    text-align: center;
+    font-size: 1rem;
+    line-height: 1.5;
   }
 
   .texto h1, .texto2 h1, .texto3 h1 {
-    font-size: 1.5rem !important;
-    line-height: 1.2 !important;
+    font-size: 1.5rem;
+    line-height: 1.2;
   }
 
   .texto p, .texto2 p {
-    font-size: 1rem !important;
-    line-height: 1.6 !important;
+    font-size: 1rem;
+    line-height: 1.6;
   }
 
   .btn1, .btn2, .btn3 {
-    width: 80% !important;
-    max-width: 250px !important;
-    height: 50px !important;
-    font-size: 1rem !important;
-    margin: 20px auto !important;
-    display: block !important;
-    float: none !important;
-    position: relative !important;
-    align-items: center !important;
+    width: 80%;
+    max-width: 250px;
+    height: 50px;
+    font-size: 1rem;
+    margin: 20px auto;
+    display: block;
+    float: none;
+    position: relative;
+    align-items: center;
   }
 
   .btn1 {
-    margin-top: 75px !important;
-    margin-left: 10px !important;
-    width:200px !important;
-    height: 700px;
+    margin-top: 75px;
+    margin-left: 10px;
+    width:180px;
+    height: 50px;
   }
 
   .btn2, .btn3 {
-    margin-right: 0 !important;
-    margin-right: 55px !important;
+    margin-right: 0;
+    margin-right: 55px;
+  }
+}
+ 
+@media (max-width: 375px) {
+  .banner1, .banner3 {
+    width: 100%;
+    height:  auto ;
+    background-size: cover ;
+    background-position: center ;
+    position: relative ;
+    display: flex ;
+    flex-direction: column ;
+    justify-content: center ;
+    align-items: center ;
+    margin: 0 ;
+  }
+
+  .banner2, .banner4 {
+    width: 95% ;
+    height: 39vh ;
+    background-size: cover ;
+    background-position: center ;
+    padding: 20px ;
+    margin: 0 auto ;
+    margin-left: 5px;
+    margin-right: 5px;
+    display: flex ;
+    justify-content: center ;
+    align-items: center ;
+    margin-top: 10px ;
+  }
+
+  .texto, .texto2, .texto3 {
+    padding: 20px 15px ;
+    margin: 0 auto ;
+    text-align: center ;
+    font-size: 1rem ;
+    line-height: 1.5 ;
+  }
+
+  .texto h1, .texto2 h1, .texto3 h1 {
+    font-size: 1.5rem ;
+    line-height: 1.2 ;
+  } 
+
+  .btn1{
+    margin-top: 190px;
+    width: 190px;
   }
 }
