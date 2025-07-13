@@ -220,6 +220,77 @@
     width: 200px;
   }
 }
+@media (max-width: 430px) {
+  .banner1, .banner3 {
+    width: 100%;
+    height: 20vh; 
+    background-size: cover;
+    background-position: center;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin: 0;
+    padding: 20px 15px;
+  }
+
+  .banner2, .banner4 {
+    width: 80%;
+    height: 28vh; 
+    background-size: cover;
+    background-position: center;
+    padding: 20px;
+    margin: 10px auto;
+    display: flex;
+    flex-direction: column; 
+    justify-content: center;
+    align-items: center;
+  }
+
+  .texto, .texto2, .texto3 {
+    padding: 20px 15px;
+    margin: 0 auto;
+    text-align: center;
+    font-size: 1rem;
+    line-height: 1.5;
+  }
+
+  .texto h1, .texto2 h1, .texto3 h1 {
+    font-size: 1.4rem;
+    line-height: 1.2;
+  }
+
+  .texto p, .texto2 p {
+    font-size: 1rem;
+    line-height: 1.6;
+  }
+
+  .btn1, .btn2, .btn3 {
+    width: 80%;
+    max-width: 250px;
+    height: 48px;
+    font-size: 1rem;
+    margin: 20px auto 0;
+    display: block;
+    float: none;
+    position: relative;
+    align-items: center;
+  }
+
+  .btn1 {
+    margin-top: 60px;
+    margin-left: 20px;
+    margin-right: auto;
+    width: 170px;
+    height: 48px;
+  }
+
+  .btn2, .btn3 {
+    margin-right: auto;
+    margin-left: auto;
+  }
+}
  
 @media (max-width: 414px) {
   .banner1, .banner3 {
@@ -293,6 +364,7 @@
   }
 }
  
+
 @media (max-width: 375px) {
   .banner1, .banner3 {
     width: 100%;
