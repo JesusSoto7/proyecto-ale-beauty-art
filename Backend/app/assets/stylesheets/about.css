@@ -140,86 +140,6 @@
   height: 50px;
 }
 
-@media (max-width: 1024px) {
-  .banner1, .banner3 {
-    width: 100%;
-    height: 30vh;
-    background-size: cover;
-    background-position: center;
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    margin-bottom: 0;
-    padding-bottom: 0;
-  }
- .seccion-banner{
-  width: 100%;
-  height: 35vh;
- }
-  .seccion-banner{
-  width: 100%;
-  height: 35vh;
- }
-  
-
-  .banner2, .banner4 {
-    width: 100%;
-    height: 18vh;
-    background-size: cover;
-    background-position: center;
-    padding: 30px;
-    margin: 0 auto;
-    margin-left: 20px;
-    margin-top: 80px; 
-    gap: 70px;
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-  }
-
-  .texto, .texto2, .texto3 {
-    padding: 30px;
-    height: 20vh;
-    text-align: left;
-    font-size: 1.2rem;
-    line-height: 1.7;
-    flex: 1;
-    margin-bottom: 0px;
-  }
-
-  .texto h1, .texto2 h1, .texto3 h1 {
-    font-size: 2rem;
-    line-height: 1.3;
-  }
-
-  .texto p, .texto2 p {
-    font-size: 1.1rem;
-    line-height: 1.6;
-  }
-
-  .btn1, .btn2, .btn3 {
-    width: 240px;
-    height: 52px;
-    font-size: 1rem;
-    margin-top: 20px;
-    display: block;
-    float: none;
-    position: relative;
-  }
-
-  .btn1 {
-    margin-top: 45px;
-    margin-left: 20px;
-    width: 170px;
-    font-size: 1rem;
-  }
-
-  .btn2, .btn3 {
-    margin-left: 0;
-  }
-}
 
 @media (max-width: 992px) {
   .seccion-banner, .seccion-banner2 {
@@ -281,16 +201,15 @@
     padding: 20px;
     margin: 30px auto 0;
     display: flex;
-    flex-direction: row;
-    justify-content: space-between;
+    flex-direction: column;
+    justify-content: center;
     align-items: center;
     gap: 30px;
   }
 
   .texto, .texto2, .texto3 {
-    padding: 0;
-    margin: 0;
-    text-align: left;
+    margin-left: 20px;
+    text-align: center;
     font-size: 1.05rem;
     line-height: 1.5;
     flex: 1;
@@ -313,7 +232,7 @@
     margin: 0;
   }
 
-  .btn1, .btn2, .btn3 {
+  .btn2, .btn3 {
     width: 190px;
     height: 48px;
     font-size: 0.95rem;
@@ -321,6 +240,7 @@
     display: block;
     float: none;
     position: relative;
+    align-items: center;
   }
 
   .btn1 {
@@ -329,9 +249,6 @@
     font-size: 0.9rem;
   }
 
-  .btn2, .btn3 {
-    margin-left: 0;
-  }
 }
 
 @media (max-width: 853px) {
