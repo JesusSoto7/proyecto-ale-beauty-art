@@ -52,18 +52,29 @@
       </div>
 
       <div class="col-md-6">
-        <%= form.label :municipio, "Municipio", class: "form-label" %>
-        <%= form.text_field :municipio, class: "form-control" %>
+        <%= form.label :department_id, "Departamento", class: "form-label" %>
+        <%= select_tag :department_id,
+            options_from_collection_for_select(Department.all, :id, :nombre),
+            prompt: "Seleccione un departamento",
+            class: "form-select" %>
       </div>
 
       <div class="col-md-6">
-        <%= form.label :barrio, "Barrio", class: "form-label" %>
-        <%= form.text_field :barrio, class: "form-control" %>
+        <%= form.label :municipality_id, "Municipio", class: "form-label" %>
+        <%= select_tag :municipality_id,
+            "",
+            prompt: "Seleccione un municipio",
+            class: "form-select" %>
       </div>
 
       <div class="col-md-6">
-        <%= form.label :apartamento, "Apartamento (optional)", class: "form-label" %>
-        <%= form.text_field :apartamento, class: "form-control" %>
+        <%= form.label :shipping_address_neighborhood_id, "Barrio", class: "form-label" %>
+        <%= form.collection_select :neighborhood_id,
+            [],
+            :id,
+            :nombre,
+            prompt: "Seleccione un barrio",
+            class: "form-select" %>
       </div>
 
       <div class="col-md-6">
