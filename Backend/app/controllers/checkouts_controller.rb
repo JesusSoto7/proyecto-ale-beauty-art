@@ -45,12 +45,12 @@ class CheckoutsController < ApplicationController
   end
 
   def show
-    @order = Order.find(params[:id])
-    @shipping_address = @order.shipping_address || current_user&.shipping_addresses&.last
+    @order = Order.find_by(id: params[:id])
     if @order.nil?
       redirect_to root_path, alert: "Orden no encontrada."
       return
     end
+    @shipping_address = @order.shipping_address || current_user&.shipping_addresses&.last
   end
 
   def success
