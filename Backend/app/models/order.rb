@@ -6,6 +6,9 @@ class Order < ApplicationRecord
   before_create :generar_numero_de_orden
   belongs_to :shipping_address, optional: true
 
+  validates :correo_cliente, presence: true, format: { with: URI::MailTo::EMAIL_REGEXP }
+  validates :numero_de_orden, presence: true, uniqueness: true
+  validates :pago_total, numericality: { greater_than_or_equal_to: 0 }
 
   def generar_numero_de_orden
     loop do

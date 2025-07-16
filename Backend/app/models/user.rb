@@ -1,7 +1,8 @@
 class User < ApplicationRecord
   has_many_attached :carousel_images
   has_one :cart, dependent: :destroy
-  has_many :shipping_addresses
+  has_many :shipping_addresses, dependent: :destroy
+
   has_many :orders
 
 
@@ -10,9 +11,9 @@ class User < ApplicationRecord
   # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :validatable
-         
+
   include DeviseTokenAuth::Concerns::User
-  
+
   # Generar token para API automáticamente al crear usuario
   after_create :generate_api_tokens
 

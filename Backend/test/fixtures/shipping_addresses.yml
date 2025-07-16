@@ -5,9 +5,7 @@ one:
   apellido: MyString
   telefono: MyString
   direccion: MyString
-  municipio: MyString
-  barrio: MyString
-  apartamento: MyString
+  neighborhood: one
   codigo_postal: MyString
   indicaciones_adicionales: MyText
   predeterminada: false
@@ -18,9 +16,7 @@ two:
   apellido: MyString
   telefono: MyString
   direccion: MyString
-  municipio: MyString
-  barrio: MyString
-  apartamento: MyString
+  neighborhood: two
   codigo_postal: MyString
   indicaciones_adicionales: MyText
   predeterminada: false
