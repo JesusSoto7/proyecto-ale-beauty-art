@@ -12,10 +12,11 @@
   <%= stylesheet_link_tag "edit_perfil", media: "all" %>
   <%= stylesheet_link_tag "about", media: "all" %>
   <%= stylesheet_link_tag "showClient.css" %>
-  <%= javascript_include_tag "application", defer: true %>
+  <%= javascript_include_tag "favorites", defer: true %>
   
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <title>Ale beauty Cosmetics</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link rel="stylesheet" href="Backend/app/assets/stylesheets/inicio.css">
@@ -70,9 +71,18 @@
         </div>
 
         <div class="favorite fav-icon">
-          <%= link_to current_cart_path do %>
+          <a href="javascript:void(0)" id="open-favorites-modal">
             <i class="fa-regular fa-heart fa-xl" style="color: #d7a7c3;"></i>
-          <% end %>
+          </a>
+        </div>
+      
+      <!-- Modal de favoritos -->
+        <div id="favorites-modal" class="custom-modal">
+            <div class="custom-modal-content">
+              <span class="close-modal" id="close-favorites-modal">&times;</span>
+              <h2>Tus Cosmeticos Favoritos</h2>
+                 <%= render partial: 'favorites/modal_favorites', locals: { favorite_products: current_user.favorite_products } %>
+            </div>
         </div>
 
 

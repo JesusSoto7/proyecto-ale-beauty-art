@@ -92,6 +92,10 @@ Rails.application.routes.draw do
     end
   end
 
+  resources :favorites, only: [:create]
+  delete 'favorites', to: 'favorites#destroy'
+  get 'favorites/modal_favorites', to: 'favorites#modal_favorites'
+
 
 
 
