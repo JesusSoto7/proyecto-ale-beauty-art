@@ -2,8 +2,13 @@ class OrdersController < ApplicationController
 
   def create
     correo_cliente = current_user.present? ? current_user.email : params[:email]
-
     shipping_address = current_user.shipping_addresses.find_by(predeterminada: true)
+
+    unless shipping_address
+      redirect_to direcciones_path, alert: "Debes tener una dirección predeterminada antes de continuar."
+      return
+    end
+
 
     order = Order.new(
       user: current_user,

@@ -86,11 +86,13 @@ class CheckoutsController < ApplicationController
 
   private
 
+
   def shipping_address_params
     params.require(:shipping_address).permit(
       :nombre, :apellido, :telefono, :direccion,
-      :municipio, :barrio, :apartamento,
+      :neighborhood_id,
       :codigo_postal, :indicaciones_adicionales, :predeterminada
     )
   end
+
 end

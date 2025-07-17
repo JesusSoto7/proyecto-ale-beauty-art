@@ -20,7 +20,18 @@
                     <div class="list-group mb-4">
                         <% @shipping_addresses.each do |address| %>
                         <div class="list-group-item">
-                            <p><strong>Dirección:</strong> <%= address.direccion %>, <%= address.municipio %>, <%= address.barrio %></p>
+                            <% if address.neighborhood.present? %>
+                              <p>
+                                <strong>Dirección:</strong>
+                                <%= address.direccion %>,
+                                <%= address.neighborhood.nombre %>,
+                                <%= address.neighborhood.municipality.nombre %>,
+                                <%= address.neighborhood.municipality.department.nombre %>
+                              </p>
+                            <% else %>
+                              <p><strong>Dirección:</strong> <%= address.direccion %></p>
+                            <% end %>
+
 
                               <%= form_with url: set_predeterminada_shipping_address_path(address), method: :patch, local: true do %>
                                 <%= check_box_tag "predeterminada", "1", address.predeterminada, onchange: "this.form.submit()"%>
@@ -42,5 +53,6 @@
             </div>
     </div>
 </section>
+
 </body>
 </html>

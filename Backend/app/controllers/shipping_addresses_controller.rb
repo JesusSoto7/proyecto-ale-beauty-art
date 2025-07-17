@@ -6,10 +6,25 @@ class ShippingAddressesController < ApplicationController
   def index
     @shipping_addresses = current_user.shipping_addresses
     @shipping_address = ShippingAddress.new
+    @departments = Department.all
+    @municipalities = if params.dig(:shipping_address, :department_id).present?
+                        Municipality.where(department_id: params[:shipping_address][:department_id])
+                      else
+                        []
+                      end
+
+    @neighborhoods = if params.dig(:shipping_address, :municipality_id).present?
+                      Neighborhood.where(municipality_id: params[:shipping_address][:municipality_id])
+                    else
+                      []
+                   end
   end
 
   def new
     @shipping_address = ShippingAddress.new
+    @departments = Department.all
+    @municipalities = params[:department_id].present? ? Municipality.where(department_id: params[:department_id]) : []
+    @neighborhoods = params[:municipality_id].present? ? Neighborhood.where(municipality_id: params[:municipality_id]) : []
   end
 
   def edit
@@ -26,6 +41,9 @@ class ShippingAddressesController < ApplicationController
       redirect_to direcciones_path
     else
       @shipping_addresses = current_user.shipping_addresses
+      @departments = Department.all
+      @municipalities = Municipality.where(department_id: params[:shipping_address][:department_id])
+      @neighborhoods = Neighborhood.where(municipality_id: params[:shipping_address][:municipality_id])
       render :index, status: :unprocessable_entity
     end
   end
@@ -79,8 +97,10 @@ class ShippingAddressesController < ApplicationController
   def shipping_address_params
     params.require(:shipping_address).permit(
       :nombre, :apellido, :telefono, :direccion,
-      :municipio, :barrio, :apartamento,
+      :neighborhood_id,
       :codigo_postal, :indicaciones_adicionales, :predeterminada
     )
   end
+
+
 end

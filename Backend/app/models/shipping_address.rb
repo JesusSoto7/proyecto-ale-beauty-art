@@ -11,7 +11,7 @@ class ShippingAddress < ApplicationRecord
   validates :indicaciones_adicionales, length: { maximum: 500 }, allow_blank: true
 
   def predeterminada_si_esta_primero
-    if user.present? && user.shipping_addresses.where(pred  eterminada: true).empty?
+    if user.present? && user.shipping_addresses.where(predeterminada: true).empty?
       self.predeterminada = true
     end
   end

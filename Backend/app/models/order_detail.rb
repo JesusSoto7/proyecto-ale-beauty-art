@@ -8,6 +8,6 @@ class OrderDetail < ApplicationRecord
   validates :precio_unitario, :subtotal, numericality: { greater_than_or_equal_to: 0 }
 
   def calcular_subtotal
-    self.subtotal = quantity.to_i * unit_price.to_f
+    self.subtotal = cantidad.to_i * precio_unitario.to_f
   end
 end
