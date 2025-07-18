@@ -1,107 +1,104 @@
-<section id="carrito">
-  <% if @cart.cart_products.empty? %>
-    <div class="text-center text-gray-500 mt-10">
-      Tu carrito está vacío.
-    </div>
-  <% else %>
-    <div id="itemsCar">
-      <% @cart.cart_products.each do |item| %>
-        <div id="pro" class="border rounded p-3 mb-3" style="display: flex; flex-direction: column;">
-          <div class="d-flex align-items-center mt-2" style="gap: 20px;">
-            <div>
-              <% if item.product.imagen.attached? %>
-                <%= image_tag item.product.imagen, style: "width: 60px; height: 70px; object-fit: contain; border-radius: 6px;" %>
-              <% else %>
-                <p>Sin imagen</p>
-              <% end %>
-            </div>
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="<%= form_authenticity_token %>">
 
-            <div class="flex-grow-1">
-              <p class="mb-1" style="font-weight: 500;">
-                <%= item.product.nombre_producto.gsub("6.3mm", "<strong>6.3mm</strong>").gsub("3.5mm", "<strong>3.5mm</strong>").html_safe %>
-              </p>
-              <div class="d-flex gap-3 mb-1">
-                <%= button_to "Eliminar", cart_cart_product_path(@cart.id, item.id), method: :delete, class: "btn btn-link p-0 text-danger" %>
-                <a href="#" class="text-primary" style="font-size: 0.9rem;">Comprar ahora</a>
-              </div>
-              <small class="text-muted">
-                <%= item.product.stock%> disponibles
-              </small>
-            </div>
-
-            <div id="input1" class="input-group" style="width: 100px;">
-              <%= button_to cart_add_path(product_id: item.product.id, cantidad: -1), method: :post, form: { data: { turbo_stream: true } }, class: "btn btn-outline-secondary btn-m" do %>
-                -
-              <% end %>
-              <input type="text" readonly class="form-control text-center" value="<%= item.cantidad %>" style="max-width: 40px; border-left: none; border-right: none">
-              <%= button_to cart_add_path(product_id: item.product.id, cantidad: 1), method: :post, form: { data: { turbo_stream: true } }, class: "btn btn-outline-secondary btn-m" do %>
-                +
-              <% end %>
-            </div>
-
-            <div id="pre-imp">
-              <div id="input2" class="input-group" style="width: 100px;">
-                <%= button_to cart_add_path(product_id: item.product.id, cantidad: -1), method: :post, form: { data: { turbo_stream: true } }, class: "btn btn-outline-secondary btn-m" do %>
-                  -
-                <% end %>
-                <input type="text" readonly class="form-control text-center" value="<%= item.cantidad %>" style="max-width: 40px; border-left: none; border-right: none">
-                <%= button_to cart_add_path(product_id: item.product.id, cantidad: 1), method: :post, form: { data: { turbo_stream: true } }, class: "btn btn-outline-secondary btn-m" do %>
-                  +
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <%= javascript_include_tag 'cart', defer: true %>
+  </head>
+<body>
+  
+    <section id="carrito">
+    <% if @cart.cart_products.empty? %>
+      <div class="text-center text-gray-500 mt-10">
+        Tu carrito está vacío.
+      </div>
+    <% else %>
+      <div id="itemsCar">
+        <% @cart.cart_products.each do |item| %>
+          <div id="pro" class="border rounded p-3 mb-3" style="display: flex; flex-direction: column;">
+            <div class="d-flex align-items-center mt-2" style="gap: 20px;">
+              <div>
+                <% if item.product.imagen.attached? %>
+                  <%= image_tag item.product.imagen, style: "width: 60px; height: 70px; object-fit: contain; border-radius: 6px;" %>
+                <% else %>
+                  <p>Sin imagen</p>
                 <% end %>
               </div>
-              <div id="preci" class="ms-3 text-end" style="min-width: 80px;">
-                <strong>
-                  <%= number_to_currency(item.product.precio_producto,
-                    unit: "$",
-                    separator: ",",
-                    delimiter: ".",
-                    precision: (item.product.precio_producto.to_f % 1 == 0 ? 0 : 2)
-                  ) %>
-                </strong>
+
+              <div class="flex-grow-1">
+                <p class="mb-1" style="font-weight: 500;">
+                  <%= item.product.nombre_producto.gsub("6.3mm", "<strong>6.3mm</strong>").gsub("3.5mm", "<strong>3.5mm</strong>").html_safe %>
+                </p>
+                <div class="d-flex gap-3 mb-1">
+                  <%= button_to "Eliminar", cart_cart_product_path(@cart.id, item.id), method: :delete, class: "btn btn-link p-0 text-danger" %>
+                  <a href="#" class="text-primary" style="font-size: 0.9rem;">Comprar ahora</a>
+                </div>
+                <small class="text-muted">
+                  <%= item.product.stock%> disponibles
+                </small>
               </div>
+
+                <div class="input-group" style="width: 100px;">
+                  <button type="button" class="btn btn-outline-secondary btn-decrease" data-product-id="<%= item.product.id %>">-</button>
+                  <input type="text" readonly class="form-control text-center quantity" data-product-id="<%= item.product.id %>" value="<%= item.cantidad %>" style="max-width: 60px;">
+                  <button type="button" class="btn btn-outline-secondary btn-increase" data-product-id="<%= item.product.id %>">+</button>
+                </div>
+
+
+              <div id="pre-imp">
+                <div id="input2" class="input-group" style="width: 100px;">
+                </div>
+                <div id="preci" class="ms-3 text-end" style="min-width: 80px;" data-product-id="<%= item.product.id %>">
+                  <strong>
+                    <%= number_to_currency(item.cantidad * item.product.precio_producto,
+                      unit: "$", separator: ",", delimiter: ".", precision: (item.product.precio_producto.to_f % 1 == 0 ? 0 : 2)) %>
+                  </strong>
+                </div>
+
+              </div>
+              
             </div>
-            
           </div>
+        <% end %>
+      </div>
+
+      <div id="resCar"class="card p-3">
+        <h5 class="mb-3 border-bottom pb-2">Resumen de compra</h5>
+        
+        <div class="d-flex justify-content-between mb-2">
+          <span>Productos (<%= @cart.cart_products.count %>)</span>
+          <span>
+
+            <%= number_to_currency(
+                  @cart.cart_products.joins(:product).sum("products.precio_producto * cart_products.cantidad"),
+                  unit: "$",
+                  separator: ",",
+                  delimiter: ".",
+                  precision: (
+                    @cart.cart_products.joins(:product).sum("products.precio_producto * cart_products.cantidad") % 1 == 0 ? 0 : 2
+                  )
+            ) %>
+          </span>
         </div>
-      <% end %>
-    </div>
+        <br>
+        <div class="d-flex justify-content-between border-top pt-2 mb-3">
+          <strong>Total</strong>
+          <span id="total-price">
+            <%= number_to_currency(
+              @cart.cart_products.joins(:product).sum("products.precio_producto * cart_products.cantidad"),
+              unit: "$", separator: ",", delimiter: ".",
+              precision: (@cart.cart_products.joins(:product).sum("products.precio_producto * cart_products.cantidad") % 1 == 0 ? 0 : 2)
+            ) %>
+          </span>
 
-    <div id="resCar"class="card p-3">
-      <h5 class="mb-3 border-bottom pb-2">Resumen de compra</h5>
-      
-      <div class="d-flex justify-content-between mb-2">
-        <span>Productos (<%= @cart.cart_products.count %>)</span>
-        <span>
+        </div>
 
-          <%= number_to_currency(
-                @cart.cart_products.joins(:product).sum("products.precio_producto * cart_products.cantidad"),
-                unit: "$",
-                separator: ",",
-                delimiter: ".",
-                precision: (
-                  @cart.cart_products.joins(:product).sum("products.precio_producto * cart_products.cantidad") % 1 == 0 ? 0 : 2
-                )
-          ) %>
-        </span>
+        <%= button_to 'Continuar compra', orders_path, method: :post,  class: 'btn btn-primary w-100'%>
       </div>
-      <br>
-      <div class="d-flex justify-content-between border-top pt-2 mb-3">
-        <strong>Total</strong>
-        <strong>
-          <%= number_to_currency(
-            @cart.cart_products.joins(:product).sum("products.precio_producto * cart_products.cantidad"),
-            unit: "$",
-            separator: ",",
-            delimiter: ".",
-            precision: (
-              @cart.cart_products.joins(:product).sum("products.precio_producto * cart_products.cantidad") % 1 == 0 ? 0 : 2
-            )
-          ) %>
-
-        </strong>
-      </div>
-
-      <%= button_to 'Continuar compra', orders_path, method: :post,  class: 'btn btn-primary w-100'%>
-    </div>
-  <% end %>
-</section>
+    <% end %>
+  </section>
+</html>
+</html>

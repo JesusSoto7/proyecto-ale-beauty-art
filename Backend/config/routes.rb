@@ -47,22 +47,29 @@ Rails.application.routes.draw do
   get "/cart/count", to: "carts#count", as: 'count_cart'
   post 'cart/add', to: 'cart#add', as: 'cart_add'
 
-
   get '/checkout/:id', to: 'checkouts#show', as: :checkout
 
 
   resources :checkouts do
-    member do
-      get :edit_direccion
-      get :direccion_envio
-      patch :editar_direccion
-    end
-
     collection do
-      post :create_address
+      get 'create_address/:id', to: 'checkouts#new_address', as: 'create_address'
+      get 'new_address', to: 'checkouts#new_address', as: 'new_address'
+      post 'create_address', to: 'checkouts#create_address', as: 'create_address_post'
+      patch 'editar_direccion/:id', to: 'checkouts#editar_direccion', as: 'editar_direccion'
       get :seleccionar_direccion
     end
+
+    member do
+      get 'edit_direccion', to: 'checkouts#edit_direccion'
+      get :direccion_envio
+    end
   end
+
+
+
+
+
+
 
 
 
