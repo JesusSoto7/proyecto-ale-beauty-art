@@ -10,11 +10,45 @@ class CheckoutsController < ApplicationController
                     current_user&.shipping_addresses&.last ||
                     ShippingAddress.new
 
+    @departments = Department.all
+    @selected_department_id = @shipping_address.neighborhood&.municipality&.department_id
+
   end
 
-  def edit_direccion
-    @shipping_address = current_user.shipping_addresses.find(params[:id])
+  def seleccionar_direccion
+    @order = Order.find(session[:order_id])
+    @shipping_addresses = current_user&.shipping_addresses || []
+    @shipping_address = ShippingAddress.new
   end
+
+  def new_address
+    @order = Order.find(session[:order_id])
+    @shipping_address = ShippingAddress.new
+    @departments = Department.all
+    @municipalities = []
+  end
+
+
+
+
+  def edit_direccion
+    @shipping_address = ShippingAddress.find(params[:id])
+    @departments = Department.all
+
+
+    neighborhood = @shipping_address.neighborhood
+    municipality = neighborhood&.municipality
+    department = municipality&.department
+
+    @selected_department_id = department&.id
+    @selected_municipality_id = municipality&.id
+    @selected_neighborhood_id = neighborhood&.id
+
+    @municipalities = @selected_department_id ? Municipality.where(department_id: @selected_department_id) : []
+    @neighborhoods = @selected_municipality_id ? Neighborhood.where(municipality_id: @selected_municipality_id) : []
+  end
+
+
 
   def editar_direccion
     @shipping_address = current_user.shipping_addresses.find(params[:id])
@@ -27,30 +61,47 @@ class CheckoutsController < ApplicationController
   end
 
 
+
   def create_address
+    @order = Order.find(params[:order_id] || session[:order_id])
+
     @shipping_address = ShippingAddress.new(shipping_address_params)
     @shipping_address.user = current_user if current_user.present?
 
+    if current_user.present?
+      current_user.shipping_addresses.update_all(predeterminada: false)
+      @shipping_address.predeterminada = true
+    end
+
     if @shipping_address.save
-      current_order.update(shipping_address: @shipping_address)
-      redirect_to checkout_path(current_cart.id)
+      @order.update(shipping_address: @shipping_address)
+      redirect_to seleccionar_direccion_checkouts_path, notice: "Dirección guardada correctamente."
     else
-      render :new, status: :unprocessable_entity
+      @departments = Department.all
+
+      neighborhood = @shipping_address.neighborhood
+      municipality = neighborhood&.municipality
+      department = municipality&.department
+
+      @selected_department_id = department&.id
+      @selected_municipality_id = municipality&.id
+      @selected_neighborhood_id = neighborhood&.id
+
+      @municipalities = @selected_department_id ? Municipality.where(department_id: @selected_department_id) : []
+      @neighborhoods = @selected_municipality_id ? Neighborhood.where(municipality_id: @selected_municipality_id) : []
+
+      render :direccion_envio, status: :unprocessable_entity
     end
   end
 
-  def seleccionar_direccion
-    @order = Order.find(session[:order_id])
-    @shipping_addresses = current_user.shipping_addresses
-  end
 
   def show
-    @order = Order.find(params[:id])
-    @shipping_address = @order.shipping_address || current_user&.shipping_addresses&.last
+    @order = Order.find_by(id: params[:id])
     if @order.nil?
       redirect_to root_path, alert: "Orden no encontrada."
       return
     end
+    @shipping_address = @order.shipping_address || current_user&.shipping_addresses&.last
   end
 
   def success
@@ -86,11 +137,13 @@ class CheckoutsController < ApplicationController
 
   private
 
+
   def shipping_address_params
     params.require(:shipping_address).permit(
       :nombre, :apellido, :telefono, :direccion,
-      :municipio, :barrio, :apartamento,
+      :neighborhood_id,
       :codigo_postal, :indicaciones_adicionales, :predeterminada
     )
   end
+
 end

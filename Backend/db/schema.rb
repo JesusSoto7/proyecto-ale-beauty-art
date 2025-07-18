@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_07_10_161702) do
+ActiveRecord::Schema[8.0].define(version: 2025_07_17_173133) do
   create_table "active_storage_attachments", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
@@ -62,11 +62,47 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_10_161702) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "departments", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.string "nombre", limit: 100, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["nombre"], name: "index_departments_on_nombre", unique: true
+  end
+
+  create_table "favorites", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.bigint "product_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["product_id"], name: "index_favorites_on_product_id"
+    t.index ["user_id", "product_id"], name: "index_favorites_on_user_id_and_product_id", unique: true
+    t.index ["user_id"], name: "index_favorites_on_user_id"
+  end
+
+  create_table "municipalities", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.string "nombre", limit: 100, null: false
+    t.bigint "department_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["department_id"], name: "index_municipalities_on_department_id"
+    t.index ["nombre", "department_id"], name: "index_municipalities_on_nombre_and_department_id", unique: true
+  end
+
+  create_table "neighborhoods", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.string "nombre", limit: 100, null: false
+    t.bigint "municipality_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["municipality_id"], name: "index_neighborhoods_on_municipality_id"
+    t.index ["nombre", "municipality_id"], name: "index_neighborhoods_on_nombre_and_municipality_id", unique: true
+  end
+
   create_table "order_details", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.bigint "order_id", null: false
     t.bigint "product_id", null: false
     t.integer "cantidad", null: false
     t.decimal "precio_unitario", precision: 10, scale: 2, null: false
+    t.decimal "subtotal", precision: 10, scale: 2, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["order_id"], name: "index_order_details_on_order_id"
@@ -122,19 +158,18 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_10_161702) do
   end
 
   create_table "shipping_addresses", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
-    t.string "nombre", null: false
-    t.string "apellido", null: false
+    t.string "nombre", limit: 55, null: false
+    t.string "apellido", limit: 55, null: false
     t.string "telefono", limit: 10, null: false
     t.string "direccion", null: false
-    t.string "municipio", null: false
-    t.string "barrio", null: false
-    t.string "apartamento"
+    t.bigint "neighborhood_id", null: false
     t.string "codigo_postal"
     t.text "indicaciones_adicionales"
     t.boolean "predeterminada", default: false
     t.bigint "user_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["neighborhood_id"], name: "index_shipping_addresses_on_neighborhood_id"
     t.index ["user_id"], name: "index_shipping_addresses_on_user_id"
   end
 
@@ -170,11 +205,16 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_10_161702) do
   add_foreign_key "cart_products", "carts"
   add_foreign_key "cart_products", "products"
   add_foreign_key "carts", "users"
+  add_foreign_key "favorites", "products"
+  add_foreign_key "favorites", "users"
+  add_foreign_key "municipalities", "departments"
+  add_foreign_key "neighborhoods", "municipalities"
   add_foreign_key "order_details", "orders"
   add_foreign_key "order_details", "products"
   add_foreign_key "orders", "payment_methods"
   add_foreign_key "orders", "shipping_addresses"
   add_foreign_key "orders", "users"
   add_foreign_key "products", "categories"
+  add_foreign_key "shipping_addresses", "neighborhoods"
   add_foreign_key "shipping_addresses", "users"
 end

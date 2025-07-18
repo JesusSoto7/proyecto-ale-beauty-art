@@ -5,9 +5,11 @@ one:
   product: one
   cantidad: 1
   precio_unitario: 9.99
+  subtotal: 9.99
 
 two:
   order: two
   product: two
   cantidad: 1
   precio_unitario: 9.99
+  subtotal: 9.99

@@ -10,3 +10,20 @@
 
 Role.find_or_create_by(name: 'admin')
 Role.find_or_create_by(name: 'cliente')
+
+atlantico = Department.create!(nombre: "Atlántico")
+
+barranquilla = Municipality.create!(nombre: "Barranquilla", department: atlantico)
+soledad = Municipality.create!(nombre: "Soledad", department: atlantico)
+
+Neighborhood.create!(nombre: "El Prado", municipality: barranquilla)
+Neighborhood.create!(nombre: "Boston", municipality: barranquilla)
+Neighborhood.create!(nombre: "La Concepción", municipality: barranquilla)
+Neighborhood.create!(nombre: "Rebolo", municipality: barranquilla)
+Neighborhood.create!(nombre: "Villa Santos", municipality: barranquilla)
+
+Neighborhood.create!(nombre: "Hipódromo", municipality: soledad)
+Neighborhood.create!(nombre: "Ciudadela Metropolitana", municipality: soledad)
+Neighborhood.create!(nombre: "Villa Katanga", municipality: soledad)
+Neighborhood.create!(nombre: "Los Almendros", municipality: soledad)
+Neighborhood.create!(nombre: "Centro", municipality: soledad)

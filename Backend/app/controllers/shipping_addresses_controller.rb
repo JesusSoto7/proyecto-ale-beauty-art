@@ -6,13 +6,16 @@ class ShippingAddressesController < ApplicationController
   def index
     @shipping_addresses = current_user.shipping_addresses
     @shipping_address = ShippingAddress.new
+    @departments = Department.all
   end
 
   def new
     @shipping_address = ShippingAddress.new
+    @departments = Department.all
   end
 
   def edit
+      @departments = Department.all
   end
 
   def show
@@ -26,6 +29,7 @@ class ShippingAddressesController < ApplicationController
       redirect_to direcciones_path
     else
       @shipping_addresses = current_user.shipping_addresses
+      @departments = Department.all
       render :index, status: :unprocessable_entity
     end
   end
@@ -47,28 +51,23 @@ class ShippingAddressesController < ApplicationController
     end
   end
 
-
   def set_predeterminada
-
     current_user.shipping_addresses.update_all(predeterminada: false)
-
     @shipping_address.update(predeterminada: true)
 
     if session[:order_id].present?
       order = Order.find_by(id: session[:order_id])
-
-      if order&.status == 0
-        order.update(shipping_address: @shipping_address)
-      end
+      order.update(shipping_address: @shipping_address) if order&.status == 0
     end
 
-    if params[:from_checkout].present?
-      redirect_to seleccionar_direccion_checkouts_path
-    else
-      redirect_to direcciones_path, notice: "Dirección predeterminada actualizada."
+    respond_to do |format|
+      format.html do
+        redirect_path = params[:from_checkout] ? seleccionar_direccion_checkouts_path : direcciones_path
+        redirect_to redirect_path, notice: "Dirección predeterminada actualizada."
+      end
+      format.json { render json: { success: true } }
     end
   end
-
 
   private
 
@@ -79,7 +78,7 @@ class ShippingAddressesController < ApplicationController
   def shipping_address_params
     params.require(:shipping_address).permit(
       :nombre, :apellido, :telefono, :direccion,
-      :municipio, :barrio, :apartamento,
+      :neighborhood_id,
       :codigo_postal, :indicaciones_adicionales, :predeterminada
     )
   end

@@ -3,9 +3,12 @@ class Order < ApplicationRecord
   belongs_to :user, optional: true
   belongs_to :payment_method, optional: true
   has_many :order_details, dependent: :destroy
-  before_create :generar_numero_de_orden
+  before_validation :generar_numero_de_orden, on: :create
   belongs_to :shipping_address, optional: true
 
+  validates :correo_cliente, presence: true, format: { with: URI::MailTo::EMAIL_REGEXP }
+  validates :numero_de_orden, presence: true, uniqueness: true
+  validates :pago_total, numericality: { greater_than_or_equal_to: 0 }
 
   def generar_numero_de_orden
     loop do

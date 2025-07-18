@@ -5,7 +5,7 @@ Rails.application.routes.draw do
   # Can be used by load balancers and uptime monitors to verify that the app is live.
   get "up" => "rails/health#show", as: :rails_health_check
   devise_for :users
-  
+
   namespace :api do
     namespace :v1, defaults: { format: :json } do
       # Autenticación con Devise Token Auth
@@ -47,22 +47,29 @@ Rails.application.routes.draw do
   get "/cart/count", to: "carts#count", as: 'count_cart'
   post 'cart/add', to: 'cart#add', as: 'cart_add'
 
-
   get '/checkout/:id', to: 'checkouts#show', as: :checkout
 
 
   resources :checkouts do
-    member do
-      get :edit_direccion
-      get :direccion_envio
-      patch :editar_direccion
-    end
-
     collection do
-      post :create_address
+      get 'create_address/:id', to: 'checkouts#new_address', as: 'create_address'
+      get 'new_address', to: 'checkouts#new_address', as: 'new_address'
+      post 'create_address', to: 'checkouts#create_address', as: 'create_address_post'
+      patch 'editar_direccion/:id', to: 'checkouts#editar_direccion', as: 'editar_direccion'
       get :seleccionar_direccion
     end
+
+    member do
+      get 'edit_direccion', to: 'checkouts#edit_direccion'
+      get :direccion_envio
+    end
   end
+
+
+
+
+
+
 
 
 
@@ -91,6 +98,16 @@ Rails.application.routes.draw do
       patch :set_predeterminada
     end
   end
+
+  resources :favorites, only: [:create]
+  delete 'favorites', to: 'favorites#destroy'
+  get 'favorites/modal_favorites', to: 'favorites#modal_favorites'
+
+  get '/locations/municipalities', to: 'locations#municipalities'
+  get '/locations/neighborhoods', to: 'locations#neighborhoods'
+
+
+
 
     # Render dynamic PWA files from app/views/pwa/* (remember to link manifest in application.html.erb)
   # get "manifest" => "rails/pwa#manifest", as: :pwa_manifest

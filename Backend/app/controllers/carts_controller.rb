@@ -9,15 +9,28 @@ class CartsController < ApplicationController
     @cart = current_user&.cart || Cart.create(user: current_user)
     product_id = params[:product_id]
     cantidad = params[:cantidad].to_i
-  
-    # Aceptar cantidad negativa para disminuir
+
     if cantidad != 0
       @cart.agregar_producto(product_id, cantidad)
     end
-  
+
+    item = @cart.cart_products.find_by(product_id: product_id)
+    subtotal = item.cantidad * item.product.precio_producto
+    total = @cart.cart_products.joins(:product).sum("products.precio_producto * cart_products.cantidad")
+
     respond_to do |format|
-      format.html { redirect_to current_cart_path, notice: "Producto actualizado" }
-      format.turbo_stream
+      format.json do
+        render json: {
+          cantidad: item&.cantidad || 0,
+          subtotal: subtotal,
+          total: total,
+          total_items: @cart.cart_products.sum(:cantidad)
+        }
+      end
+
+      format.html do
+        redirect_to current_cart_path
+      end
     end
   end
 
