@@ -96,6 +96,8 @@ Rails.application.routes.draw do
   delete 'favorites', to: 'favorites#destroy'
   get 'favorites/modal_favorites', to: 'favorites#modal_favorites'
 
+  get '/locations/municipalities', to: 'locations#municipalities'
+  get '/locations/neighborhoods', to: 'locations#neighborhoods'
 
 
 

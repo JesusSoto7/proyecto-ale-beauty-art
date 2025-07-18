@@ -7,27 +7,15 @@ class ShippingAddressesController < ApplicationController
     @shipping_addresses = current_user.shipping_addresses
     @shipping_address = ShippingAddress.new
     @departments = Department.all
-    @municipalities = if params.dig(:shipping_address, :department_id).present?
-                        Municipality.where(department_id: params[:shipping_address][:department_id])
-                      else
-                        []
-                      end
-
-    @neighborhoods = if params.dig(:shipping_address, :municipality_id).present?
-                      Neighborhood.where(municipality_id: params[:shipping_address][:municipality_id])
-                    else
-                      []
-                   end
   end
 
   def new
     @shipping_address = ShippingAddress.new
     @departments = Department.all
-    @municipalities = params[:department_id].present? ? Municipality.where(department_id: params[:department_id]) : []
-    @neighborhoods = params[:municipality_id].present? ? Neighborhood.where(municipality_id: params[:municipality_id]) : []
   end
 
   def edit
+      @departments = Department.all
   end
 
   def show
@@ -42,8 +30,6 @@ class ShippingAddressesController < ApplicationController
     else
       @shipping_addresses = current_user.shipping_addresses
       @departments = Department.all
-      @municipalities = Municipality.where(department_id: params[:shipping_address][:department_id])
-      @neighborhoods = Neighborhood.where(municipality_id: params[:shipping_address][:municipality_id])
       render :index, status: :unprocessable_entity
     end
   end
@@ -65,28 +51,23 @@ class ShippingAddressesController < ApplicationController
     end
   end
 
-
   def set_predeterminada
-
     current_user.shipping_addresses.update_all(predeterminada: false)
-
     @shipping_address.update(predeterminada: true)
 
     if session[:order_id].present?
       order = Order.find_by(id: session[:order_id])
-
-      if order&.status == 0
-        order.update(shipping_address: @shipping_address)
-      end
+      order.update(shipping_address: @shipping_address) if order&.status == 0
     end
 
-    if params[:from_checkout].present?
-      redirect_to seleccionar_direccion_checkouts_path
-    else
-      redirect_to direcciones_path, notice: "Dirección predeterminada actualizada."
+    respond_to do |format|
+      format.html do
+        redirect_path = params[:from_checkout] ? seleccionar_direccion_checkouts_path : direcciones_path
+        redirect_to redirect_path, notice: "Dirección predeterminada actualizada."
+      end
+      format.json { render json: { success: true } }
     end
   end
-
 
   private
 
@@ -101,6 +82,4 @@ class ShippingAddressesController < ApplicationController
       :codigo_postal, :indicaciones_adicionales, :predeterminada
     )
   end
-
-
 end
