@@ -9,21 +9,22 @@
   </head>
   <body class="body">
 
-   <section class="container" style="width: 80vh;">
+   <section class="container">
       <%= image_tag 'ale_logo.jpg', alt: 'logo', class: 'img_logo' %>
 
 
       <h2 class="titulo">¿Olvidó su contraseña?</h2>
-      <p class="texto">Ingrese su correo electrónico y le enviaremos instrucciones para recuperarsu contraseña.</p>
-
+      <p class="msP">Ingrese su correo electrónico para recuperarsu contraseña.</p>
+      <hr>
+      <br>
       <%= form_for(resource, as: resource_name, url: password_path(resource_name), html: { method: :post }) do |f| %>
         <%= render "devise/shared/error_messages", resource: resource %>
 
         <div class="field">
-          <%= f.label :email %><br />
+          <%= f.label :email %>
           <%= f.email_field :email, autofocus: true, autocomplete: "email" %>
         </div>
-        <div class="options">
+        <div class="opcionesP">
           <%= render "devise/shared/links" %>
         </div>
         <div class="boton">

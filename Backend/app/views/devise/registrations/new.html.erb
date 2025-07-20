@@ -1,90 +1,87 @@
 <!DOCTYPE html>
 <html lang="es">
-  <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registrarse</title>
-    <link rel="stylesheet" href="app/assets/stylesheets/sign_up.css">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Registro</title>
+  <link rel="stylesheet" href="app/assets/stylesheets/sign_up.css">
   
-  </head>
-  <body class="body">
 
-   <section class="container" style="width: 80vh;">
-      <%= image_tag 'ale_logo.jpg', alt: 'logo', class: 'img_logo' %>
-      <br>
-      <h2>Registrarse</h2>
+</head>
+<body>
+  <article class="registro-wrapper">
+    <div class="registro-formulario">
+      <h2 class="titulo-registro">Crear cuenta</h2>
+
       <%= form_for(resource, as: resource_name, url: registration_path(resource_name)) do |f| %>
         <%= render "devise/shared/error_messages", resource: resource %>
-      <div id="form-errors" class="error-box" style="color: red;"></div>
-        
-        <div class="nombres">
-          <div class="field">
-            <%= f.label :nombre , class: "Text" %><br />
-            <%= f.text_field :nombre %>
-          </div>
+        <div id="zona-error-cliente" class="zona-errores"></div>
 
-          <div class="field">
-            <%= f.label :apellido, class: "Text" %><br />
-            <%= f.text_field :apellido %>
+        <div class="grupo-nombres">
+          <div class="campo-formulario">
+            <%= f.label :nombre %>
+            <%= f.text_field :nombre, id: "campo_nombre_usuario" %>
+          </div>
+          <div class="campo-formulario">
+            <%= f.label :apellido %>
+            <%= f.text_field :apellido, id: "campo_apellido_usuario" %>
           </div>
         </div>
-        
 
-        <div class="field">
-          <%= f.label :email, class: "Text" %><br />
-          <%= f.email_field :email, autofocus: true, autocomplete: "email" %>
+        <div class="campo-formulario">
+          <%= f.label :email %>
+          <%= f.email_field :email, id: "campo_email_usuario", autofocus: true, autocomplete: "email" %>
         </div>
-        <div class="pasword">
-          <div class="field">
-            <%= f.label :password, class: "Text" %>
-            <% if @minimum_password_length %>
-            
-            <% end %><br />
-            <%= f.password_field :password, autocomplete: "new-password" %>
-          </div>
 
-          <div class="field">
-            <%= f.label :password_confirmation, class: "Text" %><br />
+        <div class="grupo-passwords">
+          <div class="campo-formulario">
+            <%= f.label :password %>
+            <%= f.password_field :password, id: "campo_password_usuario", autocomplete: "new-password" %>
+          </div>
+          <div class="campo-formulario">
+            <%= f.label :password_confirmation %>
             <%= f.password_field :password_confirmation, autocomplete: "new-password" %>
           </div>
         </div>
-        
 
-        <div class="actions">
-          <%= f.submit "registrarse" %>
+        <div class="boton-registro">
+          <%= f.submit "Registrarse" %>
         </div>
       <% end %>
-        <div class="opciones">
-         <%= render "devise/shared/links" %>
-        </div>
-        <a class="texto" href="http://localhost:4000/inicio#index"> Quizás mas tarde</a>
-    </section>
 
-    <script>
-      document.addEventListener("DOMContentLoaded", () => {
-        const form = document.querySelector("form");
-        const errorBox = document.getElementById("form-errors");
+      <div class="enlace-opcional">
+        <%= render "devise/shared/links" %>
+      </div>
+    </div>
 
-        form.addEventListener("submit", function(e) {
-          errorBox.innerHTML = "";
-          const nombre = document.querySelector("#user_nombre").value.trim();
-          const apellido = document.querySelector("#user_apellido").value.trim();
-          const email = document.querySelector("#user_email").value.trim();
-          const password = document.querySelector("#user_password").value.trim();
+    <div class="registro-ilustracion"></div>
+  </articule>
 
-          let errores = [];
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const form = document.querySelector("form");
+      const errorBox = document.getElementById("zona-error-cliente");
 
-          if (!nombre) errores.push("El nombre es obligatorio.");
-          if (!apellido) errores.push("El apellido es obligatorio.");
-          if (!email) errores.push("El correo electrónico es obligatorio.");
-          if (!password) errores.push("La contraseña es obligatoria.");
+      form.addEventListener("submit", function(e) {
+        errorBox.innerHTML = "";
+        const nombre = document.querySelector("#campo_nombre_usuario").value.trim();
+        const apellido = document.querySelector("#campo_apellido_usuario").value.trim();
+        const email = document.querySelector("#campo_email_usuario").value.trim();
+        const password = document.querySelector("#campo_password_usuario").value.trim();
 
-          if (errores.length > 0) {
-            e.preventDefault();
-            errorBox.innerHTML = "<ul><li>" + errores.join("</li><li>") + "</li></ul>";
-          }
-        });
+        let errores = [];
+
+        if (!nombre) errores.push("El nombre es obligatorio.");
+        if (!apellido) errores.push("El apellido es obligatorio.");
+        if (!email) errores.push("El correo electrónico es obligatorio.");
+        if (!password) errores.push("La contraseña es obligatoria.");
+
+        if (errores.length > 0) {
+          e.preventDefault();
+          errorBox.innerHTML = "<ul><li>" + errores.join("</li><li>") + "</li></ul>";
+        }
       });
-    </script>
-  </body>
+    });
+  </script>
+</body>
 </html>
