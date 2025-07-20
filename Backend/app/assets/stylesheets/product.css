@@ -59,6 +59,17 @@ a{
     flex-flow: row wrap;
 }
 /* ------------------------------------product---------------------------------------- */
+.no-products {
+  text-align: center;
+  padding: 40px;
+  color: #666;
+}
+.no-products img {
+  width: 180px;
+  opacity: 0.8;
+}
+
+
 @media
     (min-width: 763px) and
     (max-width: 993px) {
@@ -110,7 +121,7 @@ a{
 }
 
 #des-prod{
-    height: 340px;
+    max-height: 340px;
     overflow-y: auto;
 }
 
