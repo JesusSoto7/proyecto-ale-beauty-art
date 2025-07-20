@@ -71,7 +71,7 @@
                   <div class="producto-card-novedades">
                           <div class="favorite fav-icon">
                             
-                            <% if current_user.favorite_products.include?(product) %>
+                            <% if current_user && current_user.favorite_products.include?(product) %>
                               <i class="fa-solid fa-heart fa-2xl favorite-icon"
                                 style="color: #cb9fb9;"
                                 data-product-id="<%= product.id %>"

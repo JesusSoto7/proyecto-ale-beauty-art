@@ -77,13 +77,16 @@
         </div>
       
       <!-- Modal de favoritos -->
-        <div id="favorites-modal" class="custom-modal">
+        <% if current_user %>
+          <div id="favorites-modal" class="custom-modal">
             <div class="custom-modal-content">
               <span class="close-modal" id="close-favorites-modal">&times;</span>
-              <h2>Tus Cosmeticos Favoritos</h2>
-                 <%= render partial: 'favorites/modal_favorites', locals: { favorite_products: current_user.favorite_products } %>
+              <h2>Tus Cosméticos Favoritos</h2>
+              <%= render partial: 'favorites/modal_favorites', locals: { favorite_products: current_user.favorite_products } %>
             </div>
-        </div>
+          </div>
+        <% end %>
+
 
 
         <div class="cart cart-icon">
