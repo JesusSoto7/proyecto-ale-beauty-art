@@ -16,7 +16,7 @@
 
     <ul class="ubi">
       <%= link_to "Home", home_path %> / 
-      <%= link_to "productos", products_path, class: "ubi-active" %>
+      <%= link_to "Productos", products_path, class: "ubi-active" %>
     </ul>
 
     <% content_for :title, "Productos"%>
@@ -33,7 +33,7 @@
         <% else %>
           <div class="no-products">
             <%= image_tag "Not_found.png" %>
-            <p>No hay productos disponibles en este momento.</p>
+            <p>No se encontraron productos.</p>
           </div>
         <% end %>
 </div>

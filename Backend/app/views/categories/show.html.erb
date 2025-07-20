@@ -2,7 +2,13 @@
     <h2 class="text-left mb-4">Productos en <%= @category.nombre_categoria %></h2>
 
     <div class="d-flex justify-content-between align-items-center mb-3">
-        <input type="text" class="form-control w-50" placeholder="Buscar producto...">
+        
+        <form class="d-flex input-group w-auto">
+            <%= text_field_tag :name, params[:name], placeholder: "buscar productos...", class: "form-control rounded" %>
+            <%= button_tag type: "submit", class: "input-group-text border-0" do %>
+                <i class="fas fa-search"></i>
+            <% end %>
+        </form>
         <%= link_to 'Agregar Producto', new_product_path, class: "btn btn-primary ms-3" %>
     </div>
 
@@ -46,7 +52,7 @@
     <% else %>
         <div class="no-products d-flex align-items-center" style="flex-direction: column; text-align: center;">
             <%= image_tag "Not_found.png", class: "me-3" %>
-            <p class="mb-0">No hay productos en esta categoría.</p>
+            <p class="mb-0">No se encontraron productos.</p>
         </div>
     <% end %>
 

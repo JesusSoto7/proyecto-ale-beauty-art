@@ -1,25 +1,30 @@
-<h2>Change your password</h2>
+<articule class="container">
+  <h2>Change your password</h2>
 
-<%= form_for(resource, as: resource_name, url: password_path(resource_name), html: { method: :put }) do |f| %>
-  <%= render "devise/shared/error_messages", resource: resource %>
-  <%= f.hidden_field :reset_password_token %>
+  <%= form_for(resource, as: resource_name, url: password_path(resource_name), html: { method: :put }) do |f| %>
+    <%= render "devise/shared/error_messages", resource: resource %>
+    <%= f.hidden_field :reset_password_token %>
 
-  <div class="field">
-    <%= f.label :password, "nueva contraseña" %><br />
-    <% if @minimum_password_length %>
-      <em>(<%= @minimum_password_length %> caracteres como mínimo)</em><br />
-    <% end %>
-    <%= f.password_field :password, autofocus: true, autocomplete: "nueva contraseña" %>
+    <div class="field">
+      <%= f.label :password, "nueva contraseña" %>
+      <% if @minimum_password_length %>
+        <em>(<%= @minimum_password_length %> caracteres como mínimo)</em><br />
+      <% end %>
+      <%= f.password_field :password, autofocus: true, autocomplete: "nueva contraseña" %>
+    </div>
+
+    <div class="field">
+      <%= f.label :password_confirmation, "Confirmar nueva contraseña" %>
+      <%= f.password_field :password_confirmation, autocomplete: "nueva contraseña" %>
+    </div>
+
+    <div class="actions">
+      <%= f.submit "cambiar contraseña" %>
+    </div>
+  <% end %>
+  <div class="opcionesP" style="margin-top: 20px;">
+    <%= render "devise/shared/links" %>
   </div>
+  
 
-  <div class="field">
-    <%= f.label :password_confirmation, "Confirmar nueva contraseña" %><br />
-    <%= f.password_field :password_confirmation, autocomplete: "nueva contraseña" %>
-  </div>
-
-  <div class="actions">
-    <%= f.submit "cambiar contraseña" %>
-  </div>
-<% end %>
-
-<%= render "devise/shared/links" %>
+</articule>

@@ -107,6 +107,7 @@
             </div>
         </aside>
         <section id="nvg">
+            <!-- navbar --->
             <nav class="navbar bg-body-tertiary">
             
                 <% if controller_name == 'products' %>
@@ -149,7 +150,7 @@
             <% end %>
 
             <% if alert %>
-                <div id="flash-message-alert" class="alerta alert-danger"> <%# Usa una ID diferente para el alert si vas a actualizarlo por separado con Turbo Stream %>
+                <div id="flash-message-alert" class="alerta alert-danger">
                 <%= alert %>
                 <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
                 </div>

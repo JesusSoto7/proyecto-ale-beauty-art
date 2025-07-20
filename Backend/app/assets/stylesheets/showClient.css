@@ -182,5 +182,6 @@
         #des-prod{
             width: auto;
             overflow-y: visible;
+            max-height: none;
         }
 }
