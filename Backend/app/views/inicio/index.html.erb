@@ -69,21 +69,6 @@
           <div class="carousel-novedades" id="carousel-productos">
               <% @product.each do |product| %>
                   <div class="producto-card-novedades">
-                          <div class="favorite fav-icon">
-                            
-                            <% if current_user && current_user.favorite_products.include?(product) %>
-                              <i class="fa-solid fa-heart fa-2xl favorite-icon"
-                                style="color: #cb9fb9;"
-                                data-product-id="<%= product.id %>"
-                                data-favorited="true"></i>
-                            <% else %>
-                              <i class="fa-regular fa-heart fa-xl favorite-icon"
-                                style="color: #d7a7c3;"
-                                data-product-id="<%= product.id %>"
-                                data-favorited="false"></i>
-                            <% end %>
-
-                          </div>
                       <%= link_to show_product_client_path(product) do%>
                           <div class="producto-img">
                               <% if product.imagen.attached? %>
@@ -101,10 +86,26 @@
                                   <%= number_to_currency(product.precio_producto, unit: "$", delimiter: ".", separator: ",", precision: (product.precio_producto.to_f % 1 == 0 ? 0 : 2)) %>
                                 </p>
                               </div>
-                              <div>
+                              <div style="display: flex; gap: 23%; align-items: center; justify-content: center;">
                                 <%=button_to "Añadir al carrito", add_to_cart_path(@cart),
                                               method: :post,
                                               params: { product_id: product.id, cantidad: 1 }, class:"add-to-cart"%>
+                                
+                                <div class="favorite fav-icon">
+                                  
+                                  <% if current_user && current_user.favorite_products.include?(product) %>
+                                    <i class="fa-solid fa-heart fa-2xl favorite-icon"
+                                      style="color: #cb9fb9;"
+                                      data-product-id="<%= product.id %>"
+                                      data-favorited="true"></i>
+                                  <% else %>
+                                    <i class="fa-regular fa-heart fa-xl favorite-icon"
+                                      style="color: #d7a7c3;"
+                                      data-product-id="<%= product.id %>"
+                                      data-favorited="false"></i>
+                                  <% end %>
+
+                                </div>
                               </div>
                             </div>
                       <%end%>
