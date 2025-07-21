@@ -5,39 +5,59 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Inicio de sesión</title>
     <link rel="stylesheet" href="app/assets/stylesheets/sign_in.css">
-  
-  </head>
-  <body class="body">
+    <%= stylesheet_link_tag "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" %>
 
-   <section class="container" style="width: 80vh;">
-    <%= image_tag 'ale_logo.jpg', alt: 'logo', class: 'img_logo' %>
+  </head>
+
+  <body class="body">
+    <section class="container">
+      <%= image_tag 'ale_logo.jpg', alt: 'logo', class: 'img_logo' %>
       <h2>Iniciar sesión</h2>
+
       <%= form_for(resource, as: resource_name, url: session_path(resource_name), html: {class: 'form'}) do |f| %>
         <div class="field">
-          <%= f.label :email %><br />
+          <%= f.label :email %>
           <%= f.email_field :email, autofocus: true, autocomplete: "email" %>
         </div>
 
         <div class="field">
-          <%= f.label :password %><br />
-          <%= f.password_field :password, autocomplete: "current-password" %>
+          <%= f.label :password %>
+          <div style="position: relative;">
+            <%= f.password_field :password, autocomplete: "current-password", id: "password_field" %>
+            <i class="fas fa-eye toggle-icon" onclick="togglePassword()" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); cursor: pointer;"></i>
+          </div>
         </div>
+
+
+
         <div class="opcionesb">
-         <%= render "devise/shared/links" %>
+          <%= render "devise/shared/links" %>
         </div>
 
         <div class="actions">
           <%= f.submit "Iniciar sesión" %>
         </div>
-        
-        <a class="texto" href="http://localhost:4000/inicio#index"> Quizás mas tarde</a>
+
+        <a class="sncuenta" href="https://localhost:4000/inicio#index">Quizás más tarde</a>
       <% end %>
-
-
-      
     </section>
+
+    <script>
+
+      function togglePassword() {
+        const input = document.getElementById('password_field');
+        const icon = document.querySelector('.toggle-icon');
+        
+        if (input.type === 'password') {
+          input.type = 'text';
+          icon.classList.remove('fa-eye');
+          icon.classList.add('fa-eye-slash');
+        } else {
+          input.type = 'password';
+          icon.classList.remove('fa-eye-slash');
+          icon.classList.add('fa-eye');
+        }
+      }
+    </script>
   </body>
 </html>
-
-
-

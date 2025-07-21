@@ -27,39 +27,59 @@
         </div>
 
         <div class="d-flex flex-wrap justify-content-center gap-3">
-
-          <% @products.each do |product| %>
-            <%= link_to show_product_client_path(product) do%>
+          <% if @products.any? %>
+            <% @products.each do |product| %>
               <div class="card shadow-sm h-100" style="width: 18rem;">
-                <% if product.imagen.attached? %>
-                  <%= image_tag product.imagen.variant(resize_to_limit: [500, 500]), class:"card-img-top", alt:"Producto Maquillaje", style:"width: 100%; max-height: 190px; object-fit: contain;" %>
-                <% else %>
-                  <div class="card-img-top d-flex align-items-center justify-content-center" style="height: 190px; background-color: #f8f9fa;">
-                    <p class="text-muted">Sin imagen</p>
+                <%= link_to show_product_client_path(product), class: "card-link-overlay", data: { turbo: false } do %>
+                  <% if product.imagen.attached? %>
+                    <%= image_tag product.imagen.variant(resize_to_limit: [500, 500]), class:"card-img-top", alt:"Producto Maquillaje", style:"width: 100%; max-height: 190px; object-fit: contain;" %>
+                  <% else %>
+                    <div class="card-img-top d-flex align-items-center justify-content-center" style="height: 190px; background-color: #f8f9fa;">
+                      <p class="text-muted">Sin imagen</p>
+                    </div>
+                  <% end %>
+
+                  <div class="card-body">
+                    <h5 class="card-title fw-bold text-dark"><%= product.nombre_producto %></h5>
+                    <p><strong>Categoria:</strong> <%= product.category.nombre_categoria %></p>
+                    <p class="card-text text-dark">
+                      <strong>
+                        <%= number_to_currency(product.precio_producto, unit: "$", delimiter: ".", separator: ",", precision: (product.precio_producto.to_f % 1 == 0 ? 0 : 2)) %>
+                      </strong>
+                    </p>
                   </div>
                 <% end %>
-                <div class="card-body">
-                  <h5 class="card-title fw-bold text-dark"><%= product.nombre_producto %></h5>
-                  <p><strong>Categoria:</strong> <%= product.category.nombre_categoria %></p>
-                  <p class="card-text text-dark">
-                    <strong>
-                      <%= number_to_currency(product.precio_producto, unit: "$", delimiter: ".", separator: ",", precision: (product.precio_producto.to_f % 1 == 0 ? 0 : 2)) %>
-                    </strong>
-                  </p>
-                </div>
-                <div class="card-footer bg-transparent border-0">
+
+                <div class="card-footer bg-transparent border-0" style="display: flex; gap: 23%; align-items: center; justify-content: center;">
                   <div>
-                    <%=button_to "Añadir al carrito", add_to_cart_path(@cart),
+                    <%= button_to "Añadir al carrito", add_to_cart_path(@cart),
                                   method: :post,
-                                  params: { product_id: product.id, cantidad: 1 }, class:"add-to-cart"%>
+                                  params: { product_id: product.id, cantidad: 1 },
+                                  class:"add-to-cart" %>
                   </div>
-                </div>
-                <div class="card-footer bg-transparent border-0">
-                  
+
+                  <div class="favorite fav-icon">
+                    <% if current_user && current_user.favorite_products.include?(product) %>
+                      <i class="fa-solid fa-heart fa-2xl favorite-icon"
+                        style="color: #cb9fb9;"
+                        data-product-id="<%= product.id %>"
+                        data-favorited="true"></i>
+                    <% else %>
+                      <i class="fa-regular fa-heart fa-xl favorite-icon"
+                        style="color: #d7a7c3;"
+                        data-product-id="<%= product.id %>"
+                        data-favorited="false"></i>
+                    <% end %>
+                  </div>
                 </div>
               </div>
             <% end %>
-          <% end %>
+          <% else %>
+            <div class="no-products d-flex align-items-center" style="flex-direction: column; text-align: center;">
+                <%= image_tag "Not_found.png", class: "me-3", style: "max-width: 30%; height: auto;" %>
+                <p class="mb-0">No se encontraron productos.</p>
+            </div>
+        <% end %>
         </div>
       </section>
     </main>

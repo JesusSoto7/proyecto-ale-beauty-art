@@ -39,9 +39,11 @@
       </nav>
       
       <div class="search-container" id="search-box">
-        <%= form_with url: productos_path, method: :get, local: true do %>
-          <%= text_field_tag :name, params[:name], placeholder: "Search" %>
-          <i class="fas fa-search search-icon"></i>
+        <%= form_with url: productos_path, method: :get, local: true, class: "search-form" do %>
+          <%= text_field_tag :name, params[:name], placeholder: "Search", class: "search-input" %>
+          <button type="submit" class="search-button">
+            <i class="fas fa-search"></i>
+          </button>
         <% end %>
       </div>
 
@@ -77,13 +79,16 @@
         </div>
       
       <!-- Modal de favoritos -->
-        <div id="favorites-modal" class="custom-modal">
+        <% if current_user %>
+          <div id="favorites-modal" class="custom-modal">
             <div class="custom-modal-content">
               <span class="close-modal" id="close-favorites-modal">&times;</span>
-              <h2>Tus Cosmeticos Favoritos</h2>
-                 <%= render partial: 'favorites/modal_favorites', locals: { favorite_products: current_user.favorite_products } %>
+              <h2>Tus Cosméticos Favoritos</h2>
+              <%= render partial: 'favorites/modal_favorites', locals: { favorite_products: current_user.favorite_products } %>
             </div>
-        </div>
+          </div>
+        <% end %>
+
 
 
         <div class="cart cart-icon">

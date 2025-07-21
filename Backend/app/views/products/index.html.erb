@@ -16,18 +16,26 @@
 
     <ul class="ubi">
       <%= link_to "Home", home_path %> / 
-      <%= link_to "productos", products_path, class: "ubi-active" %>
+      <%= link_to "Productos", products_path, class: "ubi-active" %>
     </ul>
 
     <% content_for :title, "Productos"%>
 
     <h1> Productos </h1>
 
-    <div id="order">
-        <% @products.each do |product| %>
-            <%= render product %>
-        <% end %> 
-    </div>
+    
+        <% if @products.any? %>
+          <div id="order">
+            <% @products.each do |product| %>
+              <%= render product %>
+            <% end %>
+          </div>
+        <% else %>
+          <div class="no-products">
+            <%= image_tag "Not_found.png" %>
+            <p>No se encontraron productos.</p>
+          </div>
+        <% end %>
 </div>
 
 

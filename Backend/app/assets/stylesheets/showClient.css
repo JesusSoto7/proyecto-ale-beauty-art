@@ -22,7 +22,6 @@
 }
 
 #datashow{
-    width: 100dvh;
     display: flex;
     flex-direction: column;
     padding: 50px;
@@ -182,5 +181,6 @@
         #des-prod{
             width: auto;
             overflow-y: visible;
+            max-height: none;
         }
 }
