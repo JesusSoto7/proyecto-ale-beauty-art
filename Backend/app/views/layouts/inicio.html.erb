@@ -39,9 +39,11 @@
       </nav>
       
       <div class="search-container" id="search-box">
-        <%= form_with url: productos_path, method: :get, local: true do %>
-          <%= text_field_tag :name, params[:name], placeholder: "Search" %>
-          <i class="fas fa-search search-icon"></i>
+        <%= form_with url: productos_path, method: :get, local: true, class: "search-form" do %>
+          <%= text_field_tag :name, params[:name], placeholder: "Search", class: "search-input" %>
+          <button type="submit" class="search-button">
+            <i class="fas fa-search"></i>
+          </button>
         <% end %>
       </div>
 

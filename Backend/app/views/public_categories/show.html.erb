@@ -233,10 +233,27 @@
             <div class="card-body">
               <h3 class="product-name"><%= product.nombre_producto %></h3>
               <p class="product-price"><%= number_to_currency(product.precio_producto, unit: "$", delimiter: ".", separator: ",") %></p>
-              <%= button_to "Añadir al carrito", add_to_cart_path(@cart),
-                  method: :post,
-                  params: { product_id: product.id, cantidad: 1 }, 
-                  class: "add-to-cart" %>
+
+              <div style="display: flex; justify-content: center; align-items: center; gap: 10px;">
+                <%= button_to "Añadir al carrito", add_to_cart_path(@cart),
+                    method: :post,
+                    params: { product_id: product.id, cantidad: 1 }, 
+                    class: "add-to-cart" %>
+                
+                <div class="favorite fav-icon">
+                    <% if current_user && current_user.favorite_products.include?(product) %>
+                      <i class="fa-solid fa-heart fa-2xl favorite-icon"
+                        style="color: #cb9fb9;"
+                        data-product-id="<%= product.id %>"
+                        data-favorited="true"></i>
+                    <% else %>
+                      <i class="fa-regular fa-heart fa-xl favorite-icon"
+                        style="color: #d7a7c3;"
+                        data-product-id="<%= product.id %>"
+                        data-favorited="false"></i>
+                    <% end %>
+                  </div>
+              </div>
             </div>
           </div>
         <% end %>
@@ -246,5 +263,17 @@
     <p class="no-products">No hay productos en esta categoría.</p>
   <% end %>
 </div>
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const favoriteIcons = document.querySelectorAll(".favorite-icon");
+
+    favoriteIcons.forEach(icon => {
+      icon.addEventListener("click", (event) => {
+        event.stopPropagation(); // evita que el clic llegue al contenedor
+        // aquí puedes también hacer la lógica de agregar/quitar favorito
+      });
+    });
+  });
+</script>
 </body>
 </html>
