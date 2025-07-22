@@ -38,8 +38,12 @@
 
 </div>
 
-<h3 style="margin-top: 30px; margin-left: 30px;"> Productos relacionados</h3>
-<div id="order">
+<br>
+<hr>
+
+<h3 id="related-products-title" style="margin-top: 30px; margin-left: 30px;"> Productos relacionados</h3>
+
+<% if @related_products.any? %>
     <div class="related-products">
         <% @related_products.each do |related| %>
         <div class="card shadow-sm" style="width: 18rem; margin-top: 30px; margin-left: 30px;">
@@ -93,4 +97,10 @@
                 </div>
         <% end %>
     </div>
-</div>
+
+<% else %>
+    <div class="no-products d-flex align-items-center" style="flex-direction: column; text-align: center;">
+        <%= image_tag "Not_found.png", class: "me-3", style: "max-width: 15%; height: auto;" %>
+        <p class="mb-0">No se encontraron productos.</p>
+    </div>
+<% end %>

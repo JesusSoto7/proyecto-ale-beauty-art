@@ -1,8 +1,17 @@
-#order{
+.related-products {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+#related-products-title{
+    justify-content: center;
     display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    columns: 3;
+}
+
+hr{
+    width: 64%;
+    margin: 0 auto;
 }
 
 #shw{
@@ -140,6 +149,15 @@
 @media
     (min-width: 0px) and
     (max-width: 890px) {
+
+        .related-products {
+            justify-content: center;
+        }
+
+        #related-products-title{
+            display: flex;
+            justify-content: center;
+        }
 
         #shw{
             width: 100%;
