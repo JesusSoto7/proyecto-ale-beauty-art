@@ -9,7 +9,7 @@
     <%= javascript_include_tag 'setpredeterminado', defer: true %>
   </head>
 <body>
-    <section>
+    <section class="formD">
       <div>
 
               <div>
@@ -17,20 +17,23 @@
                       <%= render 'form',  shipping_address: @shipping_address%>
                   <% else %>
                       <h4>Escoge en donde vas a recibir tus pedidos</h4>
-                      <h5>Tus Direcciones</h5>
+                      <hr>
                       <div class="list-group mb-4">
                           <% @shipping_addresses.each do |address| %>
-                          <div class="list-group-item">
+                          <div class="list-group-item" style="margin-bottom: 10px;">
+                                <strong>Dirección:</strong>
                               <%= address.direccion %>, <%= address.neighborhood.municipality.nombre %>, <%= address.neighborhood.municipality.department.nombre %>, <%= address.neighborhood.nombre %>
 
 
-                                <%= check_box_tag "predeterminada", "1", address.predeterminada, 
+                                <br> <%= check_box_tag "predeterminada", "1", address.predeterminada, 
                                 data: { address_id: address.id }, class: "predeterminada-checkbox" %>
                                 <%= label_tag "predeterminada", "Usar como predeterminada" %>
-                                <%= link_to "Editar", edit_direccion_checkout_path(address.id) %>
+                                <%= link_to "Editar", edit_direccion_checkout_path(address.id), class: "btn btn-warning btn-sm me-2" %>
 
 
                           </div>
+
+                          
 
                           <% end %>
                       </div>

@@ -34,7 +34,7 @@ class CheckoutsController < ApplicationController
   def edit_direccion
     @shipping_address = ShippingAddress.find(params[:id])
     @departments = Department.all
-
+    @order = Order.find(session[:order_id])
 
     neighborhood = @shipping_address.neighborhood
     municipality = neighborhood&.municipality

@@ -1,17 +1,16 @@
-<section>
+<section class="formD">
     <div>
-
             <div>
                 <% if @shipping_addresses.empty? %>
                     <%= render 'form',  shipping_address: @shipping_address%>
                 <% else %>
                     <h4>Elegir forma de entrega</h4>
                     <% predeterminada = @shipping_addresses.find(&:predeterminada?) %>
-                    <div class="list-group mb-4">
+                    <article class="list-group mb-4">
                         <% if predeterminada.present? %>
                             <div class="list-group-item">
                                 <% if predeterminada.present? %>
-                                    <div class="list-group-item">
+                                    <div>
                                         <p><strong>Dirección:</strong> 
                                         <%= predeterminada.direccion %>, 
                                         <%= predeterminada.neighborhood.municipality.nombre %>, 
@@ -28,7 +27,7 @@
                             <p>No tienes una direccion predeterminada.</p>
             
                         <% end %>
-                    </div>
+                    </article>
                 <% end %>
             </div>
     </div>

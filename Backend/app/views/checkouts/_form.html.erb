@@ -10,16 +10,19 @@
   </head>
   <body>
 <section class="stp1  container py-5">
-  <h2 class="mb-4 fw-bold">Tu Dirección</h2>
+
+  <% if action_name == 'new_address' %>
+    <h2 class="mb-4 fw-bold" style="text-align: center;">Nueva Dirección</h2>
+  <% elsif action_name == 'edit_direccion' %>
+    <h2 class="mb-4 fw-bold" style="text-align: center;">Editar Dirección</h2>
+  <% else %>
+    <h2 class="mb-4 fw-bold" style="text-align: center;">Tu Dirección</h2>
+  <% end %>
 
   <%= form_with model: @shipping_address,
                 url: @shipping_address.persisted? ? editar_direccion_checkouts_path(@shipping_address.id) : create_address_post_checkouts_path,
                 method: @shipping_address.persisted? ? :patch : :post,
                 local: true do |form| %>
-
-
-
-
 
     <% if @shipping_address.errors.any? %>
       <div class="alert alert-danger">
