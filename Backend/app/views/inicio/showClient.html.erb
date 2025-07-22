@@ -1,40 +1,96 @@
 
-        <div id="shw">
-            <div id="fotoshow">
-                <% if @product.imagen.attached? %>
-                    <%= image_tag @product.imagen, class: "show-img" %>
-                    <% else %>
-                    <p>Sin imagen</p>
-                <% end %>
+<div id="shw">
+    <div id="fotoshow">
+        <% if @product.imagen.attached? %>
+            <%= image_tag @product.imagen, class: "show-img" %>
+            <% else %>
+            <p>Sin imagen</p>
+        <% end %>
+    </div>
+
+    <div id="datashow" >
+        <div id="infoshow">
+            <div>
+                <p class="fs-1 fw-semibold"><%= @product.nombre_producto %></p>
+                <p class="card-text fs-5"><%= @product.category.nombre_categoria %></p>
             </div>
-
-            <div id="datashow" >
-                <div id="infoshow">
-                    <div>
-                      <p class="fs-1 fw-semibold"><%= @product.nombre_producto %></p>
-                      <p class="card-text fs-5"><%= @product.category.nombre_categoria %></p>
-                    </div>
-                    <div>
-                      <p class="fw-semibold">DESCRIPCIÓN</p>
-                      <p id="des-prod"> <%= @product.descripcion %> </p>
-                    </div>
-                    <h5 id="preci1" class="fw-semibold fs-2">
-                        <%= number_to_currency(@product.precio_producto, unit: "$", delimiter: ".", separator: ",", precision: (@product.precio_producto.to_f % 1 == 0 ? 0 : 2)) %>
-                    </h5>
-                </div>
-                
-                <div id="btnshow">
-                    <h5 id="preci2" class="fw-semibold fs-2">
-                        <%= number_to_currency(@product.precio_producto, unit: "$", delimiter: ".", separator: ",", precision: (@product.precio_producto.to_f % 1 == 0 ? 0 : 2)) %>
-                    </h5>
-                   <div>
-                      <%=button_to "Añadir al carrito", add_to_cart_path(@cart),
-                                    method: :post,
-                                    params: { product_id: @product.id, cantidad: 1 }, class:"add-to-cart"%>
-                  </div>
-                </div>
-
+            <div>
+                <p class="fw-semibold">DESCRIPCIÓN</p>
+                <p id="des-prod"> <%= @product.descripcion %> </p>
             </div>
-
+            <h5 id="preci1" class="fw-semibold fs-2">
+                <%= number_to_currency(@product.precio_producto, unit: "$", delimiter: ".", separator: ",", precision: (@product.precio_producto.to_f % 1 == 0 ? 0 : 2)) %>
+            </h5>
         </div>
-      
+        
+        <div id="btnshow">
+            <h5 id="preci2" class="fw-semibold fs-2">
+                <%= number_to_currency(@product.precio_producto, unit: "$", delimiter: ".", separator: ",", precision: (@product.precio_producto.to_f % 1 == 0 ? 0 : 2)) %>
+            </h5>
+            <div>
+                <%=button_to "Añadir al carrito", add_to_cart_path(@cart),
+                            method: :post,
+                            params: { product_id: @product.id, cantidad: 1 }, class:"add-to-cart"%>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+<h3 style="margin-top: 30px; margin-left: 30px;"> Productos relacionados</h3>
+<div id="order">
+    <div class="related-products">
+        <% @related_products.each do |related| %>
+        <div class="card shadow-sm" style="width: 18rem; margin-top: 30px; margin-left: 30px;">
+                <%# Usamos 'related' en lugar de 'product' para los productos relacionados %>
+                <%= link_to show_product_client_path(related), class: "card-link-overlay", data: { turbo: false } do %>
+                    <% if related.imagen.attached? %>
+                    <%= image_tag related.imagen.variant(resize_to_limit: [500, 500]), class:"card-img-top", alt:"Producto Maquillaje", style:"width: 100%; max-height: 190px; object-fit: contain;" %>
+                    <% else %>
+                    <div class="card-img-top d-flex align-items-center justify-content-center" style="height: 190px; background-color: #f8f9fa;">
+                        <p class="text-muted">Sin imagen</p>
+                    </div>
+                <% end %>
+
+                    <div class="card-body">
+                        <h5 class="card-title fw-bold text-dark"><%= related.nombre_producto %></h5>
+                        <% if related.respond_to?(:category) && related.category.present? %>
+                            <p><strong>Categoria:</strong> <%= related.category.nombre_categoria %></p>
+                        <% end %>
+                        <p class="card-text text-dark">
+                            <strong>
+                            <%= number_to_currency(related.precio_producto, unit: "$", delimiter: ".", separator: ",", precision: (related.precio_producto.to_f % 1 == 0 ? 0 : 2)) %>
+                            </strong>
+                        </p>
+                    </div>
+                    <% end %>
+
+                    <div class="card-footer bg-transparent border-0" style="display: flex; gap: 23%; align-items: center; justify-content: center;">
+                        <div>
+                            <%# Asegúrate de que @cart esté definido en tu controlador si no lo está ya %>
+                            <%= button_to "Añadir al carrito", add_to_cart_path(@cart),
+                                            method: :post,
+                                            params: { product_id: related.id, cantidad: 1 },
+                                            class:"add-to-cart" %>
+                        </div>
+
+                        <div class="favorite fav-icon">
+                            <%# Asegúrate de que current_user esté disponible y el modelo Product tenga la relación favorite_products %>
+                            <% if defined?(current_user) && current_user && current_user.favorite_products.include?(related) %>
+                                <i class="fa-solid fa-heart fa-2xl favorite-icon"
+                                style="color: #cb9fb9;"
+                                data-product-id="<%= related.id %>"
+                                data-favorited="true"></i>
+                            <% else %>
+                                <i class="fa-regular fa-heart fa-xl favorite-icon"
+                                style="color: #d7a7c3;"
+                                data-product-id="<%= related.id %>"
+                                data-favorited="false"></i>
+                            <% end %>
+                        </div>
+                    </div>
+                </div>
+        <% end %>
+    </div>
+</div>
