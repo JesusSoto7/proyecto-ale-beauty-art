@@ -1,16 +1,11 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Shipping Address</title>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    <%= javascript_include_tag 'form-direccion', defer: true %>
-
-  </head>
-  <body>
-<section class="stp1  container py-5">
-  <h2 class="mb-4 fw-bold">Tu Dirección</h2>
+<section class="stp1  container formD">
+  <% if action_name == 'new' %>
+    <h2 class="mb-4 fw-bold" style="text-align: center;">Nueva Dirección</h2>
+  <% elsif action_name == 'edit' %>
+    <h2 class="mb-4 fw-bold" style="text-align: center;">Editar Dirección</h2>
+  <% else %>
+    <h2 class="mb-4 fw-bold" style="text-align: center;">Tu Dirección</h2>
+  <% end %>
 
   <%= form_with(model: @shipping_address, local: true, class: "needs-validation") do |form| %>
     
@@ -86,5 +81,3 @@
 
   <% end %>
 </section>
-</body> 
-</html>

@@ -9,7 +9,7 @@
     <%= javascript_include_tag 'setpredeterminado', defer: true %>
   </head>
 <body>
-<section>
+<section class="formD">
     <div>
 
             <div>
@@ -17,7 +17,7 @@
                     <%= render 'form',  shipping_address: @shipping_address%>
                 <% else %>
                     <h4>Escoge en donde vas a recibir tus pedidos</h4>
-                    <h5>Tus Direcciones</h5>
+                    <hr style="border: 1px solid #ccc; margin: auto; margin-bottom: 20px; width: 100%;">
                     <div class="list-group mb-4">
                         <% @shipping_addresses.each do |address| %>
                         <div class="list-group-item">

@@ -1,25 +1,26 @@
 
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: #f9bffc;
+    /* background-color: #f9bffc; */
     color: #333;
     line-height: 1.6;
    
 }
 
-section {
+/* section {
     max-width: 1200px;
     margin: 0 auto;
     padding: 0 15px;
-}
+} */
 
 
-section > div {
+.formD > div {
     background-color: #ffffff;
     border-radius: 10px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     padding: 2rem;
-    margin-top: 2rem;
+    max-width: 800px;
+    margin: 2rem auto;
 }
 
 
@@ -49,6 +50,13 @@ h5::after {
     border-radius: 2px;
 }
 
+.mb-4{
+   margin-bottom: 3rem !important; 
+}
+
+.py-5{
+    padding-top: none !important;
+}
 
 .list-group {
     border-radius: 8px;
@@ -127,14 +135,16 @@ h5::after {
 }
 
 
-section > div > div:last-child {
+.formD > div > div:last-child {
     margin-top: 1.5rem;
-    text-align: center;
+    text-align: start;
+    color: #534651;
+    font-weight: bold;
 }
 
 
 @media (max-width: 768px) {
-    section > div {
+    .formD > div {
         padding: 1.5rem;
     }
     
@@ -152,7 +162,7 @@ section > div > div:last-child {
         padding: 10px;
     }
     
-    section > div {
+    .formD > div {
         padding: 1rem;
         margin-top: 1rem;
     }
