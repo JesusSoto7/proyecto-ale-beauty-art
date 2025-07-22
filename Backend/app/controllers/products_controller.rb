@@ -14,6 +14,9 @@ class ProductsController < ApplicationController
 
     # Filtros por categoría
     @products = @products.where(category: params[:category]) if params[:category].present?
+
+    # agregados recientemente
+    @recently_added_products = Product.order(created_at: :desc).limit(6)
   end
 
   def new

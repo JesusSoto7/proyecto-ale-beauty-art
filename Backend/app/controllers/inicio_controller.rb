@@ -7,6 +7,8 @@ class InicioController < ApplicationController
     @categories = Category.all
     @products = @products.where("nombre_producto LIKE ?", "%#{params[:name]}%") if params[:name].present?
 
+    # agregados recientemente
+    @recently_added_products = Product.order(created_at: :desc).limit(6)
   end
 
   def all_products
