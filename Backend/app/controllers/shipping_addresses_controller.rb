@@ -15,7 +15,18 @@ class ShippingAddressesController < ApplicationController
   end
 
   def edit
-      @departments = Department.all
+    @departments = Department.all
+
+    neighborhood = @shipping_address.neighborhood
+    municipality = neighborhood&.municipality
+    department = municipality&.department
+
+    @selected_department_id = department&.id
+    @selected_municipality_id = municipality&.id
+    @selected_neighborhood_id = neighborhood&.id
+
+    @municipalities = @selected_department_id ? Municipality.where(department_id: @selected_department_id) : []
+    @neighborhoods = @selected_municipality_id ? Neighborhood.where(municipality_id: @selected_municipality_id) : []
   end
 
   def show
@@ -35,9 +46,12 @@ class ShippingAddressesController < ApplicationController
   end
 
   def update
+    
     if @shipping_address.update(shipping_address_params)
       redirect_to direcciones_path, notice: "Dirección actualizada exitosamente."
     else
+      @departments = Department.all
+      @selected_department_id = @shipping_address.neighborhood&.municipality&.department_id
       render :edit, status: :unprocessable_entity
     end
   end
