@@ -4,7 +4,8 @@
 
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
-    <%= javascript_include_tag "favorites", defer: true %>
+    <%= javascript_include_tag "application", "data-turbo-track": "reload", defer: true %>
+
     <meta name="csrf-token" content="<%= form_authenticity_token %>">
 
     <meta charset="UTF-8">
@@ -109,12 +110,14 @@
                               data-product-id="<%= product.id %>"
                               data-favorited="true"></i>
                           <% else %>
-                            <i class="fa-regular fa-heart fa-xl favorite-icon"
+                            <i class="fa-regular fa-heart fa-2xl favorite-icon"
                               style="color: #d7a7c3;"
                               data-product-id="<%= product.id %>"
                               data-favorited="false"></i>
                           <% end %>
                         </div>
+
+
                       </div>
                     </div>
                   </div>

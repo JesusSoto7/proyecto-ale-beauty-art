@@ -58,19 +58,19 @@
                                   class:"add-to-cart" %>
                   </div>
 
-                  <div class="favorite fav-icon">
-                    <% if current_user && current_user.favorite_products.include?(product) %>
-                      <i class="fa-solid fa-heart fa-2xl favorite-icon"
-                        style="color: #cb9fb9;"
-                        data-product-id="<%= product.id %>"
-                        data-favorited="true"></i>
-                    <% else %>
-                      <i class="fa-regular fa-heart fa-xl favorite-icon"
-                        style="color: #d7a7c3;"
-                        data-product-id="<%= product.id %>"
-                        data-favorited="false"></i>
-                    <% end %>
-                  </div>
+                        <div class="favorite fav-icon">
+                          <% if current_user && current_user.favorite_products.include?(product) %>
+                            <i class="fa-solid fa-heart fa-2xl favorite-icon"
+                              style="color: #cb9fb9;"
+                              data-product-id="<%= product.id %>"
+                              data-favorited="true"></i>
+                          <% else %>
+                            <i class="fa-regular fa-heart fa-2xl favorite-icon"
+                              style="color: #d7a7c3;"
+                              data-product-id="<%= product.id %>"
+                              data-favorited="false"></i>
+                          <% end %>
+                        </div>
                 </div>
               </div>
             <% end %>
