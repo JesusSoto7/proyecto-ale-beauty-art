@@ -1,13 +1,12 @@
 
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: #f9bffc;
     color: #333;
     line-height: 1.6;
 }
 
 .container {
-    max-width: 1200px;
+    max-width: 800px;
     margin: 0 auto;
     padding: 0 15px;
 }
@@ -29,7 +28,7 @@ body {
     padding-bottom: 0.5rem;
 }
 
-.stp1 h2::after {
+/* .stp1 h2::after {
     content: '';
     position: absolute;
     bottom: 0;
@@ -38,7 +37,7 @@ body {
     height: 4px;
     background-color: #f55c76;
     border-radius: 2px;
-}
+} */
 
 
 .needs-validation .form-label {
@@ -56,6 +55,11 @@ body {
     font-size: 1rem;
     transition: all 0.3s ease;
     box-shadow: none;
+}
+
+select:focus{
+    border-color:#f70576 !important;
+    box-shadow: 0 0 0 0.2rem  #f8aec6 !important;
 }
 
 .needs-validation .form-control:focus {
