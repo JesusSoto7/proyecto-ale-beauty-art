@@ -1,14 +1,7 @@
 class OrdersController < ApplicationController
-
   def create
     correo_cliente = current_user.present? ? current_user.email : params[:email]
     shipping_address = current_user.shipping_addresses.find_by(predeterminada: true)
-
-    unless shipping_address
-      redirect_to direcciones_path, alert: "Debes tener una dirección predeterminada antes de continuar."
-      return
-    end
-
 
     order = Order.new(
       user: current_user,
@@ -28,9 +21,13 @@ class OrdersController < ApplicationController
       end
 
       session[:order_id] = order.id
-      redirect_to direccion_envio_checkout_path(session[:order_id])
+
+      if shipping_address
+        redirect_to direccion_envio_checkout_path(order)
+      else
+        redirect_to direccion_envio_checkout_path(order), alert: "Agrega una dirección para continuar con tu compra."
+      end
     else
-      Rails.logger.error "Error al guardar la orden: #{order.errors.full_messages}"
       redirect_to current_cart_path, alert: "Hubo un error al procesar la orden: #{order.errors.full_messages.to_sentence}"
     end
   end
