@@ -14,7 +14,7 @@
         border: none;
       }
       .btn-primary:hover{
-        background-color: #e72552;
+        background-color: #ff2457;
       }
       
     </style>
@@ -77,39 +77,36 @@
         <% end %>
       </div>
 
-      <div id="resCar"class="card p-3">
+      <div id="resCar" class="card p-3">
         <h5 class="mb-3 border-bottom pb-2">Resumen de compra</h5>
-        
-        <div class="d-flex justify-content-between mb-2">
-          <span>Productos (<%= @cart.cart_products.count %>)</span>
-          <span>
 
-            <%= number_to_currency(
-                  @cart.cart_products.joins(:product).sum("products.precio_producto * cart_products.cantidad"),
-                  unit: "$",
-                  separator: ",",
-                  delimiter: ".",
-                  precision: (
-                    @cart.cart_products.joins(:product).sum("products.precio_producto * cart_products.cantidad") % 1 == 0 ? 0 : 2
-                  )
-            ) %>
-          </span>
+        <div id="cart-items">
+          <% @cart.cart_products.includes(:product).each do |item| %>
+            <div class="cart-item d-flex justify-content-between mb-2" data-product-id="<%= item.product.id %>">
+              <div>
+                <strong><%= item.product.nombre_producto %></strong>
+                (<span class="item-cantidad"><%= item.cantidad %></span>)
+              </div>
+              <div class="item-subtotal">
+                <%= number_to_currency(item.product.precio_producto * item.cantidad, unit: "$", separator: ",", delimiter: ".", precision: 0) %>
+              </div>
+            </div>
+          <% end %>
         </div>
-        <br>
-        <div class="d-flex justify-content-between border-top pt-2 mb-3">
+
+        <div class="d-flex justify-content-between border-top pt-2 mb-3 mt-3">
           <strong>Total</strong>
           <span id="total-price">
             <%= number_to_currency(
               @cart.cart_products.joins(:product).sum("products.precio_producto * cart_products.cantidad"),
-              unit: "$", separator: ",", delimiter: ".",
-              precision: (@cart.cart_products.joins(:product).sum("products.precio_producto * cart_products.cantidad") % 1 == 0 ? 0 : 2)
+              unit: "$", separator: ",", delimiter: ".", precision: 0
             ) %>
           </span>
-
         </div>
 
-        <%= button_to 'Continuar compra', orders_path, method: :post,  class: 'btn btn-primary w-100'%>
+        <%= button_to 'Continuar compra', orders_path, method: :post, class: 'btn btn-primary w-100' %>
       </div>
+
     <% end %>
   </section>
 </html>
