@@ -30,6 +30,12 @@ class InicioController < ApplicationController
       redirect_to root_path, alert: "Producto no encontrado"
     end
     @products = @products.where("nombre_producto LIKE ?", "%#{params[:name]}%") if params[:name].present?
+
+    # Productos relacionados (misma categoría, excluyendo el producto actual)
+    @related_products = Product.where(category_id: @product.category_id)
+                              .where.not(id: @product.id)
+                              .order("RAND()")
+                              .limit(4)
   end
   
 end

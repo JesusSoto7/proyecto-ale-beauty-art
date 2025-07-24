@@ -1,3 +1,21 @@
+.related-products {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+#related-products-title{
+    justify-content: center;
+    display: flex;
+}
+
+hr{
+    width: 64%;
+    margin: 0 auto;
+}
+
+
+
 #shw{
     margin-top: 30px;
     display: flex;
