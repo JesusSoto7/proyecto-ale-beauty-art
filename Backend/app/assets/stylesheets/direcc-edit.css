@@ -157,9 +157,6 @@ h5::after {
 }
 
 @media (max-width: 576px) {
-    body {
-        padding: 10px;
-    }
     
     .formD > div {
         padding: 1rem;
