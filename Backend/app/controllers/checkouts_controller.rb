@@ -32,6 +32,7 @@ class CheckoutsController < ApplicationController
 
 
   def edit_direccion
+    @order = Order.find(params[:order_id] || session[:order_id])
     @shipping_address = ShippingAddress.find(params[:id])
     @departments = Department.all
 

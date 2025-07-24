@@ -59,12 +59,14 @@
             id: "department_select", class: "form-select" %>
 
       <%= form.label :municipality_id, "Municipio" %>
-      <%= select_tag "shipping_address[municipality_id]", "",
+      <%= select_tag "shipping_address[municipality_id]", 
+            options_from_collection_for_select(@municipalities || [], :id, :nombre, @selected_municipality_id),
             prompt: "Seleccione un municipio",
             id: "municipality_select", class: "form-select" %>
 
       <%= form.label :neighborhood_id, "Barrio" %>
-      <%= select_tag "shipping_address[neighborhood_id]", "",
+      <%= select_tag "shipping_address[neighborhood_id]", 
+            options_from_collection_for_select(@neighborhoods || [], :id, :nombre, @selected_neighborhood_id),
             prompt: "Seleccione un barrio",
             id: "neighborhood_select", class: "form-select" %>
 
