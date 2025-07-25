@@ -10,7 +10,14 @@
   </head>
   <body>
 <section class="stp1  container py-5">
-  <h2 class="mb-4 fw-bold">Tu Dirección</h2>
+
+  <% if action_name == 'new' %>
+    <h2 class="mb-4 fw-bold" style="text-align: center;">Nueva Dirección</h2>
+  <% elsif action_name == 'edit' %>
+    <h2 class="mb-4 fw-bold" style="text-align: center;">Editar Dirección</h2>
+  <% else %>
+    <h2 class="mb-4 fw-bold" style="text-align: center;">Tu Dirección</h2>
+  <% end %>
 
   <%= form_with(model: @shipping_address, local: true, class: "needs-validation") do |form| %>
     
