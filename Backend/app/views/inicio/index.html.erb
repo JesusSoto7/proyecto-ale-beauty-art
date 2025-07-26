@@ -102,8 +102,8 @@
                                       method: :post,
                                       params: { product_id: product.id, cantidad: 1 },
                                       class: "add-to-cart" %>
-
-                        <div class="favorite fav-icon">
+                        <!--favorite_icon-->
+                        <div class="favorite_fav-icon_002">
                           <% if current_user && current_user.favorite_products.include?(product) %>
                             <i class="fa-solid fa-heart fa-2xl favorite-icon"
                               style="color: #cb9fb9;"

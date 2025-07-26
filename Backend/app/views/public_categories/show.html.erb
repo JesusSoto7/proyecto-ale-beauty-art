@@ -65,8 +65,18 @@
       flex-direction: column;
       height: 100%;
       border: none;
+      position: relative;
     }
-
+   .favorite_fav-icon_003{
+      position: absolute;
+      top: 10px; 
+      right: 10px;
+      margin-left:5px;
+      font-size: 1.2rem;
+      color: var(--primary-color);
+      cursor: pointer;
+      z-index: 10;
+    }
     .product-card:hover {
       transform: translateY(-5px);
       box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
@@ -129,6 +139,7 @@
       cursor: pointer;
       text-align: center;
       display: block;
+      align-items: center ;
     }
 
     .add-to-cart:hover {
@@ -143,7 +154,7 @@
       font-size: 1.1rem;
       margin-top: 2rem;
     }
-
+  
     /* Responsive Styles */
     @media (max-width: 992px) {
       .products-grid {
@@ -240,7 +251,7 @@
                     params: { product_id: product.id, cantidad: 1 }, 
                     class: "add-to-cart" %>
                 
-                <div class="favorite fav-icon">
+                <div class="favorite_fav-icon_003">
                     <% if current_user && current_user.favorite_products.include?(product) %>
                       <i class="fa-solid fa-heart fa-2xl favorite-icon"
                         style="color: #cb9fb9;"

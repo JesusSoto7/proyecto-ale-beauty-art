@@ -72,13 +72,13 @@
           </div>
         </div>
 
-        <div class="favorite fav-icon">
+        <div class="favorites_fav-icon">
           <a href="javascript:void(0)" id="open-favorites-modal">
             <i class="fa-regular fa-heart fa-xl" style="color: #d7a7c3;"></i>
           </a>
         </div>
       
-      <!-- Modal de favoritos -->
+       <!-- Modal de favoritos -->
         <% if current_user %>
           <div id="favorites-modal" class="custom-modal">
             <div class="custom-modal-content">
@@ -92,9 +92,7 @@
             </div>
           </div>
         <% end %>
-
-
-
+        
         <div class="cart cart-icon">
           <%= link_to current_cart_path do %>
             <i class="fas fa-shopping-bag"></i>

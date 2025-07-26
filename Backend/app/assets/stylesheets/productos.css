@@ -245,6 +245,7 @@ nav a:hover::after {
 
 .cart {
   position: relative;
+  margin-right: 5px;
   cursor: pointer;
   color: #555;
   font-size: 1.3rem;
@@ -305,17 +306,19 @@ nav a:hover::after {
 }
 
 .add-to-cart {
-  background: linear-gradient(135deg, #d95d85, #e58bb1);
+  background: linear-gradient(135deg, #ec7baa, #e58bb1);
   color: white;
   font-weight: bold;
   padding: 0.9rem 1rem;
   border: none;
   border-radius: 10px;
-  width: 130%;
+  width: 100%;
   font-size: 1rem;
   box-shadow: 0 4px 10px rgba(0,0,0,0.1);
   transition: transform 0.2s ease;
   cursor: pointer;
+  justify-content: center;
+  margin:0 auto;
 }
 
 .add-to-cart:hover {
@@ -447,3 +450,16 @@ nav a:hover::after {
     margin-right: 5px;
  }
 }
+
+  .favorite_fav-icon_001{
+      position: absolute;
+  top: 18px; 
+  right: 11px;
+  margin-left:5px;
+  font-size: 1.2rem;
+  color: var(--primary-color);
+  cursor: pointer;
+  z-index: 10;
+  
+  }
+  

@@ -579,7 +579,30 @@ footer {
   .carousel-item img {
     height: 100px;
   }
+
+  .favorites_fav-icon{
+  top:6px;
+  margin-right: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   
+}
+
+.cart-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+  
+.user-options{
+    top:6px;
+  margin-right: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 }
 
 @media (max-width: 768px) {
@@ -623,6 +646,13 @@ footer {
   align-items: center;
   justify-content: center;
   position: relative;
+}
+.favorites_fav-icon{
+  top:6px;
+  margin-right: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
   .search-container {
@@ -670,7 +700,7 @@ footer {
   }
 
   .user-options,
-  .cart-icon {
+  .cart-icon,.favorites_fav-icon {
     position: relative;
   }
 
@@ -723,7 +753,7 @@ footer {
   }
 
   .user-options,
-  .cart-icon {
+  .cart-icon,.favorites_fav-icon {
     position: relative;
     display: flex;
     align-items: center;
@@ -767,7 +797,7 @@ footer {
   }
 
   .user-options,
-  .cart-icon {
+  .cart-icon,.favorites_fav-icon {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -780,6 +810,7 @@ footer {
     margin-top: 10px;
   }
 }
+
 @media (max-width: 820px) {
   .navbar {
     display: flex;
@@ -807,9 +838,8 @@ footer {
   .top-right-icons {
     order: 3;
     position: absolute;
-    top: 50%;
+    top: 10px;
     right: 15px;
-    transform: translateY(-15%);
     display: flex;
     align-items: center;
     gap: 10px;
@@ -817,7 +847,7 @@ footer {
   }
 
   .user-options,
-  .cart-icon {
+  .cart-icon,.favorites_fav-icon {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -867,7 +897,7 @@ footer {
   }
 
   .user-options,
-  .cart-icon {
+  .cart-icon,.favorites_fav-icon {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -1214,4 +1244,32 @@ footer {
 @keyframes spin {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
+}
+
+ .favorite_fav-icon_002{
+  position: absolute;
+  top: 10px; 
+  right: 10px;
+  margin-left:5px;
+  font-size: 1.2rem;
+  color: var(--primary-color);
+  cursor: pointer;
+  z-index: 10;
+  }
+
+  .top-right-icons {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.user-options,
+.cart-icon,
+.favorites_fav-icon {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
