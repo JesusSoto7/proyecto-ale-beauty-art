@@ -2,7 +2,7 @@
   <div class="favorite-products">
     <% if favorite_products.present? && favorite_products.any? %>
       <% favorite_products.each do |product| %>
-        <div class="fav-product mb-3">
+        <div class="fav-product mb-3" onclick="window.location='<%= show_product_client_path(product) %>'" style="cursor: pointer;">
           <% if product.imagen.attached? %>
             <%= image_tag product.imagen.variant(resize_to_limit: [200, 200]), class: "card-img-top", alt: "Producto Maquillaje", style: "width: 100%; max-height: 200px; object-fit: contain;" %>
           <% else %>
@@ -15,6 +15,14 @@
             <h5><%= product.nombre_producto %></h5>
             <p><%= number_to_currency(product.precio_producto, unit: "$") %></p>
           </div>
+
+          <div>
+            <%= button_to "Añadir al carrito", add_to_cart_path(@cart),
+              method: :post,
+              params: { product_id: product.id, cantidad: 1 },
+              class:"add-to-cart" %>
+          </div>
+          
         </div>
       <% end %>
     <% else %>
@@ -24,3 +32,138 @@
     <% end %>
   </div>
 </div>
+<style>
+  /* Estilos generales */
+  #favorite-products-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem 1rem;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  }
+  
+  .favorite-products {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 25px;
+    padding: 1rem 0;
+  }
+  
+  /* Tarjeta de producto - manteniendo tus clases originales */
+  .fav-product {
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+    position: relative;
+    border: 1px solid #eee;
+  }
+  
+  .fav-product:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+  }
+  
+  /* Contenedor de imagen - manteniendo tus estilos inline */
+  .card-img-top {
+    background: #f9f9f9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.3s ease;
+  }
+  
+  .fav-product:hover .card-img-top {
+    transform: scale(1.03);
+  }
+  
+  /* Placeholder para imagen faltante */
+  .card-img-top.d-flex {
+    color: #aaa;
+    flex-direction: column;
+  }
+  
+  .card-img-top.d-flex p {
+    margin-top: 0.5rem;
+    font-size: 0.9rem;
+  }
+  
+  /* Información del producto */
+  .product-info {
+    padding: 1.2rem;
+  }
+  
+  .product-info h5 {
+    font-size: 1.1rem;
+    color: #333;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  
+  .product-info p {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #2ecc71;
+    margin-bottom: 0;
+  }
+  
+  /* Estado vacío */
+  .text-center.p-4 {
+    background: white;
+    padding: 3rem !important;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  }
+  
+  .text-center.p-4 p {
+    font-size: 1.2rem;
+    color: #666;
+  }
+  
+  .fav-product {
+    position: relative;
+  }
+  
+  .fav-product::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1;
+  }
+  
+  .fav-product > *:not(.add-to-cart-container) {
+    position: relative;
+    z-index: 2;
+  }
+  /* Responsive */
+  @media (max-width: 768px) {
+    .favorite-products {
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 20px;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .favorite-products {
+      grid-template-columns: 1fr;
+    }
+    
+    #favorite-products-container {
+      padding: 1rem;
+    }
+  }
+</style>
+<script>
+  // Opcional: Si quieres prevenir el comportamiento por defecto en algunos elementos
+  document.querySelectorAll('.fav-product .add-to-cart').forEach(button => {
+    button.addEventListener('click', function(e) {
+      e.stopPropagation();
+    });
+  });
+</script>
