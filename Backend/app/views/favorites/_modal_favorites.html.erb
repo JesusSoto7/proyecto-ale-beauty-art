@@ -14,7 +14,7 @@
         }
 
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             line-height: 1.6;
             color: #333;
             background-color: #f5f5f5;
@@ -71,31 +71,39 @@
             flex-direction: column;
         }
 
-        /* Encabezado simplificado */
+        /* Encabezado elegante */
         .favorites-header {
-            margin-bottom: 20px;
+            margin-bottom: 30px;
+            text-align: center;
+            padding: 20px 0;
+            background: linear-gradient(135deg, #f486a5 0%, #f5a7c1 100%);
+            border-radius: 8px;
+            color: white;
+            box-shadow: 0 4px 12px rgba(244, 134, 165, 0.2);
         }
 
         .favorites-title {
-            font-size: 24px;
-            color: #d32f2f;
+            font-size: 28px;
+            font-weight: 600;
             margin-bottom: 10px;
+            letter-spacing: 0.5px;
         }
 
         .favorites-count {
-            background: #d32f2f;
+            background: rgba(255, 255, 255, 0.2);
             color: white;
-            padding: 3px 8px;
-            border-radius: 12px;
+            padding: 5px 12px;
+            border-radius: 20px;
             font-size: 14px;
             display: inline-block;
+            backdrop-filter: blur(5px);
         }
 
         /* Grid de productos */
         .favorite-products {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            gap: 20px;
+            gap: 25px;
             flex: 1;
             align-content: start;
         }
@@ -103,18 +111,24 @@
         /* Tarjeta de producto */
         .fav-product {
             background: white;
-            border-radius: 8px;
+            border-radius: 10px;
             overflow: hidden;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
             display: flex;
             flex-direction: column;
             height: 100%;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .fav-product:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.12);
         }
 
         /* Contenedor de imagen */
         .product-image-container {
             height: 200px;
-            background: #f0f0f0;
+            background: #f9f9f9;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -126,42 +140,37 @@
             max-width: 100%;
             max-height: 100%;
             object-fit: contain;
+            transition: transform 0.3s ease;
+        }
+
+        .fav-product:hover .product-image {
+            transform: scale(1.05);
         }
 
         .no-image-placeholder {
             display: flex;
             flex-direction: column;
             align-items: center;
-            color: #666;
-        }
-
-        .product-badge {
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            background-color: #d32f2f;
-            color: white;
-            padding: 3px 8px;
-            border-radius: 4px;
-            font-size: 12px;
+            color: #aaa;
         }
 
         /* Detalles del producto */
         .product-main-details {
-            padding: 15px;
+            padding: 18px;
             flex: 1;
         }
 
         .product-title {
             font-size: 16px;
-            margin-bottom: 8px;
-            font-weight: bold;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: #444;
         }
 
         .product-price {
-            font-size: 18px;
-            font-weight: bold;
-            color: #333;
+            font-size: 20px;
+            font-weight: 700;
+            color: #f486a5;
             margin-bottom: 15px;
         }
 
@@ -169,39 +178,51 @@
         .product-actions {
             display: flex;
             gap: 10px;
-            padding: 0 15px 15px;
+            padding: 0 18px 18px;
             margin-top: auto;
         }
 
         .add-to-cart-btn {
             flex-grow: 1;
-            padding: 10px;
-            background: #4285f4;
+            padding: 12px;
+            background: #f486a5;
             color: white;
             border: none;
-            border-radius: 4px;
+            border-radius: 6px;
             cursor: pointer;
+            font-weight: 600;
+            transition: background 0.3s ease;
+        }
+
+        .add-to-cart-btn:hover {
+            background: #e67292;
         }
 
         .remove-favorite-btn {
-            width: 40px;
-            height: 40px;
+            width: 44px;
+            height: 44px;
             display: flex;
             align-items: center;
             justify-content: center;
-            background: #e0e0e0;
-            color: #333;
+            background: #f0f0f0;
+            color: #666;
             border: none;
-            border-radius: 4px;
+            border-radius: 6px;
             cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .remove-favorite-btn:hover {
+            background: #e67292;
+            color: white;
         }
 
         /* Estado vacío */
         .empty-favorites {
             text-align: center;
-            padding: 40px 20px;
+            padding: 60px 20px;
             background: white;
-            border-radius: 8px;
+            border-radius: 10px;
             grid-column: 1 / -1;
             display: flex;
             flex-direction: column;
@@ -209,39 +230,67 @@
             justify-content: center;
             flex: 1;
             width: 100%;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
         }
 
         .empty-icon {
-            font-size: 40px;
-            color: #d32f2f;
-            margin-bottom: 15px;
-            opacity: 0.3;
+            font-size: 50px;
+            color: #f486a5;
+            margin-bottom: 20px;
+            opacity: 0.2;
         }
 
         .empty-favorites h3 {
-            font-size: 20px;
-            margin-bottom: 10px;
+            font-size: 22px;
+            margin-bottom: 15px;
+            color: #555;
+        }
+
+        .empty-favorites p {
+            color: #777;
+            margin-bottom: 25px;
+            max-width: 400px;
         }
 
         .btn-explore {
-            background: #4285f4;
+            background: #f486a5;
             color: white;
-            padding: 10px 20px;
-            border-radius: 4px;
+            padding: 12px 30px;
+            border-radius: 6px;
             text-decoration: none;
             display: inline-block;
+            font-weight: 600;
+            transition: background 0.3s ease, transform 0.2s ease;
+        }
+
+        .btn-explore:hover {
+            background: #e67292;
+            transform: translateY(-2px);
         }
 
         /* Responsive */
         @media (max-width: 768px) {
             .favorite-products {
                 grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+                gap: 20px;
+            }
+            
+            .favorites-header {
+                padding: 15px 0;
+            }
+            
+            .favorites-title {
+                font-size: 24px;
             }
         }
 
         @media (max-width: 480px) {
             .favorite-products {
                 grid-template-columns: 1fr;
+            }
+            
+            .favorites-header {
+                margin-bottom: 20px;
             }
         }
     </style>
@@ -250,7 +299,7 @@
     <div id="favorite-products-container">
         <div class="favorites-header">
             <h2 class="favorites-title">
-                <i class="fas fa-heart"></i> Mis Productos Favoritos
+                Mis Favoritos
             </h2>
             <% if favorite_products.present? && favorite_products.any? %>
                 <div class="favorites-count"><%= favorite_products.count %> producto<%= 's' if favorite_products.count > 1 %></div>
@@ -271,7 +320,6 @@
                                         <span>Imagen no disponible</span>
                                     </div>
                                 <% end %>
-                                <div class="product-badge">Favorito</div>
                             </div>
                             
                             <div class="product-main-details">
@@ -341,13 +389,26 @@
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    button.closest('.fav-product').remove();
+                    const productCard = button.closest('.fav-product');
+                    productCard.style.transform = 'scale(0.9)';
+                    productCard.style.opacity = '0';
                     
-                    const countElement = document.querySelector('.favorites-count');
-                    if (countElement) {
-                        const currentCount = parseInt(countElement.textContent);
-                        countElement.textContent = `${currentCount - 1} producto${currentCount - 1 !== 1 ? 's' : ''}`;
-                    }
+                    setTimeout(() => {
+                        productCard.remove();
+                        
+                        const countElement = document.querySelector('.favorites-count');
+                        if (countElement) {
+                            const currentCount = parseInt(countElement.textContent);
+                            const newCount = currentCount - 1;
+                            
+                            if (newCount > 0) {
+                                countElement.textContent = `${newCount} producto${newCount !== 1 ? 's' : ''}`;
+                            } else {
+                                // Si no quedan productos, recargar la página para mostrar el estado vacío
+                                location.reload();
+                            }
+                        }
+                    }, 300);
                 }
             })
             .catch(error => console.error('Error:', error));
