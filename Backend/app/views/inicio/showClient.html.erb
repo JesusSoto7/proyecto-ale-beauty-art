@@ -11,8 +11,8 @@
             <div id="datashow" >
                 <div id="infoshow">
                     <div>
-                      <p class="fs-1 fw-semibold"><%= @product.nombre_producto %></p>
-                      <p class="card-text fs-5"><%= @product.category.nombre_categoria %></p>
+                        <p class="fs-1 fw-semibold" style="margin: 0;"><%= @product.nombre_producto %></p>
+                        <%= link_to @product.category.nombre_categoria, categoria_publica_path(@product.category), class: "text-decoration-none card-text fs-5" %>
                     </div>
                     <div>
                       <p class="fw-semibold">DESCRIPCIÓN</p>
@@ -23,15 +23,29 @@
                     </h5>
                 </div>
                 
-                <div id="btnshow">
+                <div id="btnshow" style="gap: 70px;">
                     <h5 id="preci2" class="fw-semibold fs-2">
                         <%= number_to_currency(@product.precio_producto, unit: "$", delimiter: ".", separator: ",", precision: (@product.precio_producto.to_f % 1 == 0 ? 0 : 2)) %>
                     </h5>
-                   <div>
-                      <%=button_to "Añadir al carrito", add_to_cart_path(@cart),
-                                    method: :post,
-                                    params: { product_id: @product.id, cantidad: 1 }, class:"add-to-cart"%>
-                  </div>
+                    <div>
+                        <%=button_to "Añadir al carrito", add_to_cart_path(@cart),
+                                        method: :post,
+                                        params: { product_id: @product.id, cantidad: 1 }, class:"add-to-cart"%>
+                    </div>
+                    <div class="favorite fav-icon">
+                        <% if current_user && current_user.favorite_products.include?(@product) %>
+                        <i class="fa-solid fa-heart fa-2xl favorite-icon"
+                            style="color: #cb9fb9;"
+                            data-product-id="<%= @product.id %>"
+                            data-favorited="true"></i>
+                        <% else %>
+
+                        <i class="fa-regular fa-heart fa-2xl favorite-icon"
+                            style="color: #d7a7c3;"
+                            data-product-id="<%= @product.id %>"
+                            data-favorited="false"></i>
+                        <% end %>
+                    </div>
                 </div>
 
             </div>

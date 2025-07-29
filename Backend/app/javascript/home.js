@@ -47,16 +47,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  // Manejo del botón de filtro
-  const filterButton = document.getElementById('Verfiltro');
-  const filterSection = document.getElementById('filtro');
-
-  if (filterButton && filterSection) {
-    filterButton.addEventListener('click', () => {
-      filterSection.classList.toggle('oculto');
-    });
-  }
-
 });
 
 // Animaciones con GSAP

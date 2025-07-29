@@ -134,27 +134,6 @@ a{
     justify-self: end;
 }
 
-#filtro{
-    padding: 10px;
-    display: none;
-    justify-content: center;
-    color: #797979;
-}
-
-#filtro-submit{
-  background-color: transparent;
-  border: none;
-  color: #f36992;
-  /* transition: 400ms; */
-}
-
-
-.input-filter{
-    padding-left: 5px;
-    border-radius: 5px;
-    border: 1px solid #ccc;
-}
-
 #category-select{
   color: #797979;
   height: 28px;
@@ -164,11 +143,6 @@ a{
 
 #category-select option:hover{
     background-color: #cccccc;
-}
-
-#Verfiltro:hover{
-    color: #797979;
-    transition: 400ms;
 }
 
 @media

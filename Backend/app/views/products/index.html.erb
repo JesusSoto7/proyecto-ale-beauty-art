@@ -1,18 +1,32 @@
 <div>
-    <section id="filtro">
-    
+  
+    <div class="offcanvas offcanvas-end" tabindex="-1" id="filtroOffcanvas" aria-labelledby="filtroOffcanvasLabel">
+      <div class="offcanvas-header">
+        <h5 class="offcanvas-title" id="filtroOffcanvasLabel">Filtrar productos</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+      </div>
+
+      <div class="offcanvas-body">
         <%= form_with url: products_path, method: :get, local: true do %>
+          <div class="mb-3">
+            <%= label_tag :min_price, "Precio mínimo" %>
+            <%= number_field_tag :min_price, params[:min_price], placeholder: "Mínimo", class: "form-control" %>
+          </div>
 
-            <%= label_tag :min_price, "Precio:" %>
-            <%= number_field_tag :min_price, params[:min_price],  placeholder: "Minimo", class: "input-filter" %>
-            <%= label_tag :max_price, " - " %>
-            <%= number_field_tag :max_price, params[:max_price], placeholder: "Maximo", class: "input-filter" %>
+          <div class="mb-3">
+            <%= label_tag :max_price, "Precio máximo" %>
+            <%= number_field_tag :max_price, params[:max_price], placeholder: "Máximo", class: "form-control" %>
+          </div>
 
-            <%= select_tag :category, options_from_collection_for_select(Category.all, :id, :nombre_categoria, params[:category]), include_blank: "categoría", id: "category-select" %>
+          <div class="mb-3">
+            <%= select_tag :category, options_from_collection_for_select(Category.all, :id, :nombre_categoria, params[:category]), include_blank: "Categoría", class: "form-select" %>
+          </div>
 
-            <%= submit_tag "Filtrar", style: "padding-right: 3px;", id: "filtro-submit" %>
+          <%= submit_tag "Filtrar", class: "btn btn-dark w-100" %>
         <% end %>
-    </section>
+      </div>
+    </div>
+
 
     <ul class="ubi">
       <%= link_to "Home", home_path %> / 
@@ -23,7 +37,6 @@
 
     <h1> Productos </h1>
 
-    
         <% if @products.any? %>
           <div id="order">
             <% @products.each do |product| %>
@@ -37,26 +50,3 @@
           </div>
         <% end %>
 </div>
-
-
-<script>
-  const filterButton = document.getElementById('Verfiltro');
-  const filterSection = document.getElementById('filtro');
-
-  // Al cargar la página, revisar si se debe mostrar
-  document.addEventListener('DOMContentLoaded', () => {
-    const estadoFiltro = localStorage.getItem('filtroVisible');
-    if (estadoFiltro === 'true') {
-      filterSection.style.display = 'flex';
-    } else {
-      filterSection.style.display = 'none';
-    }
-  });
-
-  // Al hacer click, cambiar el estado y guardarlo
-  filterButton.addEventListener('click', () => {
-    const visible = filterSection.style.display === 'none' || filterSection.style.display === '';
-    filterSection.style.display = visible ? 'flex' : 'none';
-    localStorage.setItem('filtroVisible', visible); // Guarda true si se mostró, false si se ocultó
-  });
-</script>
