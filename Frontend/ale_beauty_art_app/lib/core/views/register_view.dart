@@ -26,7 +26,8 @@ class _RegisterPageState extends State<RegisterPage> {
       final name = _nameController.text.trim();
       final lastname = _lastNameController.text.trim();
       final email = _emailController.text.trim();
-      final phone = _phoneController.text.trim();
+      final rawPhone = _phoneController.text.trim();
+      final phone = rawPhone.isNotEmpty ? rawPhone : null;
       final password = _passwordController.text.trim();
 
       context.read<AuthBloc>().add(RegisterSubmitted(
@@ -83,7 +84,7 @@ class _RegisterPageState extends State<RegisterPage> {
             Navigator.pop(context);
           } else if (state is AuthFailure) {
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('❌ ${state.message}')),
+              SnackBar(content: Text(' ${state.message}')),
             );
           }
         },

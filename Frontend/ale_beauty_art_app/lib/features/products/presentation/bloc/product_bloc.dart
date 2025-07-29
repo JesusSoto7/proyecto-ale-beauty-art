@@ -16,8 +16,8 @@ class ProductBloc extends Bloc<ProductsEvent, ProductState> {
       try {
         // CAMBIA localhost o 127.0.0.1 por la IP real de tu PC (ej: 192.168.1.100)
         final url = Uri.parse('${dotenv.env['API_BASE_URL']}/api/v1/products');
-
-        final response = await CustomHttpClient.client.get(url);
+        final client = await CustomHttpClient.client;
+        final response = await client.get(url);
 
         if (response.statusCode == 200) {
           final List<dynamic> jsonList = jsonDecode(response.body);

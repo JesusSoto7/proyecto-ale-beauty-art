@@ -8,12 +8,10 @@ Rails.application.routes.draw do
 
   namespace :api do
     namespace :v1, defaults: { format: :json } do
-      # Autenticación con Devise Token Auth
-      mount_devise_token_auth_for 'User', at: 'auth', controllers: {
-        sessions: 'api/v1/auth/sessions',
-        registrations: 'api/v1/auth/registrations'
-      }
-
+      namespace :auth do
+        post 'sign_in', to: 'sessions#create'
+        post 'sign_up', to: 'registrations#create'
+      end
       # Carrito
       get 'cart', to: 'cart#show'                    # Ver carrito
       post 'cart/add', to: 'cart#add_product'        # Agregar producto

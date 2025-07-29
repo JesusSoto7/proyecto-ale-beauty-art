@@ -15,7 +15,8 @@ class CategoriesBloc extends Bloc<CategoriesEvent, CategoriesState> {
 
       try {
         final url = Uri.parse('${dotenv.env['API_BASE_URL']}/api/v1/categories');
-        final response = await CustomHttpClient.client.get(url);
+        final client = await CustomHttpClient.client;
+        final response = await client.get(url);
 
         if (response.statusCode == 200) {
           final List<dynamic> jsonList = jsonDecode(response.body);

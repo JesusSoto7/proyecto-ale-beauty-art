@@ -21,7 +21,7 @@ gem "rolify"
 
 gem "devise"
 
-gem 'devise_token_auth'
+gem 'jwt'
 
 gem "image_processing", "~> 1.2"
 

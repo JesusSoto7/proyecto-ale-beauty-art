@@ -27,7 +27,7 @@ class Product extends Equatable {
       nombreProducto: json['nombre_producto'],
       descripcion: json['descripcion'],
       categoryId: json['category_id'],
-      precioProducto: json['precio_producto'],
+      precioProducto: (json['precio_producto'] as num).toDouble(),
       stock: json['stock'],
       nombreCategoria: json['category']['nombre_categoria'],
       imagenUrl: json['imagen_url']

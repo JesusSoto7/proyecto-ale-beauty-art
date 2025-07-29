@@ -1,5 +1,5 @@
 import 'package:ale_beauty_art_app/features/cart/presentation/bloc/cart_bloc.dart';
-import 'package:ale_beauty_art_app/features/cart/presentation/bloc/cart_event.dart';
+// import 'package:ale_beauty_art_app/features/cart/presentation/bloc/cart_event.dart';
 import 'package:ale_beauty_art_app/features/cart/presentation/bloc/cart_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -37,7 +37,7 @@ class CartPageView extends StatelessWidget {
           if (state.products.isEmpty) {
             return Center(
               child: Text(
-                'Tu carrito está vacío 🛍️',
+                'Agrega Productos al carrito',
                 style: AppTextStyles.subtitle,
                 textAlign: TextAlign.center,
               ),
@@ -59,15 +59,15 @@ class CartPageView extends StatelessWidget {
                   style: AppTextStyles.body,
                 ),
                 subtitle: Text('Cantidad: ${product['cantidad'] ?? 1}'),
-                trailing: IconButton(
-                  icon: const Icon(Icons.delete, color: Colors.red),
-                  onPressed: () {
-                    // 👉 Elimina producto y recarga carrito
-                    context
-                        .read<CartBloc>()
-                        .add(RemoveProductFromCart(productId: product['product_id']));
-                  },
-                ),
+                // trailing: IconButton(
+                //   icon: const Icon(Icons.delete, color: Colors.red),
+                //   onPressed: () {
+                //     // 👉 Elimina producto y recarga carrito
+                //     context
+                //         .read<CartBloc>()
+                //         .add(RemoveProductFromCart(productId: product['product_id']));
+                //   },
+                // ),
               );
             },
           );
