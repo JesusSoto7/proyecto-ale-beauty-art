@@ -15,6 +15,8 @@
   <%= stylesheet_link_tag "direcc-edit.css" %>
   <%= stylesheet_link_tag "direcciones.css" %>
   <%= javascript_include_tag "application", defer: true %>
+  <%= javascript_include_tag 'loader', defer: true %>
+
 
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -23,6 +25,9 @@
   <link rel="stylesheet" href="Backend/app/assets/stylesheets/inicio.css">
 </head>
 <body>
+  <div id="loader" class="loader-visible">
+    <div class="spinner"></div>
+  </div>
   <div class="page-container">
     <header class="navbar">
         <h2>Checkout</h2>

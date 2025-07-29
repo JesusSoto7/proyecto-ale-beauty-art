@@ -13,6 +13,8 @@
   <%= stylesheet_link_tag "about", media: "all" %>
   <%= stylesheet_link_tag "showClient.css" %>
   <%= javascript_include_tag "favorites", defer: true %>
+  <%= javascript_include_tag 'loader', defer: true %>
+
   
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -22,6 +24,11 @@
   <link rel="stylesheet" href="Backend/app/assets/stylesheets/inicio.css">
 </head>
 <body>
+
+  <div id="loader" class="loader-visible">
+    <div class="spinner"></div>
+  </div>
+
   <div class="page-container">
     <header class="navbar">
       <div class="menu-icon" onclick="toggleMenu()"><i class="fas fa-bars"></i></div>
