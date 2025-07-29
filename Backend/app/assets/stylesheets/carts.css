@@ -16,7 +16,8 @@
     background-color: white;
 }
 #resCar{
-    max-width: 400px; 
+    
+    width: 370px; 
     height: fit-content;
 }
 
@@ -34,7 +35,7 @@
         }
 
         #resCar{
-            max-width: 100%;
+            width: 100%;
         }
 }
 
@@ -48,7 +49,7 @@
         }
 
         #resCar{
-            max-width: 100%;
+            width: 100%;
         }
         .input-group{
             display: flex;
@@ -70,3 +71,102 @@
             align-items: center;
         }
 }
+
+body {
+        background-color: #f7f8fc;
+      }
+      .cart-container {
+        padding: 40px 20px;
+        max-width: 1200px;
+        margin: auto;
+      }
+      .cart-card {
+        background: #fff;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        padding: 20px;
+      }
+      .payment-summary-card {
+        background: #fff;
+        border-radius: 8px;
+        padding: 20px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+      }
+      .cart-item {
+        border-bottom: 1px solid #eee;
+        padding: 15px 0;
+      }
+      .cart-item:last-child {
+        border-bottom: none;
+      }
+      .cart-image {
+        width: 80px;
+        height: 80px;
+        object-fit: contain;
+        border-radius: 6px;
+      }
+      .item-details h5 {
+        font-size: 16px;
+        font-weight: 500;
+      }
+      .item-price {
+        font-weight: 600;
+        min-width: 120px;
+        text-align: right;
+      }
+      .item-actions {
+        font-size: 14px;
+      }
+      .item-actions a {
+        color: #6c757d;
+        text-decoration: none;
+      }
+      .item-actions a:hover {
+        color: #e72552;
+      }
+      .quantity-control {
+        display: flex;
+        align-items: center;
+      }
+      .quantity-control .btn {
+        width: 35px;
+        height: 38px;
+        padding: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .quantity-control .form-control {
+        width: 50px;
+        text-align: center;
+        margin: 0 5px;
+        border-color: #e0e0e0;
+      }
+      .payment-summary-line {
+        display: flex;
+        justify-content: space-between;
+        padding: 8px 0;
+        font-size: 15px;
+      }
+      .payment-summary-line.total {
+        font-weight: bold;
+        border-top: 1px dashed #ccc;
+        margin-top: 10px;
+        padding-top: 10px;
+        font-size: 18px;
+      }
+      .payment-summary-line.positive {
+        color: green;
+      }
+      .payment-summary-line.negative {
+        color: red;
+      }
+      .btn-place-order {
+        background-color: #ffc107;
+        color: #000;
+        font-weight: bold;
+        border: none;
+      }
+      .btn-place-order:hover {
+        background-color: #e0a800;
+      }

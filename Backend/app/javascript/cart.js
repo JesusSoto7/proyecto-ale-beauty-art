@@ -23,7 +23,7 @@ document.addEventListener("DOMContentLoaded", () => {
         if (!response.ok) throw new Error("Error en la petición");
         const data = await response.json();
 
-        // Actualizar cantidad
+        // Actualizar campo de cantidad
         const input = document.querySelector(`input.quantity[data-product-id="${productId}"]`);
         if (input) input.value = data.cantidad;
 
@@ -31,11 +31,19 @@ document.addEventListener("DOMContentLoaded", () => {
         const priceElement = document.querySelector(`#preci[data-product-id="${productId}"] strong`);
         if (priceElement) priceElement.textContent = formatCurrency(data.subtotal);
 
-        // Actualizar total
+        // Actualizar subtotal en el resumen de compra
+        const resumenSubtotal = document.querySelector(`.item-subtotal[data-product-id="${productId}"]`);
+        if (resumenSubtotal) resumenSubtotal.textContent = formatCurrency(data.subtotal);
+
+        // Actualizar cantidad en el resumen de compra
+        const resumenCantidad = document.querySelector(`.item-cantidad[data-product-id="${productId}"]`);
+        if (resumenCantidad) resumenCantidad.textContent = data.cantidad;
+
+        // Actualizar total general
         const totalElement = document.getElementById("total-price");
         if (totalElement) totalElement.textContent = formatCurrency(data.total);
 
-        //Actualizar contador del carrito en el header
+        // Actualizar contador del carrito en el header
         const cartCountElement = document.getElementById("count-cart");
         if (cartCountElement && data.total_items !== undefined) {
           cartCountElement.textContent = data.total_items;
@@ -48,6 +56,7 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 });
 
+// ✅ Formato moneda COP
 function formatCurrency(value) {
   return new Intl.NumberFormat("es-CO", {
     style: "currency",
