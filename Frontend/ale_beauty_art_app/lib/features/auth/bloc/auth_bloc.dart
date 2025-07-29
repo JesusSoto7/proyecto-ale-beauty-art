@@ -1,24 +1,24 @@
 import 'dart:convert';
+import 'package:ale_beauty_art_app/core/http/custom_http_client.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:http/http.dart' as http;
 
 part 'auth_event.dart';
 part 'auth_state.dart';
 
 final secureStorage = FlutterSecureStorage();
 
+
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
   AuthBloc() : super(AuthInitial()) {
     // LOGIN
     on<LoginSubmitted>((event, emit) async {
       emit(AuthInProgress());
-
       try {
         final url = Uri.parse('${dotenv.env['API_BASE_URL']}/api/v1/auth/sign_in');
-
-        final response = await http.post(
+        final client = await CustomHttpClient.client;
+        final response = await client.post(
           url,
           headers: {'Content-Type': 'application/json'},
           body: jsonEncode({
@@ -28,27 +28,23 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         );
 
         if (response.statusCode == 200) {
-          final token = response.headers['access-token'];
-          final client = response.headers['client'];
-          final uid = response.headers['uid'];
+          final data = jsonDecode(response.body);
+          
+          final token = data['token'];
+          final user = data['user'];
+          
+          if (token != null && user != null) {
+            await secureStorage.write(key: 'jwt_token', value: token);
 
-          if (token != null && client != null && uid != null) {
-            await secureStorage.write(key: 'access-token', value: token);
-            await secureStorage.write(key: 'client', value: client);
-            await secureStorage.write(key: 'uid', value: uid);
-
-            final data = jsonDecode(response.body);
-           emit(AuthSuccess(
-              user: data['data'],
+            emit(AuthSuccess(
+              user: user,
               token: token,
-              client: client,
-              uid: uid,
             ));
           } else {
-            emit(AuthFailure('No se recibieron los tokens de autenticación'));
+            emit(AuthFailure('Token o usuario no válidos en la respuesta'));
           }
         } else if (response.statusCode == 401) {
-          emit(AuthFailure('Correo o contraseña incorrectos'));
+          emit(AuthFailure('Credenciales incorrectas'));
         } else {
           emit(AuthFailure('Error inesperado: ${response.statusCode}'));
         }
@@ -60,10 +56,11 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     // REGISTRO
     on<RegisterSubmitted>((event, emit) async {
       emit(AuthInProgress());
-      try {
-        final url = Uri.parse('${dotenv.env['API_BASE_URL']}/api/v1/auth');
 
-        final response = await http.post(
+      try {
+        final url = Uri.parse('${dotenv.env['API_BASE_URL']}/api/v1/auth/sign_up');
+        final client = await CustomHttpClient.client;
+        final response = await client.post(
           url,
           headers: {'Content-Type': 'application/json'},
           body: jsonEncode({
@@ -72,31 +69,25 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
             'password_confirmation': event.password,
             'nombre': event.name,
             'apellido': event.lastname,
-            'telefono': event.phone != 0 ? event.phone : null, //Opcional
+            'telefono': event.phone ?? '', // opcional
           }),
         );
 
-        if (response.statusCode == 200) {
-          final token = response.headers['access-token'];
-          final client = response.headers['client'];
-          final uid = response.headers['uid'];
+        if (response.statusCode == 200 || response.statusCode == 201) {
+          final data = jsonDecode(response.body);
 
-          if (token != null && client != null && uid != null) {
-            // Guardar tokens en almacenamiento seguro
-            await secureStorage.write(key: 'access-token', value: token);
-            await secureStorage.write(key: 'client', value: client);
-            await secureStorage.write(key: 'uid', value: uid);
+          final token = data['token'];
+          final user = data['user'];
 
-            final data = jsonDecode(response.body);
+          if (token != null && user != null) {
+            await secureStorage.write(key: 'jwt_token', value: token);
+
             emit(AuthSuccess(
-              user: data['data'],
+              user: user,
               token: token,
-              client: client,
-              uid: uid,
             ));
-
           } else {
-            emit(AuthFailure('No se recibieron los tokens de autenticación'));
+            emit(AuthFailure('Token o usuario no válidos en la respuesta'));
           }
         } else {
           emit(AuthFailure('Error al registrarse: ${response.statusCode}'));
@@ -108,13 +99,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
     // LOGOUT
     on<LogoutRequested>((event, emit) async {
-      emit(AuthInProgress());
-
-      // Borra los tokens guardados
-      await secureStorage.deleteAll();
-
+      await secureStorage.delete(key: 'jwt_token');
       emit(AuthInitial());
     });
   }
 }
+
 

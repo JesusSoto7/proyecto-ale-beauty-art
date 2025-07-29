@@ -23,7 +23,7 @@ class _LoginPageState extends State<LoginPage> {
       context.read<AuthBloc>().add(LoginSubmitted(email, password));
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('⚠️ Completa todos los campos')),
+        const SnackBar(content: Text('Completa todos los campos')),
       );
     }
   }
@@ -71,7 +71,7 @@ class _LoginPageState extends State<LoginPage> {
             Navigator.pop(context, true); // Regresa a la vista anterior
           } else if (state is AuthFailure) {
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('❌ ${state.message}')),
+              SnackBar(content: Text(' ${state.message}')),
             );
           }
         },

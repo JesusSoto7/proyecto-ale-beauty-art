@@ -1,3 +1,4 @@
+import 'package:ale_beauty_art_app/core/views/failure_view.dart';
 import 'package:ale_beauty_art_app/core/views/loading_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -102,8 +103,10 @@ class CategoriesPageView extends StatelessWidget {
                 },
               ),
             );
+          } else if(state is CategoriesLoadFailure){
+            return FailureView();
           } else {
-            return const Center(child: Text("Error al cargar categorías"));
+            return FailureView();
           }
         },
       ),

@@ -126,12 +126,8 @@ class InitialView extends StatelessWidget {
                   // ✅ Si inició sesión correctamente
                   final auth = context.read<AuthBloc>().state as AuthSuccess;
 
-                  // 🔥 Actualiza credenciales del CartBloc
-                  context.read<CartBloc>().add(UpdateCartCredentials(
-                    token: auth.token,
-                    client: auth.client,
-                    uid: auth.uid,
-                  ));
+                  // 🔥 Actualiza token del CartBloc
+                  context.read<CartBloc>().add(UpdateCartToken(auth.token));
 
                   // 🛒 Abre carrito y carga
                   Navigator.push(
@@ -143,15 +139,10 @@ class InitialView extends StatelessWidget {
                 }
               } else {
                 // Ya autenticado
-              
                 final auth = authState;
 
-                // 🔥 Actualiza credenciales del CartBloc
-                context.read<CartBloc>().add(UpdateCartCredentials(
-                  token: auth.token,
-                  client: auth.client,
-                  uid: auth.uid,
-                ));
+                // 🔥 Actualiza token del CartBloc
+                context.read<CartBloc>().add(UpdateCartToken(auth.token));
 
                 // 🛒 Abre carrito y carga
                 Navigator.push(

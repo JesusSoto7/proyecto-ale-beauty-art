@@ -1,6 +1,7 @@
 module Api
   module V1
-    class CartController < BaseController
+      class CartController < BaseController
+      before_action :authorize_request
       def show
         cart = current_user&.cart
 
@@ -20,9 +21,10 @@ module Api
             end
           }, status: :ok
         else
-          render json: { mensaje: "El usuario no tiene un carrito aún", carrito: [] }, status: :ok
+          render json: { mensaje: "El usuario no tiene un carrito aún" }, status: :ok
         end
       end
+
 
       def add_product
         cart = current_user.cart || Cart.create(user: current_user)
@@ -38,9 +40,21 @@ module Api
         cart_product.cantidad = cart_product.cantidad.to_i + cantidad
 
         if cart_product.save
+          carrito = cart.cart_products.includes(:product).map do |item|
+            {
+              id: item.id,
+              product_id: item.product.id,
+              nombre_producto: item.product.nombre_producto,
+              precio_producto: item.product.precio_producto,
+              descripcion: item.product.descripcion,
+              cantidad: item.cantidad,
+              subtotal: item.cantidad * item.product.precio_producto
+            }
+          end
+
           render json: {
             mensaje: "Producto agregado correctamente",
-            carrito: cart.cart_products.as_json(include: :product)
+            carrito: carrito
           }, status: :ok
         else
           render json: { error: "No se pudo agregar el producto" }, status: :unprocessable_entity

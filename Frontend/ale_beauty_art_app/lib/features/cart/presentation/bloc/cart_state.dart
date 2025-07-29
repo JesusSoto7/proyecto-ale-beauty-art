@@ -2,7 +2,7 @@ import 'package:equatable/equatable.dart';
 
 class CartState extends Equatable {
   final bool isLoading;
-  final List<Map<String, dynamic>> products; // Puedes cambiar a un modelo ProductCart
+  final List<Map<String, dynamic>> products; // Puedes cambiar a modelo si lo deseas
   final String? error;
 
   const CartState({
@@ -26,4 +26,3 @@ class CartState extends Equatable {
   @override
   List<Object?> get props => [isLoading, products, error];
 }
-
