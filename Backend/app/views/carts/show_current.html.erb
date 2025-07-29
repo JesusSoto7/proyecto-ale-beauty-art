@@ -9,12 +9,33 @@
     <%= javascript_include_tag 'cart', defer: true %>
 
     <style>
-      .btn-primary{
+      .btn-primary {
         background-color: #e72552;
         border: none;
       }
-      .btn-primary:hover{
+
+      .btn-primary:hover {
         background-color: #ff2457;
+      }
+
+      .cart-card {
+        background: #fff;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+      }
+
+      .resumen-card {
+        background: #fff;
+        border-radius: 8px;
+        padding: 20px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+      }
+
+      .cart-image {
+        width: 80px;
+        height: 80px;
+        object-fit: contain;
+        border-radius: 6px;
       }
       
     </style>
@@ -31,84 +52,80 @@
             </div>
           </div>
         <% else %>
-          <div id="itemsCar">
-            <% @cart.cart_products.each do |item| %>
-              <div id="pro" class="border rounded p-3 mb-3" style="display: flex; flex-direction: column;">
-                <div class="d-flex align-items-center mt-2" style="gap: 20px;">
-                  <div>
-                    <% if item.product.imagen.attached? %>
-                      <%= image_tag item.product.imagen, style: "width: 60px; height: 70px; object-fit: contain; border-radius: 6px;" %>
-                    <% else %>
-                      <p>Sin imagen</p>
-                    <% end %>
+          <div class="row">
+            <div class="col-lg-8">
+              <div id="itemsCar" class="cart-card">
+                <h4 class="mb-4">Mi Carrito (<%= @cart.cart_products.count %>)</h4>
+                <% @cart.cart_products.each do |item| %>
+                  <div id="pro" class="cart-item d-flex align-items-center">
+                    <div class="d-flex align-items-center w-100">
+                      <% if item.product.imagen.attached? %>
+                        <%= image_tag item.product.imagen, class: "cart-image me-4" %>
+                      <% else %>
+                        <div class="cart-image d-flex align-items-center justify-content-center border me-4">
+                          <small>Sin imagen</small>
+                        </div>
+                      <% end %>
+
+                      <div class="flex-grow-1 item-details">
+                        <p class="mb-1" style="font-weight: 500;">
+                          <%= item.product.nombre_producto.gsub("6.3mm", "<strong>6.3mm</strong>").gsub("3.5mm", "<strong>3.5mm</strong>").html_safe %>
+                        </p>
+                        <div class="item-actions mt-2">
+                          <%= button_to "Remove", cart_cart_product_path(@cart.id, item.id), method: :delete, class: "btn btn-link p-0 text-secondary" %>
+                        </div>
+                      </div>
+
+                      <div class="d-flex align-items-center">
+                        <div class="quantity-control me-4">
+                          <button type="button" class="btn btn-outline-secondary btn-decrease" data-product-id="<%= item.product.id %>">-</button>
+                          <input type="text" readonly class="form-control text-center quantity" data-product-id="<%= item.product.id %>" value="<%= item.cantidad %>">
+                          <button type="button" class="btn btn-outline-secondary btn-increase" data-product-id="<%= item.product.id %>">+</button>
+                        </div>
+                        
+                        <div id="preci" class="item-price ms-3 text-end" data-product-id="<%= item.product.id %>">
+                          <strong>
+                            <%= number_to_currency(item.cantidad * item.product.precio_producto, unit: "$", precision: 0) %>
+                          </strong>
+                        </div>
+                      </div>
+                    </div>
                   </div>
-
-                  <div class="flex-grow-1">
-                    <p class="mb-1" style="font-weight: 500;">
-                      <%= item.product.nombre_producto.gsub("6.3mm", "<strong>6.3mm</strong>").gsub("3.5mm", "<strong>3.5mm</strong>").html_safe %>
-                    </p>
-                    <div class="d-flex gap-3 mb-1">
-                      <%= button_to "Eliminar", cart_cart_product_path(@cart.id, item.id), method: :delete, class: "btn btn-link p-0 text-danger" %>
-                    </div>
-                    <small class="text-muted">
-                      <%= item.product.stock%> disponibles
-                    </small>
-                  </div>
-
-                    <div class="input-group" style="width: 100px;">
-                      <button type="button" class="btn btn-outline-secondary btn-decrease" data-product-id="<%= item.product.id %>">-</button>
-                      <input type="text" readonly class="form-control text-center quantity" data-product-id="<%= item.product.id %>" value="<%= item.cantidad %>" style="max-width: 60px;">
-                      <button type="button" class="btn btn-outline-secondary btn-increase" data-product-id="<%= item.product.id %>">+</button>
-                    </div>
-
-
-                  <div id="pre-imp">
-                    <div id="input2" class="input-group" style="width: 100px;">
-                    </div>
-                    <div id="preci" class="ms-3 text-end" style="min-width: 80px;" data-product-id="<%= item.product.id %>">
-                      <strong>
-                        <%= number_to_currency(item.cantidad * item.product.precio_producto,
-                          unit: "$", separator: ",", delimiter: ".", precision: (item.product.precio_producto.to_f % 1 == 0 ? 0 : 2)) %>
-                      </strong>
-                    </div>
-
-                  </div>
-                  
-                </div>
+                <% end %>
               </div>
-            <% end %>
-          </div>
+            </div>
 
-          <div id="resCar" class="card p-3">
-            <h5 class="mb-3 border-bottom pb-2">Resumen de compra</h5>
+            <div class="col-lg-4">
+              <div id="resCar" class="payment-summary-card">
+                <h5 class="mb-3">Resumen de compra</h5>
 
-            <div id="cart-items">
-              <% @cart.cart_products.includes(:product).each do |item| %>
-                <div class="cart-item d-flex justify-content-between mb-2" data-product-id="<%= item.product.id %>">
-                  <div>
-                    <strong data-product-id="<%= item.product.id %>"><%= item.product.nombre_producto %></strong>
-                    (<span class="item-cantidad" data-product-id="<%= item.product.id %>"><%= item.cantidad %></span>)
-                  </div>
-                  <div class="item-subtotal" data-product-id="<%= item.product.id %>">
-                    <%= number_to_currency(item.product.precio_producto * item.cantidad, unit: "$", separator: ",", delimiter: ".", precision: 0) %>
-                  </div>
+                <div id="cart-items">
+                  <% @cart.cart_products.includes(:product).each do |item| %>
+                    <div class="cart-item d-flex justify-content-between mb-2" data-product-id="<%= item.product.id %>">
+                      <div>
+                        <strong><%= item.product.nombre_producto %></strong>
+                        (<span class="item-cantidad" data-product-id="<%= item.product.id %>"><%= item.cantidad %></span>)
+                      </div>
+                      <div class="item-subtotal" data-product-id="<%= item.product.id %>">
+                        <%= number_to_currency(item.product.precio_producto * item.cantidad, unit: "$", separator: ",", delimiter: ".", precision: 0) %>
+                      </div>
+                    </div>
+                  <% end %>
                 </div>
-              <% end %>
+
+                <div class="d-flex justify-content-between border-top pt-2 mb-3 mt-3 payment-summary-line total">
+                  <strong>Total</strong>
+                  <span id="total-price">
+                    <%= number_to_currency(
+                      @cart.cart_products.joins(:product).sum("products.precio_producto * cart_products.cantidad"),
+                      unit: "$", separator: ",", delimiter: ".", precision: 0
+                    ) %>
+                  </span>
+                </div>
+
+                <%= button_to 'Continuar compra', orders_path, method: :post, class: 'btn btn-place-order w-100 mt-4' %>
+              </div>
             </div>
-
-            <div class="d-flex justify-content-between border-top pt-2 mb-3 mt-3">
-              <strong>Total</strong>
-              <span id="total-price">
-                <%= number_to_currency(
-                  @cart.cart_products.joins(:product).sum("products.precio_producto * cart_products.cantidad"),
-                  unit: "$", separator: ",", delimiter: ".", precision: 0
-                ) %>
-              </span>
-            </div>
-
-            <%= button_to 'Continuar compra', orders_path, method: :post, class: 'btn btn-primary w-100' %>
-          </div>
-
         <% end %>
       </section>
   </body
