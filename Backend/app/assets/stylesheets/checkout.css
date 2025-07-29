@@ -1,67 +1,98 @@
-main{
+main {
     display: flex;
     flex-direction: row;
 }
 
-.content-wrap{
-  margin-top: 20px;
-  margin: auto;
+.content-wrap {
+    margin-top: 20px;
+    margin: auto;
 }
 
-.stp1{
+.stp1 {
 
     max-width: 40%;
 }
 
 
 /* movile */
-@media
-    (min-width: 0px) and
-    (max-width: 480px) {
-    
-        .stp1{
-            max-width: 100%;
-        }
+@media (min-width: 0px) and (max-width: 480px) {
+
+    .stp1 {
+        max-width: 100%;
+    }
 
 }
 
 /* tablet */
-@media
-    (min-width: 481px) and
-    (max-width: 768px) {
+@media (min-width: 481px) and (max-width: 768px) {
 
-        .stp1{
-            max-width: 80%;
-        }
+    .stp1 {
+        max-width: 80%;
+    }
 
-        main{
-            flex-direction: column;
-        }
+    main {
+        flex-direction: column;
+    }
 
 }
 
 /* laptop */
-@media
-    (min-width: 769px) and
-    (max-width: 1024px) {
+@media (min-width: 769px) and (max-width: 1024px) {
 
-        .stp1{
-            max-width: 80%;
-        }
-        
-        main{
-            flex-direction: column;
-        }
+    .stp1 {
+        max-width: 80%;
+    }
+
+    main {
+        flex-direction: column;
+    }
 
 }
 
 /* Desktop */
-@media
-    (min-width: 1025px) and
-    (max-width: 1600px) {
+@media (min-width: 1025px) and (max-width: 1600px) {
 
-        .stp1{
-            max-width: 50%;
-        }
+    .stp1 {
+        max-width: 50%;
+    }
 
+}
+
+.spinner {
+    border: 6px solid #f3f3f3;
+    border-top: 6px solid #d7a7c3;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+#loader {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgb(255, 255, 255);
+    display: flex;
+    /* se muestra desde el principio */
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    transition: opacity 0.3s ease;
+}
+
+#loader.hidden {
+    opacity: 0;
+    pointer-events: none;
 }
