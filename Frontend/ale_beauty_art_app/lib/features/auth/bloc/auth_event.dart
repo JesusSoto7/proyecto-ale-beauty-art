@@ -21,7 +21,7 @@ class RegisterSubmitted extends AuthEvent {
     required this.password,
     required this.name,
     required this.lastname,
-    this.phone, 
+    this.phone,
   });
 }
 
