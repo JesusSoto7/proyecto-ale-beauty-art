@@ -84,10 +84,10 @@
           <% @cart.cart_products.includes(:product).each do |item| %>
             <div class="cart-item d-flex justify-content-between mb-2" data-product-id="<%= item.product.id %>">
               <div>
-                <strong><%= item.product.nombre_producto %></strong>
-                (<span class="item-cantidad"><%= item.cantidad %></span>)
+                <strong data-product-id="<%= item.product.id %>"><%= item.product.nombre_producto %></strong>
+                (<span class="item-cantidad" data-product-id="<%= item.product.id %>"><%= item.cantidad %></span>)
               </div>
-              <div class="item-subtotal">
+              <div class="item-subtotal" data-product-id="<%= item.product.id %>">
                 <%= number_to_currency(item.product.precio_producto * item.cantidad, unit: "$", separator: ",", delimiter: ".", precision: 0) %>
               </div>
             </div>
