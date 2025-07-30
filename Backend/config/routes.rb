@@ -28,7 +28,7 @@ Rails.application.routes.draw do
   get "home" => "home#index", as: :welcome
   get 'inicio', to: 'inicio#index'
   get 'productos' => "inicio#all_products", as: :productos
-  get 'showClient/:id' => "inicio#showClient", as: :show_product_client
+  get 'showProduct/:id' => "inicio#showProduct", as: :show_product_client
   get 'carousel' => "home#edit_carousel", as: :edit_carousel
   patch 'update_carousel' => "home#update_carousel", as: :update_carousel
   delete 'delete_carousel_image/:id' => "home#delete_carousel_image", as: :delete_carousel_image
@@ -41,9 +41,8 @@ Rails.application.routes.draw do
     end
   end
   get '/cart', to: 'carts#show_current', as: 'current_cart'
-  post "/cart/add", to: "carts#add", as: 'add_to_cart'
+  post "/cart/add", to: "carts#add", as: 'add_to_cart', defaults: { format: :json }
   get "/cart/count", to: "carts#count", as: 'count_cart'
-  post 'cart/add', to: 'cart#add', as: 'cart_add'
 
   get '/checkout/:id', to: 'checkouts#show', as: :checkout
 
@@ -63,15 +62,6 @@ Rails.application.routes.draw do
     end
   end
 
-
-
-
-
-
-
-
-
-
   resources :products
   resources :categories
   get 'perfil', to: 'profiles#show', as: :user_profile
@@ -87,8 +77,8 @@ Rails.application.routes.draw do
   get '/pago_realizado/:id', to: 'checkouts#success', as: :pago_realizado
   get '/pago_cancelado/:id', to: 'checkouts#rejected', as: :pago_cancelado
 
-  get 'categorias_publicas', to: 'public_categories#index', as: :categorias_publicas
-  get 'categorias_publicas/:id', to: 'public_categories#show', as: :categoria_publica
+  get 'categorias', to: 'user_categories#index', as: :user_categories
+  get 'categorias/:id', to: 'user_categories#show', as: :user_category
 
   get '/direcciones', to: 'shipping_addresses#index', as: :direcciones
   resources :shipping_addresses do

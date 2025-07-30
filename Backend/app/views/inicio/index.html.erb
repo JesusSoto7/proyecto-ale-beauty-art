@@ -5,6 +5,7 @@
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
     <%= javascript_include_tag "application", "data-turbo-track": "reload", defer: true %>
+     <%= javascript_include_tag "add", defer: true %>
 
     <meta name="csrf-token" content="<%= form_authenticity_token %>">
 
@@ -98,10 +99,8 @@
                       <% end %>
 
                       <div style="display: flex; gap: 23%; align-items: center; justify-content: center;">
-                        <%= button_to "Añadir al carrito", add_to_cart_path(@cart),
-                                      method: :post,
-                                      params: { product_id: product.id, cantidad: 1 },
-                                      class: "add-to-cart" %>
+                      <button class="add-to-cart-btn" data-product-id="<%= product.id %>">Añadir al carrito</button>
+
 
                         <div class="favorite fav-icon">
                           <% if current_user && current_user.favorite_products.include?(product) %>
@@ -149,7 +148,7 @@
               <div class="categories-carousel" id="carousel-categories">
                 <% @categories.each do |category| %>
                   <div class="category-card">
-                    <%= link_to categoria_publica_path(category), class: "category-link" do %>
+                    <%= link_to user_category_path(category), class: "category-link" do %>
                       <div class="category-img-container">
                         <% if category.imagen.attached? %>
                           <%= image_tag category.imagen, class: "category-img", alt: category.nombre_categoria %>
@@ -205,6 +204,8 @@
       });
 
     </script>
+
+
     <script>
       // Versión mejorada del JavaScript para el carrusel de categorías
   document.addEventListener('DOMContentLoaded', function() {

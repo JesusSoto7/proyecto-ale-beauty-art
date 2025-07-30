@@ -23,7 +23,7 @@ class InicioController < ApplicationController
     @products = @products.where(category: params[:category]) if params[:category].present?
   end
 
-  def showClient
+  def showProduct
     @product = Product.find_by(id: params[:id])
 
     unless @product

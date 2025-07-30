@@ -3,6 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+    <%= javascript_include_tag "add", defer: true %>
   <title>Categorías</title>
   <style>
     :root {
@@ -235,10 +238,7 @@
               <p class="product-price"><%= number_to_currency(product.precio_producto, unit: "$", delimiter: ".", separator: ",") %></p>
 
               <div style="display: flex; justify-content: center; align-items: center; gap: 10px;">
-                <%= button_to "Añadir al carrito", add_to_cart_path(@cart),
-                    method: :post,
-                    params: { product_id: product.id, cantidad: 1 }, 
-                    class: "add-to-cart" %>
+                <button class="add-to-cart-btn" data-product-id="<%= product.id %>">Añadir al carrito</button>
                 
                 <div class="favorite fav-icon">
                     <% if current_user && current_user.favorite_products.include?(product) %>
