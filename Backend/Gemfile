@@ -33,6 +33,10 @@ gem 'rack-cors'
 
 gem 'prawn', '~> 2.5'
 
+gem 'groupdate', '~> 6.7'
+
+gem 'chartkick', '~> 5.2'
+
 gem 'prawn-table', '~> 0.2.2'
 # Use Active Model has_secure_password [https://guides.rubyonrails.org/active_model_basics.html#securepassword]
 # gem "bcrypt", "~> 3.1.7"

@@ -1,75 +1,169 @@
-<article id="banner-home">
-    <%= image_tag "home.png", class: "logo-img" %>
-</article>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-<section id="home">
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css"
+    />
+
+    <link
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css?family=Titillium+Web:400,600,700"
+      rel="stylesheet"
+    />
+    <%= stylesheet_link_tag "home", media: "all" %>
+    <%= stylesheet_link_tag "modern_dashboard", media: "all" %>
+
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
     
-    <section id="overview">
-        <h5 style="color: #b4b4b4;">Overview</h5>
-        <div id="links">
-            <%= link_to products_path, class: "card__title" do%>
-                <div class="pages">
-                    <i class="fa fa-bandcamp" style="color:#202020;"></i>
-                    <h5>
-                        Productos
-                    </h5>
+    <%= javascript_include_tag "home", defer: true %>
+    <%= javascript_include_tag "data", defer: true %>
+    <%= javascript_include_tag "dashboard", defer: true %>
 
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+
+  </head>
+
+
+  <body>
+      <article id="banner-home">
+        <%= image_tag "home.png", class: "logo-img" %>
+      </article>
+
+    <section id="home">
+        
+        <section id="overview">
+            <h5 style="color: #b4b4b4;">Overview</h5>
+            <div id="links">
+                <%= link_to products_path, class: "card__title" do%>
+                    <div class="pages">
+                        <i class="fa fa-bandcamp" style="color:#202020;"></i>
+                        <h5>
+                            Productos
+                        </h5>
+
+                    </div>
+                <% end %>
+
+                <%= link_to categories_path, class: "card__title" do%>
+                    <div class="pages" style="background-color: rgb(0, 153, 255);">
+                        <i class="fa fa-bandcamp" style="background-color: rgb(127, 225, 255); color:#202020;"></i>
+                        <h5>
+                            Categorias
+                        </h5>
+
+                    </div>
+                <% end %>
+                <%= link_to edit_carousel_path do%>
+                    <div class="pages" style="background-color: rgb(255, 0, 140);">
+                        <i class="fa fa-bandcamp" style="background-color: rgb(255, 127, 206); color:#202020;"></i>
+                        <h5>
+                            Banners
+                        </h5>
+
+                    </div>
+                <% end %>
+
+                <%= link_to inicio_url, class: "card__title" do%>
+                    <div class="pages" style="background-color: #66b032ff;">
+                        <i class="fa fa-bandcamp" style="background-color: rgb(139 218 125); color:#202020;"></i>
+                        <h5>
+                            tienda
+                        </h5>
+
+                    </div>
+                <% end %>
+            </div>
+        </section>
+
+        <article id="graficas">
+            <div class="container" style="max-width: 333px;">
+                <div class="card shadow-sm mx-auto" style="max-width: 333px;">
+                    <div class="card-body">
+                        <canvas id="graficoBarras" height="320"></canvas>
+                    </div>
                 </div>
-            <% end %>
+            </div>
 
-            <%= link_to categories_path, class: "card__title" do%>
-                <div class="pages" style="background-color: rgb(0, 153, 255);">
-                    <i class="fa fa-bandcamp" style="background-color: rgb(127, 225, 255); color:#202020;"></i>
-                    <h5>
-                        Categorias
-                    </h5>
-
+            <div class="container py-5">
+                <div class="card-custom">
+                    <div class="chart-container">
+                        <canvas id="donutChart"></canvas>
+                        <div class="chart-center-text">94,304</div>
+                    </div>
+                    <div class="legend-circle">
+                        <span><span class="dot" style="background:#6f42c1;"></span> Bases</span>
+                        <span><span class="dot" style="background:#d63384;"></span> Labial</span>
+                        <span><span class="dot" style="background:#000;"></span> Pestañina</span>
+                    </div>
                 </div>
-            <% end %>
-            <%= link_to edit_carousel_path do%>
-                <div class="pages" style="background-color: rgb(255, 0, 140);">
-                    <i class="fa fa-bandcamp" style="background-color: rgb(255, 127, 206); color:#202020;"></i>
-                    <h5>
-                        Banners
-                    </h5>
+            </div>
+        </article>
 
-                </div>
-            <% end %>
-
-            <%= link_to inicio_url, class: "card__title" do%>
-                <div class="pages" style="background-color: #66b032ff;">
-                    <i class="fa fa-bandcamp" style="background-color: rgb(139 218 125); color:#202020;"></i>
-                    <h5>
-                        tienda
-                    </h5>
-
-                </div>
-            <% end %>
-        </div>
     </section>
-
-    <article id="graficas">
-        <div class="container" style="max-width: 333px;">
-            <div class="card shadow-sm mx-auto" style="max-width: 333px;">
-                <div class="card-body">
-                    <canvas id="graficoBarras" height="320"></canvas>
+                  
+     <div id="wrapper">
+      <div class="content-area">
+        <div class="container-fluid">
+          <div class="main">
+            <div class="row sparkboxes mt-4 mb-4">
+              <div class="col-md-4">
+                <div class="box box1">
+                  <div id="spark1"></div>
                 </div>
+              </div>
+              <div class="col-md-4">
+                <div class="box box2">
+                  <div id="spark2"></div>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="box box3">
+                  <div id="spark3"></div>
+                </div>
+              </div>
             </div>
-        </div>
 
-        <div class="container py-5">
-            <div class="card-custom">
-                <div class="chart-container">
-                    <canvas id="donutChart"></canvas>
-                    <div class="chart-center-text">94,304</div>
+            <div class="row mt-5 mb-4">
+              <div class="col-md-6">
+                <div class="box">
+                  <div id="bar"></div>
                 </div>
-                <div class="legend-circle">
-                    <span><span class="dot" style="background:#6f42c1;"></span> Bases</span>
-                    <span><span class="dot" style="background:#d63384;"></span> Labial</span>
-                    <span><span class="dot" style="background:#000;"></span> Pestañina</span>
+              </div>
+              <div class="col-md-6">
+                <div class="box">
+                  <div id="donut"></div>
                 </div>
+              </div>
             </div>
-        </div>
-    </article>
 
-</section>
+            <div class="row mt-4 mb-4">
+              <div class="col-md-6">
+                <div class="box">
+                  <div id="area"></div>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="box">
+                  <div id="line"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.slim.min.js"></script>
+
+    <script></script>
+  </body>
+</html>
