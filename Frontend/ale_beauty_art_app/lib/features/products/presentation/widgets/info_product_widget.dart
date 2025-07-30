@@ -43,7 +43,7 @@ class InfoProduct extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Container(
-                      height: 130,
+                      height: 120,
                       margin: const EdgeInsets.all(8),
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(12),
@@ -72,11 +72,11 @@ class InfoProduct extends StatelessWidget {
                               ),
                       ),
                     ),
-                    Expanded(
+                    SizedBox(
+                      height: 48, // Altura controlada para nombre y precio
                       child: Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 8),
                         child: Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             SizedBox(
@@ -116,6 +116,7 @@ class InfoProduct extends StatelessWidget {
     );
   }
 }
+
 
 
 

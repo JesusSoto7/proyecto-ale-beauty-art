@@ -31,7 +31,7 @@ class CategoriesPageView extends StatelessWidget {
                   crossAxisCount: 2, // 2 círculos por fila
                   mainAxisSpacing: 20, // Menos espacio vertical
                   crossAxisSpacing: 12, // Menos espacio horizontal
-                  childAspectRatio: 1.2, // Más ajustado
+                  childAspectRatio: 1, // Más ajustado
                 ),
                 itemBuilder: (context, index) {
                   final category = categories[index];
