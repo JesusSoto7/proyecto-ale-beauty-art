@@ -4,6 +4,8 @@ class HomeController < ApplicationController
   def index
       @products = Product.all
       @admin = User.with_role(:admin).first
+
+      @productos_por_categoria = Product.joins(:category).group("categories.nombre_categoria").count
   end
 
   def edit_carousel

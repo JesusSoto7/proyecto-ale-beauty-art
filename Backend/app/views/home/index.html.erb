@@ -25,7 +25,6 @@
     <%= csp_meta_tag %>
     
     <%= javascript_include_tag "home", defer: true %>
-    <%= javascript_include_tag "data", defer: true %>
     <%= javascript_include_tag "dashboard", defer: true %>
 
     <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
@@ -84,30 +83,6 @@
             </div>
         </section>
 
-        <article id="graficas">
-            <div class="container" style="max-width: 333px;">
-                <div class="card shadow-sm mx-auto" style="max-width: 333px;">
-                    <div class="card-body">
-                        <canvas id="graficoBarras" height="320"></canvas>
-                    </div>
-                </div>
-            </div>
-
-            <div class="container py-5">
-                <div class="card-custom">
-                    <div class="chart-container">
-                        <canvas id="donutChart"></canvas>
-                        <div class="chart-center-text">94,304</div>
-                    </div>
-                    <div class="legend-circle">
-                        <span><span class="dot" style="background:#6f42c1;"></span> Bases</span>
-                        <span><span class="dot" style="background:#d63384;"></span> Labial</span>
-                        <span><span class="dot" style="background:#000;"></span> Pestañina</span>
-                    </div>
-                </div>
-            </div>
-        </article>
-
     </section>
                   
      <div id="wrapper">
@@ -164,6 +139,8 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.slim.min.js"></script>
 
-    <script></script>
+    <script>
+      const productosPorCategoria = <%= raw @productos_por_categoria.to_json %>;
+    </script>
   </body>
 </html>

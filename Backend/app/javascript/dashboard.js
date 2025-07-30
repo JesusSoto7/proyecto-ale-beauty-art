@@ -31,7 +31,7 @@ var sparklineData = [47, 45, 54, 38, 56, 24, 65, 31, 37, 39, 62, 51, 35, 41, 35,
 
 // the default colorPalette for this dashboard
 //var colorPalette = ['#01BFD6', '#5564BE', '#F7A600', '#EDCD24', '#F74F58'];
-var colorPalette = ['#00D8B6','#008FFB',  '#FEB019', '#FF4560', '#775DD0']
+var colorPalette = ['#00D8B6','#008FFB',  '#d63384', '#FF4560', '#6f42c1']
 
 var spark1 = {
   chart: {
@@ -436,6 +436,10 @@ var optionsBar = {
 var chartBar = new ApexCharts(document.querySelector('#bar'), optionsBar);
 chartBar.render();
 
+const catLabels = Object.keys(productosPorCategoria);
+const catData = Object.values(productosPorCategoria);
+
+
 
 var optionDonut = {
   chart: {
@@ -460,13 +464,13 @@ var optionDonut = {
   },
   colors: colorPalette,
   title: {
-    text: 'Department Sales',
+    text: 'Categorias',
     style: {
       fontSize: '18px'
     }
   },
-  series: [21, 23, 19, 14, 6],
-  labels: ['Clothing', 'Food Products', 'Electronics', 'Kitchen Utility', 'Gardening'],
+  series: catData,
+  labels: catLabels,
   legend: {
     position: 'left',
     offsetY: 80
