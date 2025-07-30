@@ -14,7 +14,7 @@ document.addEventListener("DOMContentLoaded", () => {
             "Content-Type": "application/json",
             "Accept": "application/json"
           },
-          body: JSON.stringify({
+          body: JSON.stringify({  
             product_id: productId,
             cantidad: delta
           })

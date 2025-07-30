@@ -12,7 +12,7 @@
 
 <div class="row2">
   <% @categories.each do |category| %>
-    <%= link_to categoria_publica_path(category), class: "card2" do %>
+    <%= link_to user_category_path(category), class: "card2" do %>
       <% if category.imagen.attached? %>
         <%= image_tag category.imagen, class: "card-img-top2", alt: category.nombre_categoria %>
       <% end %>

@@ -441,7 +441,7 @@ nav a:hover::after {
   margin: 0.5rem 0;
 }
 
-.add-to-cart {
+.add-to-cart-btn {
   background: linear-gradient(135deg, #d95d85, #e58bb1);
   color: white;
   font-weight: bold;
@@ -455,7 +455,7 @@ nav a:hover::after {
   cursor: pointer;
 }
 
-.add-to-cart:hover {
+.add-to-cart-btn:hover {
   transform: scale(1.03);
 }
 

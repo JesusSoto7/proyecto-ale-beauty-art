@@ -1,127 +1,142 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+     <%= javascript_include_tag "add", defer: true %>
+
+    <meta name="csrf-token" content="<%= form_authenticity_token %>">
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  </head>
+  <body>   
+   
       <div class="offcanvas offcanvas-end" tabindex="-1" id="filtroOffcanvas" aria-labelledby="filtroOffcanvasLabel">
-        <div class="offcanvas-header">
-          <h5 class="offcanvas-title" id="filtroOffcanvasLabel">Filtrar productos</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Cerrar"></button>
-        </div>
-
-        <div class="offcanvas-body">
-          <%= form_with url: productos_path, method: :get, local: true do %>
-            <div class="mb-3">
-              <%= label_tag :min_price, "Precio mínimo" %>
-              <%= number_field_tag :min_price, params[:min_price], placeholder: "Mínimo", class: "form-control" %>
+            <div class="offcanvas-header">
+              <h5 class="offcanvas-title" id="filtroOffcanvasLabel">Filtrar productos</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Cerrar"></button>
             </div>
 
-            <div class="mb-3">
-              <%= label_tag :max_price, "Precio máximo" %>
-              <%= number_field_tag :max_price, params[:max_price], placeholder: "Máximo", class: "form-control" %>
+            <div class="offcanvas-body">
+              <%= form_with url: productos_path, method: :get, local: true do %>
+                <div class="mb-3">
+                  <%= label_tag :min_price, "Precio mínimo" %>
+                  <%= number_field_tag :min_price, params[:min_price], placeholder: "Mínimo", class: "form-control" %>
+                </div>
+
+                <div class="mb-3">
+                  <%= label_tag :max_price, "Precio máximo" %>
+                  <%= number_field_tag :max_price, params[:max_price], placeholder: "Máximo", class: "form-control" %>
+                </div>
+
+                <div class="mb-3">
+                  <%= select_tag :category, options_from_collection_for_select(Category.all, :id, :nombre_categoria, params[:category]), include_blank: "Categoría", class: "form-select" %>
+                </div>
+
+                <%= submit_tag "Filtrar", class: "btn btn-dark w-100" %>
+              <% end %>
+            </div>
+          </div>
+
+
+          <div style="display: flex; justify-content: start;">
+            <button id="Verfiltro" type="button" data-bs-toggle="offcanvas" data-bs-target="#filtroOffcanvas" aria-controls="filtroOffcanvas">
+              <i class="fa-solid fa-filter"></i>
+            </button>
+          </div>
+
+          <!-- Productos destacados -->
+          <section class="mb-5 products-section">
+            <div class="d-flex justify-content-center align-items-center mb-3">
+              <h3 class="fw-bold section-title">Productos</h3>
             </div>
 
-            <div class="mb-3">
-              <%= select_tag :category, options_from_collection_for_select(Category.all, :id, :nombre_categoria, params[:category]), include_blank: "Categoría", class: "form-select" %>
-            </div>
+            <div class="d-flex flex-wrap justify-content-center gap-3">
+              <% if @products.any? %>
+                <% @products.each do |product| %>
+                  <div class="card shadow-sm h-100" style="width: 18rem;">
+                    <%= link_to show_product_client_path(product), class: "card-link-overlay", data: { turbo: false } do %>
+                      <% if product.imagen.attached? %>
+                        <%= image_tag product.imagen.variant(resize_to_limit: [500, 500]), class:"card-img-top", alt:"Producto Maquillaje", style:"width: 100%; max-height: 190px; object-fit: contain;" %>
+                      <% else %>
+                        <div class="card-img-top d-flex align-items-center justify-content-center" style="height: 190px; background-color: #f8f9fa;">
+                          <p class="text-muted">Sin imagen</p>
+                        </div>
+                      <% end %>
 
-            <%= submit_tag "Filtrar", class: "btn btn-dark w-100" %>
-          <% end %>
-        </div>
-      </div>
+                      <div class="card-body">
+                        <h5 class="card-title fw-bold text-dark"><%= product.nombre_producto %></h5>
+                        <p><strong>Categoria:</strong> <%= product.category.nombre_categoria %></p>
+                        <p class="card-text text-dark">
+                          <strong>
+                            <%= number_to_currency(product.precio_producto, unit: "$", delimiter: ".", separator: ",", precision: (product.precio_producto.to_f % 1 == 0 ? 0 : 2)) %>
+                          </strong>
+                        </p>
+                      </div>
+                    <% end %>
 
+                    <div class="card-footer bg-transparent border-0" style="display: flex; gap: 23%; align-items: center; justify-content: center;">
+                      <div>
+                        <button class="add-to-cart-btn" data-product-id="<%= product.id %>">Añadir al carrito</button>
+                      </div>
 
-      <div style="display: flex; justify-content: start;">
-        <button id="Verfiltro" type="button" data-bs-toggle="offcanvas" data-bs-target="#filtroOffcanvas" aria-controls="filtroOffcanvas">
-          <i class="fa-solid fa-filter"></i>
-        </button>
-      </div>
-
-      <!-- Productos destacados -->
-      <section class="mb-5 products-section">
-        <div class="d-flex justify-content-center align-items-center mb-3">
-          <h3 class="fw-bold section-title">Productos</h3>
-        </div>
-
-        <div class="d-flex flex-wrap justify-content-center gap-3">
-          <% if @products.any? %>
-            <% @products.each do |product| %>
-              <div class="card shadow-sm h-100" style="width: 18rem;">
-                <%= link_to show_product_client_path(product), class: "card-link-overlay", data: { turbo: false } do %>
-                  <% if product.imagen.attached? %>
-                    <%= image_tag product.imagen.variant(resize_to_limit: [500, 500]), class:"card-img-top", alt:"Producto Maquillaje", style:"width: 100%; max-height: 190px; object-fit: contain;" %>
-                  <% else %>
-                    <div class="card-img-top d-flex align-items-center justify-content-center" style="height: 190px; background-color: #f8f9fa;">
-                      <p class="text-muted">Sin imagen</p>
+                            <div class="favorite fav-icon">
+                              <% if current_user && current_user.favorite_products.include?(product) %>
+                                <i class="fa-solid fa-heart fa-2xl favorite-icon"
+                                  style="color: #cb9fb9;"
+                                  data-product-id="<%= product.id %>"
+                                  data-favorited="true"></i>
+                              <% else %>
+                                <i class="fa-regular fa-heart fa-2xl favorite-icon"
+                                  style="color: #d7a7c3;"
+                                  data-product-id="<%= product.id %>"
+                                  data-favorited="false"></i>
+                              <% end %>
+                            </div>
                     </div>
-                  <% end %>
-
-                  <div class="card-body">
-                    <h5 class="card-title fw-bold text-dark"><%= product.nombre_producto %></h5>
-                    <p><strong>Categoria:</strong> <%= product.category.nombre_categoria %></p>
-                    <p class="card-text text-dark">
-                      <strong>
-                        <%= number_to_currency(product.precio_producto, unit: "$", delimiter: ".", separator: ",", precision: (product.precio_producto.to_f % 1 == 0 ? 0 : 2)) %>
-                      </strong>
-                    </p>
                   </div>
                 <% end %>
-
-                <div class="card-footer bg-transparent border-0" style="display: flex; gap: 23%; align-items: center; justify-content: center;">
-                  <div>
-                    <%= button_to "Añadir al carrito", add_to_cart_path(@cart),
-                                  method: :post,
-                                  params: { product_id: product.id, cantidad: 1 },
-                                  class:"add-to-cart" %>
-                  </div>
-
-                        <div class="favorite fav-icon">
-                          <% if current_user && current_user.favorite_products.include?(product) %>
-                            <i class="fa-solid fa-heart fa-2xl favorite-icon"
-                              style="color: #cb9fb9;"
-                              data-product-id="<%= product.id %>"
-                              data-favorited="true"></i>
-                          <% else %>
-                            <i class="fa-regular fa-heart fa-2xl favorite-icon"
-                              style="color: #d7a7c3;"
-                              data-product-id="<%= product.id %>"
-                              data-favorited="false"></i>
-                          <% end %>
-                        </div>
+              <% else %>
+                <div class="no-products d-flex align-items-center" style="flex-direction: column; text-align: center;">
+                    <%= image_tag "Not_found.png", class: "me-3", style: "max-width: 30%; height: auto;" %>
+                    <p class="mb-0">No se encontraron productos.</p>
                 </div>
-              </div>
             <% end %>
-          <% else %>
-            <div class="no-products d-flex align-items-center" style="flex-direction: column; text-align: center;">
-                <%= image_tag "Not_found.png", class: "me-3", style: "max-width: 30%; height: auto;" %>
-                <p class="mb-0">No se encontraron productos.</p>
             </div>
-        <% end %>
-        </div>
-      </section>
+          </section>
 
-  <!-- Scripts -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-  <script>
-    document.addEventListener("DOMContentLoaded", function() {
-      // Dropdown menu para móviles
-      function toggleDropdown() {
-        const menu = document.getElementById('dropdown-menu');
-        if (menu.style.display === 'flex') {
-          menu.style.display = 'none';
-        } else {
-          menu.style.display = 'flex';
+      <!-- Scripts -->
+      <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+      <script>
+        document.addEventListener("DOMContentLoaded", function() {
+          // Dropdown menu para móviles
+          function toggleDropdown() {
+            const menu = document.getElementById('dropdown-menu');
+            if (menu.style.display === 'flex') {
+              menu.style.display = 'none';
+            } else {
+              menu.style.display = 'flex';
+            }
+          }
+        });
+      </script>
+
+    <script>
+      document.addEventListener("click", function (event) {
+        if (event.target.classList.contains("offcanvas-backdrop")) {
+          // Cierra todos los offcanvas abiertos
+          document.querySelectorAll('.offcanvas.show').forEach(offcanvasEl => {
+            const instance = bootstrap.Offcanvas.getInstance(offcanvasEl);
+            if (instance) instance.hide();
+          });
+
+          // Elimina todos los backdrop manualmente por seguridad
+          document.querySelectorAll('.offcanvas-backdrop').forEach(backdrop => backdrop.remove());
         }
-      }
-    });
-  </script>
-
- <script>
-  document.addEventListener("click", function (event) {
-    if (event.target.classList.contains("offcanvas-backdrop")) {
-      // Cierra todos los offcanvas abiertos
-      document.querySelectorAll('.offcanvas.show').forEach(offcanvasEl => {
-        const instance = bootstrap.Offcanvas.getInstance(offcanvasEl);
-        if (instance) instance.hide();
       });
-
-      // Elimina todos los backdrop manualmente por seguridad
-      document.querySelectorAll('.offcanvas-backdrop').forEach(backdrop => backdrop.remove());
-    }
-  });
-</script>
+    </script>
+</body>
+</html>
