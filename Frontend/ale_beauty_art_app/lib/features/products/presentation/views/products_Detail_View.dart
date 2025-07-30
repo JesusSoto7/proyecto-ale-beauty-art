@@ -121,7 +121,7 @@ class ProductDetailView extends StatelessWidget {
               product.descripcion,
               style: const TextStyle(
                 fontSize: 16,
-                color: Color(0xFF374151), // 👈 más oscuro para mejor contraste
+                color: Color(0xFF374151),
                 height: 1.4,
               ),
             ),
@@ -130,13 +130,11 @@ class ProductDetailView extends StatelessWidget {
         ),
       ),
 
-      // Botones fijos al final
-      bottomNavigationBar: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      bottomNavigationBar: SafeArea(
+        minimum: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            // Botón Comprar ahora
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
@@ -161,7 +159,6 @@ class ProductDetailView extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 8),
-            // Botón Agregar al carrito
             SizedBox(
               width: double.infinity,
               child: OutlinedButton(

@@ -132,25 +132,28 @@ class _ProductsCarouselState extends State<ProductsCarousel> {
                                   ),
                                 ],
                               ),
-                              // Texto y precio
-                              Expanded(
+                               Expanded(
                                 child: Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 8, vertical: 4), // mismo margen lateral que la imagen
+                                  padding: const EdgeInsets.symmetric(horizontal: 8),
                                   child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.start,
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
-                                      Text(
-                                        product.nombreProducto,
-                                        style: const TextStyle(
-                                          fontWeight: FontWeight.w600,
-                                          fontSize: 16,
-                                          color: Color(0xFF1F2937),
+                                      SizedBox(
+                                        width: double.infinity,
+                                        child: Text(
+                                          product.nombreProducto,
+                                          style: const TextStyle(
+                                            fontWeight: FontWeight.w600,
+                                            fontSize: 16,
+                                            color: Color(0xFF1F2937),
+                                          ),
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                          softWrap: false,
                                         ),
-                                        maxLines: 2,
-                                        overflow: TextOverflow.ellipsis,
                                       ),
-                                      const SizedBox(height: 4),
+                                      const SizedBox(height: 2),
                                       Text(
                                         '\$${product.precioProducto.toStringAsFixed(2)}',
                                         style: AppTextStyles.price.copyWith(
