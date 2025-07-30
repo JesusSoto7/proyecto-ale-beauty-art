@@ -33,6 +33,12 @@ var sparklineData = [47, 45, 54, 38, 56, 24, 65, 31, 37, 39, 62, 51, 35, 41, 35,
 //var colorPalette = ['#01BFD6', '#5564BE', '#F7A600', '#EDCD24', '#F74F58'];
 var colorPalette = ['#00D8B6','#008FFB',  '#d63384', '#FF4560', '#6f42c1']
 
+const ventasDiaOrdenadas = Object.entries(ventasDia || {})
+  .sort(([diaA], [diaB]) => new Date(diaA) - new Date(diaB));
+
+const ventasDiaLabels = ventasDiaOrdenadas.map(([fecha]) => new Date(fecha).getTime());
+const ventasDiaData = ventasDiaOrdenadas.map(([, valor]) => valor);
+
 var spark1 = {
   chart: {
     id: 'sparkline1',
@@ -50,10 +56,10 @@ var spark1 = {
     opacity: 1,
   },
   series: [{
-    name: 'Sales',
-    data: randomizeArray(sparklineData)
+    name: 'Ventas',
+    data: ventasDiaData
   }],
-  labels: [...Array(24).keys()].map(n => `2018-09-0${n+1}`),
+  labels: ventasDiaLabels,
   yaxis: {
     min: 0
   },
@@ -62,7 +68,7 @@ var spark1 = {
   },
   colors: ['#DCE6EC'],
   title: {
-    text: '$424,652',
+    text: `$${totalVentas.toLocaleString()}`,
     offsetX: 30,
     style: {
       fontSize: '24px',
@@ -70,7 +76,7 @@ var spark1 = {
     }
   },
   subtitle: {
-    text: 'Sales',
+    text: 'Ventas',
     offsetX: 30,
     style: {
       fontSize: '14px',
@@ -378,6 +384,9 @@ var optionsArea = {
 var chartArea = new ApexCharts(document.querySelector('#area'), optionsArea);
 chartArea.render();
 
+const categorias = Object.keys(productosVendidosPorCategoria);
+const cantidades = Object.values(productosVendidosPorCategoria);
+
 var optionsBar = {
   chart: {
     type: 'bar',
@@ -392,14 +401,12 @@ var optionsBar = {
   },
   colors: colorPalette,
   series: [{
-    name: "Clothing",
-    data: [42, 52, 16, 55, 59, 51, 45, 32, 26, 33, 44, 51, 42, 56],
-  }, {
-    name: "Food Products",
-    data: [6, 12, 4, 7, 5, 3, 6, 4, 3, 3, 5, 6, 7, 4],
+    name: "Productos Vendidos",
+    data: cantidades,
   }],
   labels: [10,11,12,13,14,15,16,17,18,19,20,21,22,23],
   xaxis: {
+    categories: categorias,
     labels: {
       show: false
     },
@@ -424,7 +431,7 @@ var optionsBar = {
     }
   },
   title: {
-    text: 'Monthly Sales',
+    text: 'Productos Vendidos Por Categoria',
     align: 'left',
     style: {
       fontSize: '18px'

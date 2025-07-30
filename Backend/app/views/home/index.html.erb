@@ -75,7 +75,7 @@
                     <div class="pages" style="background-color: #66b032ff;">
                         <i class="fa fa-bandcamp" style="background-color: rgb(139 218 125); color:#202020;"></i>
                         <h5>
-                            tienda
+                            Tienda
                         </h5>
 
                     </div>
@@ -141,6 +141,9 @@
 
     <script>
       const productosPorCategoria = <%= raw @productos_por_categoria.to_json %>;
+      const ventasDia = <%= raw(@ventas_por_dia.to_json) %>;
+      const totalVentas = <%= @total_ventas.to_f.round(2) %>;
+      const productosVendidosPorCategoria = <%= raw  @productos_vendidos_por_categoria.to_json %>;
     </script>
   </body>
 </html>
