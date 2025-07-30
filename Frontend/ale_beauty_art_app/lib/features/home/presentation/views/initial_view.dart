@@ -32,8 +32,7 @@ class InitialView extends StatelessWidget {
       },
       child: Scaffold(
         backgroundColor: AppColors.background,
-
-        // ✅ AppBar con logo y barra de búsqueda
+        // AppBar con logo y barra de búsqueda
         appBar: AppBar(
           backgroundColor: AppColors.primaryPink,
           automaticallyImplyLeading: false,
@@ -60,6 +59,7 @@ class InitialView extends StatelessWidget {
                     borderRadius: BorderRadius.circular(18),
                   ),
                   child: TextField(
+                    readOnly: true,
                     decoration: InputDecoration(
                       hintText: 'Buscar...',
                       prefixIcon: Icon(Icons.search, color: AppColors.primaryPink),
