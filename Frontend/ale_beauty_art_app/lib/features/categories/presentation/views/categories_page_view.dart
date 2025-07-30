@@ -13,6 +13,7 @@ class CategoriesPageView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       backgroundColor: AppColors.background,
       body: BlocBuilder<CategoriesBloc, CategoriesState>(
         builder: (context, state) {
@@ -20,7 +21,7 @@ class CategoriesPageView extends StatelessWidget {
             return const Center(child: LoadingView());
           } else if (state is CategoriesLoadSuccess) {
             final categories = state.categories;
-
+          
             return Padding(
               padding: const EdgeInsets.all(12.0), // Menos padding general
               child: GridView.builder(

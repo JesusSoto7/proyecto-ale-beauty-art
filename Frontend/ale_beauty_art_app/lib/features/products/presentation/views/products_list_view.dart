@@ -11,6 +11,7 @@ class ProductsListView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       backgroundColor: AppColors.background,
       body: InfoProduct(products: products),
     );

@@ -40,7 +40,7 @@ class InitialView extends StatelessWidget {
           elevation: 0,
           title: Row(
             children: [
-              // 🔥 Logo
+              // Logo
               ClipRRect(
                 borderRadius: BorderRadius.circular(8),
                 child: Image.asset(
@@ -51,7 +51,7 @@ class InitialView extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: 12),
-              // 🔥 Barra de búsqueda
+              // Barra de búsqueda
               Expanded(
                 child: Container(
                   height: 36,
@@ -94,8 +94,7 @@ class InitialView extends StatelessWidget {
             }
           },
         ),
-
-        // ✅ FAB (Carrito) más pequeño y abajo
+        resizeToAvoidBottomInset: false,
         floatingActionButton: SizedBox(
           height: 60,
           width: 60,
@@ -116,20 +115,20 @@ class InitialView extends StatelessWidget {
               final authState = context.read<AuthBloc>().state;
 
               if (authState is! AuthSuccess) {
-                // 🚨 No autenticado: abre LoginPage
+                // No autenticado: abre LoginPage
                 final result = await Navigator.push(
                   context,
                   MaterialPageRoute(builder: (_) => const LoginPage()),
                 );
 
                 if (result == true) {
-                  // ✅ Si inició sesión correctamente
+                  // Si inició sesión correctamente
                   final auth = context.read<AuthBloc>().state as AuthSuccess;
 
-                  // 🔥 Actualiza token del CartBloc
+                  // Actualiza token del CartBloc
                   context.read<CartBloc>().add(UpdateCartToken(auth.token));
 
-                  // 🛒 Abre carrito y carga
+                  // Abre carrito y carga
                   Navigator.push(
                     context,
                     MaterialPageRoute(builder: (_) => const CartPageView()),
@@ -141,10 +140,10 @@ class InitialView extends StatelessWidget {
                 // Ya autenticado
                 final auth = authState;
 
-                // 🔥 Actualiza token del CartBloc
+                // Actualiza token del CartBloc
                 context.read<CartBloc>().add(UpdateCartToken(auth.token));
 
-                // 🛒 Abre carrito y carga
+                // Abre carrito y carga
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (_) => const CartPageView()),
@@ -157,7 +156,7 @@ class InitialView extends StatelessWidget {
         ),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
 
-        // ✅ BottomAppBar ajustado
+        // BottomAppBar ajustado
         bottomNavigationBar: BlocBuilder<NavigationBloc, NavigationState>(
           builder: (context, state) {
             final currentIndex =(state is NavigationUpdated) ? state.selectedIndex : 0;
