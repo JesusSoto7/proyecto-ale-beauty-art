@@ -1041,6 +1041,7 @@ footer {
   padding: 1rem 0;
   width: calc(100% - 80px);
   margin: 0 auto;
+  justify-content: center;
 }
 
 .categories-carousel::-webkit-scrollbar {

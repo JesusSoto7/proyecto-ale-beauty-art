@@ -7,7 +7,6 @@
   position: relative;
 }
 .btn1{
-  float:left;
   background-color: #ff6565; 
   color: rgb(255, 255, 255);
   border: none;
@@ -18,8 +17,9 @@
   padding: 10px 20px;
   width: 200px;
   height: 70px; 
-  margin-left: 40px;
-  margin-top: 395px;
+  position: absolute;
+  left: 40px;
+  top: 390px;
   font-family: 'Montserrat', sans-serif;
   font-weight: bold;
    
@@ -140,6 +140,13 @@
   height: 50px;
 }
 
+@media (max-width: 1365px) {
+
+  .btn1{
+    top: 300px
+  }
+}
+
 
 @media (max-width: 992px) {
   .seccion-banner, .seccion-banner2 {
@@ -166,7 +173,7 @@
     float: none;
   }
   .btn1{
-    margin-top: 190px;
+    top: 190px;
     
   }
   .banner2, .banner4{
@@ -244,8 +251,8 @@
   }
 
   .btn1 {
-    margin-top: 130px;
-    margin-left: 20px;
+    top: 130px;
+    left: 20px;
     font-size: 0.9rem;
   }
 

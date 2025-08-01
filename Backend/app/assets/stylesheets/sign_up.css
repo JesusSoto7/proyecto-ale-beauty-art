@@ -2,6 +2,21 @@
   navigation: auto;
 }
 
+.wave-wrapper {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+}
+
+.wave-svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  position: fixed;
+  bottom: 0;
+}
+
+
 * {
   margin: 0;
   padding: 0;
