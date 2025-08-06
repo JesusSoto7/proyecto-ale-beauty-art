@@ -34,125 +34,176 @@ aside{
     border-right: solid 1px #e2dede;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    overflow-y: scroll;
+    /* align-items: center; */
+    overflow-y: auto;
     scrollbar-color: rgb(201, 194, 194) rgb(255, 255, 255);
 }
 
+/* aside{
+    display: flex;
+    flex-direction: column;
+    width: 260px;
+    height: 99.99vh;
+    background-color: #ffffff;
+    border: solid 2px #ebeaef;
+} */
+
 /* ---------inicio carpetas---------- */
 
-.sect{
-    width: 90%;
+a {
+  color: #111;
+  text-decoration: none;
+}
+
+link {
+  margin-left: 0;
 }
 
 .content button {
-    width: 100%;
-    background: none;
-    border: none;
-    text-align: left;
-    padding: 8px;
-    font-size: 14px;
-    cursor: pointer;
-    color: #333;
-  }
-  
-  .content button:hover {
-    background-color: #eee;
-  }
-  
+  width: 90%;
+  background: none;
+  border: none;
+  text-align: left;
+  padding: 8px;
+  font-size: 14px;
+  cursor: pointer;
+  color: #333;
+  display: flex;
+}
 
-a{
-    margin-left: 30px;
+.content button:hover {
+  background-color: #eee;
 }
 
 .toggle-btn {
-    width: 100%;
-    margin-left: 0;
-    padding: 10px;
-    background-color: #ffffff;
-    border: none;
-    font-weight: bold;
-    text-align: left;
-    cursor: pointer;
+  width: 100%;
+  margin-left: 0;
+  padding: 10px;
+  background-color: #ffffff;
+  border: none;
+  text-align: left;
+  cursor: pointer;
+
 }
 
 .content {
-    max-height: 0;
-    overflow: hidden;
-    padding-left: 10px;
-    background-color: #ffffff;
-    transition: max-height 0.4s ease;
+  max-height: 0;
+  overflow: hidden;
+  padding-left: 10px;
+  background-color: #ffffff;
+  transition: max-height 0.4s ease;
 }
 
 .content.open {
-    max-height: 300px;
+  max-height: 300px;
 }
 
 
 .btn-recargar {
-    width: 90%;
-    background: none;
-    border: none;
-    text-align: left;
-    padding: 8px 10px;
-    font-size: 14px;
-    color: #333;
-    cursor: pointer;
+  width: 95%;
+  background: none;
+  border: none;
+  text-align: left;
+  padding: 8px 10px;
+  font-size: 14px;
+  color: #333;
+  cursor: pointer;
+  border-radius: 5px;
+  margin-left: 5px;
+  margin-top: 5px;
 }
 
 .btn-recargar:hover {
-    background-color: #eee;
+  background-color: #eee;
 }
 
 .content ul {
-    list-style: none;
-    padding: 0;
-    margin: 10px 0;
+  list-style: none;
+  padding: 0;
+  margin: 10px 0;
 
 }
 
 .content ul li {
-    margin: 5px 0;
+  margin: 5px 0;
 
 }
 
 .content a {
-    text-decoration: none;
-    color: rgb(36, 36, 36);
+  text-decoration: none;
+  color: rgb(36, 36, 36);
 }
 
 .content a:hover {
-    text-decoration: underline;
+  text-decoration: underline;
 }
+
+.btn-recargar.active {
+  background-color: #ffebf5;
+  color: rgb(0, 0, 0);
+  font-weight: bold;
+}
+
+.btn-recargar.active :hover {
+  background-color: #ffebf5;
+  color: rgb(0, 0, 0);
+
+}
+
+.fa-folder-open {
+  color: #fabad9;
+}
+
+
+.menu-btn {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: none;
+  border: none;
+  color: #333;
+  cursor: pointer;
+}
+
+.menu-btn .left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* aside */
+
+#links {
+  display: flex;
+  flex-flow: wrap row;
+  padding: 10px;
+  gap: 20px;
+}
+
+#links a {
+  text-decoration: none;
+  color: rgb(255, 255, 255);
+}
+
+#lnks a {
+  color: #111;
+  text-decoration: none;
+}
+
 
 /* --------fin-------- */
 
-#logo{
-    display: flex;
-    position: absolute;
-    top: 10px;
-    width: 220px;
-    height: 45px;
-    background-size: cover;
-    background-position: center;
-    flex-direction: row;
-    align-items: center; 
-    border-bottom: solid 1px #e2dede;
+#logo {
+  border-bottom: solid 2px #ebeaef;
+  height: 60px;
+  gap: 10px;
 }
 
-#logo h4{
-    margin-left: 10px;
+#logo img {
+  width: 40px;
+  border-radius: 50%;
 }
 
-aside label{
-    margin-top: 66px;
-    margin-left: -165px;
-    
-    font-size: 16px;
-
-    color: #778088;
-    margin-bottom: 8px;
-}
 
 #contenido{
     position: absolute;
@@ -196,8 +247,9 @@ button:hover{
 
 
 .active {
-    background-color: #f0c1c1;
-    color: white;
+    background-color: #ffebf5;
+    color: #202020;
+    font-weight: bold;
 }
 
 .burger{

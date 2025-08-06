@@ -12,12 +12,15 @@
 </head>
 <body class="rubik-park-fuente">
     <main>
-        <aside>
+        <!-- <aside>
             <div id="logo">
                 <img src="/Backend/app/assets/images/ale_logo.jpg" alt="" width="40" style="border-radius: 50px;">
                 <h4>Ale beauty art</h4>
             </div>
             <label><strong>general</strong></label>
+            <div id="lnks">
+
+            </div>
             <button class="btn-recargar active" class="btn-recargar" onclick="cargarContenido('inicio'), changeColor(this)">Introducción</button>
             <button class="btn-recargar" onclick="cargarContenido('estructura'), changeColor(this)">Estructura</button>
             <div class="sect">
@@ -37,6 +40,80 @@
                     <button class="btn-recargar" onclick="cargarContenido('pag3'), changeColor(this)">| Recargar sección 3</button>
 
                 </div>
+            </div>
+        </aside> -->
+        <aside class="d-flex">
+            <div class="p-2" id="logo">
+                <img src="/Backend/app/assets/images/ale_logo.jpg" alt="" width="40" style="border-radius: 50px;">
+                <label class="">Ale beauty art</label>
+            </div>
+            <div class="p-2" id="lnks">
+
+                    <button class="btn-recargar active menu-btn" class="btn-recargar" onclick="changeColor(this)">
+                        <span class="left">
+                            <i class="fa-solid fa-house"></i>
+                            <span class="label">Home</span>
+                            
+                        </span>
+                    </button>
+                
+                <div class="sect">
+                    <button class="toggle-btn menu-btn">
+                        <span class="left">
+                            <i class="fa-regular fa-folder"></i>
+                            <span class="label">Productos</span>
+                        </span>
+                        <i class="fa-solid fa-chevron-down fa-xs chevron-icon"></i>
+                    </button>
+                    <div class="content">
+                            <button class="btn-recargar" onclick="changeColor(this)">
+                                | Ver Productos
+                            </button>
+                        
+                            <button class="btn-recargar" onclick="changeColor(this)">
+                                | Agregar Producto
+                            </button>
+                    </div>
+                </div>
+                <div class="section">
+                    <button class="toggle-btn menu-btn">
+                        <span class="left">
+                            <i class="fa-regular fa-folder"></i>
+                            <span class="label">Categorias</span>
+                        </span>
+                        <i class="fa-solid fa-chevron-down fa-xs chevron-icon"></i>
+                    </button>
+                    <div class="content">
+                            <button class="btn-recargar" onclick="changeColor(this)">
+                                | Ver Categorias
+                            </button>
+
+                            <button class="btn-recargar" onclick="changeColor(this)">
+                                | Agregar Categoria
+                            </button>
+                    </div>
+                </div>
+                <div class="section">
+                    <button class="toggle-btn menu-btn">
+                        <span class="left">
+                            <i class="fa-regular fa-folder"></i>
+                            <span class="label">Inicio</span>
+                        </span>
+                        <i class="fa-solid fa-chevron-down fa-xs chevron-icon"></i>
+                    </button>
+                    <div class="content">
+
+                            <button class="btn-recargar" onclick="changeColor(this)">
+                                | Carousel
+                            </button>
+
+                    </div>
+                </div>
+            </div>
+            <div class="mt-auto p-2" id="sttgs">
+                <span class="left">
+                    
+                </span>
             </div>
         </aside>
         <div id="contenido">
