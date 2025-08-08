@@ -44,53 +44,39 @@
         </aside> -->
         <aside class="d-flex">
             <div class="p-2" id="logo">
-                <img src="/Backend/app/assets/images/ale_logo.jpg" alt="" width="40" style="border-radius: 50px;">
+                <img src="https://raw.githubusercontent.com/JesusSoto7/proyecto-ale-beauty-art/refs/heads/main/Backend/app/assets/images/ale_logo.jpg" alt="" width="40" style="border-radius: 50px;">
                 <label class="">Ale beauty art</label>
             </div>
             <div class="p-2" id="lnks">
 
-                    <button class="btn-recargar active menu-btn" class="btn-recargar" onclick="changeColor(this)">
-                        <span class="left">
-                            <i class="fa-solid fa-house"></i>
-                            <span class="label">Home</span>
-                            
-                        </span>
-                    </button>
-                
+                <button class="btn-recargar active" class="btn-recargar" onclick="cargarContenido('inicio'), changeColor(this)">Introducción</button>
+                <button class="btn-recargar" onclick="cargarContenido('estructura'), changeColor(this)">Estructura</button>
                 <div class="sect">
                     <button class="toggle-btn menu-btn">
                         <span class="left">
                             <i class="fa-regular fa-folder"></i>
-                            <span class="label">Productos</span>
+                            <span class="label">Introducción</span>
                         </span>
                         <i class="fa-solid fa-chevron-down fa-xs chevron-icon"></i>
                     </button>
                     <div class="content">
-                            <button class="btn-recargar" onclick="changeColor(this)">
-                                | Ver Productos
-                            </button>
-                        
-                            <button class="btn-recargar" onclick="changeColor(this)">
-                                | Agregar Producto
-                            </button>
+                        <button class="btn-recargar" onclick="cargarContenido('diagramas'), changeColor(this)"><div class="line"></div> Diagramas</button>
+                        <button class="btn-recargar" onclick="cargarContenido('pag3'), changeColor(this)"><div class="line"></div> Recargar sección 3</button>
+                        <button class="btn-recargar" onclick="cargarContenido('pag3'), changeColor(this)"><div class="line"></div> Recargar sección 3</button>
                     </div>
                 </div>
                 <div class="section">
                     <button class="toggle-btn menu-btn">
                         <span class="left">
                             <i class="fa-regular fa-folder"></i>
-                            <span class="label">Categorias</span>
+                            <span class="label"> Ruby on Rails</span>
                         </span>
                         <i class="fa-solid fa-chevron-down fa-xs chevron-icon"></i>
                     </button>
                     <div class="content">
-                            <button class="btn-recargar" onclick="changeColor(this)">
-                                | Ver Categorias
-                            </button>
-
-                            <button class="btn-recargar" onclick="changeColor(this)">
-                                | Agregar Categoria
-                            </button>
+                        <button class="btn-recargar" onclick="cargarContenido('pag3'), changeColor(this)"><div class="line"></div> Recargar sección 3</button>
+                        <button class="btn-recargar" onclick="cargarContenido('pag3'), changeColor(this)"><div class="line"></div> Recargar sección 3</button>
+                        <button class="btn-recargar" onclick="cargarContenido('pag3'), changeColor(this)"><div class="line"></div> Recargar sección 3</button>
                     </div>
                 </div>
                 <div class="section">
@@ -103,9 +89,7 @@
                     </button>
                     <div class="content">
 
-                            <button class="btn-recargar" onclick="changeColor(this)">
-                                | Carousel
-                            </button>
+                        <button class="btn-recargar" onclick="cargarContenido('pag3'), changeColor(this)"><div class="line"></div> Recargar sección 3</button>
 
                     </div>
                 </div>

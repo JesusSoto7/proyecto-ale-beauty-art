@@ -1,4 +1,10 @@
-
+.line{
+  width: 1px;
+  height: 35px;
+  margin-top: -8px;
+  background-color: #fdc0e9;
+  margin-right: 10px;
+}
 
 #copy{
     margin: 20px;
@@ -29,12 +35,11 @@ aside{
     position: absolute;
     top: 0;
     left: 0;
-    width: 260px;
+    width: 210px;
     height: 99.8vh;
-    border-right: solid 1px #e2dede;
+    border-right: solid 2px #eee;
     display: flex;
     flex-direction: column;
-    /* align-items: center; */
     overflow-y: auto;
     scrollbar-color: rgb(201, 194, 194) rgb(255, 255, 255);
 }
@@ -51,7 +56,7 @@ aside{
 /* ---------inicio carpetas---------- */
 
 a {
-  color: #111;
+  color: #fd98c2;
   text-decoration: none;
 }
 
@@ -76,7 +81,7 @@ link {
 }
 
 .toggle-btn {
-  width: 100%;
+  width: 95%;
   margin-left: 0;
   padding: 10px;
   background-color: #ffffff;
@@ -163,6 +168,7 @@ link {
   border: none;
   color: #333;
   cursor: pointer;
+  justify-self: center;
 }
 
 .menu-btn .left {
@@ -194,9 +200,12 @@ link {
 /* --------fin-------- */
 
 #logo {
+  display: flex;
   border-bottom: solid 2px #ebeaef;
   height: 60px;
   gap: 10px;
+  align-items: center;
+  justify-content: center;
 }
 
 #logo img {
@@ -208,8 +217,8 @@ link {
 #contenido{
     position: absolute;
     top: 0;
-    left: 260px;
-    width: calc(100% - 260px);
+    left: 210px;
+    width: calc(100% - 210px);
     height: calc(100% - 2px);
     /* border: solid 1px #000; */
     overflow-y: scroll;
@@ -218,9 +227,9 @@ link {
 
 nav{
     width: calc(100% - 1px);
-    height: 55px;
-    /* border: solid 1px #000; */
-    background-color: #f0c1c1;
+    height: 60px;
+    border-bottom: solid 2px #eee;
+    background-color: #ffe4e4;
     display: flex;
     justify-content: end;
     align-items: center;
