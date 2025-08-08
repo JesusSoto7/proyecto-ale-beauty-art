@@ -9,6 +9,7 @@ const btnA = document.querySelectorAll('.btn-recargar');
 const contO = document.querySelectorAll('.content');
 const btnsC = document.querySelectorAll('.menu-btn');
 const logo = document.getElementById('logo');
+const ul = document.getElementById('nav-links');
 
 
 function activarOscuro() {
@@ -19,6 +20,9 @@ function activarOscuro() {
   aside.style.backgroundColor = '#302d2cff';
   aside.style.border = 'none';
   aside.style.color = '#ffffff';
+
+  // ul.style.backgroundColor = '#202020';
+  
   document.querySelectorAll('.card').forEach(card => {
     card.style.backgroundColor = '#3f3b3a';
     card.style.border = 'none';
@@ -45,6 +49,9 @@ function activarOscuro() {
   logo.style.backgroundColor = '#333';
   logo.style.border = 'none';
   btnRecargar.innerHTML = '<i class="fa-solid fa-moon fa-lg"></i>';
+
+  const ul = document.getElementById('nav-links');
+  if (ul) ul.style.backgroundColor = '#202020';
 
   temaOscuro = true;
   localStorage.setItem('temaOscuro', 'true');
@@ -85,6 +92,9 @@ function activarClaro() {
   logo.style.backgroundColor = '';
   logo.style.border = '';
   btnRecargar.innerHTML = '<i class="fa-solid fa-sun fa-lg"></i>';
+
+  const ul = document.getElementById('nav-links');
+  if (ul) ul.style.backgroundColor = '';
 
   temaOscuro = false;
   localStorage.setItem('temaOscuro', 'false');
