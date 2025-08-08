@@ -36,7 +36,14 @@
       <article id="banner-home">
         <%= image_tag "home.png", class: "logo-img" %>
       </article>
-
+      <div style="text-align: right; padding: 1rem;">
+        <%= link_to "Español", url_for(locale: :es) %> |
+        <%= link_to "English", url_for(locale: :en) %>
+      </div>
+      <div class="container mt-3">
+        <h1><%= t('hello ') %></h1>
+        <p><%= t('bienvenido') %></p>
+      </div>
     <section id="home">
         
         <section id="overview">
