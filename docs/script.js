@@ -45,9 +45,11 @@ function activarOscuro() {
   logo.style.backgroundColor = '#333';
   logo.style.border = 'none';
   btnRecargar.innerHTML = '<i class="fa-solid fa-moon fa-lg"></i>';
-  temaOscuro = true;
-}
 
+  temaOscuro = true;
+  localStorage.setItem('temaOscuro', 'true');
+}
+// ------------------------------------------
 function activarClaro() {
   document.body.style.backgroundColor = '#ffffff';
   document.body.style.color = '#000000';
@@ -83,7 +85,9 @@ function activarClaro() {
   logo.style.backgroundColor = '';
   logo.style.border = '';
   btnRecargar.innerHTML = '<i class="fa-solid fa-sun fa-lg"></i>';
+
   temaOscuro = false;
+  localStorage.setItem('temaOscuro', 'false');
 }
 
 function cambiarTema() {
@@ -112,7 +116,12 @@ function cargarContenido(num) {
 // document.getElementById('btn-recargar').addEventListener('click', cargarContenido);
 
 document.addEventListener('DOMContentLoaded', () => {
-    cargarContenido('inicio'); //aqui puedes agregar la pagina en la que estas trabajando :D
+  if (localStorage.getItem('temaOscuro') === 'true') {
+    activarOscuro();
+  } else {
+    activarClaro();
+  }
+  cargarContenido('inicio'); //aqui puedes agregar la pagina en la que estas trabajando :D
 });
 
 function changeColor(selectedButton) {
