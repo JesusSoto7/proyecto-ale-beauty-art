@@ -1,16 +1,30 @@
-// let btnRecargar = document.getElementById('tema');
-// let bol = false;
+// let temaOscuro = false; // Variable global para guardar el estado
+
 // function cambiarTema() {
-//     if (bol = true) {
+//     const btnRecargar = document.getElementById('tema');
+//     const nav = document.querySelector('nav');
+//     const pres = document.querySelectorAll('pre');
+//     const aside = document.querySelector('aside');
+
+//     if (!temaOscuro) {
 //         document.body.style.backgroundColor = '#202020';
+//         nav.style.backgroundColor = '#595959';
+//         aside.style.backgroundColor = '#3d3c3c';
+//         aside.style.color = '#ffffff'; // Cambia el color de fondo del aside
+//         pres.forEach(pre => {
+//             pre.style.backgroundColor = '#3d3c3c'; // ejemplo de cambio
+//         });
 //         document.body.style.color = '#ffffff';
-//         btnRecargar.innerHTML = '☀️';
-//         bol = false;
-//     }else{
+
+//         btnRecargar.innerHTML = '<i class="fa-solid fa-moon fa-lg"></i>';
+//         temaOscuro = true;
+//     } else {
 //         document.body.style.backgroundColor = '#ffffff';
+//         nav.style.backgroundColor = '';
+
 //         document.body.style.color = '#000000';
-//         btnRecargar.innerHTML = '🌙';
-//         bol = true;
+//         btnRecargar.innerHTML = '<i class="fa-solid fa-sun fa-lg"></i>';
+//         temaOscuro = false;
 //     }
 // }
 
@@ -20,6 +34,7 @@ function cargarContenido(num) {
     .then(html => {
         document.getElementById('contenido-dinamico').innerHTML = html;
         document.querySelector('title').innerHTML = `Docs - ${num}`;
+        if (temaOscuro) cambiarTema();
     })
     .catch(err => {
         console.error("Error al cargar el fragmento:", err);
@@ -39,15 +54,6 @@ function changeColor(selectedButton) {
     selectedButton.classList.add('active');
     
 }
-
-
-// document.querySelectorAll('.toggle-btn').forEach(button => {
-//     button.addEventListener('click', () => {
-//       const content = button.nextElementSibling;
-//       content.classList.toggle('open');
-//     });
-
-// });
 
 
 document.addEventListener("DOMContentLoaded", () => {

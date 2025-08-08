@@ -12,36 +12,6 @@
 </head>
 <body class="rubik-park-fuente">
     <main>
-        <!-- <aside>
-            <div id="logo">
-                <img src="/Backend/app/assets/images/ale_logo.jpg" alt="" width="40" style="border-radius: 50px;">
-                <h4>Ale beauty art</h4>
-            </div>
-            <label><strong>general</strong></label>
-            <div id="lnks">
-
-            </div>
-            <button class="btn-recargar active" class="btn-recargar" onclick="cargarContenido('inicio'), changeColor(this)">Introducción</button>
-            <button class="btn-recargar" onclick="cargarContenido('estructura'), changeColor(this)">Estructura</button>
-            <div class="sect">
-                <button class="toggle-btn"><i class="fa-solid fa-folder"></i> Introducción</button>
-                <div class="content">
-                    <button class="btn-recargar" onclick="cargarContenido('diagramas'), changeColor(this)">| Diagramas</button>
-                    <button class="btn-recargar" onclick="cargarContenido('pag3'), changeColor(this)">| Recargar sección 3</button>
-                    <button class="btn-recargar" onclick="cargarContenido('pag3'), changeColor(this)">| Recargar sección 3</button>
-                </div>
-            </div>
-            <button class="btn-recargar" onclick="cargarContenido('pag3'), changeColor(this)">Recargar sección 3</button>
-            <div class="sect">
-                <button class="toggle-btn"><i class="fa-solid fa-folder"></i> Ruby on Rails</button>
-                <div class="content">
-                    <button class="btn-recargar" onclick="cargarContenido('pag3'), changeColor(this)">| Recargar sección 3</button>
-                    <button class="btn-recargar" onclick="cargarContenido('pag3'), changeColor(this)">| Recargar sección 3</button>
-                    <button class="btn-recargar" onclick="cargarContenido('pag3'), changeColor(this)">| Recargar sección 3</button>
-
-                </div>
-            </div>
-        </aside> -->
         <aside class="d-flex">
             <div class="p-2" id="logo">
                 <img src="https://raw.githubusercontent.com/JesusSoto7/proyecto-ale-beauty-art/refs/heads/main/Backend/app/assets/images/ale_logo.jpg" alt="" width="40" style="border-radius: 50px;">
@@ -49,8 +19,8 @@
             </div>
             <div class="p-2" id="lnks">
 
-                <button class="btn-recargar active" class="btn-recargar" onclick="cargarContenido('inicio'), changeColor(this)">Introducción</button>
-                <button class="btn-recargar" onclick="cargarContenido('estructura'), changeColor(this)">Estructura</button>
+                <button class="btn-recargar active" class="btn-recargar" onclick="cargarContenido('inicio'), changeColor(this)"><i class="fa-solid fa-house"></i> Inicio</button>
+                <button class="btn-recargar" onclick="cargarContenido('estructura'), changeColor(this)"><i class="fa-solid fa-network-wired"></i> Estructura</button>
                 <div class="sect">
                     <button class="toggle-btn menu-btn">
                         <span class="left">
@@ -102,12 +72,12 @@
         </aside>
         <div id="contenido">
             <nav>
-                <!-- <button id="tema">
-                    🌙
-                </button> -->
+                <button id="tema" onclick="cambiarTema()">
+                    <i class="fa-solid fa-sun fa-lg"></i>
+                </button>
             </nav>
             <section id="contenido-dinamico">
-                <svg viewBox="25 25 50 50">
+                <svg viewBox="25 25 50 50" style="display: flex; justify-self: center; align-self: center;">
                     <circle r="20" cy="50" cx="50"></circle>
                 </svg>
             </section>
