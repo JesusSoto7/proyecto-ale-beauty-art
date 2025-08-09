@@ -48,7 +48,6 @@ es:
               confirmation: "Contraseña y confirmación no coinciden"
             password_confirmation:
               blank: "Confirmación de contraseña no puede estar en blanco"
-        site:
   app:
     title: "Ale Beauty Art"
     logo_alt: "Logo Ale Beauty Art"
@@ -60,7 +59,7 @@ es:
     favorites: "Favoritos"
     settings: "Configuración"
   search:
-    placeholder: "Buscar productos..."
+    placeholder: "Buscar productos..." 
   profile:
     my_profile: "Mi Perfil"
     my_addresses: "Mis direcciones"
@@ -77,7 +76,51 @@ es:
     contact: "Contacto"
     follow_us: "Síguenos"
     copyright: "Todos los derechos reservados"
-
+  home:
+    no_carousel_images: "No hay imágenes de carrusel disponibles por el momento."
+    no_products: "No hay productos disponibles por el momento."
+    no_categories: "No hay categorías disponibles por el momento."
+    novedades_maquillaje: "Novedades Maquillaje"
+    categorias: "Categorías"
     hello: "hola"
+    ale_beauty_art: "Ale beauty art"
+    menu:
+      home: "Inicio"
+      products: "Productos"
+      view_products: "Ver Productos"
+      add_product: "Agregar Producto"
+      categories: "Categorías"
+      view_categories: "Ver Categorías"
+      add_category: "Agregar Categoría"
+      home_section: "Inicio"
+      carousel: "Carousel"
+    logout: "Cerrar sesión"
+    welcome: "Bienvenido"
 
-
+  hello: "Hola"
+  bienvenido: "Bienvenido a la aplicación"
+  idiomas:
+    es: "Español"
+    en: "Inglés"
+  overview:
+    titulo: "Resumen"
+    productos: "Productos"
+    categorias: "Categorías"
+    banners: "Banners"
+    tienda: "Tienda"
+    title: "Home"
+    carousel:
+    previous: "Anterior"
+    next: "Siguiente"
+    no_images: "No hay imágenes de carrusel disponibles por el momento."
+    slide_number: "Diapositiva %{number}"
+    slide_alt: "Imagen del carrusel %{number}"
+  products:
+    new_makeup: "Novedades Maquillaje"
+    image_alt: "Producto Maquillaje"
+    no_image: "Sin imagen"
+    add_to_cart: "Añadir al carrito"
+    no_products: "No hay productos disponibles por el momento."
+  categories:
+    title: "Categorías"
+    no_categories: "No hay categorías disponibles por el momento."  

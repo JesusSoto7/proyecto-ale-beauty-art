@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Home</title>
+    <title><%= t("home.title") %></title>
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
 
     <%= stylesheet_link_tag "bootstrap", media: "all" %>
-     <%= stylesheet_link_tag "showClient", media: "all" %>
+    <%= stylesheet_link_tag "showClient", media: "all" %>
     <%= stylesheet_link_tag "product", media: "all" %>
     <%= stylesheet_link_tag "home", media: "all" %>
     <%= javascript_include_tag "home", defer: true %>
@@ -16,7 +16,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
-    
   </head>
 
   <body>
@@ -27,7 +26,7 @@
         <aside class="d-flex">
             <div class="p-2" id="logo">
                 <%= image_tag "ale_logo.jpg", class: "logo-img" %>
-                <label class="">Ale beauty art</label>
+                <label><%= t("home.ale_beauty_art") %></label>
             </div>
             <div class="p-2" id="lnks">
 
@@ -35,8 +34,7 @@
                     <button class="btn-recargar active menu-btn" class="btn-recargar" onclick="changeColor(this)">
                         <span class="left">
                             <i class="fa-solid fa-house"></i>
-                            <span class="label">Home</span>
-                            
+                            <span class="label"><%= t("home.menu.home") %></span>
                         </span>
                     </button>
                 <% end %>
@@ -45,20 +43,20 @@
                     <button class="toggle-btn menu-btn">
                         <span class="left">
                             <i class="fa-regular fa-folder"></i>
-                            <span class="label">Productos</span>
+                            <span class="label"><%= t("home.menu.products") %></span>
                         </span>
                         <i class="fa-solid fa-chevron-down fa-xs chevron-icon"></i>
                     </button>
                     <div class="content">
                         <%= link_to products_path do%>
                             <button class="btn-recargar" onclick="changeColor(this)">
-                                | Ver Productos
+                                | <%= t("home.menu.view_products") %>
                             </button>
                         <% end %>
                         
                         <%= link_to new_product_path do%>
                             <button class="btn-recargar" onclick="changeColor(this)">
-                                | Agregar Producto
+                                | <%= t("home.menu.add_product") %>
                             </button>
                         <% end %>
                     </div>
@@ -67,20 +65,20 @@
                     <button class="toggle-btn menu-btn">
                         <span class="left">
                             <i class="fa-regular fa-folder"></i>
-                            <span class="label">Categorias</span>
+                            <span class="label"><%= t("home.menu.categories") %></span>
                         </span>
                         <i class="fa-solid fa-chevron-down fa-xs chevron-icon"></i>
                     </button>
                     <div class="content">
                         <%= link_to categories_path do%>
                             <button class="btn-recargar" onclick="changeColor(this)">
-                                | Ver Categorias
+                                | <%= t("home.menu.view_categories") %>
                             </button>
                         <% end %>
 
                         <%= link_to new_category_path do%>
                             <button class="btn-recargar" onclick="changeColor(this)">
-                                | Agregar Categoria
+                                | <%= t("home.menu.add_category") %>
                             </button>
                         <% end %>
                     </div>
@@ -89,7 +87,7 @@
                     <button class="toggle-btn menu-btn">
                         <span class="left">
                             <i class="fa-regular fa-folder"></i>
-                            <span class="label">Inicio</span>
+                            <span class="label"><%= t("home.menu.home_section") %></span>
                         </span>
                         <i class="fa-solid fa-chevron-down fa-xs chevron-icon"></i>
                     </button>
@@ -97,7 +95,7 @@
 
                         <%= link_to edit_carousel_path do%>
                             <button class="btn-recargar" onclick="changeColor(this)">
-                                | Carousel
+                                | <%= t("home.menu.carousel") %>
                             </button>
                         <% end %>
 
@@ -106,7 +104,7 @@
             </div>
             <div class="mt-auto p-2" id="sttgs">
                 <span class="left">
-                    <%= button_to "<i class='fas fa-sign-out-alt'></i> Cerrar sesión".html_safe, destroy_user_session_path, method: :delete, class: "logout" %>
+                    <%= button_to "<i class='fas fa-sign-out-alt'></i> ".html_safe + t("home.logout"), destroy_user_session_path, method: :delete, class: "logout" %>
                 </span>
             </div>
         </aside>
@@ -119,7 +117,7 @@
                 <% else %>
                     <div class="container-fluid">
                         <a class="navbar-brand">
-                        <strong>Welcome, <label><%= current_user.nombre%></label></strong>
+                        <strong><%= t("home.welcome") %>, <label><%= current_user.nombre%></label></strong>
                         </a>
                         <form class="d-flex input-group w-auto">
                         </form>

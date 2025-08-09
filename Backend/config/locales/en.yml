@@ -19,10 +19,11 @@ en:
               confirmation: "Password and confirmation do not match"
             password_confirmation:
               blank: "Password confirmation cannot be blank"
-  
+
   app:
     title: "Ale Beauty Art"
     logo_alt: "Ale Beauty Art Logo"
+
   menu:
     home: "Home"
     products: "Products"
@@ -30,16 +31,21 @@ en:
     my_purchases: "My Purchases"
     favorites: "Favorites"
     settings: "Settings"
+
   search:
     placeholder: "Search products..."
+
   profile:
     my_profile: "My Profile"
     my_addresses: "My Addresses"
+
   auth:
     login: "Log In"
     logout: "Log Out"
+
   favorites:
     title: "My Favorites"
+
   footer:
     info: "Information"
     about_us: "About Us"
@@ -48,3 +54,48 @@ en:
     contact: "Contact"
     follow_us: "Follow Us"
     copyright: "All rights reserved"
+
+  home:
+    no_carousel_images: "No carousel images available at the moment."
+    no_products: "No products available at the moment."
+    no_categories: "No categories available at the moment."
+    novedades_maquillaje: "Makeup News"
+    categorias: "Categories"
+    home: "Home"
+    products: "Products"
+    view_products: "View Products"
+    add_product: "Add Product"
+    categories: "Categories"
+    view_categories: "View Categories"
+    add_category: "Add Category"
+    home_section: "Home"
+    carousel: "Carousel"
+    logout: "Log out"
+    welcome: "Welcome"
+  hello: "Hello"
+  bienvenido: "Welcome to the app"
+  idiomas:
+    es: "Spanish"
+    en: "English"
+  overview:
+    titulo: "Overview"
+    productos: "Products"
+    categorias: "Categories"
+    banners: "Banners"
+    tienda: "Store"
+    title: "Home"
+  carousel:
+    previous: "Previous"
+    next: "Next"
+    no_images: "No carousel images available at the moment."
+    slide_number: "Slide %{number}"
+    slide_alt: "Carousel image %{number}"
+  products:
+    new_makeup: "New Makeup Arrivals"
+    image_alt: "Makeup Product"
+    no_image: "No image"
+    add_to_cart: "Add to Cart"
+    no_products: "No products available at the moment."
+  categories:
+    title: "Categories"
+    no_categories: "No categories available at the moment."

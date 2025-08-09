@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="<%= I18n.locale %>">
   <head>
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -31,60 +31,56 @@
 
   </head>
 
-
   <body>
       <article id="banner-home">
         <%= image_tag "home.png", class: "logo-img" %>
       </article>
       <div style="text-align: right; padding: 1rem;">
-        <%= link_to "Español", url_for(locale: :es) %> |
-        <%= link_to "English", url_for(locale: :en) %>
+        <%= link_to t('idiomas.es'), url_for(locale: :es) %> |
+        <%= link_to t('idiomas.en'), url_for(locale: :en) %>
       </div>
       <div class="container mt-3">
-        <h1><%= t('hello ') %></h1>
+        <h1><%= t('hello') %></h1>
         <p><%= t('bienvenido') %></p>
       </div>
     <section id="home">
         
         <section id="overview">
-            <h5 style="color: #b4b4b4;">Overview</h5>
+            <h5 style="color: #b4b4b4;"><%= t('overview.titulo') %></h5>
             <div id="links">
-                <%= link_to products_path, class: "card__title" do%>
+                <%= link_to products_path, class: "card__title" do %>
                     <div class="pages">
                         <i class="fa fa-bandcamp" style="color:#202020;"></i>
                         <h5>
-                            Productos
+                            <%= t('overview.productos') %>
                         </h5>
-
                     </div>
                 <% end %>
 
-                <%= link_to categories_path, class: "card__title" do%>
+                <%= link_to categories_path, class: "card__title" do %>
                     <div class="pages" style="background-color: rgb(0, 153, 255);">
                         <i class="fa fa-bandcamp" style="background-color: rgb(127, 225, 255); color:#202020;"></i>
                         <h5>
-                            Categorias
+                            <%= t('overview.categorias') %>
                         </h5>
-
                     </div>
                 <% end %>
-                <%= link_to edit_carousel_path do%>
+
+                <%= link_to edit_carousel_path do %>
                     <div class="pages" style="background-color: rgb(255, 0, 140);">
                         <i class="fa fa-bandcamp" style="background-color: rgb(255, 127, 206); color:#202020;"></i>
                         <h5>
-                            Banners
+                            <%= t('overview.banners') %>
                         </h5>
-
                     </div>
                 <% end %>
 
-                <%= link_to inicio_url, class: "card__title" do%>
+                <%= link_to inicio_url, class: "card__title" do %>
                     <div class="pages" style="background-color: #66b032ff;">
                         <i class="fa fa-bandcamp" style="background-color: rgb(139 218 125); color:#202020;"></i>
                         <h5>
-                            Tienda
+                            <%= t('overview.tienda') %>
                         </h5>
-
                     </div>
                 <% end %>
             </div>
