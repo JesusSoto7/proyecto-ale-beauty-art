@@ -48,7 +48,36 @@ es:
               confirmation: "Contraseña y confirmación no coinciden"
             password_confirmation:
               blank: "Confirmación de contraseña no puede estar en blanco"
-  
-  hello: "hola"
+        site:
+  app:
+    title: "Ale Beauty Art"
+    logo_alt: "Logo Ale Beauty Art"
+  menu:
+    home: "Inicio"
+    products: "Productos"
+    categories: "Categorías"
+    my_purchases: "Mis compras"
+    favorites: "Favoritos"
+    settings: "Configuración"
+  search:
+    placeholder: "Buscar productos..."
+  profile:
+    my_profile: "Mi Perfil"
+    my_addresses: "Mis direcciones"
+  auth:
+    login: "Iniciar sesión"
+    logout: "Cerrar sesión"
+  favorites:
+    title: "Mis Favoritos"
+  footer:
+    info: "Información"
+    about_us: "Sobre nosotros"
+    terms: "Términos y condiciones"
+    privacy: "Política de privacidad"
+    contact: "Contacto"
+    follow_us: "Síguenos"
+    copyright: "Todos los derechos reservados"
+
+    hello: "hola"
 
 

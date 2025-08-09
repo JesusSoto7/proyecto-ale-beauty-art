@@ -1,4 +1,4 @@
-es:
+en:
   activerecord:
     format: "%{attribute} %{message}"
     attributes:
@@ -20,4 +20,31 @@ es:
             password_confirmation:
               blank: "Password confirmation cannot be blank"
   
-  hello: "hello"
+  app:
+    title: "Ale Beauty Art"
+    logo_alt: "Ale Beauty Art Logo"
+  menu:
+    home: "Home"
+    products: "Products"
+    categories: "Categories"
+    my_purchases: "My Purchases"
+    favorites: "Favorites"
+    settings: "Settings"
+  search:
+    placeholder: "Search products..."
+  profile:
+    my_profile: "My Profile"
+    my_addresses: "My Addresses"
+  auth:
+    login: "Log In"
+    logout: "Log Out"
+  favorites:
+    title: "My Favorites"
+  footer:
+    info: "Information"
+    about_us: "About Us"
+    terms: "Terms and Conditions"
+    privacy: "Privacy Policy"
+    contact: "Contact"
+    follow_us: "Follow Us"
+    copyright: "All rights reserved"

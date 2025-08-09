@@ -60,12 +60,17 @@ class ApplicationController < ActionController::Base
     session[:order_id] = order.id
     order
   end
-    def set_locale
-      I18n.locale = params[:locale] || I18n.default_locale
-    end
+  
+   def set_locale
+  I18n.locale = params[:locale] || I18n.default_locale
 
-    def default_url_options
-      { locale: I18n.locale }
-    end
-    
+  if params[:locale].blank?
+    redirect_to url_for(locale: I18n.locale) and return
+  end
+end
+
+
+  def default_url_options
+    { locale: I18n.locale }
+  end
 end
