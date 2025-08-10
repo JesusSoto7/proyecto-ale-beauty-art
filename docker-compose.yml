@@ -1,0 +1,45 @@
+version: '3.8'
+
+services:
+  db:
+    image: mysql:8.0
+    container_name: mysql_db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: 350rln34y9g85
+      MYSQL_DATABASE: tienda_maquillaje_db_development
+      MYSQL_USER: userproy
+      MYSQL_PASSWORD: 350rln34y9g85
+    volumes:
+      - db_data:/var/lib/mysql
+    ports:
+      - "3307:3306"
+
+  backend:
+    build:
+      context: ./Backend
+    container_name: rails_app
+    volumes:
+      - ./Backend:/app
+    ports:
+      - "4000:4000"
+    environment:
+      RAILS_ENV: development
+      DATABASE_HOST: db
+      DATABASE_USERNAME: userproy
+      DATABASE_PASSWORD: 350rln34y9g85
+      DATABASE_NAME: tienda_maquillaje_db_development
+    depends_on:
+      - db
+
+  frontend:
+    build:
+      context: ./FrontendReact/ale-beauty-react
+    container_name: react_app
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+
+volumes:
+  db_data:
