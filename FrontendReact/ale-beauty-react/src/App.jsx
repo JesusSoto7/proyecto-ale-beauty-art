@@ -1,34 +1,54 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import './App.css'
+import './assets/stylesheets/RegisterForm.css';
+import './assets/stylesheets/Inicio.css'
+import './assets/stylesheets/Header.css'
+import './assets/stylesheets/Inicio.css'
+import './assets/stylesheets/Footer.css'
+import 'bootstrap/dist/css/bootstrap.min.css';
+import './App.css';
+
+import React, { useState } from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import LoginForm from './components/LoginForm'; LoginForm
+import Register from './components/RegisterForm';
+import Inicio from './components/Inicio';
+import LayoutInicio from './components/Layout';
+
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [isLoggedIn, setIsLoggedIn] = React.useState(() => {
+    return !!localStorage.getItem('token'); // true si hay token
+  });
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src="/vite.svg" className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    <Router>
+      <Routes>
+
+        <Route element={<LayoutInicio />}>
+          <Route
+            path='/inicio'
+            element={isLoggedIn ? <Inicio /> : <Navigate to="/login" />}
+          />
+        </Route>
+
+
+        <Route
+          path="/login"
+          element={<LoginForm onLogin={() => setIsLoggedIn(true)} />}
+        />
+
+        <Route
+          path="/register"
+          element={<Register />}
+        />
+
+        {/* Redirigir ruta raíz al login */}
+        <Route
+          path="/"
+          element={<Navigate to="/login" />}
+        />
+      </Routes>
+    </Router>
+  );
 }
 
-export default App
+export default App;

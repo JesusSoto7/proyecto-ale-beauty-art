@@ -1,4 +1,4 @@
-version: '3.8'
+version: "3.8"
 
 services:
   db:
@@ -35,9 +35,16 @@ services:
   frontend:
     build:
       context: ./FrontendReact/ale-beauty-react
+      dockerfile: Dockerfile.dev
     container_name: react_app
+    command: npm run dev
+    volumes:
+      - ./FrontendReact/ale-beauty-react:/app
+      - /app/node_modules
     ports:
-      - "3000:80"
+      - "3000:3000"
+    stdin_open: true
+    tty: true
     depends_on:
       - backend
 

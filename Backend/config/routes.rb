@@ -16,8 +16,8 @@ Rails.application.routes.draw do
       get 'cart', to: 'cart#show'                    # Ver carrito
       post 'cart/add', to: 'cart#add_product'        # Agregar producto
       delete 'cart/remove', to: 'cart#remove_product' # Quitar producto
-
-      # Categorías y productos
+       get "inicio", to: "inicio#index"
+      # Categorías y productos  
       resources :products, only: [:index, :show]
       resources :categories, only: [:index, :show]
     end

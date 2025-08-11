@@ -1,0 +1,241 @@
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+/* Header y navegación */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1px 5%;
+  /* antes 15px → ahora más compacto */
+  background-color: #fff;
+  box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.logo img {
+  max-height: 50px;
+  width: 50px;
+  /* asegura que sea cuadrada */
+  border-radius: 50%;
+  /* hace que sea redonda */
+  object-fit: cover;
+  /* recorta para que no se deforme */
+  transition: transform 0.3s;
+}
+
+.navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.8rem 3rem;
+  background-color: #fff;
+}
+
+.logo img {
+  height: 60px;
+  width: auto;
+}
+
+#main-nav a {
+  margin: 0 1rem;
+  text-decoration: none;
+  font-weight: bold;
+  color: #333;
+}
+
+.search-icons-container {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.search-form {
+  display: flex;
+  align-items: center;
+}
+
+.search-input {
+  padding: 0.6rem 1rem;
+  border: 1px solid #ccc;
+  border-radius: 25px;
+  font-size: 1rem;
+  width: 250px;
+  /* Más grande */
+}
+
+.search-button {
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  margin-left: -35px;
+  cursor: pointer;
+  color: #555;
+}
+
+.header-icons {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  font-size: 1.8rem;
+  /* Iconos más grandes */
+  color: #333;
+  cursor: pointer;
+}
+
+
+
+.search-container input {
+  padding: 0.4rem 1rem 0.4rem 2rem;
+  /* menos alto */
+  font-size: 0.85rem;
+  /* un poquito más compacto */
+}
+
+.menu-icon {
+  font-size: 1.5rem;
+  cursor: pointer;
+  display: none;
+  color: #d85a7f;
+}
+
+.logo {
+  flex: 0;
+  /* no ocupa espacio extra */
+  text-align: left;
+  /* alinea a la izquierda */
+  margin-left: 7 rem;
+  /* ajusta el valor para moverlo */
+}
+
+.logo img:hover {
+  transform: scale(1.05);
+}
+
+nav {
+  display: flex;
+  gap: 2rem;
+  margin: 0 2rem;
+}
+
+nav a {
+  font-weight: 600;
+  padding: 0.5rem 0;
+  position: relative;
+  transition: color 0.3s;
+  color: #555;
+  font-size: 0.95rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+nav a:hover {
+  color: #d85a7f;
+}
+
+nav a::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background-color: #d85a7f;
+  transition: width 0.3s;
+}
+
+nav a:hover::after {
+  width: 100%;
+}
+
+/* Barra de búsqueda con lupa */
+.search-container {
+  position: relative;
+  margin: 0 1rem;
+  width: 250px;
+}
+
+.search-container input {
+  padding: 0.7rem 1rem 0.7rem 2.5rem;
+  border: 1px solid #e0e0e0;
+  border-radius: 25px;
+  outline: none;
+  width: 100%;
+  transition: all 0.3s;
+  font-size: 0.9rem;
+  background-color: #f8f8f8;
+}
+
+.search-container input:focus {
+  border-color: #d85a7f;
+  box-shadow: 0 0 0 2px rgba(216, 90, 127, 0.2);
+  background-color: #fff;
+}
+
+.search-button {
+  position: absolute;
+  left: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  color: #999;
+  cursor: pointer;
+}
+
+.search-container input:focus+.search-button {
+  color: #d85a7f;
+}
+
+.user-options {
+  position: relative;
+  margin-left: 15px;
+}
+
+#profile-icon {
+  font-size: 1.5rem;
+  margin-left: 10px;
+  z-index: 1;
+  position: relative;
+  color: #555;
+  cursor: pointer;
+  transition: color 0.3s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#profile-icon:hover {
+  color: #d85a7f;
+}
+
+#menu-perfil {
+  display: none;
+  position: absolute;
+  right: 0;
+  top: calc(100% + 10px);
+  background: white;
+  border: 1px solid #f0f0f0;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+  border-radius: 12px;
+  z-index: 1000;
+  width: 200px;
+  padding: 0;
+  margin: 0;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+#ul-perfil {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+#ul-perfil li {
+  transition: all 0.2s ease;
+}

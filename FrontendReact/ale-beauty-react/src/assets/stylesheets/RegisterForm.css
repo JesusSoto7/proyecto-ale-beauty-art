@@ -1,0 +1,88 @@
+/* Tarjeta principal */
+.register-card {
+  display: flex;
+  background: #fff;
+  border-radius: 15px;
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgb(255, 255, 255);
+  max-width: 900px;
+  width: 100%;
+}
+
+/* Sección del formulario */
+.form-section {
+  flex: 1;
+  padding: 70px;
+}
+
+.form-section h2 {
+  font-size: 1.8rem;
+  color: #d27df0;
+  margin-bottom: 20px;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.row {
+  display: flex;
+  gap: 10px;
+}
+
+input {
+  flex: 1;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  outline: none;
+}
+
+input:focus {
+  border-color: #d27df0;
+}
+
+button {
+  background: #d27df0;
+  color: white;
+  padding: 12px;
+  border: none;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #c168db;
+}
+
+.error {
+  color: red;
+  font-size: 0.85rem;
+}
+
+.success {
+  color: green;
+  font-size: 0.85rem;
+}
+
+.login-link {
+  font-size: 0.85rem;
+  color: gray;
+  text-align: center;
+  cursor: pointer;
+}
+
+/* Sección de imagen */
+.image-section {
+  flex: 1;
+  display: flex;
+}
+
+.image-section img {
+  width: 100%;
+  object-fit: cover;
+}
