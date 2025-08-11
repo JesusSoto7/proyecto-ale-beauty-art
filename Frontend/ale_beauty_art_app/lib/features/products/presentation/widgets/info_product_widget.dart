@@ -95,7 +95,7 @@ class InfoProduct extends StatelessWidget {
                             ),
                             const SizedBox(height: 2),
                             Text(
-                              '\$${product.precioProducto.toStringAsFixed(2)}',
+                              '\$${product.precioProducto}',
                               style: AppTextStyles.price.copyWith(
                                 color: Colors.pinkAccent,
                                 fontWeight: FontWeight.bold,

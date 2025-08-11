@@ -31,7 +31,7 @@ class InitialView extends StatelessWidget {
         return !canPop; // Solo permite salir si no hay nada en la pila
       },
       child: Scaffold(
-        backgroundColor: AppColors.background,
+        backgroundColor: const Color.fromARGB(255, 247, 246, 246),
         // AppBar con logo y barra de búsqueda
         appBar: AppBar(
           backgroundColor: AppColors.primaryPink,
@@ -50,6 +50,14 @@ class InitialView extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: 12),
+              Text(
+                'Ale Beauty Art',
+                style: AppTextStyles.title.copyWith(
+                  color: Colors.white,
+                  fontSize: 20,
+                ),
+              ),
+              const SizedBox(width: 12),
               // Barra de búsqueda
               Expanded(
                 child: Container(
@@ -64,7 +72,7 @@ class InitialView extends StatelessWidget {
                       hintText: 'Buscar...',
                       prefixIcon: Icon(Icons.search, color: AppColors.primaryPink),
                       border: InputBorder.none,
-                      contentPadding: const EdgeInsets.symmetric(vertical: 8),
+                      contentPadding: const EdgeInsets.symmetric(vertical: 5),
                     ),
                   ),
                 ),
@@ -164,7 +172,7 @@ class InitialView extends StatelessWidget {
 
             return BottomAppBar(
               height: 80,
-              color: Colors.white,
+              color: const Color.fromARGB(255, 255, 255, 255),
               elevation: 8,
               shape: const AutomaticNotchedShape(
                 RoundedRectangleBorder(
@@ -359,16 +367,6 @@ class InitialView extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Bienvenida fija
-          Center(
-            child: Text(
-              '¡Bienvenid@ a Ale Beauty Art!',
-              style: AppTextStyles.title.copyWith(fontSize: 24),
-              textAlign: TextAlign.center,
-            ),
-          ),
-
-          const SizedBox(height: 60), // espacio después de bienvenida
 
           // Carrusel de productos
           ProductCarousel(
