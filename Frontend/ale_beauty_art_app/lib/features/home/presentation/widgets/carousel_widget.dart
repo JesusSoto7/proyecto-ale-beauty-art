@@ -23,7 +23,7 @@ class ProductCarousel extends StatelessWidget {
         return Builder(
           builder: (BuildContext context) {
             return ClipRRect(
-              borderRadius: BorderRadius.circular(16),
+              borderRadius: BorderRadius.circular(10),
               child: Image.network(
                 url,
                 fit: BoxFit.cover,

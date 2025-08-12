@@ -12,7 +12,7 @@ class ProductsListView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      backgroundColor: AppColors.background,
+      backgroundColor: const Color.fromARGB(255, 245, 245, 245),
       body: InfoProduct(products: products),
     );
   }

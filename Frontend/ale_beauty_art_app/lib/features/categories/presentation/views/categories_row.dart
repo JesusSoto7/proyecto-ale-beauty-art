@@ -32,7 +32,7 @@ class _CategoriesRowViewState extends State<CategoriesRowView> {
     return BlocBuilder<CategoriesBloc, CategoriesState>(
       builder: (context, state) {
         if (state is CategoriesLoadInProgress) {
-          return const Center(child: CircularProgressIndicator(color: AppColors.primaryPink));
+          return const Center(child: CircularProgressIndicator(color: AppColors.accentPink));
         } else if (state is CategoriesLoadSuccess) {
           final categories = state.categories;
 

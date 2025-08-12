@@ -11,7 +11,6 @@ import 'package:ale_beauty_art_app/features/products/presentation/bloc/product_b
 import 'package:ale_beauty_art_app/features/products/presentation/views/products_page_view.dart';
 import 'package:ale_beauty_art_app/features/products/presentation/widgets/products_carousel.dart';
 import 'package:ale_beauty_art_app/features/profile/presentation/views/profile_view.dart';
-import '../../../../../models/category.dart';
 
 import 'package:ale_beauty_art_app/styles/colors.dart'; // Estilos
 import 'package:ale_beauty_art_app/styles/text_styles.dart'; // Tipografías
@@ -20,6 +19,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../widgets/carousel_widget.dart';
+
+import '../widgets/buscador.dart';
 
 class InitialView extends StatelessWidget {
   const InitialView({super.key});
@@ -35,10 +36,11 @@ class InitialView extends StatelessWidget {
         backgroundColor: const Color.fromARGB(255, 247, 246, 246),
         // AppBar con logo y barra de búsqueda
         appBar: AppBar(
-          backgroundColor: AppColors.primaryPink,
+          backgroundColor: const Color.fromARGB(255, 255, 238, 243),
           automaticallyImplyLeading: false,
           elevation: 0,
           title: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               // Logo
               ClipRRect(
@@ -51,33 +53,9 @@ class InitialView extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: 12),
-              Text(
-                'Ale Beauty Art',
-                style: AppTextStyles.title.copyWith(
-                  color: Colors.white,
-                  fontSize: 20,
-                ),
-              ),
-              const SizedBox(width: 12),
+              
               // Barra de búsqueda
-              Expanded(
-                child: Container(
-                  height: 36,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(18),
-                  ),
-                  child: TextField(
-                    readOnly: true,
-                    decoration: InputDecoration(
-                      hintText: 'Buscar...',
-                      prefixIcon: Icon(Icons.search, color: AppColors.primaryPink),
-                      border: InputBorder.none,
-                      contentPadding: const EdgeInsets.symmetric(vertical: 5),
-                    ),
-                  ),
-                ),
-              ),
+              const ExpandableSearchBar(),
             ],
           ),
         ),
@@ -390,7 +368,7 @@ class InitialView extends StatelessWidget {
           ),
           const SizedBox(height: 20), // Espacio para donde irán los productos luego
           SizedBox(
-            height: 180,
+            height: 210,
             child: ProductsCarousel(),
           ),
         ],

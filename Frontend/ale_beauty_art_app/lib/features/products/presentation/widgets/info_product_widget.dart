@@ -49,14 +49,7 @@ class InfoProduct extends StatelessWidget {
                         margin: const EdgeInsets.all(8),
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(16),
-                          gradient: LinearGradient(
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
-                            colors: [
-                              Colors.grey.shade200,
-                              Colors.grey.shade100,
-                            ],
-                          ),
+                          color: const Color.fromARGB(255, 247, 246, 246),
                         ),
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(16),
@@ -103,8 +96,8 @@ class InfoProduct extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                   child: Text(
                     product.nombreProducto ?? '',
-                    style: AppTextStyles.title.copyWith(
-                      fontWeight: FontWeight.w500,
+                    style:TextStyle(
+                      fontWeight: FontWeight.w600,
                       fontSize: 14,
                     ),
                     maxLines: 1,
@@ -118,7 +111,7 @@ class InfoProduct extends StatelessWidget {
                   child: Text(
                     '\$${product.precioProducto}',
                     style: AppTextStyles.price.copyWith(
-                      color: Colors.black87,
+                      color: Colors.pinkAccent,
                       fontWeight: FontWeight.bold,
                       fontSize: 16,
                     ),
