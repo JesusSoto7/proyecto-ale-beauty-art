@@ -12,6 +12,7 @@ import LoginForm from './components/LoginForm'; LoginForm
 import Register from './components/RegisterForm';
 import Inicio from './components/Inicio';
 import LayoutInicio from './components/Layout';
+import Carrito from './components/Cart';
 
 
 function App() {
@@ -46,6 +47,12 @@ function App() {
           path="/"
           element={<Navigate to="/login" />}
         />
+        <Route element={<LayoutInicio />}>
+          <Route path='/carrito'
+            element={<Carrito />} />
+        </Route>
+
+
       </Routes>
     </Router>
   );

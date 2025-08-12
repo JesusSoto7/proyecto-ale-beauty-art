@@ -11,11 +11,14 @@ Rails.application.routes.draw do
       namespace :auth do
         post 'sign_in', to: 'sessions#create'
         post 'sign_up', to: 'registrations#create'
+        delete 'sign_out', to: 'sessions#logout'
       end
       # Carrito
-      get 'cart', to: 'cart#show'                    # Ver carrito
-      post 'cart/add', to: 'cart#add_product'        # Agregar producto
-      delete 'cart/remove', to: 'cart#remove_product' # Quitar producto
+        get "cart", to: "cart#show"
+        post 'cart/add_product', to: 'cart#add_product'                     # Ver carrito
+        delete 'cart/remove_product', to: 'cart#remove_product'
+
+ # Quitar producto
        get "inicio", to: "inicio#index"
       # Categorías y productos  
       resources :products, only: [:index, :show]

@@ -4,7 +4,7 @@ module Api
   module V1
     module Auth
       class SessionsController < Api::V1::BaseController
-
+         before_action :authorize_request
         def create
             user = User.find_by(email: params[:email])
             if user&.valid_password?(params[:password])
@@ -27,6 +27,19 @@ module Api
           end
         end
       end
+
+      def logout
+        current_user.tokens.where(token: request_token).destroy_all
+        head :no_content  
+      end
+
+      private
+
+      def request_token
+        request.headers['Authorization']&.split(' ')&.last
+      end
+
+
     end
   end
 end

@@ -196,6 +196,21 @@ nav a:hover::after {
   margin-left: 15px;
 }
 
+.icon-dropdown {
+  cursor: pointer;
+  color: inherit;
+}
+
+.icon-dropdown:hover {
+  color: #ff4081;
+  /* opcional, color al pasar el mouse */
+}
+
+.dropdown-toggle::after {
+  display: none !important;
+}
+
+
 #profile-icon {
   font-size: 1.5rem;
   margin-left: 10px;
