@@ -27,7 +27,7 @@ class ProductsByCategoryView extends StatelessWidget {
           fontSize: 20,
         ),
       ),
-      backgroundColor: AppColors.primaryPink,
+      backgroundColor: const Color.fromARGB(255, 247, 246, 246),
       automaticallyImplyLeading: false, // quita el back automático
       centerTitle: true, // centra el título
       leading: IconButton(

@@ -11,19 +11,21 @@ class ProductDetailView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: const Color.fromARGB(255, 247, 246, 246),
       appBar: AppBar(
-        backgroundColor: AppColors.primaryPink,
+        backgroundColor: const Color.fromARGB(255, 247, 246, 246),
         // Esto asegura que Flutter no ponga su back automático
         automaticallyImplyLeading: false,
         // Flecha personalizada
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          icon: const Icon(Icons.arrow_back, color: Color.fromARGB(255, 248, 174, 174)),
           tooltip: '', // evita que salga el texto flotante
           onPressed: () {
             Navigator.pop(context); // vuelve atrás
           },
         ),
+        
+         
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
@@ -74,7 +76,38 @@ class ProductDetailView extends StatelessWidget {
                 ),
               ),
             ),
-            const SizedBox(height: 20),
+            
+            const SizedBox(height: 12),
+
+            // Nombre del producto
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  product.nombreProducto,
+                  style: const TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xFF1F2937),
+                  ),
+                ),
+
+                const SizedBox(height: 8),
+        
+                // Precio
+                Text(
+                  '\$${product.precioProducto}',
+                  style: const TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.primaryPink,
+                  ),
+                ),
+                // Aquí podrías agregar un botón de favorito si lo deseas
+              ],
+            ),
+            
+            const SizedBox(height: 10),
 
             // Badge de categoría
             Container(
@@ -92,30 +125,8 @@ class ProductDetailView extends StatelessWidget {
                 ),
               ),
             ),
-            const SizedBox(height: 12),
 
-            // Nombre del producto
-            Text(
-              product.nombreProducto,
-              style: const TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: Color(0xFF1F2937),
-              ),
-            ),
-            const SizedBox(height: 8),
-
-            // Precio
-            Text(
-              '\$${product.precioProducto}',
-              style: const TextStyle(
-                fontSize: 22,
-                fontWeight: FontWeight.bold,
-                color: AppColors.primaryPink,
-              ),
-            ),
-            const SizedBox(height: 20),
-
+            const SizedBox(height: 10),
             // Descripción
             Text(
               product.descripcion,
@@ -132,35 +143,12 @@ class ProductDetailView extends StatelessWidget {
 
       bottomNavigationBar: SafeArea(
         minimum: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
+        child: Row(
           children: [
+            // Botón del carrito cuadrado
             SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: () {
-                  // TODO: lógica de "Comprar ahora"
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.primaryPink,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                ),
-                child: const Text(
-                  "Comprar ahora",
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                  ),
-                ),
-              ),
-            ),
-            const SizedBox(height: 8),
-            SizedBox(
-              width: double.infinity,
+              width: 56, // cuadrado
+              height: 56,
               child: OutlinedButton(
                 onPressed: () {
                   // TODO: lógica de "Agregar al carrito"
@@ -170,14 +158,35 @@ class ProductDetailView extends StatelessWidget {
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  padding: EdgeInsets.zero, // quita padding extra
+                ),
+                child: const Icon(
+                  Icons.add_shopping_cart,
+                  color: AppColors.primaryPink,
+                ),
+              ),
+            ),
+            const SizedBox(width: 12), // espacio entre botones
+
+            // Botón de comprar ahora
+            Expanded(
+              child: ElevatedButton(
+                onPressed: () {
+                  // TODO: lógica de "Comprar ahora"
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.primaryPink,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  padding: const EdgeInsets.symmetric(vertical: 23),
                 ),
                 child: const Text(
-                  "Agregar al carrito",
+                  "Comprar ahora",
                   style: TextStyle(
                     fontSize: 16,
-                    color: AppColors.primaryPink,
                     fontWeight: FontWeight.bold,
+                    color: Colors.white,
                   ),
                 ),
               ),

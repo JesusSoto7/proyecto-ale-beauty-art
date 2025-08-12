@@ -5,12 +5,13 @@ import 'package:ale_beauty_art_app/features/cart/presentation/bloc/cart_event.da
 import 'package:ale_beauty_art_app/features/cart/presentation/view/cart_page_view.dart';
 import 'package:ale_beauty_art_app/features/categories/presentation/bloc/categories_bloc.dart';
 import 'package:ale_beauty_art_app/features/categories/presentation/views/categories_page_view.dart';
+import 'package:ale_beauty_art_app/features/categories/presentation/views/categories_row.dart';
 import 'package:ale_beauty_art_app/features/navigation/bloc/navigation_bloc.dart';
 import 'package:ale_beauty_art_app/features/products/presentation/bloc/product_bloc.dart';
 import 'package:ale_beauty_art_app/features/products/presentation/views/products_page_view.dart';
 import 'package:ale_beauty_art_app/features/products/presentation/widgets/products_carousel.dart';
 import 'package:ale_beauty_art_app/features/profile/presentation/views/profile_view.dart';
-
+import '../../../../../models/category.dart';
 
 import 'package:ale_beauty_art_app/styles/colors.dart'; // Estilos
 import 'package:ale_beauty_art_app/styles/text_styles.dart'; // Tipografías
@@ -378,8 +379,10 @@ class InitialView extends StatelessWidget {
             ],
           ),
 
-          const SizedBox(height: 80), // espacio entre carrusel y sección destacada
-  
+          const SizedBox(height: 20),
+          CategoriesRowView(),
+          const SizedBox(height: 20), // espacio entre carrusel y sección destacada
+        
           // Título sección productos destacados
           Text(
             'Productos Destacados',
@@ -395,6 +398,4 @@ class InitialView extends StatelessWidget {
     );
   }
 }
-
-
 

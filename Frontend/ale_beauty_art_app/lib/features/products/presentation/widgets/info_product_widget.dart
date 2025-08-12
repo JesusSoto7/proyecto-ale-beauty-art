@@ -10,135 +10,125 @@ class InfoProduct extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        return GridView.builder(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2,
-            mainAxisSpacing: 10,
-            crossAxisSpacing: 10,
-            childAspectRatio: 0.9,
-          ),
-          itemCount: products.length,
-          itemBuilder: (context, index) {
-            final product = products[index];
+    return GridView.builder(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        mainAxisSpacing: 12,
+        crossAxisSpacing: 12,
+        childAspectRatio: 0.75,
+      ),
+      itemCount: products.length,
+      itemBuilder: (context, index) {
+        final product = products[index];
 
-            return GestureDetector(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => ProductDetailView(product: product),
-                  ),
-                );
-              },
-              child: Card(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                color: Colors.white,
-                elevation: 3,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Container(
-                      height: 120,
-                      margin: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(12),
-                        gradient: LinearGradient(
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                          colors: [
-                            Colors.pink.shade100,
-                            Colors.pinkAccent.shade100,
-                          ],
-                        ),
-                      ),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(12),
-                        child: (product.imagenUrl?.isNotEmpty ?? false)
-                            ? Image.network(
-                                product.imagenUrl!,
-                                fit: BoxFit.cover,
-                                width: double.infinity,
-                                errorBuilder: (_, __, ___) => const Center(
-                                  child: Text('💋', style: TextStyle(fontSize: 28)),
-                                ),
-                              )
-                            : const Center(
-                                child: Text('💋', style: TextStyle(fontSize: 28)),
-                              ),
-                      ),
-                    ),
-                    SizedBox(
-                      height: 48, // Altura controlada para nombre y precio
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 8),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            SizedBox(
-                              width: double.infinity,
-                              child: Text(
-                                product.nombreProducto,
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 16,
-                                  color: Color(0xFF1F2937),
-                                ),
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                softWrap: false,
-                              ),
-                            ),
-                            const SizedBox(height: 2),
-                            Text(
-                              '\$${product.precioProducto}',
-                              style: AppTextStyles.price.copyWith(
-                                color: Colors.pinkAccent,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 14,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
+        return GestureDetector(
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => ProductDetailView(product: product),
               ),
             );
           },
+          child: Card(
+            elevation: 3,
+            shadowColor: Colors.black26,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Imagen con fondo y botón favorito
+                Expanded(
+                  child: Stack(
+                    children: [
+                      // Fondo degradado con imagen
+                      Container(
+                        margin: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(16),
+                          gradient: LinearGradient(
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                            colors: [
+                              Colors.grey.shade200,
+                              Colors.grey.shade100,
+                            ],
+                          ),
+                        ),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(16),
+                          child: (product.imagenUrl?.isNotEmpty ?? false)
+                              ? Image.network(
+                                  product.imagenUrl!,
+                                  fit: BoxFit.contain,
+                                  width: double.infinity,
+                                  errorBuilder: (_, __, ___) => const Center(
+                                    child: Icon(Icons.image_not_supported, size: 40, color: Colors.grey),
+                                  ),
+                                )
+                              : const Center(
+                                  child: Icon(Icons.image, size: 40, color: Colors.grey),
+                                ),
+                        ),
+                      ),
+
+                      // Botón de favoritos
+                      Positioned(
+                        top: 4,
+                        right: 4,
+                        child: Container(
+                          child: IconButton(
+                            icon: Icon(
+                              // product.isFavorite ? Icons.favorite : Icons.favorite_border,
+                              Icons.favorite_border,
+                              color: Colors.grey,
+                              // color: product.isFavorite ? Colors.red : Colors.grey,
+                            ),
+                            onPressed: () {
+                              // TODO: Aquí colocas tu lógica de favorito
+                              print("Favorito: ${product.nombreProducto}");
+                            },
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+
+                // Nombre del producto
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                  child: Text(
+                    product.nombreProducto ?? '',
+                    style: AppTextStyles.title.copyWith(
+                      fontWeight: FontWeight.w500,
+                      fontSize: 14,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+
+                // Precio
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  child: Text(
+                    '\$${product.precioProducto}',
+                    style: AppTextStyles.price.copyWith(
+                      color: Colors.black87,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
         );
       },
     );
   }
 }
-
-
-
-
-
-
-
-
-//Logica de de donde se saca la informacion del json
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       body: ListView.builder(
-//         itemCount: products.length,
-//         itemBuilder: (context, index) {
-//           final p = products[index];
-//           return ListTile(
-//             title: Text(p.name),
-//             subtitle: Text(p.description),
-//             trailing: Text('\$${p.price.toStringAsFixed(2)}'),
-//           );
-//         },
-//       ),
-//     );
-//   }
-// }
