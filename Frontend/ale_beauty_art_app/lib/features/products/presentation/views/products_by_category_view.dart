@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../../../../models/product.dart';
-import '../../../../styles/colors.dart';
 import '../widgets/info_product_widget.dart';
 
 class ProductsByCategoryView extends StatelessWidget {
