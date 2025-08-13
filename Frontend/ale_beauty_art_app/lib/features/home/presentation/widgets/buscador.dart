@@ -33,44 +33,52 @@ class _ExpandableSearchBarState extends State<ExpandableSearchBar> {
 
   @override
   Widget build(BuildContext context) {
-    return AnimatedContainer(
-      duration: const Duration(milliseconds: 250),
-      width: _isExpanded ? 320 : 48, // ancho dinámico
-      height: 36,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(18),
-      ),
-      child: Row(
-        children: [
-          IconButton(
-            icon: Icon(Icons.search, color: AppColors.primaryPink),
-            onPressed: () {
-              setState(() {
-                _isExpanded = true;
-              });
-              Future.delayed(const Duration(milliseconds: 100), () {
-                FocusScope.of(context).requestFocus(_focusNode);
-              });
-            },
-            padding: EdgeInsets.zero,
-
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.end, // Alinea a la derecha
+      children: [
+        AnimatedContainer(
+          duration: const Duration(milliseconds: 250),
+          width: _isExpanded ? 290 : 48, // ancho dinámico
+          height: 36,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(10),
           ),
-          if (_isExpanded)
-            Flexible(
-              child: TextField(
-                focusNode: _focusNode,
-                controller: _controller,
-                decoration: const InputDecoration(
-                  hintText: 'Buscar...',
-                  border: InputBorder.none,
-                  isDense: true,
-                  contentPadding: EdgeInsets.symmetric(vertical: 5),
-                ),
+          child: Row(
+            textDirection: TextDirection.rtl,
+            children: [
+              IconButton(
+                icon: Icon(Icons.search, color: AppColors.primaryPink),
+                onPressed: () {
+                  setState(() {
+                    _isExpanded = true;
+                  });
+                  Future.delayed(const Duration(milliseconds: 100), () {
+                    FocusScope.of(context).requestFocus(_focusNode);
+                  });
+                },
+                padding: EdgeInsets.zero,
               ),
-            ),
-        ],
-      ),
+              if (_isExpanded)
+                Expanded( // Cambiado de Flexible a Expanded
+                  child: TextField(
+                    focusNode: _focusNode,
+                    controller: _controller,
+                    decoration: const InputDecoration(
+                      hintText: 'Buscar...',
+                      border: InputBorder.none,
+                      isDense: true,
+                      contentPadding: EdgeInsets.symmetric(vertical: 5, horizontal: 8), // Añade padding horizontal
+                    ),
+                    style: TextStyle(
+                      overflow: TextOverflow.ellipsis, // Evita desbordamiento del texto ingresado
+                    ),
+                  ),
+                ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 }

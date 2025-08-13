@@ -31,97 +31,94 @@ class InfoProduct extends StatelessWidget {
               ),
             );
           },
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Imagen con fondo y botón favorito
-              Expanded(
-                child: Stack(
-                  children: [
-                    Container(
-                      margin: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(16),
-                        color: Colors.white, // Fondo blanco siempre
-                      ),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(16),
-                        child: (product.imagenUrl?.isNotEmpty ?? false)
-                            ? Image.network(
-                                product.imagenUrl!,
-                                fit: BoxFit.contain,
-                                width: double.infinity,
-                                height: double.infinity,
-                                loadingBuilder: (context, child, loadingProgress) {
-                                  if (loadingProgress == null) {
-                                    return child; // Imagen lista
-                                  }
-                                  // Mientras carga, mostrar fondo blanco
-                                  return Container(
-                                    color: Colors.white,
-                                    child: const Center(
-                                      child: Icon(Icons.image, size: 40, color: Colors.grey),
-                                    ),
-                                  );
-                                },
-                                errorBuilder: (_, __, ___) => const Center(
-                                  child: Icon(Icons.image_not_supported, size: 40, color: Colors.grey),
-                                ),
-                              )
-                            : Container(
-                                color: Colors.white,
-                                child: const Center(
+          child: Card(
+            elevation: 3,
+            shadowColor: Colors.black26,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Imagen con fondo y botón favorito
+                Expanded(
+                  child: Stack(
+                    children: [
+                      // Fondo degradado con imagen
+                      Container(
+                        margin: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(16),
+                          color: Colors.white, // <-- Siempre blanco
+                        ),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(16),
+                          child: (product.imagenUrl?.isNotEmpty ?? false)
+                              ? Image.network(
+                                  product.imagenUrl!,
+                                  fit: BoxFit.contain,
+                                  width: double.infinity,
+                                  errorBuilder: (_, __, ___) => const Center(
+                                    child: Icon(Icons.image_not_supported, size: 40, color: Colors.grey),
+                                  ),
+                                )
+                              : const Center(
                                   child: Icon(Icons.image, size: 40, color: Colors.grey),
                                 ),
-                              ),
-                      ),
-                    ),
-
-                    // Botón de favoritos
-                    Positioned(
-                      top: 6,
-                      right: 6,
-                      child: IconButton(
-                        icon: const Icon(
-                          Icons.favorite_border,
-                          color: Colors.grey,
                         ),
-                        onPressed: () {
-                          print("Favorito: ${product.nombreProducto}");
-                        },
                       ),
+
+                      // Botón de favoritos
+                      Positioned(
+                        top: 4,
+                        right: 4,
+                        child: Container(
+                          child: IconButton(
+                            icon: Icon(
+                              // product.isFavorite ? Icons.favorite : Icons.favorite_border,
+                              Icons.favorite_border,
+                              color: Colors.grey,
+                              // color: product.isFavorite ? Colors.red : Colors.grey,
+                            ),
+                            onPressed: () {
+                              // TODO: Aquí colocas tu lógica de favorito
+                              print("Favorito: ${product.nombreProducto}");
+                            },
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+
+                // Nombre del producto
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                  child: Text(
+                    product.nombreProducto ?? '',
+                    style:TextStyle(
+                      fontWeight: FontWeight.w600,
+                      fontSize: 14,
                     ),
-                  ],
-                ),
-              ),
-
-              // Nombre del producto
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                child: Text(
-                  product.nombreProducto ?? '',
-                  style: const TextStyle(
-                    fontWeight: FontWeight.w600,
-                    fontSize: 14,
-                  ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-
-              // Precio
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                child: Text(
-                  '\$${product.precioProducto}',
-                  style: AppTextStyles.price.copyWith(
-                    color: Colors.pinkAccent,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ),
-              ),
-            ],
+
+                // Precio
+                Padding(
+                  padding: const EdgeInsets.only(left: 8, top: 3, bottom: 8),
+                  child: Text(
+                    '\$${product.precioProducto}',
+                    style: AppTextStyles.price.copyWith(
+                      color: Colors.pinkAccent,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         );
       },
