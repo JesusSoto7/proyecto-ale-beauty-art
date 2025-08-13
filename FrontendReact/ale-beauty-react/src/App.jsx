@@ -2,7 +2,6 @@
 import './assets/stylesheets/RegisterForm.css';
 import './assets/stylesheets/Inicio.css'
 import './assets/stylesheets/Header.css'
-import './assets/stylesheets/Inicio.css'
 import './assets/stylesheets/Footer.css'
 import './assets/stylesheets/Cart.css'
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -10,14 +9,14 @@ import './App.css';
 
 import React, { useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import LoginForm from './components/LoginForm'; LoginForm
+import LoginForm from './components/LoginForm';
 import Register from './components/RegisterForm';
 import Inicio from './components/Inicio';
 import LayoutInicio from './components/Layout';
 import Cart from './components/Cart';
 import ShippingAddress from './components/ShippingAddress';
 import ShippingAddressForm from './components/ShippingAddressForm';
-
+import Dashboard from './pages/Dashboard';
 
 
 function App() {
@@ -49,6 +48,11 @@ function App() {
           path="/login"
           element={<LoginForm onLogin={() => setIsLoggedIn(true)} />}
         />
+
+        <Route path="/home" element={<Dashboard />} />
+        {/* O incluso: <Route index element={<DashboardMain />} /> */}
+
+
 
         <Route
           path="/register"
