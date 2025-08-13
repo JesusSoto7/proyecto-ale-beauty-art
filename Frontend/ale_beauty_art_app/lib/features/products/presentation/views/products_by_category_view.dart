@@ -22,16 +22,16 @@ class ProductsByCategoryView extends StatelessWidget {
       title: Text(
         categoryName,
         style: const TextStyle(
-          color: Colors.white, // texto blanco
+          color: Color.fromARGB(255, 248, 174, 174), // texto blanco
           fontWeight: FontWeight.bold,
           fontSize: 20,
         ),
       ),
-      backgroundColor: const Color.fromARGB(255, 247, 246, 246),
+      backgroundColor: const Color.fromARGB(255, 255, 238, 243),
       automaticallyImplyLeading: false, // quita el back automático
       centerTitle: true, // centra el título
       leading: IconButton(
-        icon: const Icon(Icons.arrow_back, color: Colors.white),
+        icon: const Icon(Icons.arrow_back, color: Color.fromARGB(255, 248, 174, 174)),
         tooltip: '', // quita el texto flotante
         onPressed: () {
           Navigator.pop(context);

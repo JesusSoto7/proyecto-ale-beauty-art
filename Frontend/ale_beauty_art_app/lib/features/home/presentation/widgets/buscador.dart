@@ -35,7 +35,7 @@ class _ExpandableSearchBarState extends State<ExpandableSearchBar> {
   Widget build(BuildContext context) {
     return AnimatedContainer(
       duration: const Duration(milliseconds: 250),
-      width: _isExpanded ? 250 : 40, // ancho dinámico
+      width: _isExpanded ? 320 : 48, // ancho dinámico
       height: 36,
       decoration: BoxDecoration(
         color: Colors.white,
@@ -54,9 +54,10 @@ class _ExpandableSearchBarState extends State<ExpandableSearchBar> {
               });
             },
             padding: EdgeInsets.zero,
+
           ),
           if (_isExpanded)
-            Expanded(
+            Flexible(
               child: TextField(
                 focusNode: _focusNode,
                 controller: _controller,

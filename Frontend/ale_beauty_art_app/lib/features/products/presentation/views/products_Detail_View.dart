@@ -39,6 +39,17 @@ class _ProductDetailViewState extends State<ProductDetailView> {
           ),
           onPressed: () => Navigator.pop(context),
         ),
+        title: Align(
+          alignment: Alignment.center,
+          child: Text(
+            'Product Details',
+            style: const TextStyle(
+              color: Color.fromARGB(255, 248, 174, 174), // texto blanco
+              fontWeight: FontWeight.bold,
+              fontSize: 20,
+            ),
+          ),
+        ),
         actions: [
           IconButton(
             icon: const Icon(Icons.favorite_border, color: Colors.grey),
