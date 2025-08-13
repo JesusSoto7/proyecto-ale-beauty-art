@@ -44,8 +44,8 @@ class InitialView extends StatelessWidget {
                 borderRadius: BorderRadius.circular(8),
                 child: Image.asset(
                   'assets/images/ale_logo.png',
-                  height: 40,
-                  width: 40,
+                  height: 50,
+                  width: 50,
                   fit: BoxFit.cover,
                 ),
               ),

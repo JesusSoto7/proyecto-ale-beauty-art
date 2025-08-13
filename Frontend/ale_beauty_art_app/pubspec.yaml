@@ -44,10 +44,13 @@ dependencies:
   flutter_secure_storage: ^9.0.0
   
 flutter_native_splash:
+  android: true
   color: "#ffffff"
-  image: assets/images/ale_logo.png
+  image: "assets/images/ale_logo.png"
   android_gravity: center
   fullscreen: true
+  android_12:
+    image: "assets/images/ale_logo.png"
 
 dev_dependencies:
   flutter_test:
