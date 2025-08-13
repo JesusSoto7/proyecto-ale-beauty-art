@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useEffect, useState } from "react";
 import { styled } from '@mui/material/styles';
 import Avatar from '@mui/material/Avatar';
 import MuiDrawer, { drawerClasses } from '@mui/material/Drawer';
@@ -25,6 +26,23 @@ const Drawer = styled(MuiDrawer)({
 });
 
 export default function SideMenu() {
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) return;
+    fetch("https://localhost:4000/api/v1/me", {
+      headers: {
+        "Authorization": `Bearer ${token}`
+      }
+    })
+      .then(res => res.json())
+      .then(data => setUser(data))
+      .catch(err => console.error(err));
+  }, []);
+
+  if (!user) return null;
+
   return (
     <Drawer
       variant="permanent"
@@ -74,10 +92,10 @@ export default function SideMenu() {
         />
         <Box sx={{ mr: 'auto' }}>
           <Typography variant="body2" sx={{ fontWeight: 500, lineHeight: '16px' }}>
-            Riley Carter
+            {user.nombre} {user.apellido}
           </Typography>
           <Typography variant="caption" sx={{ color: 'text.secondary' }}>
-            riley@email.com
+            {user.email}
           </Typography>
         </Box>
         <OptionsMenu />
