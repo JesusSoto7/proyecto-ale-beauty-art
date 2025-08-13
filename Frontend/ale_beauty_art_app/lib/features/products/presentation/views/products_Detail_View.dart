@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:shimmer/shimmer.dart';
 import '../../../../models/product.dart';
 import 'package:ale_beauty_art_app/styles/colors.dart';
+import 'package:ale_beauty_art_app/core/utils/formatters.dart';
 
 class ProductDetailView extends StatefulWidget {
   final Product product;
@@ -167,7 +168,7 @@ class _ProductDetailViewState extends State<ProductDetailView> {
                   ),
                 ),
                 Text(
-                  '\$${product.precioProducto}',
+                  formatPriceCOP(product.precioProducto),
                   style: const TextStyle(
                     fontSize: 22,
                     fontWeight: FontWeight.bold,
@@ -195,9 +196,7 @@ class _ProductDetailViewState extends State<ProductDetailView> {
                 ),
               ),
             ),
-
-            const SizedBox(height: 10),
-
+            
             // Descripción
             Text(
               product.descripcion,
