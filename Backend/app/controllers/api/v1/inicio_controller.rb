@@ -1,6 +1,7 @@
-class Api::V1::InicioController < ActionController::API
+class Api::V1::InicioController < Api::V1::BaseController
+  include Rails.application.routes.url_helpers
 
-include Rails.application.routes.url_helpers
+  skip_before_action :authorize_request, only: [:index]
 
   def index
     admin = User.with_role(:admin).first

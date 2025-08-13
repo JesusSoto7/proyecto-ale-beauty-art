@@ -1,8 +1,10 @@
+
 import './assets/stylesheets/RegisterForm.css';
 import './assets/stylesheets/Inicio.css'
 import './assets/stylesheets/Header.css'
 import './assets/stylesheets/Inicio.css'
 import './assets/stylesheets/Footer.css'
+import './assets/stylesheets/Cart.css'
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
 
@@ -12,7 +14,10 @@ import LoginForm from './components/LoginForm'; LoginForm
 import Register from './components/RegisterForm';
 import Inicio from './components/Inicio';
 import LayoutInicio from './components/Layout';
-import Carrito from './components/Cart';
+import Cart from './components/Cart';
+import ShippingAddress from './components/ShippingAddress';
+import ShippingAddressForm from './components/ShippingAddressForm';
+
 
 
 function App() {
@@ -29,6 +34,14 @@ function App() {
             path='/inicio'
             element={isLoggedIn ? <Inicio /> : <Navigate to="/login" />}
           />
+        </Route>
+
+        <Route element={<LayoutInicio />}>
+          <Route
+            path='/direcciones'
+            element={<ShippingAddress />}
+          />
+          <Route path="/direcciones/nueva" element={<ShippingAddressForm onSuccess={() => { }} />} />
         </Route>
 
 
@@ -49,7 +62,7 @@ function App() {
         />
         <Route element={<LayoutInicio />}>
           <Route path='/carrito'
-            element={<Carrito />} />
+            element={<Cart />} />
         </Route>
 
 

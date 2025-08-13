@@ -1,4 +1,4 @@
-class Api::V1::ProductsController < ActionController::API
+class Api::V1::ProductsController < Api::V1::BaseController
   before_action :set_product, only: [:show]
 
   def index

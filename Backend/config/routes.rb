@@ -15,7 +15,7 @@ Rails.application.routes.draw do
       end
       # Carrito
         get "cart", to: "cart#show"
-        post 'cart/add_product', to: 'cart#add_product'                     # Ver carrito
+        post 'cart/add_product', to: 'cart#add_product'        
         delete 'cart/remove_product', to: 'cart#remove_product'
 
  # Quitar producto
@@ -23,6 +23,18 @@ Rails.application.routes.draw do
       # Categorías y productos  
       resources :products, only: [:index, :show]
       resources :categories, only: [:index, :show]
+
+      resources :shipping_addresses do
+        member do
+          patch :set_predeterminada
+        end
+      end
+
+      get 'locations/departments', to: 'locations#departments'
+      get 'locations/municipalities/:department_id', to: 'locations#municipalities'
+      get 'locations/neighborhoods/:municipality_id', to: 'locations#neighborhoods'
+
+
     end
   end
 

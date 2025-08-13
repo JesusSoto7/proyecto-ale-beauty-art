@@ -1,8 +1,6 @@
 module Api
   module V1
-    class CartController < BaseController
-      before_action :authorize_request
-
+    class CartController <  Api::V1::BaseController
       def show
         cart = current_user.cart || current_user.create_cart
         render json: cart_json(cart)

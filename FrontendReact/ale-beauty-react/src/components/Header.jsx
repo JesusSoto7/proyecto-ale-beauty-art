@@ -70,7 +70,7 @@ export default function Header() {
 
             <Dropdown.Menu>
               <Dropdown.Item eventKey="1">Perfil</Dropdown.Item>
-              <Dropdown.Item eventKey="2">Mis direcciones</Dropdown.Item>
+              <Dropdown.Item as={Link} to="/direcciones" eventKey="2">Mis direcciones</Dropdown.Item>
               <Dropdown.Divider />
               <Dropdown.Item onClick={handleLogout}>Cerrar sesión</Dropdown.Item>
             </Dropdown.Menu>
