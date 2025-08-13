@@ -50,7 +50,7 @@ flutter_native_splash:
   android_gravity: center
   fullscreen: true
   android_12:
-    image: "assets/images/ale_logo.png"
+    image: "assets/images/ale_logo_2.png"
 
 dev_dependencies:
   flutter_test:
