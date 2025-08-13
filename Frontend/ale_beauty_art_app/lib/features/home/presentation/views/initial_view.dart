@@ -5,12 +5,12 @@ import 'package:ale_beauty_art_app/features/cart/presentation/bloc/cart_event.da
 import 'package:ale_beauty_art_app/features/cart/presentation/view/cart_page_view.dart';
 import 'package:ale_beauty_art_app/features/categories/presentation/bloc/categories_bloc.dart';
 import 'package:ale_beauty_art_app/features/categories/presentation/views/categories_page_view.dart';
+import 'package:ale_beauty_art_app/features/categories/presentation/views/categories_row.dart';
 import 'package:ale_beauty_art_app/features/navigation/bloc/navigation_bloc.dart';
 import 'package:ale_beauty_art_app/features/products/presentation/bloc/product_bloc.dart';
 import 'package:ale_beauty_art_app/features/products/presentation/views/products_page_view.dart';
 import 'package:ale_beauty_art_app/features/products/presentation/widgets/products_carousel.dart';
 import 'package:ale_beauty_art_app/features/profile/presentation/views/profile_view.dart';
-
 
 import 'package:ale_beauty_art_app/styles/colors.dart'; // Estilos
 import 'package:ale_beauty_art_app/styles/text_styles.dart'; // Tipografías
@@ -19,6 +19,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../widgets/carousel_widget.dart';
+
+import '../widgets/buscador.dart';
 
 class InitialView extends StatelessWidget {
   const InitialView({super.key});
@@ -31,13 +33,14 @@ class InitialView extends StatelessWidget {
         return !canPop; // Solo permite salir si no hay nada en la pila
       },
       child: Scaffold(
-        backgroundColor: AppColors.background,
+        backgroundColor: const Color.fromARGB(255, 247, 246, 246),
         // AppBar con logo y barra de búsqueda
         appBar: AppBar(
-          backgroundColor: AppColors.primaryPink,
+          backgroundColor: const Color.fromARGB(255, 255, 238, 243),
           automaticallyImplyLeading: false,
           elevation: 0,
           title: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               // Logo
               ClipRRect(
@@ -50,25 +53,9 @@ class InitialView extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: 12),
+              
               // Barra de búsqueda
-              Expanded(
-                child: Container(
-                  height: 36,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(18),
-                  ),
-                  child: TextField(
-                    readOnly: true,
-                    decoration: InputDecoration(
-                      hintText: 'Buscar...',
-                      prefixIcon: Icon(Icons.search, color: AppColors.primaryPink),
-                      border: InputBorder.none,
-                      contentPadding: const EdgeInsets.symmetric(vertical: 8),
-                    ),
-                  ),
-                ),
-              ),
+              const ExpandableSearchBar(),
             ],
           ),
         ),
@@ -164,7 +151,7 @@ class InitialView extends StatelessWidget {
 
             return BottomAppBar(
               height: 80,
-              color: Colors.white,
+              color: const Color.fromARGB(255, 255, 255, 255),
               elevation: 8,
               shape: const AutomaticNotchedShape(
                 RoundedRectangleBorder(
@@ -359,16 +346,6 @@ class InitialView extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Bienvenida fija
-          Center(
-            child: Text(
-              '¡Bienvenid@ a Ale Beauty Art!',
-              style: AppTextStyles.title.copyWith(fontSize: 24),
-              textAlign: TextAlign.center,
-            ),
-          ),
-
-          const SizedBox(height: 60), // espacio después de bienvenida
 
           // Carrusel de productos
           ProductCarousel(
@@ -380,8 +357,26 @@ class InitialView extends StatelessWidget {
             ],
           ),
 
-          const SizedBox(height: 80), // espacio entre carrusel y sección destacada
-  
+          const SizedBox(height: 20),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'Categorias',
+                style: AppTextStyles.title.copyWith(fontSize: 20),
+              ),
+              GestureDetector(
+                onTap: () {
+                  context.read<NavigationBloc>().add(NavigationTabChanged(2));
+                },
+                child: Text('Ver Más', style: AppTextStyles.subtitle),
+              ),
+            ],
+          ),
+          const SizedBox(height: 20),
+          CategoriesRowView(),
+          const SizedBox(height: 20), // espacio entre carrusel y sección destacada
+        
           // Título sección productos destacados
           Text(
             'Productos Destacados',
@@ -389,7 +384,7 @@ class InitialView extends StatelessWidget {
           ),
           const SizedBox(height: 20), // Espacio para donde irán los productos luego
           SizedBox(
-            height: 180,
+            height: 210,
             child: ProductsCarousel(),
           ),
         ],
@@ -397,6 +392,4 @@ class InitialView extends StatelessWidget {
     );
   }
 }
-
-
 

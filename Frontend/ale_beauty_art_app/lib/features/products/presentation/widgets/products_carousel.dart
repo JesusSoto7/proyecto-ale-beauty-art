@@ -84,55 +84,67 @@ class _ProductsCarouselState extends State<ProductsCarousel> {
                           );
                         },
                         child: Card(
-                          elevation: 4,
+                          elevation: 3,
+                          shadowColor: Colors.black26,
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
+                            borderRadius: BorderRadius.circular(16),
                           ),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              // Imagen con fondo degradado
-                              Stack(
-                                children: [
-                                  Container(
-                                    height: 100,
-                                    margin: const EdgeInsets.all(8), // margen de la imagen
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(12),
-                                      gradient: LinearGradient(
-                                        begin: Alignment.topLeft,
-                                        end: Alignment.bottomRight,
-                                        colors: [
-                                          Colors.pink.shade100,
-                                          Colors.pinkAccent.shade100,
-                                        ],
+                              // Imagen con fondo y botón favorito
+                              SizedBox(
+                                height: 140,
+                                child: Stack(
+                                  children: [
+                                    // Fondo degradado con imagen
+                                    Container(
+                                      margin: const EdgeInsets.all(8),
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(16),
+                                        color: const Color.fromARGB(255, 255, 255, 255),
+                                      ),
+                                      child: ClipRRect(
+                                        
+                                        borderRadius: BorderRadius.circular(16),
+                                        child: (product.imagenUrl?.isNotEmpty ?? false)
+                                            ? Image.network(
+                                                product.imagenUrl!,
+                                                fit: BoxFit.contain, // 🔹 para que llene más el espacio
+                                                width: double.infinity,
+                                                errorBuilder: (_, __, ___) => const Center(
+                                                  child: Icon(Icons.image_not_supported, size: 40, color: Colors.grey),
+                                                ),
+                                              )
+                                            : const Center(
+                                                child: Icon(Icons.image, size: 40, color: Colors.grey),
+                                              ),
                                       ),
                                     ),
-                                    child: (product.imagenUrl != null && product.imagenUrl!.isNotEmpty)
-                                        ? ClipRRect(
-                                            borderRadius: const BorderRadius.all(Radius.circular(12)),
-                                            child: Image.network(
-                                              product.imagenUrl!,
-                                              fit: BoxFit.cover,
-                                              errorBuilder: (context, error, stackTrace) {
-                                                return const Center(
-                                                  child: Text(
-                                                    '💋',
-                                                    style: TextStyle(fontSize: 32),
-                                                  ),
-                                                );
-                                              },
-                                            ),
-                                          )
-                                        : const Center(
-                                            child: Text(
-                                              '💋',
-                                              style: TextStyle(fontSize: 32),
-                                            ),
+
+                                    // Botón de favoritos
+                                    Positioned(
+                                      top: 4,
+                                      right: 4,
+                                      child: Container(
+                                        child: IconButton(
+                                          icon: Icon(
+                                            // product.isFavorite ? Icons.favorite : Icons.favorite_border,
+                                            Icons.favorite_border,
+                                            color: Colors.grey,
+                                            // color: product.isFavorite ? Colors.red : Colors.grey,
                                           ),
-                                  ),
-                                ],
+                                          onPressed: () {
+                                            // TODO: Aquí colocas tu lógica de favorito
+                                            print("Favorito: ${product.nombreProducto}");
+                                          },
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
+
                                Expanded(
                                 child: Padding(
                                   padding: const EdgeInsets.symmetric(horizontal: 8),

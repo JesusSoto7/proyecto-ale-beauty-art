@@ -1,69 +1,145 @@
-
-import 'package:ale_beauty_art_app/core/utils/formatters.dart';
-import 'package:ale_beauty_art_app/styles/text_styles.dart';
 import 'package:flutter/material.dart';
+import 'package:shimmer/shimmer.dart';
 import '../../../../models/product.dart';
 import 'package:ale_beauty_art_app/styles/colors.dart';
+import 'package:ale_beauty_art_app/core/utils/formatters.dart';
 
-class ProductDetailView extends StatelessWidget {
+class ProductDetailView extends StatefulWidget {
   final Product product;
 
   const ProductDetailView({super.key, required this.product});
 
   @override
+  State<ProductDetailView> createState() => _ProductDetailViewState();
+}
+
+class _ProductDetailViewState extends State<ProductDetailView> {
+  bool _isImageLoaded = false;
+
+  void _markImageLoaded() {
+    if (!_isImageLoaded && mounted) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) setState(() => _isImageLoaded = true);
+      });
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final product = widget.product;
+
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: const Color.fromARGB(255, 247, 246, 246),
       appBar: AppBar(
-        backgroundColor: AppColors.primaryPink,
-        // Esto asegura que Flutter no ponga su back automático
+        backgroundColor: const Color.fromARGB(255, 255, 238, 243),
         automaticallyImplyLeading: false,
-        // Flecha personalizada
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white),
-          tooltip: '', // evita que salga el texto flotante
-          onPressed: () {
-            Navigator.pop(context); // vuelve atrás
-          },
+          icon: const Icon(
+            Icons.arrow_back,
+            color: Color.fromARGB(255, 248, 174, 174),
+          ),
+          onPressed: () => Navigator.pop(context),
         ),
+        title: Align(
+          alignment: Alignment.center,
+          child: Text(
+            'Product Details',
+            style: const TextStyle(
+              color: Color.fromARGB(255, 248, 174, 174), // texto blanco
+              fontWeight: FontWeight.bold,
+              fontSize: 20,
+            ),
+          ),
+        ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.favorite_border, color: Colors.grey),
+            onPressed: () {
+              print("Favorito: ${product.nombreProducto}");
+            },
+          ),
+        ],
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Imagen con degradado
+            // ----------------------
+            // Contenedor imagen + shimmer
+            // ----------------------
             Center(
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(16),
-                child: Container(
+                child: AnimatedContainer(
+                  duration: const Duration(milliseconds: 250),
+                  curve: Curves.easeOut,
                   height: 260,
                   width: double.infinity,
                   decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                      colors: [
-                        Colors.pink.shade100,
-                        Colors.pinkAccent.shade100,
-                      ],
-                    ),
+                    color: _isImageLoaded ? Colors.white : Colors.transparent,
                     borderRadius: BorderRadius.circular(16),
                   ),
-                  child: (product.imagenUrl != null && product.imagenUrl!.isNotEmpty)
-                  ? Image.network(
-                          product.imagenUrl!,
-                          fit: BoxFit.cover,
-                          errorBuilder: (context, error, stackTrace) => const Center(
-                            child: Text(
-                              '💋',
-                              style: TextStyle(
-                                fontSize: 64,
-                                color: AppColors.primaryPink,
+                  child: (product.imagenUrl != null &&
+                          product.imagenUrl!.isNotEmpty)
+                      ? Stack(
+                          children: [
+                            // Imagen (abajo)
+                            Positioned.fill(
+                              child: Image.network(
+                                product.imagenUrl!,
+                                fit: BoxFit.fitHeight,
+                                // frameBuilder nos dice cuando llega el primer frame (imagen visible)
+                                frameBuilder:
+                                    (context, child, frame, wasSynchronouslyLoaded) {
+                                  if (wasSynchronouslyLoaded) {
+                                    // imagen desde cache: marcar como cargada
+                                    _markImageLoaded();
+                                    return child;
+                                  }
+                                  if (frame == null) {
+                                    // aún no hay frame -> no retornamos el child para que el shimmer se vea
+                                    return const SizedBox.shrink();
+                                  } else {
+                                    // primer frame recibido -> marcar y mostrar imagen
+                                    _markImageLoaded();
+                                    return child;
+                                  }
+                                },
+                                errorBuilder:
+                                    (context, error, stackTrace) {
+                                  // marcar como "cargada" para quitar el shimmer y mostrar fallback
+                                  _markImageLoaded();
+                                  return const Center(
+                                    child: Text(
+                                      '💋',
+                                      style: TextStyle(
+                                        fontSize: 64,
+                                        color: AppColors.primaryPink,
+                                      ),
+                                    ),
+                                  );
+                                },
                               ),
                             ),
-                          ),
+
+                            // Shimmer (encima) — visible solo mientras no esté cargada
+                            if (!_isImageLoaded)
+                              Positioned.fill(
+                                child: Shimmer.fromColors(
+                                  baseColor: Colors.grey.shade300,
+                                  highlightColor: Colors.grey.shade100,
+                                  child: Container(
+                                    // mantener el mismo tamaño para evitar saltos
+                                    height: 260,
+                                    width: double.infinity,
+                                    color: Colors.grey.shade300,
+                                  ),
+                                ),
+                              ),
+                          ],
                         )
+                      // fallback cuando no hay URL
                       : const Center(
                           child: Text(
                             '💋',
@@ -76,9 +152,35 @@ class ProductDetailView extends StatelessWidget {
                 ),
               ),
             ),
-            const SizedBox(height: 20),
 
-            // Badge de categoría
+            const SizedBox(height: 12),
+
+            // Nombre y precio
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  product.nombreProducto,
+                  style: const TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xFF1F2937),
+                  ),
+                ),
+                Text(
+                  formatPriceCOP(product.precioProducto),
+                  style: const TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.primaryPink,
+                  ),
+                ),
+              ],
+            ),
+
+            const SizedBox(height: 10),
+
+            // Badge categoría
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
               decoration: BoxDecoration(
@@ -94,33 +196,7 @@ class ProductDetailView extends StatelessWidget {
                 ),
               ),
             ),
-            const SizedBox(height: 12),
-
-            // Nombre del producto
-            Text(
-              product.nombreProducto,
-              style: const TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: Color(0xFF1F2937),
-              ),
-            ),
-            const SizedBox(height: 8),
-
-            // Precio
-            Text(
-              formatPriceCOP(product.precioProducto),
-              style: AppTextStyles.price.copyWith(
-                color: Colors.pinkAccent,
-                fontWeight: FontWeight.bold,
-                fontSize: 20,
-              ),
-              overflow: TextOverflow.ellipsis,
-              maxLines: 1,
-              softWrap: false,
-            ),
-            const SizedBox(height: 20),
-
+            
             // Descripción
             Text(
               product.descripcion,
@@ -130,28 +206,45 @@ class ProductDetailView extends StatelessWidget {
                 height: 1.4,
               ),
             ),
-            const SizedBox(height: 80), // Espacio para los botones fijos
+            const SizedBox(height: 80),
           ],
         ),
       ),
 
+      // Botones
       bottomNavigationBar: SafeArea(
         minimum: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
+        child: Row(
           children: [
             SizedBox(
-              width: double.infinity,
+              width: 56,
+              height: 56,
+              child: OutlinedButton(
+                onPressed: () {},
+                style: OutlinedButton.styleFrom(
+                  side:
+                      const BorderSide(color: AppColors.primaryPink, width: 1.5),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  padding: EdgeInsets.zero,
+                ),
+                child: const Icon(
+                  Icons.add_shopping_cart,
+                  color: AppColors.primaryPink,
+                ),
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
               child: ElevatedButton(
-                onPressed: () {
-                  // TODO: lógica de "Comprar ahora"
-                },
+                onPressed: () {},
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.primaryPink,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  padding: const EdgeInsets.symmetric(vertical: 23),
                 ),
                 child: const Text(
                   "Comprar ahora",
@@ -159,30 +252,6 @@ class ProductDetailView extends StatelessWidget {
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
                     color: Colors.white,
-                  ),
-                ),
-              ),
-            ),
-            const SizedBox(height: 8),
-            SizedBox(
-              width: double.infinity,
-              child: OutlinedButton(
-                onPressed: () {
-                  // TODO: lógica de "Agregar al carrito"
-                },
-                style: OutlinedButton.styleFrom(
-                  side: const BorderSide(color: AppColors.primaryPink, width: 1.5),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                ),
-                child: const Text(
-                  "Agregar al carrito",
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: AppColors.primaryPink,
-                    fontWeight: FontWeight.bold,
                   ),
                 ),
               ),
