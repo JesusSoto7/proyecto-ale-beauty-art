@@ -289,15 +289,15 @@ class InitialView extends StatelessWidget {
                         ),
                       ),
                     ),
-                    // 👤 Perfil
-                                        GestureDetector(
+                    //  Perfil
+                    GestureDetector(
                       child: Material(
                         color: Colors.transparent, // Quita el fondo fijo
                         shape: const CircleBorder(),
                         child: InkWell(
                           customBorder: const CircleBorder(),
                           splashColor: AppColors.primaryPink.withOpacity(0.1), // Ripple
-                          radius: 25, // 📏 Radio más grande para cubrir ícono + texto
+                          radius: 25, //  Radio más grande para cubrir ícono + texto
                           onTap: () {
                             context.read<NavigationBloc>().add(NavigationTabChanged(3));
                             context.read<AuthBloc>();

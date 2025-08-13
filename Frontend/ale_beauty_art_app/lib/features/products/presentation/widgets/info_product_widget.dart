@@ -1,3 +1,4 @@
+import 'package:ale_beauty_art_app/core/utils/formatters.dart';
 import 'package:flutter/material.dart';
 import 'package:ale_beauty_art_app/models/product.dart';
 import 'package:ale_beauty_art_app/styles/text_styles.dart';
@@ -67,7 +68,7 @@ class InfoProduct extends StatelessWidget {
                                 ),
                         ),
                       ),
-
+                      
                       // Botón de favoritos
                       Positioned(
                         top: 4,
@@ -109,7 +110,7 @@ class InfoProduct extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.only(left: 8, top: 3, bottom: 8),
                   child: Text(
-                    '\$${product.precioProducto}',
+                    formatPriceCOP(product.precioProducto),
                     style: AppTextStyles.price.copyWith(
                       color: Colors.pinkAccent,
                       fontWeight: FontWeight.bold,
