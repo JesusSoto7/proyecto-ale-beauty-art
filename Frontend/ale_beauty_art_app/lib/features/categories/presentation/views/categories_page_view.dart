@@ -14,7 +14,7 @@ class CategoriesPageView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      backgroundColor: AppColors.background,
+      backgroundColor: const Color.fromARGB(255, 247, 246, 246),
       body: BlocBuilder<CategoriesBloc, CategoriesState>(
         builder: (context, state) {
           if (state is CategoriesLoadInProgress) {

@@ -7,7 +7,7 @@ class LoadingView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: const Color.fromARGB(255, 247, 246, 246),
       body: Center(
         child: Column(
           mainAxisSize: MainAxisSize.min, // Para que no ocupe toda la pantalla
@@ -16,13 +16,6 @@ class LoadingView extends StatelessWidget {
               color: AppColors.accentPink,
             ),
             const SizedBox(height: 16), // Espacio vertical entre el indicador y el texto
-            Text(
-              'Cargando...',
-              style: TextStyle(
-                fontSize: 18,
-                color: AppColors.textPrimary,
-              ),
-            ),
           ],
         ),
       ),
