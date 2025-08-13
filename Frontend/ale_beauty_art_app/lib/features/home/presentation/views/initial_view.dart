@@ -358,13 +358,21 @@ class InitialView extends StatelessWidget {
           ),
 
           const SizedBox(height: 20),
-          Row( mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-            Text(
-              'Categorias',
-              style: AppTextStyles.title.copyWith(fontSize: 20),
-            ),
-            Text('Ver Más', style: AppTextStyles.subtitle)
-          ],),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'Categorias',
+                style: AppTextStyles.title.copyWith(fontSize: 20),
+              ),
+              GestureDetector(
+                onTap: () {
+                  context.read<NavigationBloc>().add(NavigationTabChanged(2));
+                },
+                child: Text('Ver Más', style: AppTextStyles.subtitle),
+              ),
+            ],
+          ),
           const SizedBox(height: 20),
           CategoriesRowView(),
           const SizedBox(height: 20), // espacio entre carrusel y sección destacada

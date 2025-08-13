@@ -118,9 +118,9 @@ class _LoginPageState extends State<LoginPage> {
                           children: [
                             const Center(
                               child: Text(
-                                "Log In",
+                                "Iniciar Sesión",
                                 style: TextStyle(
-                                  fontSize: 38,
+                                  fontSize: 30,
                                   fontWeight: FontWeight.bold,
                                   color: Color.fromARGB(255, 227, 184, 255),
                                   letterSpacing: 1.2,
@@ -133,7 +133,7 @@ class _LoginPageState extends State<LoginPage> {
                             TextField(
                               controller: _emailController,
                               decoration: InputDecoration(
-                                hintText: "Enter email",
+                                hintText: "Ingresa tu email",
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(12),
                                 ),
@@ -145,7 +145,7 @@ class _LoginPageState extends State<LoginPage> {
                               controller: _passwordController,
                               obscureText: obscurePassword,
                               decoration: InputDecoration(
-                                hintText: "Password",
+                                hintText: "Contraseña",
                                 suffixIcon: IconButton(
                                   icon: Icon(
                                     obscurePassword ? Icons.visibility_off : Icons.visibility,
@@ -176,12 +176,12 @@ class _LoginPageState extends State<LoginPage> {
                                         });
                                       },
                                     ),
-                                    const Text("Remember me"),
+                                    const Text("Recordarme"),
                                   ],
                                 ),
                                 TextButton(
                                   onPressed: () {},
-                                  child: const Text("Forgot password?"),
+                                  child: const Text("¿Olvidaste tu contraseña?"),
                                 ),
                               ],
                             ),
@@ -213,7 +213,7 @@ class _LoginPageState extends State<LoginPage> {
                                     child: state is AuthInProgress
                                         ? const CircularProgressIndicator(color: Colors.white)
                                         : const Text(
-                                            "Log In",
+                                            "Iniciar Sesión",
                                             style: TextStyle(
                                               fontSize: 18,
                                               fontWeight: FontWeight.bold,
@@ -225,25 +225,13 @@ class _LoginPageState extends State<LoginPage> {
                               ),
                             ),
                             const SizedBox(height: 20),
-                            // Social login
-                            const Center(child: Text("Sign in with")),
-                            const SizedBox(height: 12),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                _socialButton(FontAwesomeIcons.facebookF, Colors.blue),
-                                const SizedBox(width: 16),
-                                _socialButton(FontAwesomeIcons.google, Colors.red),
-                                const SizedBox(width: 16),
-                                _socialButton(FontAwesomeIcons.apple, Colors.black),
-                              ],
-                            ),
+                            
                             const SizedBox(height: 20),
                             // Link registro
                             Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                const Text("Don't have an account? "),
+                                const Text("¿no tienes una cuenta? "),
                                 GestureDetector(
                                   onTap: () {
                                     Navigator.push(
@@ -252,9 +240,9 @@ class _LoginPageState extends State<LoginPage> {
                                     );
                                   },
                                   child: const Text(
-                                    "Sign Up",
+                                    "Registrate",
                                     style: TextStyle(
-                                      color: Colors.blue,
+                                      color: Color.fromARGB(255, 255, 167, 251),
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
