@@ -1,3 +1,4 @@
+import 'package:ale_beauty_art_app/core/utils/formatters.dart';
 import 'package:ale_beauty_art_app/core/views/loading_view.dart';
 import 'package:ale_beauty_art_app/features/products/presentation/bloc/product_bloc.dart';
 import 'package:ale_beauty_art_app/features/products/presentation/views/products_Detail_View.dart';
@@ -155,12 +156,15 @@ class _ProductsCarouselState extends State<ProductsCarousel> {
                                       ),
                                       const SizedBox(height: 2),
                                       Text(
-                                        '\$${product.precioProducto.toStringAsFixed(2)}',
+                                        formatPriceCOP(product.precioProducto),
                                         style: AppTextStyles.price.copyWith(
                                           color: Colors.pinkAccent,
                                           fontWeight: FontWeight.bold,
                                           fontSize: 14,
                                         ),
+                                        overflow: TextOverflow.ellipsis,
+                                        maxLines: 1,
+                                        softWrap: false,
                                       ),
                                     ],
                                   ),

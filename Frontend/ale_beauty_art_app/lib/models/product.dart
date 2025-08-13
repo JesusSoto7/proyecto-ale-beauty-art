@@ -3,7 +3,7 @@ import 'package:equatable/equatable.dart';
 class Product extends Equatable {
   final int id;
   final String nombreProducto;
-  final double precioProducto;
+  final int precioProducto;
   final String descripcion;
   final int categoryId;
   final int stock;
@@ -27,7 +27,7 @@ class Product extends Equatable {
       nombreProducto: json['nombre_producto'],
       descripcion: json['descripcion'],
       categoryId: json['category_id'],
-      precioProducto: (json['precio_producto'] as num).toDouble(),
+      precioProducto: json['precio_producto'],
       stock: json['stock'],
       nombreCategoria: json['category']['nombre_categoria'],
       imagenUrl: json['imagen_url']

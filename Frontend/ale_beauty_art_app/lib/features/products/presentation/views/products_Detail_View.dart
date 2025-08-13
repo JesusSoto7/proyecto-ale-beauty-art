@@ -1,4 +1,6 @@
 
+import 'package:ale_beauty_art_app/core/utils/formatters.dart';
+import 'package:ale_beauty_art_app/styles/text_styles.dart';
 import 'package:flutter/material.dart';
 import '../../../../models/product.dart';
 import 'package:ale_beauty_art_app/styles/colors.dart';
@@ -107,12 +109,15 @@ class ProductDetailView extends StatelessWidget {
 
             // Precio
             Text(
-              '\$${product.precioProducto}',
-              style: const TextStyle(
-                fontSize: 22,
+              formatPriceCOP(product.precioProducto),
+              style: AppTextStyles.price.copyWith(
+                color: Colors.pinkAccent,
                 fontWeight: FontWeight.bold,
-                color: AppColors.primaryPink,
+                fontSize: 20,
               ),
+              overflow: TextOverflow.ellipsis,
+              maxLines: 1,
+              softWrap: false,
             ),
             const SizedBox(height: 20),
 

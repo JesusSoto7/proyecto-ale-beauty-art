@@ -1,3 +1,4 @@
+import 'package:ale_beauty_art_app/core/utils/formatters.dart';
 import 'package:flutter/material.dart';
 import 'package:ale_beauty_art_app/models/product.dart';
 import 'package:ale_beauty_art_app/styles/text_styles.dart';
@@ -95,12 +96,15 @@ class InfoProduct extends StatelessWidget {
                             ),
                             const SizedBox(height: 2),
                             Text(
-                              '\$${product.precioProducto.toStringAsFixed(2)}',
+                              formatPriceCOP(product.precioProducto),
                               style: AppTextStyles.price.copyWith(
                                 color: Colors.pinkAccent,
                                 fontWeight: FontWeight.bold,
                                 fontSize: 14,
                               ),
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: 1,
+                              softWrap: false,
                             ),
                           ],
                         ),
