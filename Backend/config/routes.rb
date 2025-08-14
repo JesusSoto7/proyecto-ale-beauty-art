@@ -25,7 +25,7 @@ Rails.application.routes.draw do
  # Quitar producto
        get "inicio", to: "inicio#index"
       # Categorías y productos  
-      resources :products, only: [:index, :show]
+      resources :products
       resources :categories, only: [:index, :show]
 
       resources :shipping_addresses do

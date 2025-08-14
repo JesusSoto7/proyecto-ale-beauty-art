@@ -1,19 +1,17 @@
-
-
 import React, { useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import LoginForm from './components/LoginForm';
 import Register from './components/RegisterForm';
-import Inicio from './components/Inicio';
+import Inicio from './pages/inicio/Inicio';
 import LayoutInicio from './components/Layout';
 import Cart from './components/Cart';
 import ShippingAddress from './components/ShippingAddress';
 import ShippingAddressForm from './components/ShippingAddressForm';
-import Dashboard from './pages/Dashboard';
+import Dashboard from './pages/home/Dashboard';
 import DashboardLayout from './components/DashboardLayout';
-import Productos from './pages/Productos';
-import Categorias from './pages/Categorias';
-import Carousel from './pages/Carousel';
+import ProductTable from './pages/home/Productos';
+import Categorias from './pages/home/Categorias';
+import Carousel from './pages/home/Carousel';
 
 
 import './assets/stylesheets/RegisterForm.css';
@@ -57,7 +55,7 @@ function App() {
         {/* O incluso: <Route index element={<DashboardMain />} /> */}
         <Route path="/home" element={<DashboardLayout />}>
           <Route index element={<Dashboard />} />
-          <Route path="productos" element={<Productos />} />
+          <Route path="productos" element={<ProductTable />} />
           <Route path="categorias" element={<Categorias />} />
           <Route path="carousel" element={<Carousel />} />
         </Route>
