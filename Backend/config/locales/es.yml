@@ -1,0 +1,126 @@
+# Files in the config/locales directory are used for internationalization and
+# are automatically loaded by Rails. If you want to use locales other than
+# English, add the necessary files in this directory.
+#
+# To use the locales, use `I18n.t`:
+#
+#     I18n.t "hello"
+#
+# In views, this is aliased to just `t`:
+#
+#     <%= t("hello") %>
+#
+# To use a different locale, set it with `I18n.locale`:
+#
+#     I18n.locale = :es
+#
+# This would use the information in config/locales/es.yml.
+#
+# To learn more about the API, please read the Rails Internationalization guide
+# at https://guides.rubyonrails.org/i18n.html.
+#
+# Be aware that YAML interprets the following case-insensitive strings as
+# booleans: `true`, `false`, `on`, `off`, `yes`, `no`. Therefore, these strings
+# must be quoted to be interpreted as strings. For example:
+#
+#     en:
+#       "yes": yup
+#       enabled: "ON"
+
+es:
+  activerecord:
+    format: "%{attribute} %{message}"
+    attributes:
+      user:
+        email: "Correo electrónico"
+        password: "Contraseña"
+        password_confirmation: "Confirmar contraseña"
+        remember_me: "Recordarme"
+    errors:
+      models:
+        user:
+          attributes:
+            email:
+              blank: " no puede estar en blanco"
+              format: "Correo electrónico debe ser en formato valido"
+            password:
+              blank: "Contraseña no puede estar en blanco"
+              confirmation: "Contraseña y confirmación no coinciden"
+            password_confirmation:
+              blank: "Confirmación de contraseña no puede estar en blanco"
+  app:
+    title: "Ale Beauty Art"
+    logo_alt: "Logo Ale Beauty Art"
+  menu:
+    home: "Inicio"
+    products: "Productos"
+    categories: "Categorías"
+    my_purchases: "Mis compras"
+    favorites: "Favoritos"
+    settings: "Configuración"
+  search:
+    placeholder: "Buscar productos..." 
+  profile:
+    my_profile: "Mi Perfil"
+    my_addresses: "Mis direcciones"
+  auth:
+    login: "Iniciar sesión"
+    logout: "Cerrar sesión"
+  favorites:
+    title: "Mis Favoritos"
+  footer:
+    info: "Información"
+    about_us: "Sobre nosotros"
+    terms: "Términos y condiciones"
+    privacy: "Política de privacidad"
+    contact: "Contacto"
+    follow_us: "Síguenos"
+    copyright: "Todos los derechos reservados"
+  home:
+    no_carousel_images: "No hay imágenes de carrusel disponibles por el momento."
+    no_products: "No hay productos disponibles por el momento."
+    no_categories: "No hay categorías disponibles por el momento."
+    novedades_maquillaje: "Novedades Maquillaje"
+    categorias: "Categorías"
+    hello: "hola"
+    ale_beauty_art: "Ale beauty art"
+    menu:
+      home: "Inicio"
+      products: "Productos"
+      view_products: "Ver Productos"
+      add_product: "Agregar Producto"
+      categories: "Categorías"
+      view_categories: "Ver Categorías"
+      add_category: "Agregar Categoría"
+      home_section: "Inicio"
+      carousel: "Carousel"
+    logout: "Cerrar sesión"
+    welcome: "Bienvenido"
+
+  hello: "Hola"
+  bienvenido: "Bienvenido a la aplicación"
+  idiomas:
+    es: "Español"
+    en: "Inglés"
+  overview:
+    titulo: "Resumen"
+    productos: "Productos"
+    categorias: "Categorías"
+    banners: "Banners"
+    tienda: "Tienda"
+    title: "Home"
+    carousel:
+    previous: "Anterior"
+    next: "Siguiente"
+    no_images: "No hay imágenes de carrusel disponibles por el momento."
+    slide_number: "Diapositiva %{number}"
+    slide_alt: "Imagen del carrusel %{number}"
+  products:
+    new_makeup: "Novedades Maquillaje"
+    image_alt: "Producto Maquillaje"
+    no_image: "Sin imagen"
+    add_to_cart: "Añadir al carrito"
+    no_products: "No hay productos disponibles por el momento."
+  categories:
+    title: "Categorías"
+    no_categories: "No hay categorías disponibles por el momento."  

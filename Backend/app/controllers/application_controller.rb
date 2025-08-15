@@ -5,7 +5,8 @@ class ApplicationController < ActionController::Base
   before_action :configure_permitted_parameters, if: :devise_controller?
   helper_method :current_cart
   helper_method :current_order
-
+  before_action :set_locale
+    protect_from_forgery with: :exception
   protected
 
   def configure_permitted_parameters
@@ -58,5 +59,18 @@ class ApplicationController < ActionController::Base
     order = Order.create(user: current_user.presence, status: :pendiente)
     session[:order_id] = order.id
     order
+  end
+  
+   def set_locale
+  I18n.locale = params[:locale] || I18n.default_locale
+
+  if params[:locale].blank?
+    redirect_to url_for(locale: I18n.locale) and return
+  end
+end
+
+
+  def default_url_options
+    { locale: I18n.locale }
   end
 end

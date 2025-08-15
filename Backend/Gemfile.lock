@@ -123,6 +123,7 @@ GEM
     ffi (1.17.2-arm-linux-gnu)
     ffi (1.17.2-arm-linux-musl)
     ffi (1.17.2-arm64-darwin)
+    ffi (1.17.2-x64-mingw-ucrt)
     ffi (1.17.2-x86_64-darwin)
     ffi (1.17.2-x86_64-linux-gnu)
     ffi (1.17.2-x86_64-linux-musl)
@@ -220,6 +221,8 @@ GEM
       racc (~> 1.4)
     nokogiri (1.18.3-arm64-darwin)
       racc (~> 1.4)
+    nokogiri (1.18.3-x64-mingw-ucrt)
+      racc (~> 1.4)
     nokogiri (1.18.3-x86_64-darwin)
       racc (~> 1.4)
     nokogiri (1.18.3-x86_64-linux-gnu)
@@ -287,6 +290,9 @@ GEM
     rails-html-sanitizer (1.6.2)
       loofah (~> 2.21)
       nokogiri (>= 1.15.7, != 1.16.7, != 1.16.6, != 1.16.5, != 1.16.4, != 1.16.3, != 1.16.2, != 1.16.1, != 1.16.0.rc1, != 1.16.0)
+    rails-i18n (8.0.1)
+      i18n (>= 0.7, < 2)
+      railties (>= 8.0.0, < 9)
     railties (8.0.1)
       actionpack (= 8.0.1)
       activesupport (= 8.0.1)
@@ -391,6 +397,8 @@ GEM
       railties (>= 6.0.0)
     tzinfo (2.0.6)
       concurrent-ruby (~> 1.0)
+    tzinfo-data (1.2025.2)
+      tzinfo (>= 1.0.0)
     unicode-display_width (3.1.4)
       unicode-emoji (~> 4.0, >= 4.0.4)
     unicode-emoji (4.0.4)
@@ -419,6 +427,7 @@ PLATFORMS
   arm-linux-gnu
   arm-linux-musl
   arm64-darwin
+  x64-mingw-ucrt
   x86_64-darwin
   x86_64-linux
   x86_64-linux-gnu
@@ -446,6 +455,7 @@ DEPENDENCIES
   puma (>= 5.0)
   rack-cors
   rails (~> 8.0.1)
+  rails-i18n
   rolify
   rubocop-rails-omakase
   selenium-webdriver

@@ -23,6 +23,7 @@ ENV RAILS_ENV="development" \
     PATH="/usr/local/bundle/bin:$PATH"
 
 COPY Gemfile Gemfile.lock ./
+RUN gem install bundler -v "~> 2.6"
 RUN bundle install
 
 COPY . .

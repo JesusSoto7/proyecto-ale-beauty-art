@@ -4,8 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Inicio de sesión</title>
+
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+
     <link rel="stylesheet" href="app/assets/stylesheets/sign_in.css">
     <%= stylesheet_link_tag "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" %>
+    <%= hidden_field_tag :authenticity_token, form_authenticity_token %>
 
   </head>
 
@@ -15,6 +20,8 @@
       <h2>Iniciar sesión</h2>
 
       <%= form_for(resource, as: resource_name, url: session_path(resource_name), html: {class: 'form'}) do |f| %>
+        <%= hidden_field_tag :authenticity_token, form_authenticity_token %>
+
         <div class="field">
           <%= f.label :email %>
           <%= f.email_field :email, autofocus: true, autocomplete: "email" %>
