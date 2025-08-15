@@ -11,15 +11,35 @@ Rails.application.routes.draw do
       namespace :auth do
         post 'sign_in', to: 'sessions#create'
         post 'sign_up', to: 'registrations#create'
+        delete 'sign_out', to: 'sessions#logout'
       end
       # Carrito
-      get 'cart', to: 'cart#show'                    # Ver carrito
-      post 'cart/add', to: 'cart#add_product'        # Agregar producto
-      delete 'cart/remove', to: 'cart#remove_product' # Quitar producto
+      get "cart", to: "cart#show"
+      post 'cart/add_product', to: 'cart#add_product'        
+      delete 'cart/remove_product', to: 'cart#remove_product'
 
-      # Categorías y productos
-      resources :products, only: [:index, :show]
+      get    'carousel', to: 'carousel#index'
+      patch  'carousel', to: 'carousel#update'
+      delete 'carousel/:id', to: 'carousel#destroy'
+
+ # Quitar producto
+       get "inicio", to: "inicio#index"
+      # Categorías y productos  
+      resources :products
       resources :categories, only: [:index, :show]
+
+      resources :shipping_addresses do
+        member do
+          patch :set_predeterminada
+        end
+      end
+
+      get "/me", to: "users#me"
+      get 'locations/departments', to: 'locations#departments'
+      get 'locations/municipalities/:department_id', to: 'locations#municipalities'
+      get 'locations/neighborhoods/:municipality_id', to: 'locations#neighborhoods'
+
+
     end
   end
 

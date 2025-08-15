@@ -4,6 +4,7 @@ module Api
   module V1
     module Auth
       class RegistrationsController < Api::V1::BaseController
+        skip_before_action :authorize_request, only: [:create]
         def create
           user = User.new(sign_up_params) 
           if user.save
@@ -34,15 +35,9 @@ module Api
         private
 
         def sign_up_params
-          params.permit(
-            :email,
-            :password,
-            :password_confirmation,
-            :nombre,
-            :apellido,
-            :telefono
-          )
+          params.require(:registration).permit(:email, :password, :password_confirmation, :nombre, :apellido)
         end
+
       end
     end
   end

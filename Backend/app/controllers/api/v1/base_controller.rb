@@ -1,15 +1,22 @@
 module Api
   module V1
     class BaseController < ActionController::API
-      def authorize_request
-        header = request.headers['Authorization']
-        token = header.split(' ').last if header
-        decoded = JsonWebToken.decode(token)
-        @current_user = User.find_by(id: decoded[:user_id]) if decoded
-        render json: { error: 'Not Authorized' }, status: :unauthorized unless @current_user
-      end
-      
+      before_action :authorize_request
+
       private
+      
+    def authorize_request
+      header = request.headers['Authorization']
+      Rails.logger.info "Authorization header: #{header.inspect}"
+      token = header.split(' ').last if header
+      Rails.logger.info "Token: #{token.inspect}"
+      decoded = JsonWebToken.decode(token) rescue nil
+      @current_user = User.find_by(id: decoded[:user_id]) if decoded
+      unless @current_user
+        Rails.logger.info "Unauthorized access"
+        render json: { error: 'Not Authorized' }, status: :unauthorized
+      end
+    end
 
       def current_user
         @current_user
@@ -17,5 +24,3 @@ module Api
     end
   end
 end
-
-

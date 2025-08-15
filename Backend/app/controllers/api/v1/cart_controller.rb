@@ -1,81 +1,58 @@
 module Api
   module V1
-      class CartController < BaseController
-      before_action :authorize_request
+    class CartController <  Api::V1::BaseController
       def show
-        cart = current_user&.cart
-
-        if cart
-          render json: {
-            mensaje: "Carrito cargado correctamente",
-            carrito: cart.cart_products.includes(:product).map do |cart_product|
-              {
-                id: cart_product.id,
-                product_id: cart_product.product.id,
-                nombre_producto: cart_product.product.nombre_producto,
-                precio_producto: cart_product.product.precio_producto,
-                descripcion: cart_product.product.descripcion,
-                cantidad: cart_product.cantidad,
-                subtotal: cart_product.product.precio_producto * cart_product.cantidad
-              }
-            end
-          }, status: :ok
-        else
-          render json: { mensaje: "El usuario no tiene un carrito aún" }, status: :ok
-        end
+        cart = current_user.cart || current_user.create_cart
+        render json: cart_json(cart)
       end
 
-
       def add_product
-        cart = current_user.cart || Cart.create(user: current_user)
-        product = Product.find_by(id: params[:product_id])
-        cantidad = params[:cantidad].to_i
+        cart = current_user.cart || current_user.create_cart
+        product = Product.find(params[:product_id])
 
-        if product.nil?
-          render json: { error: "Producto no encontrado" }, status: :not_found
-          return
-        end
-
-        cart_product = cart.cart_products.find_or_initialize_by(product_id: product.id)
-        cart_product.cantidad = cart_product.cantidad.to_i + cantidad
+        cart_product = cart.cart_products.find_or_initialize_by(product: product)
+        cart_product.cantidad ||= 0
+        cart_product.cantidad += 1
 
         if cart_product.save
-          carrito = cart.cart_products.includes(:product).map do |item|
-            {
-              id: item.id,
-              product_id: item.product.id,
-              nombre_producto: item.product.nombre_producto,
-              precio_producto: item.product.precio_producto,
-              descripcion: item.product.descripcion,
-              cantidad: item.cantidad,
-              subtotal: item.cantidad * item.product.precio_producto
-            }
-          end
-
-          render json: {
-            mensaje: "Producto agregado correctamente",
-            carrito: carrito
-          }, status: :ok
+          render json: { message: "Producto añadido", cart: cart_json(cart) }
         else
-          render json: { error: "No se pudo agregar el producto" }, status: :unprocessable_entity
+          render json: { errors: cart_product.errors.full_messages }, status: :unprocessable_entity
         end
       end
 
       def remove_product
-        cart = current_user&.cart
+        cart = current_user.cart
+        return render json: { error: "Carrito no encontrado" }, status: :not_found unless cart
 
-        if cart
-          cart_product = cart.cart_products.find_by(product_id: params[:product_id])
+        cart_product = cart.cart_products.find_by(product_id: params[:product_id])
+        return render json: { error: "Producto no encontrado en el carrito" }, status: :not_found unless cart_product
 
-          if cart_product
-            cart_product.destroy
-            render json: { mensaje: "Producto eliminado del carrito" }, status: :ok
-          else
-            render json: { error: "Producto no encontrado en el carrito" }, status: :not_found
-          end
+        if cart_product.cantidad > 1
+          cart_product.cantidad -= 1
+          cart_product.save
         else
-          render json: { error: "El usuario no tiene un carrito" }, status: :not_found
+          cart_product.destroy
         end
+
+        render json: { message: "Producto eliminado", cart: cart_json(cart) }
+      end
+
+      private
+
+      def cart_json(cart)
+        {
+          id: cart.id,
+          products: cart.cart_products.includes(:product).map do |cp|
+            {
+              product_id: cp.product.id,
+              nombre_producto: cp.product.nombre_producto,
+              cantidad: cp.cantidad,
+              precio_producto: cp.product.precio_producto,
+              imagen_url: cp.product.imagen.attached? ? url_for(cp.product.imagen) : nil
+            }
+          end
+        }
       end
     end
   end
