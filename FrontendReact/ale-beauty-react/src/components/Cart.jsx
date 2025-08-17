@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from 'react-router-dom';
 
 function Cart() {
+  const navigate = useNavigate();
   const [cart, setCart] = useState(null);
   const token = localStorage.getItem("token");
 
@@ -112,7 +114,7 @@ function Cart() {
             ${(total - total * 0.1 + 50).toFixed(2)}
           </span>
         </div>
-        <button className="checkout-btn">Comprar</button>
+        <button onClick={() => navigate("/checkout/shippingAddress")} className="checkout-btn">Comprar</button>
       </div>
     </div>
   );

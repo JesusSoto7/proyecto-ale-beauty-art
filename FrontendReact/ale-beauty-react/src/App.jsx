@@ -21,6 +21,8 @@ import './assets/stylesheets/Footer.css'
 import './assets/stylesheets/Cart.css'
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
+import CheckoutLayout from './components/CheckoutLayout';
+import Checkout from './pages/inicio/Checkout';
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = React.useState(() => {
@@ -38,6 +40,13 @@ function App() {
           />
         </Route>
 
+        <Route element={<CheckoutLayout />}>
+          <Route
+            path='/checkout/shippingAddress'
+            element={<Checkout />}
+          />
+        </Route>
+
         <Route element={<LayoutInicio />}>
           <Route
             path='/direcciones'
@@ -52,7 +61,6 @@ function App() {
           element={<LoginForm onLogin={() => setIsLoggedIn(true)} />}
         />
 
-        {/* O incluso: <Route index element={<DashboardMain />} /> */}
         <Route path="/home" element={<DashboardLayout />}>
           <Route index element={<Dashboard />} />
           <Route path="productos" element={<ProductTable />} />
@@ -66,7 +74,6 @@ function App() {
           element={<Register />}
         />
 
-        {/* Redirigir ruta raíz al login */}
         <Route
           path="/"
           element={<Navigate to="/login" />}

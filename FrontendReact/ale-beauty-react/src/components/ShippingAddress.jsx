@@ -1,6 +1,15 @@
 import React, { useState, useEffect } from "react";
-import ShippingAddressForm from "./ShippingAddressForm"; // tu componente formulario
+import { pink } from '@mui/material/colors';
+import Checkbox from '@mui/material/Checkbox';
+import ShippingAddressForm from "./ShippingAddressForm";
 import { useNavigate } from "react-router-dom";
+import '../assets/stylesheets/ShippingAddresses.css'
+import FormControlLabel from "@mui/material/FormControlLabel";
+
+const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
+
+
+
 
 
 function ShippingAddresses() {
@@ -49,6 +58,43 @@ function ShippingAddresses() {
       });
   }, [token]);
 
+  const handleSetPredeterminada = async (id) => {
+
+    setAddresses((prev) =>
+      prev.map((addr) =>
+        addr.id === id
+          ? { ...addr, predeterminada: true }
+          : { ...addr, predeterminada: false }
+      )
+    );
+
+    try {
+      const res = await fetch(`https://localhost:4000/api/v1/shipping_addresses/${id}/set_predeterminada`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!res.ok) throw new Error("Error al actualizar predeterminada");
+
+    } catch (error) {
+      console.error(error);
+      alert("No se pudo actualizar la direccion predeterminada");
+
+
+      setAddresses((prev) =>
+        prev.map((addr) =>
+          addr.id === id
+            ? { ...addr, predeterminada: false }
+            : addr
+        )
+      );
+    }
+  }
+
+
   const handleFormSuccess = (savedAddress, isEditing) => {
     if (isEditing) {
       // Si era edición, actualizamos la lista
@@ -67,7 +113,7 @@ function ShippingAddresses() {
     return <p>Cargando direcciones...</p>;
   }
   return (
-    <div>
+    <div className="shipping-container">
       {showForm ? (
         <div>
           <h2>Crear nueva dirección</h2>
@@ -76,10 +122,12 @@ function ShippingAddresses() {
             onSuccess={handleFormSuccess}
             initialData={editAddress}
           />
-          <button onClick={() => {
-            setShowForm(false);
-            setEditAddress(null);
-          }}
+          <button
+            className="btn btn-cancel"
+            onClick={() => {
+              setShowForm(false);
+              setEditAddress(null);
+            }}
           >Cancelar</button>
         </div>
       ) : (
@@ -88,19 +136,43 @@ function ShippingAddresses() {
           {addresses.length === 0 ? (
             <p>No tienes direcciones guardadas.</p>
           ) : (
-            <ul>
+            <ul className="address-list">
               {addresses.map(addr => (
-                <li key={addr.id}>
-                  {addr.nombre} {addr.apellido} — {addr.direccion} — Barrio: {addr.neighborhood.nombre}
-                  {/* Muestra más info si quieres */}
-                  <button
-                    onClick={() => {
-                      setEditAddress(addr);
-                      setShowForm(true);
-                    }}
-                  >
-                    Editar
-                  </button>
+                <li key={addr.id} className="address-card">
+                  <div className="address-info">
+                    <strong>{addr.nombre} {addr.apellido}</strong>
+                    <br />
+                    {addr.direccion} — Barrio: {addr.neighborhood.nombre}
+                  </div>
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        {...label}
+                        checked={addr.predeterminada}
+                        onChange={() => handleSetPredeterminada(addr.id)}
+                        sx={{
+                          color: pink[800],
+                          '&.Mui-checked': {
+                            color: pink[600],
+                          },
+                        }}
+                      />
+                    }
+                    label="Predeterminada"
+                  />
+
+                  <div className="button-group">
+                    <button
+                      className="btn btn-secondary"
+                      onClick={() => {
+                        setEditAddress(addr);
+                        setShowForm(true);
+                      }}
+                    >
+                      Editar
+                    </button>
+
+                  </div>
                 </li>
               ))}
             </ul>
