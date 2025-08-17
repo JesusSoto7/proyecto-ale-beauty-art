@@ -42,6 +42,21 @@ class Api::V1::ShippingAddressesController < Api::V1::BaseController
     end
   end
 
+  def predeterminada
+    address = current_user.shipping_addresses.find_by(predeterminada: true)
+    if address
+      render json: address.as_json(include: {
+        neighborhood: {
+          include: {
+            municipality: { include: :department }
+          }
+        }
+      }), status: :ok
+    else
+      render json: { error: "No tienes dirección predeterminada" }, status: :not_found  
+    end
+  end
+
   def set_predeterminada
     current_user.shipping_addresses.update_all(predeterminada: false)
     @shipping_address.update(predeterminada: true)

@@ -32,7 +32,13 @@ Rails.application.routes.draw do
         member do
           patch :set_predeterminada
         end
+        collection do
+          get :predeterminada
+        end
       end
+
+      resources :orders, only: [:create]
+      resources :payments, only: [:create]
 
       get "/me", to: "users#me"
       get 'locations/departments', to: 'locations#departments'

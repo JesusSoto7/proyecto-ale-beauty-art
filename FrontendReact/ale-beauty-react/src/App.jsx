@@ -42,7 +42,7 @@ function App() {
 
         <Route element={<CheckoutLayout />}>
           <Route
-            path='/checkout/shippingAddress'
+            path='/checkout'
             element={<Checkout />}
           />
         </Route>
