@@ -1,9 +1,11 @@
-import { useEffect } from "react";
-import { useLocation } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 
 export default function CheckoutPago() {
   const publicKey = import.meta.env.VITE_MERCADOPAGO_PUBLIC_KEY;
   const location = useLocation();
+  const navigate = useNavigate();
+  const [token, setToken] = useState(null);
   const { orderId, total } = location.state || {};
 
   if (!publicKey) {
@@ -12,12 +14,25 @@ export default function CheckoutPago() {
   }
 
   useEffect(() => {
+    const savedToken = localStorage.getItem("token");
+    if (savedToken) {
+      setToken(savedToken);
+    } else {
+      alert("no esta atenticado");
+    }
+  })
+
+  useEffect(() => {
+    if (!token) return;
+
     const mp = new window.MercadoPago(publicKey, {
       locale: "es-CO",
     });
 
     const bricksBuilder = mp.bricks();
-    const renderCardPaymentBrick = async (bricksBuilder) => {
+    let controller;
+
+    const renderCardPaymentBrick = async () => {
       const settings = {
         initialization: {
           amount: Number(total), // total amount to be paid
@@ -49,6 +64,7 @@ export default function CheckoutPago() {
                 method: "POST",
                 headers: {
                   "Content-Type": "application/json",
+                  Authorization: `Bearer ${token}`
                 },
                 body: JSON.stringify({
                   ...cardFormData,
@@ -57,21 +73,33 @@ export default function CheckoutPago() {
                 })
               })
                 .then((response) => response.json())
+                .then((data) => {
+                  console.log("Respuesta del backend:", data);
+                  navigate(`/checkout/success/${data.payment.id}`, { state: { paymentId: data.payment.id } });
+                  resolve();
+                })
                 .catch((error) => {
-                  // handle error response when trying to create payment
+                  console.error("Error al procesar el pago:", error);
                   reject();
                 })
             });
           },
           onError: (error) => {
-            // callback called to all error cases related to the Brick
+            console.error("Error en el Brick:", error);
           },
         },
       };
-      window.cardPaymentBrickController = await bricksBuilder.create('cardPayment', 'cardPaymentBrick_container', settings);
+      controller = await bricksBuilder.create('cardPayment', 'cardPaymentBrick_container', settings);
     };
-    renderCardPaymentBrick(bricksBuilder);
-  }, [orderId, total]);
+    renderCardPaymentBrick();
+
+    return () => {
+      if (controller) {
+        controller.destroy();
+      }
+    }
+
+  }, [orderId, total, publicKey, navigate, token]);
 
   return (
     <div>

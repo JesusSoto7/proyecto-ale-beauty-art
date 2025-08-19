@@ -1,5 +1,4 @@
 class Api::V1::PaymentsController < Api::V1::BaseController
-  skip_before_action :verify_authenticity_token
 
   def create
     require 'mercadopago'
@@ -27,6 +26,7 @@ class Api::V1::PaymentsController < Api::V1::BaseController
 
     if payment["status"] == "approved"
       order.update(status: :pagada, fecha_pago: Time.current)
+      current_user.cart.cart_products.destroy_all
       InvoiceMailer.enviar_factura(order).deliver_later
 
       render json: {

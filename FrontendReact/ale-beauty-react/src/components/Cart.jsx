@@ -66,7 +66,7 @@ function Cart() {
       .then((res) => res.json())
       .then((data) => {
         if (data.order) {
-          navigate("/checkout/payments", {
+          navigate("/checkout", {
             state: {
               orderId: data.order.id,
               total: data.order.pago_total
@@ -138,7 +138,7 @@ function Cart() {
         <div className="summary-total">
           <span>Total</span>
           <span>
-            ${(total - total * 0.1 + 50).toFixed(2)}
+            ${(total + 10000).toFixed(2)}
           </span>
         </div>
         <button onClick={handleCheckout}

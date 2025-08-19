@@ -23,6 +23,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
 import CheckoutLayout from './components/CheckoutLayout';
 import Checkout from './pages/inicio/Checkout';
+import CheckoutSuccess from './components/CheckoutSuccess';
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = React.useState(() => {
@@ -44,6 +45,10 @@ function App() {
           <Route
             path='/checkout'
             element={<Checkout />}
+          />
+          <Route
+            path='/checkout/success/:paymentId'
+            element={<CheckoutSuccess />}
           />
         </Route>
 
