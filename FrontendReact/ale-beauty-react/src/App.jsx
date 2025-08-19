@@ -28,7 +28,7 @@ import CheckoutSuccess from './components/CheckoutSuccess';
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = React.useState(() => {
-    return !!localStorage.getItem('token'); // true si hay token
+    return !!localStorage.getItem('token');
   });
 
   return (
@@ -54,7 +54,7 @@ function App() {
         </Route>
 
         <Route element={<LayoutInicio />}>
-          <Route path="/product/:slug" element={<ProductDetails />} />
+          <Route path="/products/:slug" element={<ProductDetails />} />
           <Route
             path='/direcciones'
             element={<ShippingAddress />}

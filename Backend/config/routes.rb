@@ -28,7 +28,8 @@ Rails.application.routes.draw do
        get "inicio", to: "inicio#index"
       # Categorías y productos  
       resources :products, param: :slug
-      resources :categories, only: [:index, :show]
+
+      resources :categories
 
       resources :shipping_addresses do
         member do

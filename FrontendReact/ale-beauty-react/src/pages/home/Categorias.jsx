@@ -1,76 +1,166 @@
-import React from "react";
-import "../../assets/stylesheets/Categoria.css"; // Importamos el CSS
-
-const users = [
-  { id: 1, name: "Michael Holz", avatar: "/examples/images/avatar/1.jpg", date: "04/10/2013", role: "Admin", status: "Active", statusColor: "text-success" },
-  { id: 2, name: "Paula Wilson", avatar: "/examples/images/avatar/2.jpg", date: "05/08/2014", role: "Publisher", status: "Active", statusColor: "text-success" },
-  { id: 3, name: "Antonio Moreno", avatar: "/examples/images/avatar/3.jpg", date: "11/05/2015", role: "Publisher", status: "Suspended", statusColor: "text-danger" },
-  { id: 4, name: "Mary Saveley", avatar: "/examples/images/avatar/4.jpg", date: "06/09/2016", role: "Reviewer", status: "Active", statusColor: "text-success" },
-  { id: 5, name: "Martin Sommer", avatar: "/examples/images/avatar/5.jpg", date: "12/08/2017", role: "Moderator", status: "Inactive", statusColor: "text-warning" },
-];
+import React, { useState, useEffect } from "react";
+import {
+  Button,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  TextField,
+  Stack,
+  List,
+  ListItem,
+  ListItemText,
+  IconButton,
+} from "@mui/material";
+import AddIcon from "@mui/icons-material/Add";
+import EditIcon from "@mui/icons-material/Edit";
 
 const Categorias = () => {
+  const [open, setOpen] = useState(false);
+  const [categorias, setCategorias] = useState([]);
+  const [nombre, setNombre] = useState("");
+  const [imagen, setImagen] = useState(null);
+  const [categoriaEdit, setCategoriaEdit] = useState(null);
+  const token = localStorage.getItem("token");
+
+  // Cargar categorías al inicio
+  useEffect(() => {
+    if (!token) return;
+    fetch("https://localhost:4000/api/v1/categories", {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+      .then((res) => res.json())
+      .then((data) => setCategorias(Array.isArray(data) ? data : []))
+      .catch((err) => console.error("Error cargando categorías", err));
+  }, [token]);
+
+  const openDialog = (categoria = null) => {
+    if (categoria) {
+      setCategoriaEdit(categoria);
+      setNombre(categoria.nombre_categoria);
+    } else {
+      setCategoriaEdit(null);
+      setNombre("");
+      setImagen(null);
+    }
+    setOpen(true);
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!nombre) return;
+
+    const formData = new FormData();
+    formData.append("category[nombre_categoria]", nombre);
+    if (imagen) formData.append("category[imagen]", imagen);
+
+    try {
+      let url = "https://localhost:4000/api/v1/categories";
+      let method = "POST";
+
+      if (categoriaEdit) {
+        url += `/${categoriaEdit.id}`;
+        method = "PATCH";
+      }
+
+      const res = await fetch(url, {
+        method,
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        body: formData,
+      });
+
+      if (!res.ok) {
+        const errorData = await res.json();
+        alert(`Error: ${errorData.error || res.statusText}`);
+        return;
+      }
+
+      const categoriaActualizada = await res.json();
+
+      if (categoriaEdit) {
+        setCategorias((prev) =>
+          prev.map((cat) => (cat.id === categoriaActualizada.id ? categoriaActualizada : cat))
+        );
+      } else {
+        setCategorias((prev) => [...prev, categoriaActualizada]);
+      }
+
+      setNombre("");
+      setImagen(null);
+      setCategoriaEdit(null);
+      setOpen(false);
+    } catch (err) {
+      console.error("Error:", err);
+      alert("Ocurrió un error procesando la categoría");
+    }
+  };
+
   return (
-    <div className="container">
-      <div className="table-responsive">
-        <div className="table-wrapper">
-          <div className="table-title">
-            <div className="row">
-              <div className="col-xs-5">
-                <h2>User <b>Management</b></h2>
-              </div>
-              <div className="col-xs-7">
-                <button className="btn btn-primary"><i className="material-icons">&#xE147;</i> <span>Add New User</span></button>
-                <button className="btn btn-primary"><i className="material-icons">&#xE24D;</i> <span>Export to Excel</span></button>
-              </div>
-            </div>
-          </div>
+    <div style={{ padding: "1rem" }}>
+      <Button
+        variant="contained"
+        color="primary"
+        startIcon={<AddIcon />}
+        onClick={() => openDialog()}
+      >
+        Agregar Categoría
+      </Button>
 
-          <table className="table table-striped table-hover">
-            <thead>
-              <tr>
-                <th>#</th>
-                <th>Name</th>
-                <th>Date Created</th>
-                <th>Role</th>
-                <th>Status</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              {users.map(user => (
-                <tr key={user.id}>
-                  <td>{user.id}</td>
-                  <td>
-                    <a href="#">
-                      <img src={user.avatar} className="avatar" alt="Avatar" /> {user.name}
-                    </a>
-                  </td>
-                  <td>{user.date}</td>
-                  <td>{user.role}</td>
-                  <td>
-                    <span className={`status ${user.statusColor}`}>&bull;</span> {user.status}
-                  </td>
-                  <td>
-                    <a href="#" className="settings" title="Settings"><i className="material-icons">&#xE8B8;</i></a>
-                    <a href="#" className="delete" title="Delete"><i className="material-icons">&#xE5C9;</i></a>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+      <Dialog open={open} onClose={() => setOpen(false)}>
+        <DialogTitle>{categoriaEdit ? "Editar categoría" : "Crear nueva categoría"}</DialogTitle>
+        <DialogContent>
+          <Stack spacing={2} sx={{ marginTop: 1 }}>
+            <TextField
+              label="Nombre"
+              value={nombre}
+              onChange={(e) => setNombre(e.target.value)}
+              fullWidth
+              autoFocus
+            />
+            <input
+              type="file"
+              accept="image/*"
+              onChange={(e) => setImagen(e.target.files[0])}
+            />
+          </Stack>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setOpen(false)}>Cancelar</Button>
+          <Button onClick={handleSubmit} variant="contained">
+            {categoriaEdit ? "Actualizar" : "Crear"}
+          </Button>
+        </DialogActions>
+      </Dialog>
 
-          <div className="clearfix">
-            <div className="hint-text">Showing <b>5</b> out of <b>25</b> entries</div>
-            <ul className="pagination">
-              <li className="page-item disabled"><a href="#">Previous</a></li>
-              {[1, 2, 3, 4, 5].map(num => (
-                <li key={num} className={`page-item ${num === 3 ? "active" : ""}`}><a href="#" className="page-link">{num}</a></li>
-              ))}
-              <li className="page-item"><a href="#">Next</a></li>
-            </ul>
-          </div>
-        </div>
+      <div style={{ marginTop: "2rem" }}>
+        <h3>Listado de categorías:</h3>
+        <List>
+          {categorias.map((cat) => (
+            <ListItem
+              key={cat.id}
+              secondaryAction={
+                <IconButton edge="end" onClick={() => openDialog(cat)}>
+                  <EditIcon />
+                </IconButton>
+              }
+            >
+              <ListItemText
+                primary={cat.nombre_categoria}
+                secondary={
+                  cat.imagen_url ? (
+                    <img
+                      src={cat.imagen_url}
+                      alt={cat.nombre_categoria}
+                      style={{ width: "50px", marginTop: "5px" }}
+                    />
+                  ) : null
+                }
+              />
+            </ListItem>
+          ))}
+        </List>
       </div>
     </div>
   );

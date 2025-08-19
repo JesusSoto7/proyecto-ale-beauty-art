@@ -4,13 +4,30 @@ import { useParams } from "react-router-dom";
 function ProductDetails() {
   const { slug } = useParams();
   const [product, setProduct] = useState(null);
+  const [token, setToken] = useState(null);
 
   useEffect(() => {
-    fetch(`https://localhost:4000/api/v1/products/${slug}`)
+    const savedToken = localStorage.getItem("token");
+    if (savedToken) {
+      setToken(savedToken);
+    } else {
+      alert("no esta atenticado");
+    }
+  })
+
+
+  useEffect(() => {
+    if (!token) return;
+
+    fetch(`https://localhost:4000/api/v1/products/${slug}`, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    })
       .then(res => res.json())
       .then(data => setProduct(data))
       .catch(err => console.error(err));
-  }, [slug]);
+  }, [slug, token]);
 
   if (!product) return <p>Cargando producto...</p>;
 

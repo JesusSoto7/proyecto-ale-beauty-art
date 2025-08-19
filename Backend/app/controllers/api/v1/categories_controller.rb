@@ -1,8 +1,7 @@
 class Api::V1::CategoriesController < Api::V1::BaseController
   include Rails.application.routes.url_helpers
 
-  before_action :set_category, only: [:show]
-
+  before_action :set_category, only: [:show, :update, :destroy]
   skip_before_action :authorize_request, only: [:index, :show]
 
   def index
@@ -20,6 +19,28 @@ class Api::V1::CategoriesController < Api::V1::BaseController
     ), status: :ok
   end
 
+  def create
+    category = Category.new(category_params)
+    if category.save
+      render json: category, status: :created
+    else
+      render json: { error: category.errors.full_messages.join(", ") }, status: :unprocessable_entity
+    end
+  end
+
+  def update
+    if @category.update(category_params)
+      render json: @category, status: :ok
+    else
+      render json: { error: @category.errors.full_messages.join(", ") }, status: :unprocessable_entity
+    end
+  end
+
+  def destroy
+    @category.destroy
+    render json: { message: "Categoría eliminada" }, status: :ok
+  end
+
   private
 
   def set_category
@@ -27,5 +48,9 @@ class Api::V1::CategoriesController < Api::V1::BaseController
     unless @category
       render json: { error: "Categoría no encontrada" }, status: :not_found
     end
+  end
+
+  def category_params
+    params.require(:category).permit(:nombre_categoria, :imagen)
   end
 end
