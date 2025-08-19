@@ -22,17 +22,26 @@ Rails.application.routes.draw do
       patch  'carousel', to: 'carousel#update'
       delete 'carousel/:id', to: 'carousel#destroy'
 
+      resources :favorites, only: [:create, :destroy, :index]
+
  # Quitar producto
        get "inicio", to: "inicio#index"
       # Categorías y productos  
-      resources :products
-      resources :categories, only: [:index, :show]
+      resources :products, param: :slug
+
+      resources :categories
 
       resources :shipping_addresses do
         member do
           patch :set_predeterminada
         end
+        collection do
+          get :predeterminada
+        end
       end
+
+      resources :orders, only: [:create]
+      resources :payments, only: [:create]
 
       get "/me", to: "users#me"
       get 'locations/departments', to: 'locations#departments'

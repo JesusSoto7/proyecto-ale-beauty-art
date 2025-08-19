@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom'; // <-- Importa Link aquí
+import { useNavigate, Link } from 'react-router-dom';
 import { login } from '../services/authService';
 
 function LoginForm({ onLogin }) {

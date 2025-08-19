@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from 'react-router-dom';
 
 function Cart() {
+  const navigate = useNavigate();
   const [cart, setCart] = useState(null);
   const token = localStorage.getItem("token");
 
@@ -53,6 +55,33 @@ function Cart() {
 
   const cantidad = cart.products.reduce((acc, p) => acc + p.cantidad, 0);
 
+  const handleCheckout = () => {
+    fetch("https://localhost:4000/api/v1/orders", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`
+      }
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.order) {
+          navigate("/checkout", {
+            state: {
+              orderId: data.order.id,
+              total: data.order.pago_total
+            }
+          });
+        } else {
+          alert("No se pudo crear la orden");
+        }
+      })
+      .catch((err) => {
+        console.error("Error creando orden:", err);
+        alert("Error creando orden");
+      })
+  }
+
 
   return (
     <div className="cart-container">
@@ -96,7 +125,7 @@ function Cart() {
       <div className="cart-summary">
         <h4>Resumen de compra</h4>
         <div className="summary-row">
-          <spam>productos({cantidad})</spam>
+          <span>productos({cantidad})</span>
         </div>
         <div className="summary-row">
           <span>Sub Total</span>
@@ -109,10 +138,11 @@ function Cart() {
         <div className="summary-total">
           <span>Total</span>
           <span>
-            ${(total - total * 0.1 + 50).toFixed(2)}
+            ${(total + 10000).toFixed(2)}
           </span>
         </div>
-        <button className="checkout-btn">Comprar</button>
+        <button onClick={handleCheckout}
+          className="checkout-btn">Comprar</button>
       </div>
     </div>
   );

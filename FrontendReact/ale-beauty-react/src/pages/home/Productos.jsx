@@ -19,36 +19,78 @@ import {
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import AddIcon from "@mui/icons-material/Add";
-import {
-  useCreateProduct,
-  useGetProducts,
-  useUpdateProduct,
-  useDeleteProduct,
-} from "../../hooks/productHooks";
 import "../../assets/stylesheets/ProductTable.css";
 
 const ProductTable = () => {
   const [validationErrors, setValidationErrors] = useState({});
   const [categories, setCategories] = useState([]);
+  const [products, setProducts] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isError, setIsError] = useState(false);
+  const [token, setToken] = useState(null);
 
-  // Cargar categorías con JWT
+
   useEffect(() => {
-    const token = localStorage.getItem("token");
+    const savedToken = localStorage.getItem("token");
+    if (savedToken) {
+      setToken(savedToken);
+    } else {
+      alert("no esta atenticado");
+    }
+  })
+
+  // Cargar categorías
+  useEffect(() => {
+    if (!token) return;
     fetch("https://localhost:4000/api/v1/categories", {
       headers: token ? { Authorization: `Bearer ${token}` } : {},
     })
       .then((res) => res.json())
       .then((data) => setCategories(Array.isArray(data) ? data : []))
       .catch((err) => console.error("Error cargando categorías", err));
-  }, []);
+  }, [token]);
+
+  // Cargar productos
+  const fetchProducts = () => {
+    if (!token) return;
+    setIsLoading(true);
+    fetch("https://localhost:4000/api/v1/products", {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+      .then((res) => res.json())
+      .then((data) => setProducts(Array.isArray(data) ? data : []))
+      .catch((err) => {
+        console.error("Error cargando productos", err);
+        setIsError(true);
+      })
+      .finally(() => setIsLoading(false));
+  };
+
+
+  useEffect(() => {
+    fetchProducts();
+  }, [token]);
 
   const columns = useMemo(
     () => [
-      { accessorKey: "id", header: "ID", enableEditing: false, size: 60 },
+      {
+        accessorKey: "id",
+        header: "ID",
+        enableEditing: false,
+        Edit: () => null,
+      },
+      {
+        accessorKey: "slug",
+        header: "Slug",
+        enableEditing: false,
+        enableSorting: false,
+        enableHiding: true,
+        Edit: () => null,
+      },
       {
         accessorKey: "imagen_url",
         header: "Imagen",
-        enableEditing: false,
+        enableEditing: true,
         Cell: ({ cell }) =>
           cell.getValue() ? (
             <img
@@ -59,7 +101,37 @@ const ProductTable = () => {
           ) : (
             "Sin imagen"
           ),
+        Edit: ({ row, column }) => {
+          const [preview, setPreview] = useState(row.original?.imagen_url || null);
+
+          const handleChange = (e) => {
+            const file = e.target.files[0];
+            if (!row._valuesCache) row._valuesCache = {};
+            row._valuesCache["imagen"] = file || null;
+
+            if (file) {
+              const reader = new FileReader();
+              reader.onloadend = () => setPreview(reader.result);
+              reader.readAsDataURL(file);
+            }
+          };
+
+          return (
+            <div>
+              {preview && (
+                <img
+                  src={preview}
+                  alt="Preview"
+                  style={{ width: "60px", height: "60px", objectFit: "cover" }}
+                />
+              )}
+              <input type="file" accept="image/*" onChange={handleChange} />
+            </div>
+          );
+        },
       },
+
+
       {
         accessorKey: "nombre_producto",
         header: "Producto",
@@ -68,43 +140,29 @@ const ProductTable = () => {
           error: !!validationErrors?.nombre_producto,
           helperText: validationErrors?.nombre_producto,
           onFocus: () =>
-            setValidationErrors((prev) => ({
-              ...prev,
-              nombre_producto: undefined,
-            })),
+            setValidationErrors((prev) => ({ ...prev, nombre_producto: undefined })),
         },
       },
       {
         accessorKey: "descripcion",
         header: "Descripción",
-        muiEditTextFieldProps: {
-          multiline: true,
-          minRows: 2,
-          maxRows: 4,
-        },
+        muiEditTextFieldProps: { multiline: true, minRows: 2, maxRows: 4 },
       },
       {
         accessorKey: "category_id",
         header: "Categoría",
-        // Mostrar el nombre en la celda normal
         Cell: ({ row }) => row.original?.category?.nombre_categoria || "",
-        // Editor custom para Select
         Edit: ({ row, column }) => {
-          // valor actual como string para evitar mismatch con MenuItem
           const current =
-            row._valuesCache?.[column.id] ??
-            (row.original.category_id != null
-              ? String(row.original.category_id)
-              : "");
-
+            row._valuesCache?.[column.id] ?? (row.original.category_id != null ? String(row.original.category_id) : "");
           return (
             <TextField
               select
               value={current}
               onChange={(e) => {
-                const v = e.target.value; // string
+                const v = e.target.value;
                 if (!row._valuesCache) row._valuesCache = {};
-                row._valuesCache[column.id] = v; // guarda como string
+                row._valuesCache[column.id] = v;
               }}
               fullWidth
             >
@@ -121,28 +179,18 @@ const ProductTable = () => {
       {
         accessorKey: "precio_producto",
         header: "Precio",
-        muiEditTextFieldProps: {
-          type: "number",
-          required: true,
-        },
+        muiEditTextFieldProps: { type: "number", required: true },
       },
       {
         accessorKey: "stock",
         header: "Stock",
-        muiEditTextFieldProps: {
-          type: "number",
-          required: true,
-        },
+        muiEditTextFieldProps: { type: "number", required: true },
       },
     ],
     [validationErrors, categories]
   );
 
-  const { mutateAsync: createProduct } = useCreateProduct();
-  const { data: products = [], isLoading, isError } = useGetProducts();
-  const { mutateAsync: updateProduct } = useUpdateProduct();
-  const { mutateAsync: deleteProduct } = useDeleteProduct();
-
+  // Crear producto
   const handleCreateProduct = async ({ values, table }) => {
     const errors = validateProduct(values);
     if (Object.values(errors).some(Boolean)) {
@@ -150,18 +198,43 @@ const ProductTable = () => {
       return;
     }
     setValidationErrors({});
-    // Si category_id viene como string desde el Select, conviértelo aquí
-    const payload = {
-      ...values,
-      category_id:
-        typeof values.category_id === "string"
-          ? parseInt(values.category_id, 10)
-          : values.category_id,
-    };
-    await createProduct(payload);
-    table.setCreatingRow(null);
+
+    // FormData para enviar archivos
+    const formData = new FormData();
+    for (const key in values) {
+      if (key === "imagen" && values[key] instanceof File) {
+        formData.append("product[imagen]", values[key]);
+      } else {
+        formData.append(`product[${key}]`, values[key]);
+      }
+    }
+
+    try {
+      if (!token) return;
+      const res = await fetch("https://localhost:4000/api/v1/products", {
+        method: "POST",
+        headers: {
+          Authorization: token ? `Bearer ${token}` : "",
+        },
+        body: formData,
+      }, [token]);
+
+      if (!res.ok) {
+        const errorData = await res.json();
+        alert(`Error creando producto: ${errorData.error || res.statusText}`);
+        return;
+      }
+
+      const newProduct = await res.json();
+      setProducts((prev) => [...prev, newProduct]);
+      table.setCreatingRow(null);
+    } catch (err) {
+      console.error("Error creando producto:", err);
+      alert("Ocurrió un error creando el producto");
+    }
   };
 
+  // Actualizar producto
   const handleSaveProduct = async ({ values, table }) => {
     const errors = validateProduct(values);
     if (Object.values(errors).some(Boolean)) {
@@ -169,20 +242,66 @@ const ProductTable = () => {
       return;
     }
     setValidationErrors({});
-    const payload = {
-      ...values,
-      category_id:
-        typeof values.category_id === "string"
-          ? parseInt(values.category_id, 10)
-          : values.category_id,
-    };
-    await updateProduct(payload);
-    table.setEditingRow(null);
+
+    const formData = new FormData();
+    for (const key in values) {
+      if (key === "imagen" && values[key] instanceof File) {
+        formData.append("product[imagen]", values[key]); // nombre según Rails
+      } else {
+        formData.append(`product[${key}]`, values[key]); // anidado en `product`
+      }
+    }
+
+    try {
+      const res = await fetch(`https://localhost:4000/api/v1/products/${values.slug}`, {
+        method: "PUT",
+        headers: {
+          Authorization: token ? `Bearer ${token}` : "",
+          // NO poner 'Content-Type', FormData lo maneja
+        },
+        body: formData,
+      });
+
+      if (!res.ok) {
+        const errorData = await res.json();
+        alert(`Error actualizando producto: ${errorData.error || res.statusText}`);
+        return;
+      }
+
+      const updatedProduct = await res.json();
+      setProducts((prev) =>
+        prev.map((p) => (p.slug === updatedProduct.slug ? updatedProduct : p))
+      );
+      table.setEditingRow(null);
+    } catch (err) {
+      console.error("Error actualizando producto:", err);
+      alert("Ocurrió un error actualizando el producto");
+    }
   };
 
-  const handleDelete = (row) => {
-    if (window.confirm(`¿Eliminar producto "${row.original.nombre_producto}"?`)) {
-      deleteProduct(row.original.id);
+
+  // Eliminar producto
+  const handleDelete = async (row) => {
+    if (!window.confirm(`¿Eliminar producto "${row.original.nombre_producto}"?`)) return;
+
+    try {
+      const res = await fetch(`https://localhost:4000/api/v1/products/${row.original.slug}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: token ? `Bearer ${token}` : "",
+        },
+      });
+
+      if (!res.ok) {
+        const errorData = await res.json();
+        alert(`Error eliminando producto: ${errorData.error || res.statusText}`);
+        return;
+      }
+
+      setProducts((prev) => prev.filter((p) => p.slug !== row.original.slug));
+    } catch (err) {
+      console.error("Error eliminando producto:", err);
+      alert("Ocurrió un error eliminando el producto");
     }
   };
 
@@ -239,7 +358,11 @@ const ProductTable = () => {
       </Box>
     ),
     renderTopToolbarCustomActions: ({ table }) => (
-      <Button variant="contained" startIcon={<AddIcon />} onClick={() => table.setCreatingRow(true)}>
+      <Button
+        variant="contained"
+        startIcon={<AddIcon />}
+        onClick={() => table.setCreatingRow(true)}
+      >
         Nuevo Producto
       </Button>
     ),

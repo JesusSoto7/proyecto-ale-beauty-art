@@ -12,6 +12,7 @@ import DashboardLayout from './components/DashboardLayout';
 import ProductTable from './pages/home/Productos';
 import Categorias from './pages/home/Categorias';
 import Carousel from './pages/home/Carousel';
+import ProductDetails from './pages/productsDetails/ProductDetails';
 
 
 import './assets/stylesheets/RegisterForm.css';
@@ -21,10 +22,13 @@ import './assets/stylesheets/Footer.css'
 import './assets/stylesheets/Cart.css'
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
+import CheckoutLayout from './components/CheckoutLayout';
+import Checkout from './pages/inicio/Checkout';
+import CheckoutSuccess from './components/CheckoutSuccess';
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = React.useState(() => {
-    return !!localStorage.getItem('token'); // true si hay token
+    return !!localStorage.getItem('token');
   });
 
   return (
@@ -38,7 +42,19 @@ function App() {
           />
         </Route>
 
+        <Route element={<CheckoutLayout />}>
+          <Route
+            path='/checkout'
+            element={<Checkout />}
+          />
+          <Route
+            path='/checkout/success/:paymentId'
+            element={<CheckoutSuccess />}
+          />
+        </Route>
+
         <Route element={<LayoutInicio />}>
+          <Route path="/products/:slug" element={<ProductDetails />} />
           <Route
             path='/direcciones'
             element={<ShippingAddress />}
@@ -52,7 +68,6 @@ function App() {
           element={<LoginForm onLogin={() => setIsLoggedIn(true)} />}
         />
 
-        {/* O incluso: <Route index element={<DashboardMain />} /> */}
         <Route path="/home" element={<DashboardLayout />}>
           <Route index element={<Dashboard />} />
           <Route path="productos" element={<ProductTable />} />
@@ -66,7 +81,6 @@ function App() {
           element={<Register />}
         />
 
-        {/* Redirigir ruta raíz al login */}
         <Route
           path="/"
           element={<Navigate to="/login" />}
@@ -75,6 +89,7 @@ function App() {
           <Route path='/carrito'
             element={<Cart />} />
         </Route>
+
 
 
       </Routes>

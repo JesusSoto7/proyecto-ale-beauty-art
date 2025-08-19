@@ -1262,3 +1262,28 @@ footer {
   opacity: 0;
   pointer-events: none;
 }
+
+.product-details {
+  background-color: #f8f8f8;
+  padding: 0.8rem;
+  margin: 0.5rem 0;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  color: #555;
+}
+
+.details-btn {
+  background-color: #d85a7f;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 5px 10px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  margin-bottom: 5px;
+  transition: background 0.3s;
+}
+
+.details-btn:hover {
+  background-color: #c04a6f;
+}
