@@ -22,10 +22,12 @@ Rails.application.routes.draw do
       patch  'carousel', to: 'carousel#update'
       delete 'carousel/:id', to: 'carousel#destroy'
 
+      resources :favorites, only: [:create, :destroy, :index]
+
  # Quitar producto
        get "inicio", to: "inicio#index"
       # Categorías y productos  
-      resources :products
+      resources :products, param: :slug
       resources :categories, only: [:index, :show]
 
       resources :shipping_addresses do

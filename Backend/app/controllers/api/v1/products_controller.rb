@@ -4,10 +4,8 @@ class Api::V1::ProductsController < Api::V1::BaseController
   def index
     products = Product.with_attached_imagen.includes(:category).all
     render json: products.as_json(
-      include: {
-        category: { only: [:nombre_categoria] }
-      },
-      methods: [:imagen_url]
+      include: { category: { only: [:nombre_categoria] } },
+      methods: [:imagen_url, :slug] # <-- aquí agregamos slug
     ), status: :ok
   end
 
@@ -16,7 +14,7 @@ class Api::V1::ProductsController < Api::V1::BaseController
       include: {
         category: { only: [:nombre_categoria] }
       },
-      methods: [:imagen_url]
+      methods: [:imagen_url, :slug]
     ), status: :ok
   end
 
@@ -63,10 +61,10 @@ class Api::V1::ProductsController < Api::V1::BaseController
   private
 
   def set_product
-    @product = Product.with_attached_imagen.includes(:category).find_by(id: params[:id])
-    unless @product
-      render json: { error: "Producto no encontrado" }, status: :not_found
-    end
+      @product = Product.with_attached_imagen.includes(:category).find_by(slug: params[:slug])
+      unless @product
+        render json: { error: "Producto no encontrado" }, status: :not_found
+      end
   end
 
   def product_params

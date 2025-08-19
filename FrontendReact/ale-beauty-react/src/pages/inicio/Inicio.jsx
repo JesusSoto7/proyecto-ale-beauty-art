@@ -1,5 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import Carousel from 'react-bootstrap/Carousel';
+import IconButton from '@mui/joy/IconButton';
+import FavoriteBorder from '@mui/icons-material/FavoriteBorder';
+import { Link } from 'react-router-dom';
+
 
 function Inicio() {
   const [carousel, setCarousel] = useState([]);
@@ -53,16 +57,44 @@ function Inicio() {
       });
   };
 
+  const addToFavorites = (productId) => {
+    fetch('https://localhost:4000/api/v1/favorites', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ product_id: productId }),
+    })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          alert('Producto añadido a favoritos');
+        } else if (data.errors) {
+          alert('Error: ' + data.errors.join(", "));
+        }
+      })
+      .catch(err => {
+        console.error('Error añadiendo producto a favoritos: ', err);
+        alert('Error añadiendo producto a favoritos');
+      });
+  };
+
+
   return (
     <div>
       {carousel.length > 0 ? (
-        <Carousel>
+        <Carousel interval={3000} className="mb-0">
           {carousel.map((img, idx) => (
             <Carousel.Item key={idx}>
               <img
                 className="d-block w-100"
                 src={img}
                 alt={`Slide ${idx + 1}`}
+                style={{
+                  height: "400px", // más alto como banner
+                  objectFit: "cover",
+                }}
               />
             </Carousel.Item>
           ))}
@@ -73,37 +105,64 @@ function Inicio() {
 
 
       {/* Productos */}
+      {/* Productos */}
       <section className="mt-5">
         <h2 className="mb-4">Novedades Maquillaje</h2>
         {products.length > 0 ? (
-          <div className="row g-4">
-            {products.map(prod => (
-              <div className="col-md-4 col-lg-3" key={prod.id}>
-                <div className="card h-100 shadow-sm">
-                  <img
-                    src={prod.imagen_url}
-                    alt={prod.nombre_producto}
-                    className="card-img-top"
-                    style={{
-                      height: '200px',
-                      objectFit: 'cover'
-                    }}
-                  />
-                  <div className="card-body">
-                    <h5 className="card-title">{prod.nombre_producto}</h5>
-                    <p className="card-text text-primary fw-bold">
-                      ${prod.precio_producto}
-                    </p>
+          <div className="carousel-container">
+            {/* Botón izquierdo */}
+            <button
+              className="carousel-btn prev"
+              onClick={() => {
+                document.querySelector(".carousel-items").scrollBy({ left: -300, behavior: "smooth" });
+              }}
+            >
+              ❮
+            </button>
+
+            {/* Productos en fila */}
+            <div className="carousel-items">
+              {products.map(prod => (
+                <div className="product-card" key={prod.id}>
+                  <Link
+                    to={`/products/${prod.slug}`}
+                    style={{ textDecoration: 'none', color: 'inherit' }}
+                  >
+                    <div className="image-container">
+                      <img
+                        src={prod.imagen_url || "https://via.placeholder.com/250x200?text=Sin+imagen"}
+                        alt={prod.nombre_producto}
+                      />
+                    </div>
+                    <h5>{prod.nombre_producto}</h5>
+                    <p>${prod.precio_producto}</p>
+                  </Link>
+                  <div className="actions">
                     <button onClick={() => addToCart(prod.id)}>Añadir al carrito</button>
+                    <IconButton onClick={() => addToFavorites(prod.id)}>
+                      <FavoriteBorder />
+                    </IconButton>
                   </div>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
+
+            {/* Botón derecho */}
+            <button
+              className="carousel-btn next"
+              onClick={() => {
+                document.querySelector(".carousel-items").scrollBy({ left: 300, behavior: "smooth" });
+              }}
+            >
+              ❯
+            </button>
           </div>
         ) : (
           <p>No hay productos disponibles.</p>
         )}
       </section>
+
+
 
       {/* Categorías */}
       {/* <section>

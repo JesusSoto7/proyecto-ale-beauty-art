@@ -12,6 +12,7 @@ import DashboardLayout from './components/DashboardLayout';
 import ProductTable from './pages/home/Productos';
 import Categorias from './pages/home/Categorias';
 import Carousel from './pages/home/Carousel';
+import ProductDetails from './pages/productsDetails/ProductDetails';
 
 
 import './assets/stylesheets/RegisterForm.css';
@@ -53,6 +54,7 @@ function App() {
         </Route>
 
         <Route element={<LayoutInicio />}>
+          <Route path="/product/:slug" element={<ProductDetails />} />
           <Route
             path='/direcciones'
             element={<ShippingAddress />}
@@ -87,6 +89,7 @@ function App() {
           <Route path='/carrito'
             element={<Cart />} />
         </Route>
+
 
 
       </Routes>
