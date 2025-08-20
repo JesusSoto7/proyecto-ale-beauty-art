@@ -13,7 +13,7 @@ import ProductTable from './pages/home/Productos';
 import Categorias from './pages/home/Categorias';
 import Carousel from './pages/home/Carousel';
 import ProductDetails from './pages/productsDetails/ProductDetails';
-
+import ProductosCliente from "./pages/ProductosCliente/productosCliente";
 
 import './assets/stylesheets/RegisterForm.css';
 import './assets/stylesheets/Inicio.css'
@@ -40,6 +40,11 @@ function App() {
             path='/inicio'
             element={isLoggedIn ? <Inicio /> : <Navigate to="/login" />}
           />
+          <Route
+            path="/products"
+            element={<ProductosCliente />}
+          />
+
         </Route>
 
         <Route element={<CheckoutLayout />}>
@@ -89,7 +94,8 @@ function App() {
           <Route path='/carrito'
             element={<Cart />} />
         </Route>
-
+        
+        
 
 
       </Routes>
