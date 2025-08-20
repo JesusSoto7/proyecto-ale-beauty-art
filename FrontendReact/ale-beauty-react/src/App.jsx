@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, Outlet } from 'react-router-dom';
 import LoginForm from './components/LoginForm';
 import Register from './components/RegisterForm';
 import Inicio from './pages/inicio/Inicio';
@@ -95,6 +95,9 @@ function App() {
             element={<Cart />} />
         </Route>
         
+        <main>
+          <Outlet />
+        </main>
         
 
 
