@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import logo from '../assets/images/ale_logo.jpg';
 import { BsHeart, BsCart4 } from "react-icons/bs";
@@ -15,7 +15,6 @@ import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import SearchIcon from '@mui/icons-material/Search';
 import MoreIcon from '@mui/icons-material/MoreVert';
-
 
 // Importa Modal de Joy UI
 import Modal from '@mui/joy/Modal';
@@ -59,10 +58,12 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 
 export default function Header() {
   const [searchTerm, setSearchTerm] = useState('');
+  const [results, setResults] = useState([]);
+  const [loading, setLoading] = useState(false);
+
   const [anchorEl, setAnchorEl] = useState(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = useState(null);
-
-  const [openModal, setOpenModal] = useState(false); // 👈 estado para modal
+  const [openModal, setOpenModal] = useState(false);
 
   const location = useLocation();
   const navigate = useNavigate();
@@ -70,19 +71,108 @@ export default function Header() {
   const isMenuOpen = Boolean(anchorEl);
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
 
+  const containerRef = useRef(null);   // para click fuera
+  const debounceRef = useRef(null);
+
+  const DEBOUNCE_MS = 250;
+
   function handleSearchSubmit(e) {
     e.preventDefault();
-    alert('Buscar: ' + searchTerm);
+    // Intencional: no navegamos para no cambiar la vista.
+    // Si quieres que presionar Enter vaya a /products?search=...
+    // puedes descomentar la línea siguiente:
+    // if (searchTerm.trim()) navigate(`/products?search=${encodeURIComponent(searchTerm)}`);
+  }
+
+  // Cierra dropdown al hacer click fuera
+  useEffect(() => {
+    const handleClickOutside = (ev) => {
+      if (containerRef.current && !containerRef.current.contains(ev.target)) {
+        setResults([]);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  // Busca con debounce
+  useEffect(() => {
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+
+    if (searchTerm.trim() === '') {
+      setResults([]);
+      setLoading(false);
+      return;
+    }
+
+    debounceRef.current = setTimeout(() => {
+      fetchResults(searchTerm);
+    }, DEBOUNCE_MS);
+
+    return () => {
+      if (debounceRef.current) clearTimeout(debounceRef.current);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchTerm]);
+
+  async function fetchResults(q) {
+    setLoading(true);
+    try {
+      const token = localStorage.getItem('token'); // si tu API necesita auth
+      const res = await fetch('https://localhost:4000/api/v1/products', {
+        headers: token ? { Authorization: `Bearer ${token}` } : {},
+      });
+
+      // Depuración: muestra status y si hay problema lanza error
+      if (!res.ok) {
+        console.error('Error en fetch products:', res.status, res.statusText);
+        setResults([]);
+        setLoading(false);
+        return;
+      }
+
+      const data = await res.json();
+
+      if (!Array.isArray(data)) {
+        // Algunos backends devuelven { products: [...] } u otro shape
+        console.warn('Respuesta products no es array, shape recibido:', data);
+        // intenta intentar extraer un array común:
+        const arr = Array.isArray(data.products) ? data.products : [];
+        setResults(filterAndLimit(arr, q));
+        setLoading(false);
+        return;
+      }
+
+      setResults(filterAndLimit(data, q));
+    } catch (err) {
+      console.error('fetchResults error:', err);
+      setResults([]);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  function filterAndLimit(array, q) {
+    const term = (q || '').toString().toLowerCase();
+    const filtered = array.filter((prod) => {
+      const name = (prod?.nombre_producto || prod?.name || prod?.titulo || '').toString().toLowerCase();
+      return name.includes(term);
+    });
+    return filtered.slice(0, 6); // máximo 6 resultados
   }
 
   async function handleLogout() {
     localStorage.removeItem('token');
-    fetch('https://localhost:4000/api/v1/sign_out', {
-      method: 'DELETE',
-      headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
-    }).finally(() => {
+    try {
+      await fetch('https://localhost:4000/api/v1/sign_out', {
+        method: 'DELETE',
+        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+      });
+    } catch (e) {
+      console.error('Logout error:', e);
+    } finally {
       window.location.href = '/login';
-    });
+    }
   }
 
   const handleProfileMenuOpen = (event) => {
@@ -101,7 +191,24 @@ export default function Header() {
     setMobileMoreAnchorEl(null);
   };
 
-  // Menú del perfil
+  // Si presionan un resultado -> navega al detalle (usa slug si existe, si no id)
+  function goToProduct(prod) {
+    const slugOrId = prod?.slug || prod?.id;
+    if (!slugOrId) {
+      console.warn('Producto sin slug/id:', prod);
+      return;
+    }
+    setResults([]);        // cierra dropdown
+    setSearchTerm('');     // limpia input (opcional)
+    navigate(`/products/${slugOrId}`);
+  }
+
+  // DEBUG: muestra en consola el término y # resultados
+  useEffect(() => {
+    console.debug('Header searchTerm:', searchTerm, 'resultsCount:', results.length);
+  }, [searchTerm, results.length]);
+
+  // Menús (igual que antes)
   const renderMenu = (
     <Menu
       anchorEl={anchorEl}
@@ -118,7 +225,6 @@ export default function Header() {
     </Menu>
   );
 
-  // Menú mobile
   const renderMobileMenu = (
     <Menu
       anchorEl={mobileMoreAnchorEl}
@@ -146,7 +252,6 @@ export default function Header() {
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="static" color="inherit">
         <Toolbar>
-
           {/* Logo */}
           <Link to="/inicio">
             <img src={logo} alt="Logo" style={{ height: 40, borderRadius: 20 }} />
@@ -171,7 +276,12 @@ export default function Header() {
           </Box>
 
           {/* Buscador */}
-          <Box component="form" onSubmit={handleSearchSubmit} sx={{ flexGrow: 1, display: 'flex', justifyContent: 'center' }}>
+          <Box
+            component="form"
+            onSubmit={handleSearchSubmit}
+            sx={{ flexGrow: 1, display: 'flex', justifyContent: 'center', position: 'relative' }}
+            ref={containerRef}
+          >
             <Search>
               <SearchIconWrapper>
                 <SearchIcon />
@@ -180,8 +290,65 @@ export default function Header() {
                 placeholder="Buscar…"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
+                inputProps={{ 'aria-label': 'buscar productos' }}
               />
             </Search>
+
+            {/* Dropdown de resultados */}
+            { (results.length > 0 || loading) && (
+              <Box
+                sx={{
+                  position: 'absolute',
+                  top: '100%',
+                  mt: 1,
+                  bgcolor: 'background.paper',
+                  boxShadow: 3,
+                  borderRadius: 1,
+                  zIndex: 1300,
+                  width: { xs: '220px', sm: '360px' },
+                  maxHeight: 300,
+                  overflowY: 'auto',
+                }}
+              >
+                {loading && (
+                  <Box sx={{ p: 1 }}>Buscando...</Box>
+                )}
+
+                {!loading && results.length === 0 && (
+                  <Box sx={{ p: 1 }}>No hay resultados</Box>
+                )}
+
+                {!loading && results.map(prod => {
+                  const name = prod?.nombre_producto || prod?.name || prod?.titulo || 'Sin nombre';
+                  const img = prod?.imagen_url || prod?.image || prod?.img || null;
+                  const price = prod?.precio_producto || prod?.price || null;
+                  return (
+                    <Box
+                      key={prod.id || prod.slug || name}
+                      onClick={() => goToProduct(prod)}
+                      sx={{
+                        display: 'flex',
+                        gap: 1,
+                        alignItems: 'center',
+                        p: 1,
+                        cursor: 'pointer',
+                        '&:hover': { bgcolor: '#f5f5f5' }
+                      }}
+                    >
+                      {img ? (
+                        <img src={img} alt={name} style={{ width: 48, height: 48, objectFit: 'cover', borderRadius: 6 }} />
+                      ) : (
+                        <Box sx={{ width: 48, height: 48, backgroundColor: '#eee', borderRadius: 1 }} />
+                      )}
+                      <Box sx={{ flex: 1 }}>
+                        <div style={{ fontSize: 14, fontWeight: 500 }}>{name}</div>
+                        {price != null && <div style={{ fontSize: 12, color: '#666' }}>${price}</div>}
+                      </Box>
+                    </Box>
+                  );
+                })}
+              </Box>
+            )}
           </Box>
 
           {/* Íconos desktop */}
@@ -195,8 +362,6 @@ export default function Header() {
             <IconButton color="inherit" onClick={() => setOpenModal(true)}>
               <BsHeart size={22} />
             </IconButton>
-
-
           </Box>
 
           {/* Menú mobile */}
@@ -205,13 +370,13 @@ export default function Header() {
               <MoreIcon />
             </IconButton>
           </Box>
-
         </Toolbar>
       </AppBar>
+
       {renderMobileMenu}
       {renderMenu}
 
-      {/* Modal */}
+      {/* Modal favoritos */}
       <Modal open={openModal} onClose={() => setOpenModal(false)}>
         <ModalDialog size="lg">
           <ModalClose />
