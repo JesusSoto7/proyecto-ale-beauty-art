@@ -163,7 +163,7 @@ export default function Header() {
             </Typography>
             <Typography
               component={Link}
-              to="/productos"
+              to="/products"
               sx={{ mx: 2, color: 'black', textDecoration: 'none' }}
             >
               PRODUCTOS
