@@ -16,7 +16,6 @@ import MenuItem from '@mui/material/MenuItem';
 import SearchIcon from '@mui/icons-material/Search';
 import MoreIcon from '@mui/icons-material/MoreVert';
 
-// Importa Modal de Joy UI
 import Modal from '@mui/joy/Modal';
 import ModalDialog from '@mui/joy/ModalDialog';
 import ModalClose from '@mui/joy/ModalClose';
@@ -65,26 +64,19 @@ export default function Header() {
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = useState(null);
   const [openModal, setOpenModal] = useState(false);
 
-  const location = useLocation();
   const navigate = useNavigate();
-
   const isMenuOpen = Boolean(anchorEl);
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
 
-  const containerRef = useRef(null);   // para click fuera
+  const containerRef = useRef(null);
   const debounceRef = useRef(null);
-
   const DEBOUNCE_MS = 250;
 
   function handleSearchSubmit(e) {
     e.preventDefault();
-    // Intencional: no navegamos para no cambiar la vista.
-    // Si quieres que presionar Enter vaya a /products?search=...
-    // puedes descomentar la línea siguiente:
-    // if (searchTerm.trim()) navigate(`/products?search=${encodeURIComponent(searchTerm)}`);
   }
 
-  // Cierra dropdown al hacer click fuera
+  // cerrar si clic afuera
   useEffect(() => {
     const handleClickOutside = (ev) => {
       if (containerRef.current && !containerRef.current.contains(ev.target)) {
@@ -95,57 +87,35 @@ export default function Header() {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  // Busca con debounce
   useEffect(() => {
     if (debounceRef.current) clearTimeout(debounceRef.current);
-
     if (searchTerm.trim() === '') {
       setResults([]);
       setLoading(false);
       return;
     }
-
     debounceRef.current = setTimeout(() => {
       fetchResults(searchTerm);
     }, DEBOUNCE_MS);
-
-    return () => {
-      if (debounceRef.current) clearTimeout(debounceRef.current);
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    return () => clearTimeout(debounceRef.current);
   }, [searchTerm]);
 
   async function fetchResults(q) {
     setLoading(true);
     try {
-      const token = localStorage.getItem('token'); // si tu API necesita auth
+      const token = localStorage.getItem('token');
       const res = await fetch('https://localhost:4000/api/v1/products', {
         headers: token ? { Authorization: `Bearer ${token}` } : {},
       });
-
-      // Depuración: muestra status y si hay problema lanza error
       if (!res.ok) {
-        console.error('Error en fetch products:', res.status, res.statusText);
         setResults([]);
         setLoading(false);
         return;
       }
-
       const data = await res.json();
-
-      if (!Array.isArray(data)) {
-        // Algunos backends devuelven { products: [...] } u otro shape
-        console.warn('Respuesta products no es array, shape recibido:', data);
-        // intenta intentar extraer un array común:
-        const arr = Array.isArray(data.products) ? data.products : [];
-        setResults(filterAndLimit(arr, q));
-        setLoading(false);
-        return;
-      }
-
-      setResults(filterAndLimit(data, q));
-    } catch (err) {
-      console.error('fetchResults error:', err);
+      const arr = Array.isArray(data) ? data : Array.isArray(data.products) ? data.products : [];
+      setResults(filterAndLimit(arr, q));
+    } catch {
       setResults([]);
     } finally {
       setLoading(false);
@@ -153,12 +123,19 @@ export default function Header() {
   }
 
   function filterAndLimit(array, q) {
-    const term = (q || '').toString().toLowerCase();
-    const filtered = array.filter((prod) => {
-      const name = (prod?.nombre_producto || prod?.name || prod?.titulo || '').toString().toLowerCase();
-      return name.includes(term);
-    });
-    return filtered.slice(0, 6); // máximo 6 resultados
+    const term = (q || '').toLowerCase();
+    const filtered = array.filter((prod) =>
+      (prod?.nombre_producto || prod?.name || '').toLowerCase().includes(term)
+    );
+    return filtered.slice(0, 4); // 🔹 solo 4 resultados máximo
+  }
+
+  function goToProduct(prod) {
+    const slugOrId = prod?.slug || prod?.id;
+    if (!slugOrId) return;
+    setResults([]);
+    setSearchTerm('');
+    navigate(`/products/${slugOrId}`);
   }
 
   async function handleLogout() {
@@ -168,57 +145,18 @@ export default function Header() {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
       });
-    } catch (e) {
-      console.error('Logout error:', e);
-    } finally {
-      window.location.href = '/login';
-    }
+    } catch {}
+    window.location.href = '/login';
   }
 
-  const handleProfileMenuOpen = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handleMenuClose = () => {
-    setAnchorEl(null);
-  };
-
-  const handleMobileMenuOpen = (event) => {
-    setMobileMoreAnchorEl(event.currentTarget);
-  };
-
-  const handleMobileMenuClose = () => {
-    setMobileMoreAnchorEl(null);
-  };
-
-  // Si presionan un resultado -> navega al detalle (usa slug si existe, si no id)
-  function goToProduct(prod) {
-    const slugOrId = prod?.slug || prod?.id;
-    if (!slugOrId) {
-      console.warn('Producto sin slug/id:', prod);
-      return;
-    }
-    setResults([]);        // cierra dropdown
-    setSearchTerm('');     // limpia input (opcional)
-    navigate(`/products/${slugOrId}`);
-  }
-
-  // DEBUG: muestra en consola el término y # resultados
-  useEffect(() => {
-    console.debug('Header searchTerm:', searchTerm, 'resultsCount:', results.length);
-  }, [searchTerm, results.length]);
-
-  // Menús (igual que antes)
   const renderMenu = (
     <Menu
       anchorEl={anchorEl}
       open={isMenuOpen}
-      onClose={handleMenuClose}
-      anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
-      transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+      onClose={() => setAnchorEl(null)}
     >
-      <MenuItem onClick={handleMenuClose}>Perfil</MenuItem>
-      <MenuItem onClick={() => { navigate("/direcciones"); handleMenuClose(); }}>
+      <MenuItem onClick={() => setAnchorEl(null)}>Perfil</MenuItem>
+      <MenuItem onClick={() => { navigate("/direcciones"); setAnchorEl(null); }}>
         Mis direcciones
       </MenuItem>
       <MenuItem onClick={handleLogout}>Cerrar sesión</MenuItem>
@@ -229,11 +167,9 @@ export default function Header() {
     <Menu
       anchorEl={mobileMoreAnchorEl}
       open={isMobileMenuOpen}
-      onClose={handleMobileMenuClose}
-      anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
-      transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+      onClose={() => setMobileMoreAnchorEl(null)}
     >
-      <MenuItem onClick={handleProfileMenuOpen}>
+      <MenuItem onClick={(e) => setAnchorEl(e.currentTarget)}>
         <IoPersonCircleSharp size={25} />
         <p style={{ marginLeft: 10 }}>Perfil</p>
       </MenuItem>
@@ -252,27 +188,13 @@ export default function Header() {
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="static" color="inherit">
         <Toolbar>
-          {/* Logo */}
           <Link to="/inicio">
             <img src={logo} alt="Logo" style={{ height: 40, borderRadius: 20 }} />
           </Link>
 
-          {/* Navegación */}
           <Box sx={{ display: { xs: 'none', sm: 'flex' }, ml: 3 }}>
-            <Typography
-              component={Link}
-              to="/inicio"
-              sx={{ mx: 2, color: 'black', textDecoration: 'none' }}
-            >
-              INICIO
-            </Typography>
-            <Typography
-              component={Link}
-              to="/products"
-              sx={{ mx: 2, color: 'black', textDecoration: 'none' }}
-            >
-              PRODUCTOS
-            </Typography>
+            <Typography component={Link} to="/inicio" sx={{ mx: 2, color: 'black', textDecoration: 'none' }}>INICIO</Typography>
+            <Typography component={Link} to="/products" sx={{ mx: 2, color: 'black', textDecoration: 'none' }}>PRODUCTOS</Typography>
           </Box>
 
           {/* Buscador */}
@@ -283,92 +205,84 @@ export default function Header() {
             ref={containerRef}
           >
             <Search>
-              <SearchIconWrapper>
-                <SearchIcon />
-              </SearchIconWrapper>
+              <SearchIconWrapper><SearchIcon /></SearchIconWrapper>
               <StyledInputBase
                 placeholder="Buscar…"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                inputProps={{ 'aria-label': 'buscar productos' }}
               />
             </Search>
 
-            {/* Dropdown de resultados */}
-            { (results.length > 0 || loading) && (
+            {/* Dropdown resultados */}
+            {(results.length > 0 || loading) && (
               <Box
                 sx={{
                   position: 'absolute',
                   top: '100%',
+                  left: 0,
+                  right: 0,
                   mt: 1,
-                  bgcolor: 'background.paper',
+                  bgcolor: 'white',
                   boxShadow: 3,
-                  borderRadius: 1,
+                  borderRadius: 2,
                   zIndex: 1300,
-                  width: { xs: '220px', sm: '360px' },
-                  maxHeight: 300,
-                  overflowY: 'auto',
+                  width: '90%',
+                  mx: 'auto',
+                  p: 2,
                 }}
               >
-                {loading && (
-                  <Box sx={{ p: 1 }}>Buscando...</Box>
-                )}
+                {loading && <Box sx={{ p: 1 }}>Buscando...</Box>}
 
-                {!loading && results.length === 0 && (
-                  <Box sx={{ p: 1 }}>No hay resultados</Box>
+                {!loading && results.length > 0 && (
+                  <Box
+                    sx={{
+                      display: 'grid',
+                      gridTemplateColumns: 'repeat(4, 1fr)', // 🔹 siempre 4 columnas
+                      gap: 2,
+                    }}
+                  >
+                    {results.map((prod) => {
+                      const name = prod?.nombre_producto || prod?.name || 'Sin nombre';
+                      const img = prod?.imagen_url || prod?.image || null;
+                      const price = prod?.precio_producto || prod?.price || null;
+                      return (
+                        <Box
+                          key={prod.id || prod.slug || name}
+                          onClick={() => goToProduct(prod)}
+                          sx={{
+                            p: 1,
+                            textAlign: 'center',
+                            border: '1px solid #ddd',
+                            borderRadius: 2,
+                            cursor: 'pointer',
+                            '&:hover': { boxShadow: 4 },
+                          }}
+                        >
+                          {img ? (
+                            <img src={img} alt={name} style={{ width: '100%', height: 120, objectFit: 'cover', borderRadius: 8 }} />
+                          ) : (
+                            <Box sx={{ width: '100%', height: 120, bgcolor: '#eee', borderRadius: 1 }} />
+                          )}
+                          <Typography variant="body2" sx={{ mt: 1, fontWeight: 500 }}>{name}</Typography>
+                          {price && <Typography variant="caption" color="text.secondary">${price}</Typography>}
+                        </Box>
+                      );
+                    })}
+                  </Box>
                 )}
-
-                {!loading && results.map(prod => {
-                  const name = prod?.nombre_producto || prod?.name || prod?.titulo || 'Sin nombre';
-                  const img = prod?.imagen_url || prod?.image || prod?.img || null;
-                  const price = prod?.precio_producto || prod?.price || null;
-                  return (
-                    <Box
-                      key={prod.id || prod.slug || name}
-                      onClick={() => goToProduct(prod)}
-                      sx={{
-                        display: 'flex',
-                        gap: 1,
-                        alignItems: 'center',
-                        p: 1,
-                        cursor: 'pointer',
-                        '&:hover': { bgcolor: '#f5f5f5' }
-                      }}
-                    >
-                      {img ? (
-                        <img src={img} alt={name} style={{ width: 48, height: 48, objectFit: 'cover', borderRadius: 6 }} />
-                      ) : (
-                        <Box sx={{ width: 48, height: 48, backgroundColor: '#eee', borderRadius: 1 }} />
-                      )}
-                      <Box sx={{ flex: 1 }}>
-                        <div style={{ fontSize: 14, fontWeight: 500 }}>{name}</div>
-                        {price != null && <div style={{ fontSize: 12, color: '#666' }}>${price}</div>}
-                      </Box>
-                    </Box>
-                  );
-                })}
               </Box>
             )}
           </Box>
 
-          {/* Íconos desktop */}
+          {/* Íconos */}
           <Box sx={{ display: { xs: 'none', md: 'flex' }, gap: 2 }}>
-            <IconButton onClick={handleProfileMenuOpen} color="inherit">
-              <IoPersonCircleSharp size={30} />
-            </IconButton>
-            <IconButton component={Link} to="/carrito" color="inherit">
-              <BsCart4 size={25} />
-            </IconButton>
-            <IconButton color="inherit" onClick={() => setOpenModal(true)}>
-              <BsHeart size={22} />
-            </IconButton>
+            <IconButton onClick={(e) => setAnchorEl(e.currentTarget)}><IoPersonCircleSharp size={30} /></IconButton>
+            <IconButton component={Link} to="/carrito"><BsCart4 size={25} /></IconButton>
+            <IconButton onClick={() => setOpenModal(true)}><BsHeart size={22} /></IconButton>
           </Box>
 
-          {/* Menú mobile */}
           <Box sx={{ display: { xs: 'flex', md: 'none' } }}>
-            <IconButton onClick={handleMobileMenuOpen} color="inherit">
-              <MoreIcon />
-            </IconButton>
+            <IconButton onClick={(e) => setMobileMoreAnchorEl(e.currentTarget)}><MoreIcon /></IconButton>
           </Box>
         </Toolbar>
       </AppBar>
@@ -376,7 +290,6 @@ export default function Header() {
       {renderMobileMenu}
       {renderMenu}
 
-      {/* Modal favoritos */}
       <Modal open={openModal} onClose={() => setOpenModal(false)}>
         <ModalDialog size="lg">
           <ModalClose />
