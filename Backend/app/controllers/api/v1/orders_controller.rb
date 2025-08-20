@@ -33,6 +33,19 @@ class Api::V1::OrdersController < Api::V1::BaseController
     end
   end
 
+  def count_completed
+    completed_orders = Order.where(status: :pagada).count
+    render json: { count: completed_orders }
+  end
+
+  def orders_completed_per_day
+    data = Order.where(status: :pagada)
+                    .group("DATE(created_at)")
+                    .order("DATE(created_at)")
+                    .count
+    render json: data
+  end
+
   private
 
   def calcular_monto_actual
@@ -40,4 +53,6 @@ class Api::V1::OrdersController < Api::V1::BaseController
       item.product.precio_producto * item.cantidad
     end
   end
+
+ 
 end
