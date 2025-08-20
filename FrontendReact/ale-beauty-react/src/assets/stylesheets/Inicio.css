@@ -173,7 +173,7 @@
 }
 
 .main-carousel .carousel-item img {
-  height: 500px !important; /* Antes era 600px */
+  height: 510px !important; /* Antes era 600px */
   width: 100vw !important;
   max-width: 100vw !important;
   object-fit: cover;
