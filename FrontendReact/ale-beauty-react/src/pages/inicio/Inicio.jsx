@@ -3,7 +3,6 @@ import Carousel from 'react-bootstrap/Carousel';
 import IconButton from '@mui/joy/IconButton';
 import FavoriteBorder from '@mui/icons-material/FavoriteBorder';
 import { Link } from 'react-router-dom';
-import Header from './Header'; // Asegúrate de que la ruta sea correcta
 
 
 function Inicio() {
@@ -84,18 +83,25 @@ function Inicio() {
 
   return (
     <div>
-      <Header />
-      <Carousel interval={3000} className="main-carousel">
-        {carousel.map((img, idx) => (
-          <Carousel.Item key={idx}>
-            <img
-              className="d-block"
-              src={img}
-              alt={`Slide ${idx + 1}`}
-            />
-          </Carousel.Item>
-        ))}
-      </Carousel>
+      {carousel.length > 0 ? (
+        <Carousel interval={3000} className="mb-0">
+          {carousel.map((img, idx) => (
+            <Carousel.Item key={idx}>
+              <img
+                className="d-block w-100"
+                src={img}
+                alt={`Slide ${idx + 1}`}
+                style={{
+                  height: "400px", // más alto como banner
+                  objectFit: "cover",
+                }}
+              />
+            </Carousel.Item>
+          ))}
+        </Carousel>
+      ) : (
+        <p>No hay imágenes de carrusel disponibles.</p>
+      )}
 
 
       {/* Productos */}

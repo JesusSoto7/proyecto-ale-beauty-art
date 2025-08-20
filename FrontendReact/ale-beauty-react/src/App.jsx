@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate, Outlet } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import LoginForm from './components/LoginForm';
 import Register from './components/RegisterForm';
 import Inicio from './pages/inicio/Inicio';
@@ -40,11 +40,10 @@ function App() {
             path='/inicio'
             element={isLoggedIn ? <Inicio /> : <Navigate to="/login" />}
           />
-          <Route
+           <Route
             path="/products"
             element={<ProductosCliente />}
           />
-
         </Route>
 
         <Route element={<CheckoutLayout />}>
@@ -94,11 +93,7 @@ function App() {
           <Route path='/carrito'
             element={<Cart />} />
         </Route>
-        
-        <main>
-          <Outlet />
-        </main>
-        
+
 
 
       </Routes>
