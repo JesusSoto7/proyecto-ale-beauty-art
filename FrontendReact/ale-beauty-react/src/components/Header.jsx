@@ -127,7 +127,7 @@ export default function Header() {
     const filtered = array.filter((prod) =>
       (prod?.nombre_producto || prod?.name || '').toLowerCase().includes(term)
     );
-    return filtered.slice(0, 4); // 🔹 solo 4 resultados máximo
+    return filtered.slice(0, 4); // 🔹 máximo 4 resultados
   }
 
   function goToProduct(prod) {
@@ -234,41 +234,90 @@ export default function Header() {
                 {loading && <Box sx={{ p: 1 }}>Buscando...</Box>}
 
                 {!loading && results.length > 0 && (
-                  <Box
-                    sx={{
-                      display: 'grid',
-                      gridTemplateColumns: 'repeat(4, 1fr)', // 🔹 siempre 4 columnas
-                      gap: 2,
-                    }}
-                  >
-                    {results.map((prod) => {
-                      const name = prod?.nombre_producto || prod?.name || 'Sin nombre';
-                      const img = prod?.imagen_url || prod?.image || null;
-                      const price = prod?.precio_producto || prod?.price || null;
-                      return (
-                        <Box
-                          key={prod.id || prod.slug || name}
-                          onClick={() => goToProduct(prod)}
-                          sx={{
-                            p: 1,
-                            textAlign: 'center',
-                            border: '1px solid #ddd',
-                            borderRadius: 2,
-                            cursor: 'pointer',
-                            '&:hover': { boxShadow: 4 },
-                          }}
-                        >
-                          {img ? (
-                            <img src={img} alt={name} style={{ width: '100%', height: 120, objectFit: 'cover', borderRadius: 8 }} />
-                          ) : (
-                            <Box sx={{ width: '100%', height: 120, bgcolor: '#eee', borderRadius: 1 }} />
-                          )}
-                          <Typography variant="body2" sx={{ mt: 1, fontWeight: 500 }}>{name}</Typography>
-                          {price && <Typography variant="caption" color="text.secondary">${price}</Typography>}
-                        </Box>
-                      );
-                    })}
-                  </Box>
+                  <>
+                    {/* Grid en pantallas medianas y grandes */}
+                    <Box
+                      sx={{
+                        display: { xs: 'none', sm: 'grid' },
+                        gridTemplateColumns: {
+                          sm: 'repeat(2, 1fr)',
+                          md: 'repeat(3, 1fr)',
+                          lg: 'repeat(4, 1fr)',
+                        },
+                        gap: 2,
+                      }}
+                    >
+                      {results.map((prod) => {
+                        const name = prod?.nombre_producto || prod?.name || 'Sin nombre';
+                        const img = prod?.imagen_url || prod?.image || null;
+                        const price = prod?.precio_producto || prod?.price || null;
+                        return (
+                          <Box
+                            key={prod.id || prod.slug || name}
+                            onClick={() => goToProduct(prod)}
+                            sx={{
+                              p: 1,
+                              textAlign: 'center',
+                              border: '1px solid #ddd',
+                              borderRadius: 2,
+                              cursor: 'pointer',
+                              '&:hover': { boxShadow: 4 },
+                            }}
+                          >
+                            {img ? (
+                              <img src={img} alt={name} style={{ width: '100%', height: 120, objectFit: 'cover', borderRadius: 8 }} />
+                            ) : (
+                              <Box sx={{ width: '100%', height: 120, bgcolor: '#eee', borderRadius: 1 }} />
+                            )}
+                            <Typography variant="body2" sx={{ mt: 1, fontWeight: 500 }}>{name}</Typography>
+                            {price && <Typography variant="caption" color="text.secondary">${price}</Typography>}
+                          </Box>
+                        );
+                      })}
+                    </Box>
+
+                    {/* Carrusel en móviles */}
+                    <Box
+                      sx={{
+                        display: { xs: 'flex', sm: 'none' },
+                        overflowX: 'auto',
+                        gap: 2,
+                        pb: 1,
+                        '&::-webkit-scrollbar': { display: 'none' },
+                      }}
+                    >
+                      {results.map((prod) => {
+                        const name = prod?.nombre_producto || prod?.name || 'Sin nombre';
+                        const img = prod?.imagen_url || prod?.image || null;
+                        const price = prod?.precio_producto || prod?.price || null;
+                        return (
+                          <Box
+                            key={prod.id || prod.slug || name}
+                            onClick={() => goToProduct(prod)}
+                            sx={{
+                              minWidth: 160,
+                              maxWidth: 200,
+                              p: 1,
+                              textAlign: 'center',
+                              border: '1px solid #ddd',
+                              borderRadius: 2,
+                              cursor: 'pointer',
+                              flexShrink: 0,
+                              '&:hover': { boxShadow: 4 },
+                            }}
+                          >
+                            {img ? (
+                              <img src={img} alt={name} style={{ width: '100%', height: 120, objectFit: 'cover', borderRadius: 8 }} />
+                            ) : (
+                              <Box sx={{ width: '100%', height: 120, bgcolor: '#eee', borderRadius: 1 }} />
+                            )}
+                            <Typography variant="body2" sx={{ mt: 1, fontWeight: 500 }}>{name}</Typography>
+                            {price && <Typography variant="caption" color="text.secondary">${price}</Typography>}
+                          </Box>
+                        );
+                      })}
+                    </Box>
+                  </>
                 )}
               </Box>
             )}
