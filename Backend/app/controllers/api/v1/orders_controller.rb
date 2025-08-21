@@ -46,6 +46,20 @@ class Api::V1::OrdersController < Api::V1::BaseController
     render json: data
   end
 
+  def total_sales
+    total = Order.where(status: :pagada).sum(:pago_total)
+    render json: { total_sales: total}
+  end
+
+  def total_sales_per_day
+    data = Order.where(status: :pagada)
+                .group("DATE(created_at)")
+                .order("DATE(created_at)")
+                .sum(:pago_total)
+
+    render json: data
+  end
+
   private
 
   def calcular_monto_actual

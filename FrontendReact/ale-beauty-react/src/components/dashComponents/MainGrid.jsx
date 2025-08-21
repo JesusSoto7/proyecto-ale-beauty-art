@@ -11,6 +11,7 @@ import HighlightedCard from './HighlightedCard';
 import PageViewsBarChart from './PageViewsBarChart';
 import SessionsChart from './SessionsChart';
 import StatCard from './StatCard';
+import { formatCOP } from '../../services/currency';
 
 
 
@@ -20,6 +21,8 @@ export default function MainGrid() {
   const [userChartData, setUserChartData] = React.useState([]);
   const [completedOrders, setCompletedOrders] = React.useState(0);
   const [orderCharData, setOrderCharData] = React.useState([]);
+  const [totalSales, setTotalSales] = React.useState(0);
+  const [totalSalesCharData, setTotalSalesCharData] = React.useState([]);
 
   React.useEffect(() => {
 
@@ -30,6 +33,33 @@ export default function MainGrid() {
       alert("no esta atenticado");
     }
   }, []);
+
+  React.useEffect(() => {
+    if (!token) return;
+
+    fetch("https://localhost:4000/api/v1/total_sales", {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        const total = formatCOP(data.total_sales);
+        setTotalSales(total);
+      })
+      .catch((err) => console.error(err));
+
+    fetch("https://localhost:4000/api/v1/total_sales_per_day", {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        const values = Object.values(data).map(v => Number(v));
+        setTotalSalesCharData(values);
+      })
+  }, [token]);
 
   React.useEffect(() => {
     if (!token) return;
@@ -102,14 +132,11 @@ export default function MainGrid() {
       data: orderCharData,
     },
     {
-      title: 'Event count',
-      value: '200k',
-      interval: 'Last 30 days',
+      title: 'Total vendidos',
+      value: totalSales,
+      interval: 'Ultimos 30 dias',
       trend: 'neutral',
-      data: [
-        500, 400, 510, 530, 520, 600, 530, 520, 510, 730, 520, 510, 530, 620, 510, 530,
-        520, 410, 530, 520, 610, 530, 520, 610, 530, 420, 510, 430, 520, 510,
-      ],
+      data: totalSalesCharData,
     },
   ];
 
