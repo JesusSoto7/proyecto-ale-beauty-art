@@ -51,6 +51,7 @@ Rails.application.routes.draw do
       get "orders_completed_per_day", to: "orders#orders_completed_per_day"
       get "total_sales", to: "orders#total_sales"
       get "total_sales_per_day", to: "orders#total_sales_per_day"
+      get "total_sales_by_category", to: "orders#total_sales_by_category"
 
       get 'locations/departments', to: 'locations#departments'
       get 'locations/municipalities/:department_id', to: 'locations#municipalities'

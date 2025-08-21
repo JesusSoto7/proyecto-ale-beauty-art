@@ -17,39 +17,7 @@ import {
   GlobeFlag,
 } from '../../internals/components/CustomIcons';
 
-const data = [
-  { label: 'India', value: 50000 },
-  { label: 'USA', value: 35000 },
-  { label: 'Brazil', value: 10000 },
-  { label: 'Other', value: 5000 },
-];
 
-const countries = [
-  {
-    name: 'India',
-    value: 50,
-    flag: <IndiaFlag />,
-    color: 'hsl(220, 25%, 65%)',
-  },
-  {
-    name: 'USA',
-    value: 35,
-    flag: <UsaFlag />,
-    color: 'hsl(220, 25%, 45%)',
-  },
-  {
-    name: 'Brazil',
-    value: 10,
-    flag: <BrazilFlag />,
-    color: 'hsl(220, 25%, 30%)',
-  },
-  {
-    name: 'Other',
-    value: 5,
-    flag: <GlobeFlag />,
-    color: 'hsl(220, 25%, 20%)',
-  },
-];
 
 const StyledText = styled('text', {
   shouldForwardProp: (prop) => prop !== 'variant',
@@ -118,7 +86,53 @@ const colors = [
   'hsl(220, 20%, 25%)',
 ];
 
-export default function ChartUserByCountry() {
+export default function ChartProductsByCategory() {
+  const [token, setToken] = React.useState(null)
+  const [categoryData, setCategoryData] = React.useState([]);
+  const [categoryPercent, setCategortPercent] = React.useState([]);
+
+  React.useEffect(() => {
+
+    const savedToken = localStorage.getItem("token");
+    if (savedToken) {
+      setToken(savedToken);
+    } else {
+      alert("no esta atenticado");
+    }
+  }, []);
+
+
+  React.useEffect(() => {
+    if (!token) return;
+    fetch("https://localhost:4000/api/v1/total_sales_by_category", {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        const total = data.reduce((sum, cat) => sum + cat.total_sales, 0);
+
+        setCategoryData(
+          data.map((cat) => ({
+            id: cat.id,
+            label: cat.name,
+            value: cat.total_sales,
+          }))
+        );
+
+        setCategortPercent(
+          data.map((cat) => ({
+            id: cat.id,
+            nombre_categoria: cat.name,
+            value: total > 0 ? ((cat.total_sales / total) * 100).toFixed(1) : 0,
+            imagen_url: cat.imagen_url,
+          }))
+        )
+      })
+      .catch((err) => console.error(err));
+  }, [token]);
+
   return (
     <Card
       variant="outlined"
@@ -126,7 +140,7 @@ export default function ChartUserByCountry() {
     >
       <CardContent>
         <Typography component="h2" variant="subtitle2">
-          Users by country
+          Total vendidos por categoria
         </Typography>
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
           <PieChart
@@ -139,7 +153,7 @@ export default function ChartUserByCountry() {
             }}
             series={[
               {
-                data,
+                data: categoryData,
                 innerRadius: 75,
                 outerRadius: 100,
                 paddingAngle: 0,
@@ -150,16 +164,45 @@ export default function ChartUserByCountry() {
             width={260}
             hideLegend
           >
-            <PieCenterLabel primaryText="98.5K" secondaryText="Total" />
+            <PieCenterLabel
+              primaryText={categoryData.reduce(
+                (sum, cat) => sum + cat.value,
+                0
+              ).toLocaleString("es-CO", {
+                style: "currency",
+                currency: "COP",
+              })}
+              secondaryText="Total" />
           </PieChart>
         </Box>
-        {countries.map((country, index) => (
+        {categoryPercent.map((cat, index) => (
           <Stack
             key={index}
             direction="row"
             sx={{ alignItems: 'center', gap: 2, pb: 2 }}
           >
-            {country.flag}
+            {cat.imagen_url ? (
+              <img
+                src={cat.imagen_url}
+                alt={cat.nombre_categoria}
+                width={32}
+                height={32}
+                style={{ borderRadius: '50%', objectFit: 'cover' }}
+              />
+
+
+            ) : (
+              <Box
+                sx={{
+                  width: 32,
+                  height: 32,
+                  bgcolor: "grey.300",
+                  borderRadius: "50%",
+                }}
+              />
+            )}
+
+
             <Stack sx={{ gap: 1, flexGrow: 1 }}>
               <Stack
                 direction="row"
@@ -170,19 +213,19 @@ export default function ChartUserByCountry() {
                 }}
               >
                 <Typography variant="body2" sx={{ fontWeight: '500' }}>
-                  {country.name}
+                  {cat.nombre_categoria}
                 </Typography>
                 <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                  {country.value}%
+                  {cat.value}%
                 </Typography>
               </Stack>
               <LinearProgress
                 variant="determinate"
                 aria-label="Number of users by country"
-                value={country.value}
+                value={cat.value}
                 sx={{
                   [`& .${linearProgressClasses.bar}`]: {
-                    backgroundColor: country.color,
+                    backgroundColor: colors[index % colors.length],
                   },
                 }}
               />

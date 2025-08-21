@@ -59,6 +59,32 @@ class Api::V1::OrdersController < Api::V1::BaseController
 
     render json: data
   end
+  
+    def total_sales_by_category
+      categories = Category
+                  .left_joins(products: { order_details: :order })
+                  .where(orders: { status: :pagada })
+                  .group("categories.id")
+                  .select(
+                    "categories.id,
+                      categories.nombre_categoria,
+                      COALESCE(SUM(order_details.cantidad * order_details.precio_unitario), 0) AS total_sales"
+                  )
+
+      data = categories.map do |cat|
+        {
+          id: cat.id,
+          name: cat.nombre_categoria,
+          total_sales: cat.total_sales.to_f,
+          imagen_url: cat.imagen.attached? ? url_for(cat.imagen) : nil
+        }
+    end
+
+    render json: data
+  end
+
+
+
 
   private
 
