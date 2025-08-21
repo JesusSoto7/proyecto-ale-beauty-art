@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import logo from '../assets/images/ale_logo.jpg';
 import { BsHeart, BsCart4 } from "react-icons/bs";
 import { IoPersonCircleSharp } from "react-icons/io5";
@@ -23,13 +23,24 @@ import FavoritesModal from './FavoritesModal';
 
 const Search = styled('div')(({ theme }) => ({
   position: 'relative',
-  borderRadius: theme.shape.borderRadius,
+  borderRadius: 20, // 🔹 redondeado
+  border: '1px solid #ccc', // 🔹 borde delgado
   backgroundColor: alpha(theme.palette.common.white, 0.15),
   '&:hover': {
     backgroundColor: alpha(theme.palette.common.white, 0.25),
   },
   marginLeft: theme.spacing(2),
-  width: 'auto',
+  transition: 'all 0.3s ease',
+  width: '160px', // ancho base
+  [theme.breakpoints.up('sm')]: {
+    width: '200px',
+  },
+  '&:focus-within': {
+    width: '260px',
+    [theme.breakpoints.up('sm')]: {
+      width: '320px',
+    },
+  },
 }));
 
 const SearchIconWrapper = styled('div')(({ theme }) => ({
@@ -47,11 +58,10 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
   '& .MuiInputBase-input': {
     padding: theme.spacing(1, 1, 1, 0),
     paddingLeft: `calc(1em + ${theme.spacing(4)})`,
-    transition: theme.transitions.create('width'),
-    width: '15ch',
-    [theme.breakpoints.up('sm')]: {
-      width: '25ch',
-    },
+    transition: theme.transitions.create(['width', 'padding'], {
+      duration: theme.transitions.duration.short,
+    }),
+    width: '100%',
   },
 }));
 
@@ -76,7 +86,7 @@ export default function Header() {
     e.preventDefault();
   }
 
-  // cerrar si clic afuera
+  // cerrar dropdown si clic afuera
   useEffect(() => {
     const handleClickOutside = (ev) => {
       if (containerRef.current && !containerRef.current.contains(ev.target)) {
