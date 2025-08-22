@@ -40,10 +40,19 @@ Rails.application.routes.draw do
         end
       end
 
-      resources :orders, only: [:create]
+      resources :orders, only: [:create, :index]
       resources :payments, only: [:create]
 
       get "/me", to: "users#me"
+      get "/count", to: "users#count"
+      get "/registrations_per_day", to: "users#registrations_per_day"
+
+      get "completed_orders_count", to: "orders#count_completed"
+      get "orders_completed_per_day", to: "orders#orders_completed_per_day"
+      get "total_sales", to: "orders#total_sales"
+      get "total_sales_per_day", to: "orders#total_sales_per_day"
+      get "total_sales_by_category", to: "orders#total_sales_by_category"
+
       get 'locations/departments', to: 'locations#departments'
       get 'locations/municipalities/:department_id', to: 'locations#municipalities'
       get 'locations/neighborhoods/:municipality_id', to: 'locations#neighborhoods'
