@@ -11,7 +11,7 @@ import PageViewsBarChart from './PageViewsBarChart';
 import SessionsChart from './SessionsChart';
 import StatCard from './StatCard';
 import { formatCOP } from '../../services/currency';
-import ChartProductsByCategory from './ChartUserByCountry';
+import ChartProductsByCategory from './ChartProductsByCategory';
 
 
 

@@ -5,6 +5,7 @@ class Order < ApplicationRecord
   has_many :order_details, dependent: :destroy
   before_validation :generar_numero_de_orden, on: :create
   belongs_to :shipping_address, optional: true
+  has_one_attached :invoice_pdf
 
   validates :correo_cliente, presence: true, format: { with: URI::MailTo::EMAIL_REGEXP }
   validates :numero_de_orden, presence: true, uniqueness: true
@@ -19,5 +20,9 @@ class Order < ApplicationRecord
 
   def total_con_envio
     pago_total.to_f + costo_de_envio.to_f
+  end
+
+  def as_json(options = {})
+    super(options).merge(status: self.status)
   end
 end

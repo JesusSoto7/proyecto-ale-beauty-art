@@ -10,13 +10,6 @@ import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import LinearProgress, { linearProgressClasses } from '@mui/material/LinearProgress';
 
-import {
-  IndiaFlag,
-  UsaFlag,
-  BrazilFlag,
-  GlobeFlag,
-} from '../../internals/components/CustomIcons';
-
 
 
 const StyledText = styled('text', {
@@ -80,10 +73,10 @@ PieCenterLabel.propTypes = {
 };
 
 const colors = [
-  'hsl(220, 20%, 65%)',
-  'hsl(220, 20%, 42%)',
-  'hsl(220, 20%, 35%)',
-  'hsl(220, 20%, 25%)',
+  'hsla(243, 79%, 89%, 1.00)',
+  'hsla(243, 24%, 71%, 1.00)',
+  'hsla(247, 17%, 48%, 0.87)',
+  'hsla(249, 32%, 43%, 0.91)',
 ];
 
 export default function ChartProductsByCategory() {
