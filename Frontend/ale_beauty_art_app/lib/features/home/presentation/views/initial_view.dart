@@ -11,7 +11,7 @@ import 'package:ale_beauty_art_app/features/products/presentation/bloc/product_b
 import 'package:ale_beauty_art_app/features/products/presentation/views/products_page_view.dart';
 import 'package:ale_beauty_art_app/features/products/presentation/widgets/products_carousel.dart';
 import 'package:ale_beauty_art_app/features/profile/presentation/views/profile_view.dart';
-
+import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:ale_beauty_art_app/styles/colors.dart'; // Estilos
 import 'package:ale_beauty_art_app/styles/text_styles.dart'; // Tipografías
 
@@ -62,280 +62,111 @@ class InitialView extends StatelessWidget {
 
         // Contenido según la pestaña seleccionada
         body: BlocBuilder<NavigationBloc, NavigationState>(
-          builder: (context, state) {
-            if (state is NavigationUpdated) {
-              switch (state.selectedIndex) {
-                case 0:
-                  return _homeContent(context);
-                case 1:
-                  return const ProductsPageView();
-                case 2:
-                  return const CategoriesPageView();
-                case 3:
-                  return const ProfileView();
-                default:
-                  return _homeContent(context);
-              }
-            } else {
-              return _homeContent(context);
-            }
-          },
-        ),
-        resizeToAvoidBottomInset: false,
-        floatingActionButton: SizedBox(
-          height: 60,
-          width: 60,
-          child: FloatingActionButton(
-            backgroundColor: Colors.white,
-            hoverColor: Colors.grey.withOpacity(0.1), 
-            splashColor: AppColors.primaryPink.withOpacity(0.1),
-            elevation: 4,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(50),
-            ),
-            child: Icon(
-              Icons.shopping_cart_sharp,
-              color: AppColors.primaryPink,
-              size: 28,
-            ),
-            onPressed: () async {
-              final authState = context.read<AuthBloc>().state;
-
-              if (authState is! AuthSuccess) {
-                // No autenticado: abre LoginPage
-                final result = await Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (_) => const LoginPage()),
-                );
-
-                if (result == true) {
-                  // Si inició sesión correctamente
-                  final auth = context.read<AuthBloc>().state as AuthSuccess;
-
-                  // Actualiza token del CartBloc
-                  context.read<CartBloc>().add(UpdateCartToken(auth.token));
-
-                  // Abre carrito y carga
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (_) => const CartPageView()),
-                  );
-
-                  context.read<CartBloc>().add(LoadCart());
+            builder: (context, state) {
+              if (state is NavigationUpdated) {
+                switch (state.selectedIndex) {
+                  case 0:
+                    return _homeContent(context);
+                  case 1:
+                    return const ProductsPageView();
+                  case 2:
+                    return const CategoriesPageView();
+                  case 3:
+                    return const CartPageView(); // 🛒 Carrito como vista
+                  case 4:
+                    return const ProfileView();
+                  default:
+                    return _homeContent(context);
                 }
               } else {
-                // Ya autenticado
-                final auth = authState;
-
-                // Actualiza token del CartBloc
-                context.read<CartBloc>().add(UpdateCartToken(auth.token));
-
-                // Abre carrito y carga
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (_) => const CartPageView()),
-                );
-
-                context.read<CartBloc>().add(LoadCart());
+                return _homeContent(context);
               }
             },
           ),
-        ),
-        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-
-        // BottomAppBar ajustado
-        bottomNavigationBar: BlocBuilder<NavigationBloc, NavigationState>(
-          builder: (context, state) {
-            final currentIndex =(state is NavigationUpdated) ? state.selectedIndex : 0;
-            context.read<ProductBloc>().add(ProductFetched());
-
-            return BottomAppBar(
-              height: 80,
-              color: const Color.fromARGB(255, 255, 255, 255),
-              elevation: 8,
-              shape: const AutomaticNotchedShape(
-                RoundedRectangleBorder(
-                  borderRadius: BorderRadius.zero,
-                ),
-              ),
-              notchMargin: 10,
-              child: SizedBox(
-                height: 60,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly, //  Íconos más centrados
-                  children: [
-                    // Inicio
-                    GestureDetector(
-                      child: Material(
-                        color: Colors.transparent, // Quita el fondo fijo
-                        shape: const CircleBorder(),
-                        child: InkWell(
-                          customBorder: const CircleBorder(),
-                          splashColor: AppColors.primaryPink.withOpacity(0.1), //  Ripple
-                          radius: 25, // 📏 Radio más grande para cubrir ícono + texto
-                          onTap: () {
-                            context.read<NavigationBloc>().add(NavigationTabChanged(0));
-                          },
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6), // Espacio para ícono + texto
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Icon(
-                                  Icons.home_rounded,
-                                  color: (currentIndex == 0)
-                                      ? AppColors.primaryPink // Icono activo rosado
-                                      : Colors.grey[500],
-                                  size: 24,
-                                ),
-
-                                Text(
-                                  'Inicio',
-                                  style: TextStyle(
-                                    color: (currentIndex == 0)
-                                        ? AppColors.primaryPink // Texto activo rosado
-                                        : Colors.grey[500],
-                                    fontSize: 14,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-
-                    // 🛒 Productos
-                    GestureDetector(
-                      child: Material(
-                        color: Colors.transparent, // Quita el fondo fijo
-                        shape: const CircleBorder(),
-                        child: InkWell(
-                          customBorder: const CircleBorder(),
-                          splashColor: AppColors.primaryPink.withOpacity(0.1), //  Ripple
-                          radius: 25, // 📏 Radio más grande para cubrir ícono + texto
-                          onTap: () {
-                            context.read<NavigationBloc>().add(NavigationTabChanged(1));
-                            context.read<ProductBloc>().add(ProductFetched());
-                          },
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6), // Espacio para ícono + texto
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Icon(
-                                  Icons.grid_view_rounded,
-                                  color: (currentIndex == 1)
-                                      ? AppColors.primaryPink // Icono activo rosado
-                                      : Colors.grey[500],
-                                  size: 24,
-                                ),
-                                Text(
-                                  'Productos',
-                                  style: TextStyle(
-                                    color: (currentIndex == 1)
-                                        ? AppColors.primaryPink // Texto activo rosado
-                                        : Colors.grey[500],
-                                    fontSize: 14,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                    SizedBox(width: 15),
-                    GestureDetector(
-                      child: Material(
-                        color: Colors.transparent, // Quita el fondo fijo
-                        shape: const CircleBorder(),
-                        child: InkWell(
-                          customBorder: const CircleBorder(),
-                          splashColor: AppColors.primaryPink.withOpacity(0.1), //  Ripple
-                          radius: 25, //  Radio más grande para cubrir ícono + texto
-                          onTap: () {
-                            context.read<NavigationBloc>().add(NavigationTabChanged(2));
-                            context.read<ProductBloc>().add(ProductFetched());
-                            context.read<CategoriesBloc>().add(CategoriesFetched());
-                          },
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6), //Espacio para ícono + texto
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Icon(
-                                  Icons.category_rounded,
-                                  color: (currentIndex == 2)
-                                      ? AppColors.primaryPink // Icono activo rosado
-                                      : Colors.grey[500],
-                                  size: 24,
-                                ),
-                                Text(
-                                  'Categorias',
-                                  style: TextStyle(
-                                    color: (currentIndex == 2)
-                                        ? AppColors.primaryPink // Texto activo rosado
-                                        : Colors.grey[500],
-                                    fontSize: 14,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                    //  Perfil
-                    GestureDetector(
-                      child: Material(
-                        color: Colors.transparent, // Quita el fondo fijo
-                        shape: const CircleBorder(),
-                        child: InkWell(
-                          customBorder: const CircleBorder(),
-                          splashColor: AppColors.primaryPink.withOpacity(0.1), // Ripple
-                          radius: 25, //  Radio más grande para cubrir ícono + texto
-                          onTap: () {
-                            context.read<NavigationBloc>().add(NavigationTabChanged(3));
-                            context.read<AuthBloc>();
-                          },
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6), //  Espacio para ícono + texto
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Icon(
-                                  Icons.person,
-                                  color: (currentIndex == 3)
-                                      ? AppColors.primaryPink // Icono activo rosado
-                                      : Colors.grey[500],
-                                  size: 24,
-                                ),
-                                Text(
-                                  'Perfil',
-                                  style: TextStyle(
-                                    color: (currentIndex == 3)
-                                        ? AppColors.primaryPink // Texto activo rosado
-                                        : Colors.grey[500],
-                                    fontSize: 14,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
+          resizeToAvoidBottomInset: false,
+          
+          // 🔥 Nuevo Navbar con GNav
+          bottomNavigationBar: BlocBuilder<NavigationBloc, NavigationState>(
+            builder: (context, state) {
+              final currentIndex = (state is NavigationUpdated) ? state.selectedIndex : 0;
+              context.read<ProductBloc>().add(ProductFetched());
+              return Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  boxShadow: [
+                    BoxShadow(
+                      blurRadius: 8,
+                      color: Colors.black.withOpacity(0.1),
+                    )
                   ],
                 ),
-              ),
-            );
-          },
-        ),
+                child: SafeArea(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 8),
+                    child: GNav(
+                      gap: 8,
+                      backgroundColor: Colors.white,
+                      color: Colors.grey[500],
+                      activeColor: AppColors.primaryPink,
+                      tabBackgroundColor: AppColors.primaryPink.withOpacity(0.1),
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                      selectedIndex: currentIndex,
+                      onTabChange: (index) async {
+                      if (index == 3) {
+                        // 🛒 Carrito
+                        final authState = context.read<AuthBloc>().state;
+                        if (authState is! AuthSuccess) {
+                          final result = await Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (_) => const LoginPage()),
+                          );
+
+                          if (result == true) {
+                            // ✅ Autenticado después del login
+                            final auth = context.read<AuthBloc>().state as AuthSuccess;
+                            context.read<CartBloc>().add(UpdateCartToken(auth.token));
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (_) => const CartPageView()),
+                            );
+                            context.read<CartBloc>().add(LoadCart());
+
+                            // 🔄 Ahora sí mover tab a Carrito
+                            context.read<NavigationBloc>().add(NavigationTabChanged(3));
+                          }
+                        } else {
+                          // ✅ Ya autenticado
+                          final auth = authState;
+                          context.read<CartBloc>().add(UpdateCartToken(auth.token));
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (_) => const CartPageView()),
+                          );
+                          context.read<CartBloc>().add(LoadCart());
+
+                          // 🔄 Cambiar tab a Carrito
+                          context.read<NavigationBloc>().add(NavigationTabChanged(3));
+                        }
+                      } else {
+                        // 🔄 Manejo normal de tabs
+                        context.read<NavigationBloc>().add(NavigationTabChanged(index));
+                        if (index == 1) context.read<ProductBloc>().add(ProductFetched());
+                        if (index == 2) context.read<CategoriesBloc>().add(CategoriesFetched());
+                      }
+                    },
+                      tabs: [
+                        GButton(icon: Icons.home_rounded, text: 'Inicio'),
+                        GButton(icon: Icons.grid_view_rounded, text: 'Productos'),
+                        GButton(icon: Icons.category_rounded, text: 'Categorías'),
+                        GButton(icon: Icons.shopping_cart_rounded, text: 'Carrito'), // 🛒 Nuevo
+                        GButton(icon: Icons.person, text: 'Perfil'),
+                      ],
+                    ),
+                  ),
+                ),
+              );
+            },
+          ),
       ),
     );
   }
