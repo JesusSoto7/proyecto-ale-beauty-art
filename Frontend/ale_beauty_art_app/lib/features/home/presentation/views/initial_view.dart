@@ -100,69 +100,61 @@ class InitialView extends StatelessWidget {
                 child: SafeArea(
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 8),
-                    child: GNav(
-                      gap: 8,
-                      backgroundColor: Colors.white,
-                      color: Colors.grey[500],
-                      activeColor: AppColors.primaryPink,
-                      tabBackgroundColor: AppColors.primaryPink.withOpacity(0.1),
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                      //cambiar mas adelante mejorar los tabs visuales
-                      onTabChange: (index) async {
-                        if (index == 3) {
-                          final previousIndex = context.read<NavigationBloc>().state is NavigationUpdated
-                              ? (context.read<NavigationBloc>().state as NavigationUpdated).selectedIndex
-                              : 0;
+                    child: FittedBox( // <- Aquí agregamos FittedBox
+                      fit: BoxFit.scaleDown,
+                      child: GNav(
+                        gap: 8,
+                        backgroundColor: Colors.white,
+                        color: Colors.grey[500],
+                        activeColor: AppColors.primaryPink,
+                        tabBackgroundColor: AppColors.primaryPink.withOpacity(0.1),
+                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                        onTabChange: (index) async {
+                          if (index == 3) {
+                            final previousIndex = context.read<NavigationBloc>().state is NavigationUpdated
+                                ? (context.read<NavigationBloc>().state as NavigationUpdated).selectedIndex
+                                : 0;
 
-                          final authState = context.read<AuthBloc>().state;
+                            final authState = context.read<AuthBloc>().state;
 
-                          if (authState is! AuthSuccess) {
-                            // No logueado → ir a login
-                            final result = await Navigator.push(
+                            if (authState is! AuthSuccess) {
+                              final result = await Navigator.push(
+                                context,
+                                MaterialPageRoute(builder: (_) => const LoginPage()),
+                              );
+
+                              if (result != true) {
+                                context.read<NavigationBloc>().add(NavigationTabChanged(previousIndex));
+                                return;
+                              }
+                            }
+
+                            final auth = context.read<AuthBloc>().state as AuthSuccess;
+                            context.read<CartBloc>().add(UpdateCartToken(auth.token));
+                            context.read<CartBloc>().add(LoadCart());
+                            context.read<NavigationBloc>().add(NavigationTabChanged(3));
+
+                            await Navigator.push(
                               context,
-                              MaterialPageRoute(builder: (_) => const LoginPage()),
+                              MaterialPageRoute(builder: (_) => const CartPageView()),
                             );
 
-                            if (result != true) {
-                              // Canceló login → volvemos al tab anterior
-                              context.read<NavigationBloc>().add(NavigationTabChanged(previousIndex));
-                              return;
-                            }
+                            context.read<NavigationBloc>().add(NavigationTabChanged(previousIndex));
+
+                          } else {
+                            context.read<NavigationBloc>().add(NavigationTabChanged(index));
+                            if (index == 1) context.read<ProductBloc>().add(ProductFetched());
+                            if (index == 2) context.read<CategoriesBloc>().add(CategoriesFetched());
                           }
-
-                          // Logueado
-                          final auth = context.read<AuthBloc>().state as AuthSuccess;
-                          context.read<CartBloc>().add(UpdateCartToken(auth.token));
-                          context.read<CartBloc>().add(LoadCart());
-
-                          // Cambiar el tab visual a Carrito mientras se abre la vista
-                          context.read<NavigationBloc>().add(NavigationTabChanged(3));
-
-                          // Abrir carrito como vista superpuesta
-                          await Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (_) => const CartPageView()),
-                          );
-
-                          // Al cerrar carrito → restaurar tab anterior
-                          context.read<NavigationBloc>().add(NavigationTabChanged(previousIndex));
-
-                        } else {
-                          // Tabs normales
-                          context.read<NavigationBloc>().add(NavigationTabChanged(index));
-                          if (index == 1) context.read<ProductBloc>().add(ProductFetched());
-                          if (index == 2) context.read<CategoriesBloc>().add(CategoriesFetched());
-                        }
-                      },
-
-
-                      tabs: [
-                        GButton(icon: Icons.home_rounded, text: 'Inicio'),
-                        GButton(icon: Icons.grid_view_rounded, text: 'Productos'),
-                        GButton(icon: Icons.category_rounded, text: 'Categorías'),
-                        GButton(icon: Icons.shopping_cart_rounded, text: 'Carrito'),
-                        GButton(icon: Icons.person, text: 'Perfil'),
-                      ],
+                        },
+                        tabs: [
+                          GButton(icon: Icons.home_rounded, text: 'Inicio'),
+                          GButton(icon: Icons.grid_view_rounded, text: 'Productos'),
+                          GButton(icon: Icons.category_rounded, text: 'Categorías'),
+                          GButton(icon: Icons.shopping_cart_rounded, text: 'Carrito'),
+                          GButton(icon: Icons.person, text: 'Perfil'),
+                        ],
+                      ),
                     ),
                   ),
                 ),
