@@ -1,0 +1,82 @@
+.product-details-page {
+  padding: 2rem;
+}
+
+/* Layout responsivo */
+.product-container {
+  display: flex;
+  flex-direction: column; /* por defecto: columnas en móvil */
+  gap: 2rem;
+  align-items: center;
+}
+
+.product-image img {
+  width: 100%;
+  max-width: 450px;
+  max-height: 400px;
+  object-fit: contain; /* 🔑 nunca se corta */
+  border-radius: 12px;
+  background: #f9f9f9;
+}
+
+/* Texto y botones */
+.product-info {
+  max-width: 500px;
+}
+
+.product-info h2 {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+}
+
+.price {
+  font-size: 1.3rem;
+  font-weight: bold;
+  color: #e63946;
+  margin-top: 1rem;
+}
+
+.stock {
+  font-weight: bold;
+  color: #2a9d8f;
+}
+
+.actions {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1.5rem;
+  align-items: center;
+}
+
+.actions button {
+  background-color: #f896b8;
+  color: white;
+  border: none;
+  padding: 0.8rem 1.2rem;
+  border-radius: 10px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.actions button:hover {
+  background-color: #f35471;
+}
+
+/* --- 📺 Pantallas grandes --- */
+@media (min-width: 992px) {
+  .product-container {
+    flex-direction: row; /* imagen izquierda, texto derecha */
+    align-items: flex-start;
+    justify-content: center;
+  }
+
+  .product-image {
+    flex: 1;
+    text-align: center;
+  }
+
+  .product-info {
+    flex: 1;
+  }
+}
