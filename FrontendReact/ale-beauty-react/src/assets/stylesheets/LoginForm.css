@@ -65,12 +65,13 @@
 
 /* Inputs oscuros */
 .login-input {
-  background-color: #f5f5f5 !important;
-  border: 1px solid rgba(255, 255, 255, 0.1) !important;
-  color: rgb(43, 43, 43) !important;
-  border-radius: 0.75rem;
-  padding: 0.8rem;
-  height: 38px;
+    width: 100%;
+    background-color: #f5f5f5 !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    color: rgb(43, 43, 43) !important;
+    border-radius: 0.75rem;
+    padding: 0.8rem;
+    height: 38px;
 }
 
 
