@@ -1,12 +1,39 @@
+
+body{
+  background: linear-gradient(135deg, #7f9cf5, #d6bcfa, #90cdf4);
+}
+
+.wave-wrapper {
+  position: absolute;
+  width: 100%;
+  overflow: hidden;
+}
+
+.wave-svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  position: fixed;
+  bottom: 0;
+}
+
+.register-container{
+  display: flex;
+  align-items: center;      /* Centra verticalmente */
+  justify-content: center;  /* Centra horizontalmente */
+  min-height: 100vh;        /* Ocupa toda la altura de la ventana */
+}
+
 /* Tarjeta principal */
 .register-card {
   display: flex;
   background: #fff;
   border-radius: 15px;
   overflow: hidden;
-  box-shadow: 0 4px 15px rgb(255, 255, 255);
   max-width: 900px;
   width: 100%;
+  justify-self: center;
+  z-index: 1;
 }
 
 /* Sección del formulario */
@@ -17,7 +44,7 @@
 
 .form-section h2 {
   font-size: 1.8rem;
-  color: #d27df0;
+  color: #fab1d9;
   margin-bottom: 20px;
 }
 
@@ -27,36 +54,44 @@ form {
   gap: 15px;
 }
 
-.row {
+.row-card {
   display: flex;
   gap: 10px;
+  width: 100%;
 }
 
 input {
   flex: 1;
   padding: 10px;
-  border: 1px solid #ddd;
+  background-color: #f5f5f5 !important;
+  border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 8px;
   font-size: 0.95rem;
   outline: none;
+  width: 100%;
+}
+
+input::placeholder {
+  color: #c4c4c4 !important;
+  
 }
 
 input:focus {
-  border-color: #d27df0;
+  border-color: #f597cb;
 }
 
 button {
-  background: #d27df0;
+  background: #fab1d9;
   color: white;
   padding: 12px;
   border: none;
-  border-radius: 8px;
+  border-radius: 1rem !important;
   font-weight: bold;
   cursor: pointer;
 }
 
 button:hover {
-  background: #c168db;
+  background-color: #f597cb;
 }
 
 .error {
@@ -85,4 +120,70 @@ button:hover {
 .image-section img {
   width: 100%;
   object-fit: cover;
+}
+
+@media (max-width: 768px) {
+
+.register-card {
+  border-top-left-radius: 30px;
+  border-top-right-radius: 30px;
+  position: relative;
+  width: 100%;
+  max-width: 400px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column-reverse;
+  align-items: center;
+  background-color: white !important;
+}
+
+.image-section img{
+  width: 430px;
+  height: 250px;
+  background-size: cover;
+  background-position: center;
+  border-top-left-radius: 30px;
+  border-top-right-radius: 30px;
+  position: relative;
+  z-index: 1;
+}
+
+.form-section {
+  position: relative;
+  z-index: 2;
+  margin-top: -60px; /* superposición */
+  background: white;
+  padding: 30px 20px;
+  width: 100%;
+  border-radius: 20px;
+  box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+/* .registro-wrapper div{
+  margin-top: none;
+} */
+
+  .titulo-registro {
+    font-size: 28px;
+  }
+
+  .campo-formulario label {
+    font-size: 14px;
+  }
+
+  .campo-formulario input {
+    padding: 8px;
+  }
+
+  .boton-registro input {
+    padding: 10px;
+  }
+
+  .enlace-opcional {
+    font-size: 12px;
+  }
+
+  .zona-errores {
+    font-size: 12px;
+  }
 }

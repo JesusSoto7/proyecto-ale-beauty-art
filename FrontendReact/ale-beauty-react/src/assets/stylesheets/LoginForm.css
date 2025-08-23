@@ -42,13 +42,13 @@
 /* Card central con efecto blur */
 .login-card {
     background-color: #fff;
-  max-width: 420px;
-  width: 100%;
-  border-radius: 1.5rem;
-  backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  color: white;
-  z-index: 1;
+    max-width: 420px;
+    width: 100%;
+    border-radius: 1.5rem;
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    color: white;
+    z-index: 1;
 }
 
 .rosa{
@@ -70,10 +70,18 @@
   color: rgb(43, 43, 43) !important;
   border-radius: 0.75rem;
   padding: 0.8rem;
+  height: 38px;
+}
+
+
+.login-input:focus{
+  border-color: #f597cb !important;
+  outline: none;
 }
 
 .login-input::placeholder {
   color: #c4c4c4 !important;
+
 }
 
 /* Botón principal */

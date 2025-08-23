@@ -45,8 +45,8 @@ function LoginForm({ onLogin }) {
           <div className="mb-3">
             <input
               type="email"
-              className="form-control login-input"
-              placeholder="Your email"
+              className="login-input"
+              placeholder="tucorreo@gmail.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
@@ -55,8 +55,8 @@ function LoginForm({ onLogin }) {
           <div className="mb-3">
             <input
               type="password"
-              className="form-control login-input"
-              placeholder="Your password"
+              className="login-input"
+              placeholder="contraseña"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
