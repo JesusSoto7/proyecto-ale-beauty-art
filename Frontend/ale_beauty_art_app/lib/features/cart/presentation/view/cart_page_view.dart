@@ -78,6 +78,18 @@ class CartPageView extends StatelessWidget {
                             width: 60,
                             height: 60,
                             fit: BoxFit.cover,
+                            errorBuilder: (context, error, stackTrace) {
+                              // Se muestra si la imagen no carga
+                              return Container(
+                                width: 60,
+                                height: 60,
+                                color: AppColors.primaryPink.withOpacity(0.1),
+                                child: const Icon(
+                                  Icons.broken_image,
+                                  color: AppColors.primaryPink,
+                                ),
+                              );
+                            },
                           )
                         : Container(
                             width: 60,
