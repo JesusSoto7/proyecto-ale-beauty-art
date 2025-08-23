@@ -84,8 +84,6 @@ class InitialView extends StatelessWidget {
             },
           ),
           resizeToAvoidBottomInset: false,
-          
-          // 🔥 Nuevo Navbar con GNav
           bottomNavigationBar: BlocBuilder<NavigationBloc, NavigationState>(
             builder: (context, state) {
               context.read<ProductBloc>().add(ProductFetched());
@@ -132,7 +130,7 @@ class InitialView extends StatelessWidget {
                             }
                           }
 
-                          // ✅ Logueado
+                          // Logueado
                           final auth = context.read<AuthBloc>().state as AuthSuccess;
                           context.read<CartBloc>().add(UpdateCartToken(auth.token));
                           context.read<CartBloc>().add(LoadCart());
