@@ -1,51 +1,42 @@
 .product-details-page {
-  max-width: 800px;
-  margin: 2rem auto;
   padding: 2rem;
-  background: #fff;
-  border-radius: 16px;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-  font-family: "Segoe UI", sans-serif;
-  color: #333;
 }
 
-.product-details-page h2 {
-  font-size: 2rem;
-  font-weight: bold;
-  margin-bottom: 1rem;
-  color: #222;
+/* Layout responsivo */
+.product-container {
+  display: flex;
+  flex-direction: column; /* por defecto: columnas en móvil */
+  gap: 2rem;
+  align-items: center;
 }
 
-.product-details-page img {
+.product-image img {
   width: 100%;
-  max-width: 500px; /* puedes ajustar el tamaño máximo */
-  max-height: 400px; /* evita que sea demasiado alto */
-  object-fit: contain; /* 🔑 asegura que la imagen siempre salga completa */
+  max-width: 450px;
+  max-height: 400px;
+  object-fit: contain; /* 🔑 nunca se corta */
   border-radius: 12px;
-  display: block;
-  margin: 0 auto 1.5rem auto;
-  background-color: #f9f9f9; /* opcional: relleno de fondo si la img no ocupa todo */
+  background: #f9f9f9;
 }
 
-
-.product-details-page p {
-  font-size: 1rem;
-  margin: 0.5rem 0;
-  line-height: 1.6;
+/* Texto y botones */
+.product-info {
+  max-width: 500px;
 }
 
-.product-details-page p strong {
-  color: #000;
+.product-info h2 {
+  font-size: 2rem;
+  margin-bottom: 1rem;
 }
 
-.product-details-page .price {
+.price {
   font-size: 1.3rem;
   font-weight: bold;
   color: #e63946;
   margin-top: 1rem;
 }
 
-.product-details-page .stock {
+.stock {
   font-weight: bold;
   color: #2a9d8f;
 }
@@ -58,7 +49,7 @@
 }
 
 .actions button {
-  background-color: #f74d86;
+  background-color: #f896b8;
   color: white;
   border: none;
   padding: 0.8rem 1.2rem;
@@ -69,5 +60,23 @@
 }
 
 .actions button:hover {
-  background-color: #db5069;
+  background-color: #f35471;
+}
+
+/* --- 📺 Pantallas grandes --- */
+@media (min-width: 992px) {
+  .product-container {
+    flex-direction: row; /* imagen izquierda, texto derecha */
+    align-items: flex-start;
+    justify-content: center;
+  }
+
+  .product-image {
+    flex: 1;
+    text-align: center;
+  }
+
+  .product-info {
+    flex: 1;
+  }
 }

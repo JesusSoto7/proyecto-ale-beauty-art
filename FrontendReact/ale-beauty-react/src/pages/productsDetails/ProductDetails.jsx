@@ -86,31 +86,37 @@ function ProductDetails() {
   };
 
   return (
-    <div className="product-details-page">
-      <h2>{product.nombre_producto}</h2>
+  <div className="product-details-page">
+    <div className="product-container">
+      <div className="product-image">
+        <img
+          src={
+            product.imagen_url ||
+            "https://via.placeholder.com/400x300?text=Sin+imagen"
+          }
+          alt={product.nombre_producto}
+        />
+      </div>
 
-      <img
-        src={
-          product.imagen_url ||
-          "https://via.placeholder.com/400x300?text=Sin+imagen"
-        }
-        alt={product.nombre_producto}
-      />
+      <div className="product-info">
+        <h2>{product.nombre_producto}</h2>
+        <p>{product.descripcion}</p>
+        <p className="price">Precio: ${product.precio_producto}</p>
+        <p>Categoría: {product.categoria_nombre}</p>
+        <p className="stock">Stock: {product.stock}</p>
 
-      <p>{product.descripcion}</p>
-      <p className="price">Precio: ${product.precio_producto}</p>
-      <p>Categoría: {product.categoria_nombre}</p>
-      <p className="stock">Stock: {product.stock}</p>
-
-      {/* botones de acción */}
-      <div className="actions">
-        <button onClick={() => addToCart(product.id)}>Añadir al carrito</button>
-        <IconButton onClick={() => addToFavorites(product.id)}>
-          <FavoriteBorder />
-        </IconButton>
+        {/* botones de acción */}
+        <div className="actions">
+          <button onClick={() => addToCart(product.id)}>Añadir al carrito</button>
+          <IconButton onClick={() => addToFavorites(product.id)}>
+            <FavoriteBorder />
+          </IconButton>
+        </div>
       </div>
     </div>
-  );
+  </div>
+);
+
 }
 
 export default ProductDetails;
