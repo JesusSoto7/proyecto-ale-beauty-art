@@ -1,0 +1,73 @@
+.product-details-page {
+  max-width: 800px;
+  margin: 2rem auto;
+  padding: 2rem;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+  font-family: "Segoe UI", sans-serif;
+  color: #333;
+}
+
+.product-details-page h2 {
+  font-size: 2rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+  color: #222;
+}
+
+.product-details-page img {
+  width: 100%;
+  max-width: 500px; /* puedes ajustar el tamaño máximo */
+  max-height: 400px; /* evita que sea demasiado alto */
+  object-fit: contain; /* 🔑 asegura que la imagen siempre salga completa */
+  border-radius: 12px;
+  display: block;
+  margin: 0 auto 1.5rem auto;
+  background-color: #f9f9f9; /* opcional: relleno de fondo si la img no ocupa todo */
+}
+
+
+.product-details-page p {
+  font-size: 1rem;
+  margin: 0.5rem 0;
+  line-height: 1.6;
+}
+
+.product-details-page p strong {
+  color: #000;
+}
+
+.product-details-page .price {
+  font-size: 1.3rem;
+  font-weight: bold;
+  color: #e63946;
+  margin-top: 1rem;
+}
+
+.product-details-page .stock {
+  font-weight: bold;
+  color: #2a9d8f;
+}
+
+.actions {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1.5rem;
+  align-items: center;
+}
+
+.actions button {
+  background-color: #f74d86;
+  color: white;
+  border: none;
+  padding: 0.8rem 1.2rem;
+  border-radius: 10px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.actions button:hover {
+  background-color: #db5069;
+}
