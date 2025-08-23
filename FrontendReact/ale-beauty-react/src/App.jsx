@@ -16,6 +16,7 @@ import ProductDetails from './pages/productsDetails/ProductDetails';
 import ProductosCliente from "./pages/ProductosCliente/productosCliente";
 
 import './assets/stylesheets/RegisterForm.css';
+import './assets/stylesheets/LoginForm.css';
 import './assets/stylesheets/Inicio.css'
 import './assets/stylesheets/Header.css'
 import './assets/stylesheets/Footer.css'
