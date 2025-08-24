@@ -1,4 +1,9 @@
+import 'package:ale_beauty_art_app/core/views/login_view.dart';
+import 'package:ale_beauty_art_app/features/auth/bloc/auth_bloc.dart';
+import 'package:ale_beauty_art_app/features/cart/presentation/bloc/cart_bloc.dart';
+import 'package:ale_beauty_art_app/features/cart/presentation/bloc/cart_event.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shimmer/shimmer.dart';
 import '../../../../models/product.dart';
 import 'package:ale_beauty_art_app/styles/colors.dart';
@@ -39,17 +44,6 @@ class _ProductDetailViewState extends State<ProductDetailView> {
             color: Color.fromARGB(255, 248, 174, 174),
           ),
           onPressed: () => Navigator.pop(context),
-        ),
-        title: Align(
-          alignment: Alignment.center,
-          child: Text(
-            'Product Details',
-            style: const TextStyle(
-              color: Color.fromARGB(255, 248, 174, 174), // texto blanco
-              fontWeight: FontWeight.bold,
-              fontSize: 20,
-            ),
-          ),
         ),
         actions: [
           IconButton(
@@ -220,7 +214,69 @@ class _ProductDetailViewState extends State<ProductDetailView> {
               width: 56,
               height: 56,
               child: OutlinedButton(
-                onPressed: () {},
+               onPressed: () async {
+                final authState = context.read<AuthBloc>().state;
+
+                if (authState is! AuthSuccess) {
+                  final result = await Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => const LoginPage()),
+                  );
+
+                  if (result == true) {
+                    final auth = context.read<AuthBloc>().state as AuthSuccess;
+
+                    context.read<CartBloc>().add(UpdateCartToken(auth.token));
+
+                    // Agregar producto
+                    context.read<CartBloc>().add(
+                      AddProductToCart(productId: widget.product.id),
+                    );
+
+                    // Recargar carrito para que se vea reflejado
+                    context.read<CartBloc>().add(LoadCart());
+                      ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: const Text(
+                          'Producto Agregado',
+                          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                        ),
+                        backgroundColor: AppColors.primaryPink,
+                        behavior: SnackBarBehavior.floating,
+                        margin: const EdgeInsets.fromLTRB(20, 0, 20, 30),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                        elevation: 6,
+                        duration: const Duration(seconds: 1),
+                      ),
+                    );
+                  } else {
+                    return; // Canceló login
+                  }
+                } else {
+                  final auth = authState;
+                  context.read<CartBloc>().add(UpdateCartToken(auth.token));
+                  context.read<CartBloc>().add(
+                    AddProductToCart(productId: widget.product.id),
+                  );
+                  context.read<CartBloc>().add(LoadCart());
+
+                 ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: const Text(
+                        'Producto Agregado',
+                        style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                      ),
+                      backgroundColor: AppColors.primaryPink,
+                      behavior: SnackBarBehavior.floating,
+                      margin: const EdgeInsets.fromLTRB(20, 0, 20, 30),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                      elevation: 6,
+                      duration: const Duration(seconds: 1),
+                    ),
+                  );
+                }
+              },
+
                 style: OutlinedButton.styleFrom(
                   side:
                       const BorderSide(color: AppColors.primaryPink, width: 1.5),

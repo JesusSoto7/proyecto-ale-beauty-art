@@ -38,20 +38,6 @@ class _LoginPageState extends State<LoginPage> {
       body: BlocConsumer<AuthBloc, AuthState>(
         listener: (context, state) {
           if (state is AuthSuccess) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: const Text(
-                  'Sesión iniciada correctamente',
-                  style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-                ),
-                backgroundColor: AppColors.primaryPink,
-                behavior: SnackBarBehavior.floating,
-                margin: const EdgeInsets.fromLTRB(20, 0, 20, 30),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                elevation: 6,
-                duration: const Duration(seconds: 3),
-              ),
-            );
             Navigator.pop(context, true);
           } else if (state is AuthFailure) {
             ScaffoldMessenger.of(context).showSnackBar(

@@ -47,7 +47,8 @@ class CartBloc extends Bloc<CartEvent, CartState> {
       if (response.statusCode == 200) {
         final Map<String, dynamic> json = jsonDecode(response.body);
 
-        final List<Map<String, dynamic>> products = (json['carrito'] as List)
+        // La lista
+        final List<Map<String, dynamic>> products = (json['products'] as List)
             .map((item) => item as Map<String, dynamic>)
             .toList();
 
@@ -55,6 +56,7 @@ class CartBloc extends Bloc<CartEvent, CartState> {
       } else {
         emit(state.copyWith(error: 'Error al cargar carrito', isLoading: false));
       }
+
     } catch (e) {
       emit(state.copyWith(error: e.toString(), isLoading: false));
     }
@@ -68,19 +70,15 @@ class CartBloc extends Bloc<CartEvent, CartState> {
       final client = await CustomHttpClient.client;
 
       final response = await client.post(
-        Uri.parse('$apiUrl/cart'),
+        Uri.parse('$apiUrl/cart/add_product'),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $token',
         },
-        body: jsonEncode({
-          'product_id': event.productId,
-          'quantity': event.quantity,
-        }),
+        body: jsonEncode({'product_id': event.productId}), // 'quantity' hoy se ignora en Rails
       );
-
       if (response.statusCode == 200) {
-        add(LoadCart()); // Recargar el carrito
+        add(LoadCart());
       } else {
         emit(state.copyWith(error: 'No se pudo agregar el producto'));
       }
@@ -97,15 +95,15 @@ class CartBloc extends Bloc<CartEvent, CartState> {
       final client = await CustomHttpClient.client;
 
       final response = await client.delete(
-        Uri.parse('$apiUrl/cart/${event.productId}'),
+        Uri.parse('$apiUrl/cart/remove_product'),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $token',
         },
+        body: jsonEncode({'product_id': event.productId}),
       );
-
       if (response.statusCode == 200) {
-        add(LoadCart()); // Recargar el carrito
+        add(LoadCart());
       } else {
         emit(state.copyWith(error: 'No se pudo eliminar el producto'));
       }

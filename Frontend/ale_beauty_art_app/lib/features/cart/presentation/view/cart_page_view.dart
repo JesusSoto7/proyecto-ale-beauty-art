@@ -1,4 +1,5 @@
 import 'package:ale_beauty_art_app/features/cart/presentation/bloc/cart_bloc.dart';
+import 'package:ale_beauty_art_app/features/cart/presentation/bloc/cart_event.dart';
 import 'package:ale_beauty_art_app/features/cart/presentation/bloc/cart_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -77,6 +78,18 @@ class CartPageView extends StatelessWidget {
                             width: 60,
                             height: 60,
                             fit: BoxFit.cover,
+                            errorBuilder: (context, error, stackTrace) {
+                              // Se muestra si la imagen no carga
+                              return Container(
+                                width: 60,
+                                height: 60,
+                                color: AppColors.primaryPink.withOpacity(0.1),
+                                child: const Icon(
+                                  Icons.broken_image,
+                                  color: AppColors.primaryPink,
+                                ),
+                              );
+                            },
                           )
                         : Container(
                             width: 60,
@@ -91,7 +104,9 @@ class CartPageView extends StatelessWidget {
                   trailing: IconButton(
                     icon: const Icon(Icons.delete_outline, color: Colors.red),
                     onPressed: () {
-                        //Logica de borrar
+                       context.read<CartBloc>().add(
+                        RemoveProductFromCart(productId: product['product_id']),
+                      );
                     },
                   ),
                 ),

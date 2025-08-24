@@ -96,7 +96,7 @@ class InfoProduct extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                   child: Text(
-                    product.nombreProducto ?? '',
+                    product.nombreProducto,
                     style:TextStyle(
                       fontWeight: FontWeight.w600,
                       fontSize: 14,
