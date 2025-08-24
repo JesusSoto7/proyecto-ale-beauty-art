@@ -14,9 +14,11 @@ import Categorias from './pages/home/Categorias';
 import Carousel from './pages/home/Carousel';
 import ProductDetails from './pages/productsDetails/ProductDetails';
 import ProductosCliente from "./pages/ProductosCliente/productosCliente";
+import Perfil from './components/perfil';
 
 import './assets/stylesheets/RegisterForm.css';
 import './assets/stylesheets/LoginForm.css';
+import './assets/stylesheets/home.css';
 import './assets/stylesheets/Inicio.css'
 import './assets/stylesheets/Header.css'
 import './assets/stylesheets/Footer.css'
@@ -65,6 +67,7 @@ function App() {
             element={<ShippingAddress />}
           />
           <Route path="/direcciones/nueva" element={<ShippingAddressForm onSuccess={() => { }} />} />
+          <Route path="/perfil" element={<Perfil />} />
         </Route>
 
 

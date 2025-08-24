@@ -165,7 +165,10 @@ export default function Header() {
       open={isMenuOpen}
       onClose={() => setAnchorEl(null)}
     >
-      <MenuItem onClick={() => setAnchorEl(null)}>Perfil</MenuItem>
+      <MenuItem onClick={() => {navigate("/perfil"); setAnchorEl(null);}}>
+        Perfil
+      </MenuItem>
+      
       <MenuItem onClick={() => { navigate("/direcciones"); setAnchorEl(null); }}>
         Mis direcciones
       </MenuItem>
