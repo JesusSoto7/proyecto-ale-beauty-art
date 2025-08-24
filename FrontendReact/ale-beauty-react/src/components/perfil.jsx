@@ -72,26 +72,29 @@ export default function Perfil() {
   }
 
   return (
-    <div className="container d-flex justify-content-center align-items-center">
+    <div className="d-flex justify-content-center align-items-center">
       <div
-        className="card shadow-lg border-0 rounded-3 p-4"
-        style={{ maxWidth: "700px", width: "100%" }}
+        className="shadow-lg rounded-4 p-4"
+        style={{
+          maxWidth: "800px",
+          width: "100%",
+          backgroundColor: "#fff",
+        }}
       >
-        <div className="row g-4">
-          {/* Columna izquierda - Imagen */}
+        <div className="row align-items-center g-4">
+          {/* Columna izquierda - Avatar */}
           <div className="col-md-4 text-center">
-            <div className="position-relative d-inline-block">
-              <img
-                src={user_icon}
-                alt="Foto de perfil"
-                className="rounded img-fluid"
-                style={{
-                  width: "200px",
-                  height: "200px",
-                  objectFit: "cover",
-                }}
-              />
-            </div>
+            <img
+              src={user_icon}
+              alt="Foto de perfil"
+              className="rounded-3 img-fluid"
+              style={{
+                width: "220px",
+                height: "220px",
+                objectFit: "cover",
+                boxShadow: "0px 4px 10px rgba(0,0,0,0.1)",
+              }}
+            />
           </div>
 
           {/* Columna derecha */}
@@ -99,36 +102,38 @@ export default function Perfil() {
             {!editMode ? (
               <>
                 <p>
-                  <strong>Name:</strong> {user.nombre} {user.apellido}
+                  <strong>Nombre:</strong> {user.nombre}
+                </p>
+                <p>
+                  <strong>Apellido:</strong> {user.apellido}
+                </p>
+                <p>
+                  <strong>Teléfono:</strong>{" "}
+                  {user.telefono || "No registrado"}
                 </p>
                 <p>
                   <strong>Email:</strong> {user.email}
                 </p>
-                <p>
-                  <strong>Phone Number:</strong>{" "}
-                  {user.telefono || "No registrado"}
-                </p>
-                <p>
-                  <strong>Address:</strong>{" "}
-                  {user.direccion || "No registrada"}
-                </p>
 
                 <div className="mt-4">
                   <button
-                    className="btn btn-primary"
+                    className="btn border-0 text-white px-4 py-2"
+                    style={{
+                      background: "linear-gradient(90deg, #ff6a88, #ffcc70)",
+                      borderRadius: "10px",
+                      fontWeight: "bold",
+                    }}
                     onClick={() => setEditMode(true)}
                   >
-                    <i className="bi bi-pencil-square me-2"></i>
-                    Edit Profile
+                    Editar Perfil
                   </button>
                   <button
-                    className="btn btn-danger ms-2"
+                    className="btn btn-outline-danger ms-2 px-4 py-2"
                     onClick={() => {
                       localStorage.removeItem("token");
                       window.location.href = "/login";
                     }}
                   >
-                    <i className="bi bi-box-arrow-right me-2"></i>
                     Cerrar Sesión
                   </button>
                 </div>
@@ -187,11 +192,19 @@ export default function Perfil() {
                 </div>
 
                 <div className="mt-4">
-                  <button className="btn btn-success me-2" onClick={handleSave}>
+                  <button
+                    className="btn border-0 text-white px-4 py-2 me-2"
+                    style={{
+                      background: "linear-gradient(90deg, #38ef7d, #11998e)",
+                      borderRadius: "10px",
+                      fontWeight: "bold",
+                    }}
+                    onClick={handleSave}
+                  >
                     Guardar
                   </button>
                   <button
-                    className="btn btn-secondary"
+                    className="btn btn-secondary px-4 py-2"
                     onClick={() => setEditMode(false)}
                   >
                     Cancelar
