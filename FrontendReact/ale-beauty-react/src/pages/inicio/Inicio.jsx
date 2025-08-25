@@ -3,7 +3,7 @@ import Carousel from 'react-bootstrap/Carousel';
 import IconButton from '@mui/joy/IconButton';
 import FavoriteBorder from '@mui/icons-material/FavoriteBorder';
 import { Link, useParams } from 'react-router-dom';
-
+import Skeleton from '@mui/material/Skeleton';
 
 function Inicio() {
   const [carousel, setCarousel] = useState([]);
@@ -11,6 +11,7 @@ function Inicio() {
   const [categories, setCategories] = useState([]);
   const [cart, setCart] = useState(null);
   const { lang } = useParams();
+  const [loading, setLoading] = useState(true);
 
   const token = localStorage.getItem('token');
 
@@ -18,11 +19,39 @@ function Inicio() {
     fetch('https://localhost:4000/api/v1/inicio')
       .then(res => res.json())
       .then(data => {
-        setCarousel(data.admin_carousel || []);
-        setProducts(data.products || []);
-        setCategories(data.categories || []);
+        const imgs = [
+          ...(data.admin_carousel || []),
+          ...(data.products?.map(p => p.imagen_url) || [])
+        ];
+
+        // Esperar a que todas las imágenes se carguen
+        let loadedCount = 0;
+        if (imgs.length === 0) {
+          setCarousel(data.admin_carousel || []);
+          setProducts(data.products || []);
+          setCategories(data.categories || []);
+          setLoading(false);
+          return;
+        }
+
+        imgs.forEach(src => {
+          const img = new Image();
+          img.src = src;
+          img.onload = img.onerror = () => {
+            loadedCount++;
+            if (loadedCount === imgs.length) {
+              setCarousel(data.admin_carousel || []);
+              setProducts(data.products || []);
+              setCategories(data.categories || []);
+              setLoading(false);
+            }
+          };
+        });
       })
-      .catch(err => console.error('Error cargando datos: ' + err));
+      .catch(err => {
+        console.error('Error cargando datos: ' + err);
+        setLoading(false);
+      });
 
     fetch('https://localhost:4000/api/v1/cart', {
       headers: {
@@ -81,10 +110,16 @@ function Inicio() {
       });
   };
 
-
   return (
     <div>
-      {carousel.length > 0 ? (
+      {loading ? (
+        <Skeleton
+          sx={{ bgcolor: 'grey.800' }}
+          variant="rectangular"
+          width={"100%"}
+          height={350}
+        />
+      ) : carousel.length > 0 ? (
         <Carousel interval={3000} className="mb-0">
           {carousel.map((img, idx) => (
             <Carousel.Item key={idx}>
@@ -93,23 +128,37 @@ function Inicio() {
                 src={img}
                 alt={`Slide ${idx + 1}`}
                 style={{
-                  height: "400px", // más alto como banner
+                  height: "400px",
                   objectFit: "cover",
                 }}
               />
             </Carousel.Item>
           ))}
         </Carousel>
-      ) : (
-        <p>No hay imágenes de carrusel disponibles.</p>
-      )}
+      ) : null}
 
-
-      {/* Productos */}
       {/* Productos */}
       <section className="mt-5">
         <h2 className="mb-4">Novedades Maquillaje</h2>
-        {products.length > 0 ? (
+        {loading ? (
+          <div className="carousel-container">
+            <div className="carousel-items">
+              {[1, 2, 3, 4].map((skeleton) => (
+                <div className="product-card" key={skeleton}>
+                  <div className="image-container">
+                    <Skeleton variant="rectangular" width={"100%"} height={200} />
+                  </div>
+                  <Skeleton variant="text" width={150} height={30} />
+                  <Skeleton variant="text" width={80} height={20} />
+                  <div className="actions">
+                    <Skeleton variant="rectangular" width={120} height={36} />
+                    <Skeleton variant="circular" width={36} height={36} />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        ) : products.length > 0 ? (
           <div className="carousel-container">
             {/* Botón izquierdo */}
             <button
@@ -131,7 +180,7 @@ function Inicio() {
                   >
                     <div className="image-container">
                       <img
-                        src={prod.imagen_url || "https://via.placeholder.com/250x200?text=Sin+imagen"}
+                        src={prod.imagen_url}
                         alt={prod.nombre_producto}
                       />
                     </div>
@@ -162,23 +211,6 @@ function Inicio() {
           <p>No hay productos disponibles.</p>
         )}
       </section>
-
-
-
-      {/* Categorías */}
-      {/* <section>
-        <h2>Categorías</h2>
-        {categories.length > 0 ? (
-          categories.map(cat => (
-            <div key={cat.id}>
-              <img src={cat.imagen_url} alt={cat.nombre_categoria} />
-              <h5>{cat.nombre_categoria}</h5>
-            </div>
-          ))
-        ) : (
-          <p>No hay categorías disponibles.</p>
-        )}
-      </section> */}
     </div>
   );
 }
