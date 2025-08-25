@@ -19,11 +19,11 @@ import { useTranslation } from "react-i18next";
 export default function MainGrid() {
   const [token, setToken] = React.useState(null);
   const [userCount, setUserCount] = React.useState(0);
-  const [userChartData, setUserChartData] = React.useState([]);
   const [completedOrders, setCompletedOrders] = React.useState(0);
-  const [orderCharData, setOrderCharData] = React.useState([]);
+  const [userChartData, setUserChartData] = React.useState({ labels: [], values: [] });
+  const [orderCharData, setOrderCharData] = React.useState({ labels: [], values: [] });
   const [totalSales, setTotalSales] = React.useState(0);
-  const [totalSalesCharData, setTotalSalesCharData] = React.useState([]);
+  const [totalSalesCharData, setTotalSalesCharData] = React.useState({ labels: [], values: [] });
   const { t } = useTranslation();
 
   React.useEffect(() => {
@@ -58,8 +58,18 @@ export default function MainGrid() {
     })
       .then((res) => res.json())
       .then((data) => {
+        const labels = Object.keys(data).map(dateStr => {
+          const bogotaDate = new Date(
+            new Date(dateStr).toLocaleString("en-US", { timeZone: "America/Bogota" })
+          );
+          return bogotaDate.toLocaleDateString("en-US", {
+            month: "short",
+            day: "numeric"
+          });
+        });
+
         const values = Object.values(data).map(v => Number(v));
-        setTotalSalesCharData(values);
+        setTotalSalesCharData({ labels, values });
       })
   }, [token]);
 
@@ -84,8 +94,18 @@ export default function MainGrid() {
     })
       .then((res) => res.json())
       .then((data) => {
+        const labels = Object.keys(data).map(dateStr => {
+          const bogotaDate = new Date(
+            new Date(dateStr).toLocaleString("en-US", { timeZone: "America/Bogota" })
+          );
+          return bogotaDate.toLocaleDateString("en-US", {
+            month: "short",
+            day: "numeric"
+          });
+        });
+
         const values = Object.values(data).map(v => Number(v));
-        setOrderCharData(values);
+        setOrderCharData({ labels, values });
       })
       .catch((err) => console.error(err))
   }, [token])
@@ -110,9 +130,20 @@ export default function MainGrid() {
     })
       .then((res) => res.json())
       .then((data) => {
+        const labels = Object.keys(data).map(dateStr => {
+          const bogotaDate = new Date(
+            new Date(dateStr).toLocaleString("en-US", { timeZone: "America/Bogota" })
+          );
+          return bogotaDate.toLocaleDateString("en-US", {
+            month: "short",
+            day: "numeric"
+          });
+        });
+
         const values = Object.values(data).map(v => Number(v));
-        setUserChartData(values);
+        setUserChartData({ labels, values });
       })
+
       .catch((err) => console.error(err));
 
   }, [token]);
@@ -124,21 +155,24 @@ export default function MainGrid() {
       value: userCount,
       interval: 'Ultimos 30 dias',
       trend: 'up',
-      data: userChartData,
+      data: userChartData.values || [],
+      labels: userChartData.labels || [],
     },
     {
       title: 'Compras',
       value: completedOrders,
       interval: 'Ultimos 30 dias',
       trend: 'down',
-      data: orderCharData,
+      data: orderCharData.values || [],
+      labels: orderCharData.labels || [],
     },
     {
       title: 'Total vendidos',
       value: totalSales,
       interval: 'Ultimos 30 dias',
       trend: 'neutral',
-      data: totalSalesCharData,
+      data: totalSalesCharData.values || [],
+      labels: totalSalesCharData.labels || [],
     },
   ];
 
