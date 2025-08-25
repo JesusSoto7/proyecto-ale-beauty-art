@@ -1,3 +1,41 @@
+/* === MODAL PRODUCTOS FAVORITOS === */
+
+.modal{
+  background-color: #b8b8b8;
+  width: 60% !important;
+  height: 65% !important;
+  overflow-y: auto;
+}
+
+.modalItems{
+  background-color: #fff;
+  border-radius: 5px;
+  padding: 10px;
+}
+
+.borrarFav {
+  height: 100%;              /* ocupa toda la altura del item */
+  width: 20px;               /* ancho inicial */
+  border-radius: 7px 0 0 7px;/* solo esquinas izq redondeadas */
+  display: flex;             
+  align-items: center;       
+  justify-content: center;   
+  background-color: #eee; /* rojo suave */
+  color: white;
+  transition:  0.3s ease;
+  cursor: pointer;
+}
+
+.borrarFav:hover {
+  width: 45px;               /* se expande un poco */
+  background-color: #f56565; /* rojo más fuerte */
+}
+
+.bold{
+  color: #fd9cb9;
+  font-weight: bold;
+}
+
 /* === CARRUSEL DE PRODUCTOS === */
 .carousel-container {
   position: relative;
