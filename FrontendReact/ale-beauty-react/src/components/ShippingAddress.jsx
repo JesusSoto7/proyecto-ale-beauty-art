@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { pink } from '@mui/material/colors';
 import Checkbox from '@mui/material/Checkbox';
 import ShippingAddressForm from "./ShippingAddressForm";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import '../assets/stylesheets/ShippingAddresses.css'
 import FormControlLabel from "@mui/material/FormControlLabel";
 
@@ -18,6 +18,8 @@ function ShippingAddresses() {
   const [addresses, setAddresses] = useState(null); // null = no cargado aún
   const [showForm, setShowForm] = useState(false);
   const [editAddress, setEditAddress] = useState(null);
+  const { lang } = useParams();
+
 
 
   useEffect(() => {
@@ -177,7 +179,7 @@ function ShippingAddresses() {
               ))}
             </ul>
           )}
-          <button onClick={() => navigate("/direcciones/nueva")}>Agregar nueva dirección</button>
+          <button onClick={() => navigate(`/${lang}/direcciones/nueva`)}>Agregar nueva dirección</button>
         </div>
       )}
     </div>

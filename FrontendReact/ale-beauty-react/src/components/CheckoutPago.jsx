@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 
 export default function CheckoutPago() {
   const publicKey = import.meta.env.VITE_MERCADOPAGO_PUBLIC_KEY;
@@ -7,6 +7,7 @@ export default function CheckoutPago() {
   const navigate = useNavigate();
   const [token, setToken] = useState(null);
   const { orderId, total } = location.state || {};
+  const { lang } = useParams();
 
   if (!publicKey) {
     console.error("No se encontró la clave pública en las variables de entorno");
@@ -75,7 +76,7 @@ export default function CheckoutPago() {
                 .then((response) => response.json())
                 .then((data) => {
                   console.log("Respuesta del backend:", data);
-                  navigate(`/checkout/success/${data.payment.id}`, { state: { paymentId: data.payment.id } });
+                  navigate(`/${lang}/checkout/success/${data.payment.id}`, { state: { paymentId: data.payment.id } });
                   resolve();
                 })
                 .catch((error) => {

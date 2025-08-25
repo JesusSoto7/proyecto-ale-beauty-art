@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link, useParams } from "react-router-dom";
 import { login } from "../services/authService";
 import ale_logo from "../assets/images/ale_logo.jpg";
 
@@ -8,6 +8,7 @@ function LoginForm({ onLogin }) {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const navigate = useNavigate();
+  const { lang } = useParams();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -17,7 +18,7 @@ function LoginForm({ onLogin }) {
       const data = await login({ email, password });
       localStorage.setItem("token", data.token);
       onLogin();
-      navigate("/inicio");
+      navigate(`/${lang}/inicio`);
     } catch (err) {
       setError(err.message);
     }
@@ -25,7 +26,7 @@ function LoginForm({ onLogin }) {
 
   return (
     <div className="login-bg d-flex justify-content-center align-items-center">
-      
+
       <div className="login-card shadow-lg p-5">
 
         {/* Logo */}
@@ -37,7 +38,7 @@ function LoginForm({ onLogin }) {
             style={{ width: "60px", height: "60px", objectFit: "cover" }}
           />
           <h4 className="fw-bold rosa">Bienvenido!</h4>
-          
+
         </div>
 
         {/* Formulario */}
@@ -73,7 +74,7 @@ function LoginForm({ onLogin }) {
         {/* Otros métodos */}
         <p className="text-center text-secondary small">
           ¿No tienes una cuenta?{" "}
-          <Link to="/register" className="rosa text-decoration-none">
+          <Link to={`/${lang}/register`} className="rosa text-decoration-none">
             Registrate
           </Link>
         </p>

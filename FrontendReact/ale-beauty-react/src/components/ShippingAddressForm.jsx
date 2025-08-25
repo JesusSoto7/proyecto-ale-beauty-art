@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 function ShippingAddressForm({ onSuccess, initialData }) {
   const navigate = useNavigate();
   const [token, setToken] = useState(null);
+  const { lang } = useParams();
 
   const isEditing = !!initialData;
 
@@ -22,6 +23,7 @@ function ShippingAddressForm({ onSuccess, initialData }) {
   const [departments, setDepartments] = useState([]);
   const [municipalities, setMunicipalities] = useState([]);
   const [neighborhoods, setNeighborhoods] = useState([]);
+
 
   // Obtener token
   useEffect(() => {
@@ -122,7 +124,7 @@ function ShippingAddressForm({ onSuccess, initialData }) {
       .then(data => {
         alert(isEditing ? "Dirección actualizada con éxito" : "Dirección creada con éxito");
         onSuccess && onSuccess(data, isEditing);
-        navigate("/direcciones");
+        navigate(`/${lang}/direcciones`);
       })
       .catch(err => {
         alert(`Error al ${isEditing ? "actualizar" : "crear"} dirección`);

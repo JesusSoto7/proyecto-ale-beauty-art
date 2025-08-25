@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import Carousel from 'react-bootstrap/Carousel';
 import IconButton from '@mui/joy/IconButton';
 import FavoriteBorder from '@mui/icons-material/FavoriteBorder';
-import { Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 
 
 function Inicio() {
@@ -10,6 +10,7 @@ function Inicio() {
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
   const [cart, setCart] = useState(null);
+  const { lang } = useParams();
 
   const token = localStorage.getItem('token');
 
@@ -21,7 +22,7 @@ function Inicio() {
         setProducts(data.products || []);
         setCategories(data.categories || []);
       })
-      .catch(err => console.error('Error cargando datos: '.err));
+      .catch(err => console.error('Error cargando datos: ' + err));
 
     fetch('https://localhost:4000/api/v1/cart', {
       headers: {
@@ -125,7 +126,7 @@ function Inicio() {
               {products.map(prod => (
                 <div className="product-card" key={prod.id}>
                   <Link
-                    to={`/products/${prod.slug}`}
+                    to={`/${lang}/producto/${prod.slug}`}
                     style={{ textDecoration: 'none', color: 'inherit' }}
                   >
                     <div className="image-container">

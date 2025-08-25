@@ -12,6 +12,7 @@ import SessionsChart from './SessionsChart';
 import StatCard from './StatCard';
 import { formatCOP } from '../../services/currency';
 import ChartProductsByCategory from './ChartProductsByCategory';
+import { useTranslation } from "react-i18next";
 
 
 
@@ -23,6 +24,7 @@ export default function MainGrid() {
   const [orderCharData, setOrderCharData] = React.useState([]);
   const [totalSales, setTotalSales] = React.useState(0);
   const [totalSalesCharData, setTotalSalesCharData] = React.useState([]);
+  const { t } = useTranslation();
 
   React.useEffect(() => {
 
@@ -146,7 +148,7 @@ export default function MainGrid() {
     <Box sx={{ width: '100%', maxWidth: { sm: '100%', md: '1700px' } }}>
       {/* cards */}
       <Typography component="h2" variant="h6" sx={{ mb: 2 }}>
-        Overview
+        {t("overview")}
       </Typography>
       <Grid
         container
@@ -170,7 +172,7 @@ export default function MainGrid() {
         </Grid>
       </Grid>
       <Typography component="h2" variant="h6" sx={{ mb: 2 }}>
-        Details
+        {t("details")}
       </Typography>
       <Grid container spacing={2} columns={12}>
         <Grid size={{ xs: 12, lg: 9 }}>

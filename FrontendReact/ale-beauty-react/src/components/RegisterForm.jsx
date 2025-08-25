@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { register } from '../services/authService';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, useParams } from 'react-router-dom';
 import bannerImg from '../assets/images/bannreg.png';
 
 function Register() {
@@ -12,6 +12,7 @@ function Register() {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const navigate = useNavigate();
+  const { lang } = useParams();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -33,7 +34,7 @@ function Register() {
         apellido,
       });
       setSuccess('Usuario registrado correctamente');
-      navigate('/login');
+      navigate(`/${lang}/login`);
       console.log('Registro exitoso:', data);
     } catch (err) {
       setError(err.message);
@@ -65,7 +66,7 @@ function Register() {
               {error && <p className="error">{error}</p>}
               {success && <p className="success">{success}</p>}
               <p className='text-center'>
-                ¿Ya tiene una cuenta? <Link to="/login" className="rosa text-decoration-underline">Inicia Sesión</Link>
+                ¿Ya tiene una cuenta? <Link to={`/${lang}/login`} className="rosa text-decoration-underline">Inicia Sesión</Link>
               </p>
             </form>
           </div>

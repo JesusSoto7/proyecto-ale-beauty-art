@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import logo from '../assets/images/ale_logo.jpg';
 import { BsHeart, BsCart4 } from "react-icons/bs";
 import { IoPersonCircleSharp } from "react-icons/io5";
@@ -69,6 +69,7 @@ export default function Header() {
   const [searchTerm, setSearchTerm] = useState('');
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(false);
+  const { lang } = useParams();
 
   const [anchorEl, setAnchorEl] = useState(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = useState(null);
@@ -145,7 +146,7 @@ export default function Header() {
     if (!slugOrId) return;
     setResults([]);
     setSearchTerm('');
-    navigate(`/products/${slugOrId}`);
+    navigate(`/${lang}/products/${slugOrId}`);
   }
 
   async function handleLogout() {
@@ -155,7 +156,7 @@ export default function Header() {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
       });
-    } catch {}
+    } catch { }
     window.location.href = '/login';
   }
 
@@ -165,11 +166,11 @@ export default function Header() {
       open={isMenuOpen}
       onClose={() => setAnchorEl(null)}
     >
-      <MenuItem onClick={() => {navigate("/perfil"); setAnchorEl(null);}}>
+      <MenuItem onClick={() => { navigate(`/${lang}/perfil`); setAnchorEl(null); }}>
         Perfil
       </MenuItem>
-      
-      <MenuItem onClick={() => { navigate("/direcciones"); setAnchorEl(null); }}>
+
+      <MenuItem onClick={() => { navigate(`/${lang}/direcciones`); setAnchorEl(null); }}>
         Mis direcciones
       </MenuItem>
       <MenuItem onClick={handleLogout}>Cerrar sesión</MenuItem>
@@ -186,7 +187,7 @@ export default function Header() {
         <IoPersonCircleSharp size={25} />
         <p style={{ marginLeft: 10 }}>Perfil</p>
       </MenuItem>
-      <MenuItem component={Link} to="/carrito">
+      <MenuItem component={Link} to={`/${lang}/carrito`}>
         <BsCart4 size={22} />
         <p style={{ marginLeft: 10 }}>Carrito</p>
       </MenuItem>
@@ -201,13 +202,13 @@ export default function Header() {
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="static" color="inherit">
         <Toolbar>
-          <Link to="/inicio">
+          <Link to={`/${lang}/inicio`}>
             <img src={logo} alt="Logo" style={{ height: 40, borderRadius: 20 }} />
           </Link>
 
           <Box sx={{ display: { xs: 'none', sm: 'flex' }, ml: 3 }}>
-            <Typography component={Link} to="/inicio" sx={{ mx: 2, color: 'black', textDecoration: 'none' }}>INICIO</Typography>
-            <Typography component={Link} to="/products" sx={{ mx: 2, color: 'black', textDecoration: 'none' }}>PRODUCTOS</Typography>
+            <Typography component={Link} to={`/${lang}/inicio`} sx={{ mx: 2, color: 'black', textDecoration: 'none' }}>INICIO</Typography>
+            <Typography component={Link} to={`/${lang}/productos`} sx={{ mx: 2, color: 'black', textDecoration: 'none' }}>PRODUCTOS</Typography>
           </Box>
 
           {/* Buscador */}
@@ -339,7 +340,7 @@ export default function Header() {
           {/* Íconos */}
           <Box sx={{ display: { xs: 'none', md: 'flex' }, gap: 2 }}>
             <IconButton onClick={(e) => setAnchorEl(e.currentTarget)}><IoPersonCircleSharp size={30} /></IconButton>
-            <IconButton component={Link} to="/carrito"><BsCart4 size={25} /></IconButton>
+            <IconButton component={Link} to={`/${lang}/carrito`}><BsCart4 size={25} /></IconButton>
             <IconButton onClick={() => setOpenModal(true)}><BsHeart size={22} /></IconButton>
           </Box>
 

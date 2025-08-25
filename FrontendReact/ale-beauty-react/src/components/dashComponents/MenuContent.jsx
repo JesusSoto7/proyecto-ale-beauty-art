@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
@@ -15,21 +15,24 @@ import InfoRoundedIcon from '@mui/icons-material/InfoRounded';
 import HelpRoundedIcon from '@mui/icons-material/HelpRounded';
 
 
-const mainListItems = [
-  { text: 'Home', icon: <HomeRoundedIcon />, path: '/home' },
-  { text: 'Productos', icon: <AnalyticsRoundedIcon />, path: '/home/productos' },
-  { text: 'Categorias', icon: <PeopleRoundedIcon />, path: '/home/categorias' },
-  { text: 'Carousel', icon: <AssignmentRoundedIcon />, path: '/home/carousel' },
-];
 
-const secondaryListItems = [
-  { text: 'Settings', icon: <SettingsRoundedIcon /> },
-  { text: 'About', icon: <InfoRoundedIcon /> },
-  { text: 'Feedback', icon: <HelpRoundedIcon /> },
-];
 
 export default function MenuContent() {
+  const { lang } = useParams();
   const navigate = useNavigate();
+
+  const mainListItems = [
+    { text: 'Home', icon: <HomeRoundedIcon />, path: `/${lang}/home` },
+    { text: 'Productos', icon: <AnalyticsRoundedIcon />, path: `/${lang}/home/products` },
+    { text: 'Categorias', icon: <PeopleRoundedIcon />, path: `/${lang}/home/categories` },
+    { text: 'Carousel', icon: <AssignmentRoundedIcon />, path: `/${lang}/home/carousel` },
+  ];
+
+  const secondaryListItems = [
+    { text: 'Settings', icon: <SettingsRoundedIcon /> },
+    { text: 'About', icon: <InfoRoundedIcon /> },
+    { text: 'Feedback', icon: <HelpRoundedIcon /> },
+  ];
   return (
     <Stack sx={{ flexGrow: 1, p: 1, justifyContent: 'space-between' }}>
       <List dense>
