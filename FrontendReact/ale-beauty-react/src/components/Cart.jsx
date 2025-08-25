@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 function Cart() {
   const navigate = useNavigate();
   const [cart, setCart] = useState(null);
   const token = localStorage.getItem("token");
+  const { lang } = useParams();
 
   useEffect(() => {
     fetch("https://localhost:4000/api/v1/cart", {
@@ -66,7 +67,7 @@ function Cart() {
       .then((res) => res.json())
       .then((data) => {
         if (data.order) {
-          navigate("/checkout", {
+          navigate(`/${lang}/checkout`, {
             state: {
               orderId: data.order.id,
               total: data.order.pago_total

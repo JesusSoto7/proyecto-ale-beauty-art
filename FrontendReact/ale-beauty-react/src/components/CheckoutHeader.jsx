@@ -5,11 +5,13 @@ import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
 import logo from '../assets/images/ale_logo.jpg';
-import { Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import { colorSchemes } from '../shared-theme/themePrimitives';
 
 
 function CheckoutHeader() {
+  const { lang } = useParams();
+
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="static" color="transparent">
@@ -21,7 +23,7 @@ function CheckoutHeader() {
 
           <IconButton edge="start" color="inherit" aria-label="logo">
             <div className="logo">
-              <Link to="/inicio">
+              <Link to={`/${lang}/inicio`}>
                 <img src={logo} alt="Logo Tienda de Belleza" />
               </Link>
             </div>

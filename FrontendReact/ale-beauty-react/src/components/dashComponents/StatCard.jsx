@@ -10,6 +10,7 @@ import Typography from '@mui/material/Typography';
 import { SparkLineChart } from '@mui/x-charts/SparkLineChart';
 import { areaElementClasses } from '@mui/x-charts/LineChart';
 
+
 function getDaysInMonth(month, year) {
   const date = new Date(year, month, 0);
   const monthName = date.toLocaleDateString('en-US', {
@@ -41,9 +42,9 @@ AreaGradient.propTypes = {
   id: PropTypes.string.isRequired,
 };
 
-function StatCard({ title, value, interval, trend, data }) {
+function StatCard({ title, value, interval, trend, data, labels }) {
   const theme = useTheme();
-  const daysInWeek = getDaysInMonth(4, 2024);
+
 
   const trendColors = {
     up:
@@ -97,23 +98,32 @@ function StatCard({ title, value, interval, trend, data }) {
           <Box sx={{ width: '100%', height: 50 }}>
             <SparkLineChart
               color={chartColor}
-              data={data}
+              data={data || []}  // 👈 si viene undefined, usa []
               area
               showHighlight
               showTooltip
               xAxis={{
                 scaleType: 'band',
-                data: daysInWeek, // Use the correct property 'data' for xAxis
+                data: labels || [], // 👈 si viene undefined, usa []
               }}
               sx={{
                 [`& .${areaElementClasses.root}`]: {
                   fill: `url(#area-gradient-${value})`,
+
                 },
               }}
             >
               <AreaGradient color={chartColor} id={`area-gradient-${value}`} />
             </SparkLineChart>
+
+
           </Box>
+          <Typography
+            variant="caption"
+            align="right"
+            sx={{ color: theme.palette.primary.main }}
+          >
+          </Typography>
         </Stack>
       </CardContent>
     </Card>
@@ -121,11 +131,19 @@ function StatCard({ title, value, interval, trend, data }) {
 }
 
 StatCard.propTypes = {
-  data: PropTypes.arrayOf(PropTypes.number).isRequired,
+  data: PropTypes.arrayOf(PropTypes.number),
+  labels: PropTypes.arrayOf(PropTypes.string),
   interval: PropTypes.string.isRequired,
   title: PropTypes.string.isRequired,
   trend: PropTypes.oneOf(['down', 'neutral', 'up']).isRequired,
-  value: PropTypes.string.isRequired,
+  value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
 };
+
+StatCard.defaultProps = {
+  data: [],
+  labels: [],
+};
+
+
 
 export default StatCard;

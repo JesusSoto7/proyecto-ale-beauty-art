@@ -6,7 +6,7 @@ export default function CheckoutSuccess() {
   const publicKey = import.meta.env.VITE_MERCADOPAGO_PUBLIC_KEY;
   const location = useLocation();
   const { paymentId } = useParams();
-
+  const { lang } = useParams();
 
   useEffect(() => {
     if (!publicKey || !paymentId) return;
@@ -34,7 +34,7 @@ export default function CheckoutSuccess() {
           },
           backUrls: {
             'error': 'https://localhost:3000/inicio',
-            'return': 'https://localhost:3000/inicio'
+            'return': `https://localhost:3000/${lang}/inicio`
           }
         },
         callbacks: {
