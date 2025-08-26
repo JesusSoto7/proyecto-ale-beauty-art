@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import Carousel from 'react-bootstrap/Carousel';
 import IconButton from '@mui/joy/IconButton';
 import FavoriteBorder from '@mui/icons-material/FavoriteBorder';
+import Favorite from "@mui/icons-material/Favorite";
 import { Link, useParams } from 'react-router-dom';
 import Skeleton from '@mui/material/Skeleton';
 
@@ -12,10 +13,13 @@ function Inicio() {
   const [cart, setCart] = useState(null);
   const { lang } = useParams();
   const [loading, setLoading] = useState(true);
+  const [favoriteIds, setFavoriteIds] = useState([]); // ✅ lista de favoritos
 
   const token = localStorage.getItem('token');
 
+  // 📌 Cargar productos + favoritos del usuario
   useEffect(() => {
+    // Productos e inicio
     fetch('https://localhost:4000/api/v1/inicio')
       .then(res => res.json())
       .then(data => {
@@ -24,7 +28,6 @@ function Inicio() {
           ...(data.products?.map(p => p.imagen_url) || [])
         ];
 
-        // Esperar a que todas las imágenes se carguen
         let loadedCount = 0;
         if (imgs.length === 0) {
           setCarousel(data.admin_carousel || []);
@@ -53,14 +56,24 @@ function Inicio() {
         setLoading(false);
       });
 
+    // Carrito
     fetch('https://localhost:4000/api/v1/cart', {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
+      headers: { Authorization: `Bearer ${token}` },
     })
       .then(res => res.json())
       .then(data => setCart(data.cart))
       .catch(err => console.error('Error cargando carrito:', err));
+
+    // Favoritos del usuario
+    fetch('https://localhost:4000/api/v1/favorites', {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+      .then(res => res.json())
+      .then(data => {
+        const ids = data.map(fav => fav.id); // el backend devuelve { id, nombre_producto... }
+        setFavoriteIds(ids);
+      })
+      .catch(err => console.error('Error cargando favoritos:', err));
   }, [token]);
 
   const addToCart = (productId) => {
@@ -87,38 +100,46 @@ function Inicio() {
       });
   };
 
-  const addToFavorites = (productId) => {
-    fetch('https://localhost:4000/api/v1/favorites', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({ product_id: productId }),
-    })
-      .then(res => res.json())
-      .then(data => {
-        if (data.success) {
-          alert('Producto añadido a favoritos');
-        } else if (data.errors) {
-          alert('Error: ' + data.errors.join(", "));
+  // 📌 Toggle favoritos
+  const toggleFavorite = async (productId) => {
+    if (favoriteIds.includes(productId)) {
+      // ❌ quitar favorito
+      try {
+        const res = await fetch(`https://localhost:4000/api/v1/favorites/${productId}`, {
+          method: "DELETE",
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        if (res.ok) {
+          setFavoriteIds(prev => prev.filter(id => id !== productId));
         }
-      })
-      .catch(err => {
-        console.error('Error añadiendo producto a favoritos: ', err);
-        alert('Error añadiendo producto a favoritos');
-      });
+      } catch (err) {
+        console.error("Error quitando favorito:", err);
+      }
+    } else {
+      // ❤️ añadir favorito
+      try {
+        const res = await fetch("https://localhost:4000/api/v1/favorites", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ product_id: productId }),
+        });
+        const data = await res.json();
+        if (data.success) {
+          setFavoriteIds(prev => [...prev, productId]);
+        }
+      } catch (err) {
+        console.error("Error añadiendo favorito:", err);
+      }
+    }
   };
 
   return (
     <div>
       {loading ? (
-        <Skeleton
-          sx={{ bgcolor: 'grey.800' }}
-          variant="rectangular"
-          width={"100%"}
-          height={350}
-        />
+        <Skeleton sx={{ bgcolor: 'grey.800' }} variant="rectangular" width={"100%"} height={350} />
       ) : carousel.length > 0 ? (
         <Carousel interval={3000} className="mb-0">
           {carousel.map((img, idx) => (
@@ -127,10 +148,7 @@ function Inicio() {
                 className="d-block w-100"
                 src={img}
                 alt={`Slide ${idx + 1}`}
-                style={{
-                  height: "400px",
-                  objectFit: "cover",
-                }}
+                style={{ height: "400px", objectFit: "cover" }}
               />
             </Carousel.Item>
           ))}
@@ -164,7 +182,8 @@ function Inicio() {
             <button
               className="carousel-btn prev"
               onClick={() => {
-                document.querySelector(".carousel-items").scrollBy({ left: -300, behavior: "smooth" });
+                document.querySelector(".carousel-items")
+                  .scrollBy({ left: -300, behavior: "smooth" });
               }}
             >
               ❮
@@ -172,26 +191,39 @@ function Inicio() {
 
             {/* Productos en fila */}
             <div className="carousel-items">
-              {products.map(prod => (
-                <div className="product-card" key={prod.id}>
+              {products.map((prod) => (
+                <div className="product-card" key={prod.id} style={{ position: "relative" }}>
+                  {/* Botón favoritos */}
+                  <IconButton
+                    onClick={() => toggleFavorite(prod.id)}
+                    sx={{
+                      position: "absolute",
+                      top: 8,
+                      right: 8,
+                      bgcolor: "white",
+                      "&:hover": { bgcolor: "grey.200" },
+                    }}
+                  >
+                    {favoriteIds.includes(prod.id) ? (
+                      <Favorite sx={{ color: "white" }} />
+                    ) : (
+                      <FavoriteBorder />
+                    )}
+                  </IconButton>
+
                   <Link
                     to={`/${lang}/producto/${prod.slug}`}
-                    style={{ textDecoration: 'none', color: 'inherit' }}
+                    style={{ textDecoration: "none", color: "inherit" }}
                   >
                     <div className="image-container">
-                      <img
-                        src={prod.imagen_url}
-                        alt={prod.nombre_producto}
-                      />
+                      <img src={prod.imagen_url} alt={prod.nombre_producto} />
                     </div>
                     <h5>{prod.nombre_producto}</h5>
                     <p>${prod.precio_producto}</p>
                   </Link>
+
                   <div className="actions">
                     <button onClick={() => addToCart(prod.id)}>Añadir al carrito</button>
-                    <IconButton onClick={() => addToFavorites(prod.id)}>
-                      <FavoriteBorder />
-                    </IconButton>
                   </div>
                 </div>
               ))}
@@ -201,7 +233,8 @@ function Inicio() {
             <button
               className="carousel-btn next"
               onClick={() => {
-                document.querySelector(".carousel-items").scrollBy({ left: 300, behavior: "smooth" });
+                document.querySelector(".carousel-items")
+                  .scrollBy({ left: 300, behavior: "smooth" });
               }}
             >
               ❯

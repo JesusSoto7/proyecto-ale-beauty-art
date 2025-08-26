@@ -291,18 +291,23 @@ export default function FavoritesModal({ open, onClose }) {
                         </Typography>
                       </Box>
 
-                      {/* Fecha */}
+                      {/* Fecha ejemplo (si quieres mostrarla) */}
                       <Box sx={{ flex: 1 }}>
                         <Typography level="body2" color="neutral">
-                          {/* {product.fecha_agregado} */}
+                          18 Febrero 2024
+                           {/* {product.fecha_agregado} */}
                         </Typography>
                       </Box>
 
                       {/* Stock */}
                       <Box sx={{ flex: 1 }}>
-                        {product.stock > 0 ? (
+                        {product.stock > 9 ? (
                           <Typography sx={{ fontWeight: "bold", color: "green" }}>
                             en stock
+                          </Typography>
+                        ) : product.stock > 0 && product.stock <= 5 ? (
+                          <Typography sx={{ fontWeight: "bold", color: "orange" }}>
+                            quedan pocas
                           </Typography>
                         ) : (
                           <Typography sx={{ fontWeight: "bold", color: "red" }}>
