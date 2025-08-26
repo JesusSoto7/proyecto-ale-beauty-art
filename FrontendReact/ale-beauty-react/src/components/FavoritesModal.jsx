@@ -10,8 +10,9 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import ClearAllIcon from "@mui/icons-material/ClearAll";
 import Skeleton from "@mui/joy/Skeleton";
-// Importa tu archivo CSS donde definas la animación.
-// Por ejemplo: import './favorites-modal.css';
+import { Link } from "react-router-dom";
+import Not_found from "../assets/images/Not_found.png";
+
 
 export default function FavoritesModal({ open, onClose }) {
   const [favorites, setFavorites] = useState([]);
@@ -91,7 +92,6 @@ export default function FavoritesModal({ open, onClose }) {
       });
       if (res.ok) {
         const data = await res.json();
-        // Asegura que cada producto tenga la propiedad 'isRemoving'
         setFavorites(data.map(p => ({ ...p, isRemoving: false })));
       }
     } catch (err) {
@@ -213,13 +213,15 @@ export default function FavoritesModal({ open, onClose }) {
               ))}
             </Box>
           ) : favorites.length === 0 ? (
-            <Typography>No tienes productos favoritos.</Typography>
+            <Box className="vacio">
+                <img src={Not_found}/>
+                <Typography>No tienes productos favoritos.</Typography>
+            </Box>
           ) : (
             <Box sx={{ display: "grid", gap: 2 }}>
               {favorites.map((product) => (
                 <Box
                   key={product.id}
-                  // Aquí se aplica la clase de animación
                   className={product.isRemoving ? "slide-out-right" : ""}
                   sx={{
                     display: "flex",
@@ -229,7 +231,6 @@ export default function FavoritesModal({ open, onClose }) {
                     border: "1px solid",
                     borderColor: "neutral.outlinedBorder",
                     overflow: "hidden",
-                    // Añade transición suave para que la animación funcione bien
                     transition: "all 0.3s ease-in-out",
                   }}
                 >
@@ -239,39 +240,81 @@ export default function FavoritesModal({ open, onClose }) {
                   >
                     <DeleteIcon />
                   </div>
-                  <Box
-                    sx={{
-                      flex: 1,
-                      p: 2,
-                      display: "flex",
-                      alignItems: "center",
-                      gap: 2,
-                    }}
+
+                  <Link
+                    to={`/es/producto/${product.slug}`}
+                    style={{ textDecoration: "none", color: "inherit", flex: 1}}
+                    onClick={onClose}
                   >
-                    <img
-                      src={product.imagen_url}
-                      alt={product.nombre_producto}
-                      style={{
-                        width: 60,
-                        height: 60,
-                        objectFit: "scale-down",
-                        borderRadius: 12,
+                    <Box
+                      key={product.id}
+                      className={product.isRemoving ? "slide-out-right" : ""}
+                      sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        borderRadius: "12px",
+                        bgcolor: "background.body",
+                        borderColor: "neutral.outlinedBorder",
+                        overflow: "hidden",
+                        transition: "all 0.3s ease-in-out",
+                        p: 2,
+                        gap: 2,
                       }}
-                    />
-                    <Box>
-                      <Typography level="body1" sx={{ fontWeight: "bold" }}>
-                        {product.nombre_producto}
-                      </Typography>
-                      <Typography level="body2" color="neutral">
-                        ${product.precio_producto}
-                      </Typography>
+                    >
+
+                      {/* Imagen */}
+                      <img
+                        src={product.imagen_url}
+                        alt={product.nombre_producto}
+                        style={{
+                          width: 60,
+                          height: 60,
+                          objectFit: "scale-down",
+                          borderRadius: 12,
+                        }}
+                      />
+
+                      {/* Nombre + categoría */}
+                      <Box sx={{ flex: 2 }}>
+                        <Typography level="body1" sx={{ fontWeight: "bold" }}>
+                          {product.nombre_producto}
+                        </Typography>
+                        <Typography level="body2" color="neutral">
+                          {product.categoria}
+                        </Typography>
+                      </Box>
+
+                      {/* Precio */}
+                      <Box sx={{ flex: 1 }}>
+                        <Typography level="body2" sx={{ fontWeight: "bold" }}>
+                          ${product.precio_producto}
+                        </Typography>
+                      </Box>
+
+                      {/* Fecha */}
+                      <Box sx={{ flex: 1 }}>
+                        <Typography level="body2" color="neutral">
+                          {/* {product.fecha_agregado} */}
+                        </Typography>
+                      </Box>
+
+                      {/* Stock */}
+                      <Box sx={{ flex: 1 }}>
+                        {product.stock > 0 ? (
+                          <Typography sx={{ fontWeight: "bold", color: "green" }}>
+                            en stock
+                          </Typography>
+                        ) : (
+                          <Typography sx={{ fontWeight: "bold", color: "red" }}>
+                            agotado
+                          </Typography>
+                        )}
+                      </Box>
                     </Box>
-                    <Box>
-                      <Typography sx={{ fontWeight: "bold" }}>
-                        en stock
-                      </Typography>
-                    </Box>
-                  </Box>
+
+
+                  </Link>
+
                   <Button
                     className="colorButon"
                     size="sm"

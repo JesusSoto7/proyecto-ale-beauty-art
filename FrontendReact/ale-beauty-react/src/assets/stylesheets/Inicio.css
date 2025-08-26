@@ -1,8 +1,22 @@
 /* === MODAL PRODUCTOS FAVORITOS === */
 
+.vacio{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  justify-self: center;
+}
+
+.vacio img{
+  display: flex;
+  justify-self: center;
+  width: 20%;
+}
+
 /* favorites-modal.css */
 .slide-out-right {
-  animation: slideOutRight 0.3s forwards ease-in-out;
+  animation: slideOutRight 0.7s forwards ease-in-out;
 }
 
 @keyframes slideOutRight {
@@ -33,6 +47,7 @@
 #ModalList{
   height: 100%;
   overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .modalItems{
