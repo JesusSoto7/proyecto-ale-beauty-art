@@ -146,7 +146,7 @@ function ProductDetails() {
             </button>
             <IconButton onClick={() => toggleFavorite(product.id)}>
               {isFavorite ? (
-                <Favorite sx={{ color: "red" }} />
+                <Favorite sx={{ color: "white" }} />
               ) : (
                 <FavoriteBorder />
               )}

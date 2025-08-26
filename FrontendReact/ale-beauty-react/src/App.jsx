@@ -18,6 +18,7 @@ import CheckoutLayout from './components/CheckoutLayout';
 import Checkout from './pages/inicio/Checkout';
 import CheckoutSuccess from './components/CheckoutSuccess';
 import Perfil from './components/Perfil'
+import CategoryProducts from "./pages/home/CategoryProducts";
 
 import './assets/stylesheets/RegisterForm.css';
 import './assets/stylesheets/LoginForm.css';
@@ -92,6 +93,7 @@ function App() {
             <Route index element={<Dashboard />} />
             <Route path="products" element={<ProductTable />} />
             <Route path="categories" element={<Categorias />} />
+            <Route path="categories/:id" element={<CategoryProducts />} /> 
             <Route path="carousel" element={<Carousel />} />
           </Route>
         </Route>
