@@ -5,6 +5,7 @@ import FavoriteBorder from '@mui/icons-material/FavoriteBorder';
 import Favorite from "@mui/icons-material/Favorite";
 import { Link, useParams } from 'react-router-dom';
 import Skeleton from '@mui/material/Skeleton';
+import { formatCOP } from '../../services/currency';
 
 function Inicio() {
   const [carousel, setCarousel] = useState([]);
@@ -219,7 +220,7 @@ function Inicio() {
                       <img src={prod.imagen_url} alt={prod.nombre_producto} />
                     </div>
                     <h5>{prod.nombre_producto}</h5>
-                    <p>${prod.precio_producto}</p>
+                    <p>{formatCOP(prod.precio_producto)}</p>
                   </Link>
 
                   <div className="actions">

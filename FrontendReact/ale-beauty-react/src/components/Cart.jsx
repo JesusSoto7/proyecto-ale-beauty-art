@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from 'react-router-dom';
 import { Box, Typography } from "@mui/joy";
 import Not_found from "../assets/images/not_found.png";
+import { formatCOP } from "../services/currency";
 
 
 function Cart() {
@@ -51,9 +52,9 @@ function Cart() {
   if (!cart || !cart.products || cart.products.length === 0) {
     return (
       <Box className="vacio" sx={{ textAlign: "center", mt: 4 }}>
-        <img 
-          src={Not_found} 
-          alt="Carrito vacío" 
+        <img
+          src={Not_found}
+          alt="Carrito vacío"
           style={{ marginBottom: "16px" }}
         />
         <Typography level="h6" color="neutral">
@@ -121,7 +122,7 @@ function Cart() {
               </button>
             </div>
             <div className="cart-price">
-              ${(product.precio_producto * product.cantidad).toFixed(2)}
+              {formatCOP(product.precio_producto * product.cantidad)}
             </div>
             <div
               className="cart-remove"
@@ -144,7 +145,7 @@ function Cart() {
         </div>
         <div className="summary-row">
           <span>Sub Total</span>
-          <span>${total.toFixed(2)}</span>
+          <span>{formatCOP(total)}</span>
         </div>
         <div className="summary-row">
           <span>Envio</span>
@@ -153,7 +154,7 @@ function Cart() {
         <div className="summary-total">
           <span>Total</span>
           <span>
-            ${(total + 10000).toFixed(2)}
+            {formatCOP(total + 10000)}
           </span>
         </div>
         <button onClick={handleCheckout}

@@ -4,6 +4,7 @@ import IconButton from "@mui/joy/IconButton";
 import FavoriteBorder from "@mui/icons-material/FavoriteBorder";
 import Favorite from "@mui/icons-material/Favorite";
 import "../../assets/stylesheets/ProductDetails.css";
+import { formatCOP } from "../../services/currency";
 
 function ProductDetails() {
   const { slug } = useParams();
@@ -135,9 +136,8 @@ function ProductDetails() {
         <div className="product-info">
           <h2>{product.nombre_producto}</h2>
           <p>{product.descripcion}</p>
-          <p className="price">Precio: ${product.precio_producto}</p>
+          <p className="price">Precio: {formatCOP(product.precio_producto)}</p>
           <p>Categoría: {product.categoria_nombre}</p>
-          <p className="stock">Stock: {product.stock}</p>
 
           {/* botones de acción */}
           <div className="actions">

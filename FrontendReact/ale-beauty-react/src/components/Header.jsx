@@ -20,6 +20,7 @@ import Modal from '@mui/joy/Modal';
 import ModalDialog from '@mui/joy/ModalDialog';
 import ModalClose from '@mui/joy/ModalClose';
 import FavoritesModal from './FavoritesModal';
+import { formatCOP } from '../services/currency';
 
 const Search = styled('div')(({ theme }) => ({
   position: 'relative',
@@ -146,7 +147,7 @@ export default function Header() {
     if (!slugOrId) return;
     setResults([]);
     setSearchTerm('');
-    navigate(`/${lang}/products/${slugOrId}`);
+    navigate(`/${lang}/producto/${slugOrId}`);
   }
 
   async function handleLogout() {
@@ -284,7 +285,7 @@ export default function Header() {
                               <Box sx={{ width: '100%', height: 120, bgcolor: '#eee', borderRadius: 1 }} />
                             )}
                             <Typography variant="body2" sx={{ mt: 1, fontWeight: 500 }}>{name}</Typography>
-                            {price && <Typography variant="caption" color="text.secondary">${price}</Typography>}
+                            {price && <Typography variant="caption" color="text.secondary">{formatCOP(price)}</Typography>}
                           </Box>
                         );
                       })}

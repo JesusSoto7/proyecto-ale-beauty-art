@@ -20,6 +20,7 @@ import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import AddIcon from "@mui/icons-material/Add";
 import "../../assets/stylesheets/ProductTable.css";
+import { formatCOP } from "../../services/currency";
 
 const ProductTable = () => {
   const [validationErrors, setValidationErrors] = useState({});
@@ -180,6 +181,7 @@ const ProductTable = () => {
         accessorKey: "precio_producto",
         header: "Precio",
         muiEditTextFieldProps: { type: "number", required: true },
+        Cell: ({ cell }) => formatCOP(cell.getValue()),
       },
       {
         accessorKey: "stock",

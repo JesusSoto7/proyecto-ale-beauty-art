@@ -12,6 +12,7 @@ import ClearAllIcon from "@mui/icons-material/ClearAll";
 import Skeleton from "@mui/joy/Skeleton";
 import { Link } from "react-router-dom";
 import Not_found from "../assets/images/Not_found.png";
+import { formatCOP } from "../services/currency";
 
 
 export default function FavoritesModal({ open, onClose }) {
@@ -214,8 +215,8 @@ export default function FavoritesModal({ open, onClose }) {
             </Box>
           ) : favorites.length === 0 ? (
             <Box className="vacio">
-                <img src={Not_found}/>
-                <Typography>No tienes productos favoritos.</Typography>
+              <img src={Not_found} />
+              <Typography>No tienes productos favoritos.</Typography>
             </Box>
           ) : (
             <Box sx={{ display: "grid", gap: 2 }}>
@@ -243,7 +244,7 @@ export default function FavoritesModal({ open, onClose }) {
 
                   <Link
                     to={`/es/producto/${product.slug}`}
-                    style={{ textDecoration: "none", color: "inherit", flex: 1}}
+                    style={{ textDecoration: "none", color: "inherit", flex: 1 }}
                     onClick={onClose}
                   >
                     <Box
@@ -287,7 +288,7 @@ export default function FavoritesModal({ open, onClose }) {
                       {/* Precio */}
                       <Box sx={{ flex: 1 }}>
                         <Typography level="body2" sx={{ fontWeight: "bold" }}>
-                          ${product.precio_producto}
+                          {formatCOP(product.precio_producto)}
                         </Typography>
                       </Box>
 
@@ -295,7 +296,7 @@ export default function FavoritesModal({ open, onClose }) {
                       <Box sx={{ flex: 1 }}>
                         <Typography level="body2" color="neutral">
                           18 Febrero 2024
-                           {/* {product.fecha_agregado} */}
+                          {/* {product.fecha_agregado} */}
                         </Typography>
                       </Box>
 
