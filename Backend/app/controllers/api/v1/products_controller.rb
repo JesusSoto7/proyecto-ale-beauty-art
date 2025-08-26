@@ -4,8 +4,10 @@ class Api::V1::ProductsController < Api::V1::BaseController
 
   def index
     products = Product.with_attached_imagen.includes(:category).all
+    products = products.where(category_id: params[:category_id]) if params[:category_id].present?
+
     render json: products.as_json(
-      include: { category: { only: [:nombre_categoria] } },
+      include: { category: { only: [:nombre_categoria, :id] } },
       methods: [:slug, :imagen_url]
     ), status: :ok
   end

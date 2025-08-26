@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 
+import "../../assets/stylesheets/categoriasHome.css";
+
 const CategoryProducts = () => {
   const { id } = useParams(); // viene de /categoria/:id
   const [productos, setProductos] = useState([]);
@@ -10,8 +12,8 @@ const CategoryProducts = () => {
   useEffect(() => {
     if (!token) return;
 
-    // traer productos de la categoría
-    fetch(`https://localhost:4000/api/v1/categories/${id}/products`, {
+    // traer productos filtrados por categoría
+    fetch(`https://localhost:4000/api/v1/products?category_id=${id}`, {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then((res) => res.json())
@@ -28,41 +30,52 @@ const CategoryProducts = () => {
   }, [id, token]);
 
   return (
-    <div style={{ padding: "2rem" }}>
-      <h2 style={{ marginBottom: "1rem" }}>
+    <div style={{ padding: "2rem", minHeight: "100vh" }}>
+      <h2 style={{ marginBottom: "1.5rem", textAlign: "center" }}>
         {categoria ? categoria.nombre_categoria : "Cargando..."}
       </h2>
 
       {productos.length === 0 ? (
-        <p>No hay productos en esta categoría.</p>
+        <p style={{ textAlign: "center" }}>No hay productos en esta categoría.</p>
       ) : (
         <div
           style={{
             display: "grid",
-            gridTemplateColumns: "repeat(auto-fill, minmax(250px, 1fr))",
+            gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))",
             gap: "20px",
+            justifyContent: "center",
+            width: "100%",
+            maxWidth: "1200px",
+            margin: "0 auto",
           }}
         >
           {productos.map((p) => (
             <div
               key={p.id}
               style={{
-                background: "#fff",
+                display: "flex",
+                flexDirection: "column",
+                background: "#ffff",
+                color: "black",
                 borderRadius: "12px",
-                boxShadow: "0 4px 10px rgba(0,0,0,0.1)",
+                boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
                 overflow: "hidden",
-                transition: "transform 0.3s ease",
+                minWidth: "200px",
+                transition: "transform 0.3s ease, box-shadow 0.3s ease",
+                cursor: "pointer",
               }}
-              onMouseEnter={(e) =>
-                (e.currentTarget.style.transform = "translateY(-5px)")
-              }
-              onMouseLeave={(e) =>
-                (e.currentTarget.style.transform = "translateY(0)")
-              }
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = "translateY(-5px)";
+                e.currentTarget.style.boxShadow = "0 8px 20px rgba(0,0,0,0.15)";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = "translateY(0)";
+                e.currentTarget.style.boxShadow = "0 4px 12px rgba(0,0,0,0.1)";
+              }}
             >
               <Link
                 to={`/producto/${p.slug}`}
-                style={{ textDecoration: "none", color: "inherit" }}
+                style={{ textDecoration: "none", color: "inherit", flex: 1 }}
               >
                 <img
                   src={
@@ -70,16 +83,18 @@ const CategoryProducts = () => {
                     "https://via.placeholder.com/250x200?text=Sin+imagen"
                   }
                   alt={p.nombre_producto}
-                  style={{ width: "100%", height: "200px", objectFit: "cover" }}
+                  style={{ width: "100%", height: "200px", objectFit: "contain" }}
                 />
-                <div style={{ padding: "1rem" }}>
-                  <h4 style={{ margin: "0 0 10px", fontSize: "18px" }}>
-                    {p.nombre_producto}
-                  </h4>
-                  <p style={{ margin: "0 0 5px", fontWeight: "bold" }}>
-                    ${p.precio_producto}
-                  </p>
-                  <p style={{ fontSize: "14px", color: "#666" }}>
+                <div style={{ padding: "1rem", flex: 1, display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
+                  <div>
+                    <h4 style={{ margin: "0 0 10px", fontSize: "18px", lineHeight: "1.2em" }}>
+                      {p.nombre_producto}
+                    </h4>
+                    <p style={{ margin: "0 0 5px", fontWeight: "bold", fontSize: "16px" }}>
+                      ${p.precio_producto}
+                    </p>
+                  </div>
+                  <p style={{ fontSize: "14px", color: "#666", marginTop: "10px" }}>
                     Stock: {p.stock}
                   </p>
                 </div>

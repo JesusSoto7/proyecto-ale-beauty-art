@@ -1,0 +1,47 @@
+.category-card {
+  border-radius: 16px;
+  overflow: hidden;
+  background-color: white;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  max-width: 300px;
+  font-family: sans-serif;
+}
+
+.category-image-wrapper {
+  position: relative;
+  height: 200px;
+  overflow: hidden;
+}
+
+.category-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.category-curve {
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  width: 100%;
+  height: 40px;
+  z-index: 2;
+}
+
+.category-info {
+  padding: 16px;
+  color: #4a0072;
+}
+
+.category-info h4 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.category-info span {
+  display: block;
+  margin-top: 4px;
+  font-size: 12px;
+  color: #999;
+}

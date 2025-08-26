@@ -24,6 +24,10 @@ Rails.application.routes.draw do
 
       resources :favorites, only: [:create, :destroy, :index]
 
+      resources :categories do
+        resources :products, only: [:index]
+      end
+
  # Quitar producto
        get "inicio", to: "inicio#index"
       # Categorías y productos  

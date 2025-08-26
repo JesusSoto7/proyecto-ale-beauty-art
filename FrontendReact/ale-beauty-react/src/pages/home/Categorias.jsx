@@ -111,6 +111,32 @@ const Categorias = () => {
         >
           Agregar Categoría
         </Button>
+
+        <Dialog open={open} onClose={() => setOpen(false)}>
+          <DialogTitle>{categoriaEdit ? "Editar categoría" : "Crear nueva categoría"}</DialogTitle>
+          <DialogContent>
+            <Stack spacing={2} sx={{ marginTop: 1 }}>
+              <TextField
+                label="Nombre"
+                value={nombre}
+                onChange={(e) => setNombre(e.target.value)}
+                fullWidth
+                autoFocus
+              />
+              <input
+                type="file"
+                accept="image/*"
+                onChange={(e) => setImagen(e.target.files[0])}
+              />
+            </Stack>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={() => setOpen(false)}>Cancelar</Button>
+            <Button onClick={handleSubmit} variant="contained">
+              {categoriaEdit ? "Actualizar" : "Crear"}
+            </Button>
+          </DialogActions>
+        </Dialog>
       </div>
 
       <div
@@ -122,57 +148,42 @@ const Categorias = () => {
         }}
       >
         {categorias.map((cat) => (
-          <div
-            key={cat.id}
-            style={{
-              minWidth: "250px",
-              background: "#302735ff",
-              borderRadius: "16px",
-              overflow: "hidden",
-              boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
-              flexShrink: 0,
-              cursor: "pointer",
-              transition: "transform 0.3s ease, box-shadow 0.3s ease",
-            }}
-            onClick={() => navigate(`/categories/${cat.id}`)} // 👈 redirige
-          >
-            {/* Imagen con curva */}
-            <div style={{ position: "relative" }}>
+          <div className="category-card" onClick={() => navigate(`/es/home/categories/${cat.id}`)}>
+            {/* Imagen con curvas */}
+            <div className="category-image-wrapper">
               <img
-                src={
-                  cat.imagen_url ||
-                  "https://via.placeholder.com/300x200?text=Sin+imagen"
-                }
+                src={cat.imagen_url || "https://via.placeholder.com/300x200?text=Sin+imagen"}
                 alt={cat.nombre_categoria}
-                style={{
-                  width: "100%",
-                  height: "160px",
-                  objectFit: "cover",
-                  borderTopLeftRadius: "16px",
-                  borderTopRightRadius: "16px",
-                }}
+                className="category-image"
               />
-              <div
-                style={{
-                  position: "absolute",
-                  bottom: "-20px",
-                  left: 0,
-                  width: "100%",
-                  height: "40px",
-                  background: "#302735ff",
-                  borderTopLeftRadius: "50% 40px",
-                  borderTopRightRadius: "50% 0px",
-                }}
-              />
+              <svg
+                className="category-curve"
+                viewBox="0 0 100 20"
+                preserveAspectRatio="none"
+              >
+                <path d="M0,20 C25,0 75,40 100,20 L100,100 L0,100 Z" fill="white" />
+              </svg>
             </div>
 
             {/* Info */}
-            <div style={{ padding: "1rem", textAlign: "center" }}>
-              <h4 style={{ margin: 0, fontWeight: "bold", color: "white" }}>
-                {cat.nombre_categoria}
-              </h4>
+            <div className="category-info" style={{ padding: "16px" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                <h4 style={{ margin: 0 }}>{cat.nombre_categoria}</h4>
+                <IconButton
+                  size="small"
+                  onClick={(event) => {
+                    event.stopPropagation();
+                    openDialog(cat);
+                  }}
+                >
+                  <EditIcon fontSize="small" />
+                </IconButton>
+              </div>
+              <span style={{ fontSize: "12px", color: "#888" }}>2 hours ago</span>
             </div>
+
           </div>
+
         ))}
       </div>
     </div>
