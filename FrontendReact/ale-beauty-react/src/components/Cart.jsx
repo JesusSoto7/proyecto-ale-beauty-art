@@ -1,5 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from 'react-router-dom';
+import { Box, Typography } from "@mui/joy";
+import Not_found from "../assets/images/not_found.png";
+
 
 function Cart() {
   const navigate = useNavigate();
@@ -46,7 +49,18 @@ function Cart() {
   };
 
   if (!cart || !cart.products || cart.products.length === 0) {
-    return <p className="empty-cart">El carrito está vacío.</p>;
+    return (
+      <Box className="vacio" sx={{ textAlign: "center", mt: 4 }}>
+        <img 
+          src={Not_found} 
+          alt="Carrito vacío" 
+          style={{ marginBottom: "16px" }}
+        />
+        <Typography level="h6" color="neutral">
+          No tienes productos en el carrito.
+        </Typography>
+      </Box>
+    );
   }
 
   const total = cart.products.reduce(

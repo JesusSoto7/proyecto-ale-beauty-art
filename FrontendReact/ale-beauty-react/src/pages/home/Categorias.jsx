@@ -14,6 +14,7 @@ import {
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import EditIcon from "@mui/icons-material/Edit";
+import { useNavigate } from "react-router-dom";
 
 const Categorias = () => {
   const [open, setOpen] = useState(false);
@@ -22,6 +23,7 @@ const Categorias = () => {
   const [imagen, setImagen] = useState(null);
   const [categoriaEdit, setCategoriaEdit] = useState(null);
   const token = localStorage.getItem("token");
+  const navigate = useNavigate();
 
   // Cargar categorías al inicio
   useEffect(() => {
@@ -98,69 +100,91 @@ const Categorias = () => {
   };
 
   return (
-    <div style={{ padding: "1rem" }}>
-      <Button
-        variant="contained"
-        color="primary"
-        startIcon={<AddIcon />}
-        onClick={() => openDialog()}
-      >
-        Agregar Categoría
-      </Button>
+    <div style={{ marginTop: "2rem" }}>
+      <div style={{ display: "flex", justifyContent: "space-between" }}>
+        <h3>Categorías</h3>
+        <Button
+          variant="contained"
+          color="primary"
+          startIcon={<AddIcon />}
+          onClick={() => openDialog()}
+        >
+          Agregar Categoría
+        </Button>
 
-      <Dialog open={open} onClose={() => setOpen(false)}>
-        <DialogTitle>{categoriaEdit ? "Editar categoría" : "Crear nueva categoría"}</DialogTitle>
-        <DialogContent>
-          <Stack spacing={2} sx={{ marginTop: 1 }}>
-            <TextField
-              label="Nombre"
-              value={nombre}
-              onChange={(e) => setNombre(e.target.value)}
-              fullWidth
-              autoFocus
-            />
-            <input
-              type="file"
-              accept="image/*"
-              onChange={(e) => setImagen(e.target.files[0])}
-            />
-          </Stack>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setOpen(false)}>Cancelar</Button>
-          <Button onClick={handleSubmit} variant="contained">
-            {categoriaEdit ? "Actualizar" : "Crear"}
-          </Button>
-        </DialogActions>
-      </Dialog>
-
-      <div style={{ marginTop: "2rem" }}>
-        <h3>Listado de categorías:</h3>
-        <List>
-          {categorias.map((cat) => (
-            <ListItem
-              key={cat.id}
-              secondaryAction={
-                <IconButton edge="end" onClick={() => openDialog(cat)}>
-                  <EditIcon />
-                </IconButton>
-              }
-            >
-              <ListItemText
-                primary={cat.nombre_categoria}
-                secondary={
-                  cat.imagen_url ? (
-                    <img
-                      src={cat.imagen_url}
-                      alt={cat.nombre_categoria}
-                      style={{ width: "50px", marginTop: "5px" }}
-                    />
-                  ) : null
-                }
+        <Dialog open={open} onClose={() => setOpen(false)}>
+          <DialogTitle>{categoriaEdit ? "Editar categoría" : "Crear nueva categoría"}</DialogTitle>
+          <DialogContent>
+            <Stack spacing={2} sx={{ marginTop: 1 }}>
+              <TextField
+                label="Nombre"
+                value={nombre}
+                onChange={(e) => setNombre(e.target.value)}
+                fullWidth
+                autoFocus
               />
-            </ListItem>
-          ))}
-        </List>
+              <input
+                type="file"
+                accept="image/*"
+                onChange={(e) => setImagen(e.target.files[0])}
+              />
+            </Stack>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={() => setOpen(false)}>Cancelar</Button>
+            <Button onClick={handleSubmit} variant="contained">
+              {categoriaEdit ? "Actualizar" : "Crear"}
+            </Button>
+          </DialogActions>
+        </Dialog>
+      </div>
+
+      <div
+        style={{
+          display: "flex",
+          gap: "20px",
+          overflowX: "auto",
+          padding: "10px 0",
+        }}
+      >
+        {categorias.map((cat) => (
+          <div className="category-card" onClick={() => navigate(`/es/home/categories/${cat.id}`)}>
+            {/* Imagen con curvas */}
+            <div className="category-image-wrapper">
+              <img
+                src={cat.imagen_url || "https://via.placeholder.com/300x200?text=Sin+imagen"}
+                alt={cat.nombre_categoria}
+                className="category-image"
+              />
+              <svg
+                className="category-curve"
+                viewBox="0 0 100 20"
+                preserveAspectRatio="none"
+              >
+                <path d="M0,20 C25,0 75,40 100,20 L100,100 L0,100 Z" fill="white" />
+              </svg>
+            </div>
+
+            {/* Info */}
+            <div className="category-info" style={{ padding: "16px" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                <h4 style={{ margin: 0 }}>{cat.nombre_categoria}</h4>
+                <IconButton
+                  size="small"
+                  onClick={(event) => {
+                    event.stopPropagation();
+                    openDialog(cat);
+                  }}
+                >
+                  <EditIcon fontSize="small" />
+                </IconButton>
+              </div>
+              <span style={{ fontSize: "12px", color: "#888" }}>2 hours ago</span>
+            </div>
+
+          </div>
+
+        ))}
       </div>
     </div>
   );

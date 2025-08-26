@@ -1,3 +1,84 @@
+/* === MODAL PRODUCTOS FAVORITOS === */
+
+.vacio{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  justify-self: center;
+}
+
+.vacio img{
+  display: flex;
+  justify-self: center;
+  width: 20%;
+}
+
+/* favorites-modal.css */
+.slide-out-right {
+  animation: slideOutRight 0.7s forwards ease-in-out;
+}
+
+@keyframes slideOutRight {
+  0% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(100%);
+    max-height: 0;
+    margin: 0;
+    padding: 0;
+  }
+}
+
+.colorButon{
+  background: linear-gradient(135deg, #d95d85, #e58bb1);
+}
+
+.modal{
+  background-color: #b8b8b8;
+  width: 60% !important;
+  height: 65% !important;
+  
+}
+
+#ModalList{
+  height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.modalItems{
+  background-color: #fff;
+  border-radius: 5px;
+  padding: 10px;
+}
+
+.borrarFav {
+  height: 100%;              /* ocupa toda la altura del item */
+  width: 20px;               /* ancho inicial */
+  border-radius: 7px 0 0 7px;/* solo esquinas izq redondeadas */
+  display: flex;             
+  align-items: center;       
+  justify-content: center;   
+  background-color: #eee; /* rojo suave */
+  color: white;
+  transition:  0.3s ease;
+  cursor: pointer;
+}
+
+.borrarFav:hover {
+  width: 45px;               /* se expande un poco */
+  background-color: #f56565; /* rojo más fuerte */
+}
+
+.bold{
+  color: #fd9cb9;
+  font-weight: bold;
+}
+
 /* === CARRUSEL DE PRODUCTOS === */
 .carousel-container {
   position: relative;
@@ -28,16 +109,17 @@
 /* Tarjeta de producto */
 .product-card {
   flex: 0 0 auto;
-  min-width: calc(33.33% - 1.5rem);
-  max-width: calc(33.33% - 1.5rem);
+  width: 100%;
+  max-width: 280px; /* 👈 límite máximo */
   background: #fff;
-  border-radius: 10px;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+  border-radius: 12px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   cursor: pointer;
-  transition: transform 0.3s, box-shadow 0.3s;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  margin: 0 auto; /* centrado si sobra espacio */
 }
 
 .product-card:hover {
@@ -48,7 +130,7 @@
 .product-card img {
   width: 100%;
   height: 220px;
-  object-fit: cover;
+  object-fit: contain;
   border-radius: 10px 10px 0 0;
 }
 
@@ -140,6 +222,11 @@
     width: 40px;
     height: 40px;
     font-size: 1.5rem;
+  }
+
+  .modal{
+    width: 100% !important;
+    height: 85% !important;
   }
 }
 

@@ -93,7 +93,7 @@ function Carousel() {
   };
 
   return (
-    <Box>
+    <Box className="carouselBox">
       <Paper {...getRootProps()} sx={{ padding: 4, textAlign: "center", cursor: "pointer", border: "2px dashed #1976d2" }}>
         <input {...getInputProps()} />
         <Typography>Arrastra y suelta una imagen aquí, o haz clic para seleccionar</Typography>
