@@ -6,13 +6,17 @@ import ModalClose from "@mui/joy/ModalClose";
 import Typography from "@mui/joy/Typography";
 import Box from "@mui/joy/Box";
 import Button from "@mui/joy/Button";
-import DeleteIcon from "@mui/icons-material/Delete"; // Ícono basura
-import ShoppingCartIcon from "@mui/icons-material/ShoppingCart"; // Ícono carrito
-import ClearAllIcon from "@mui/icons-material/ClearAll"; // Ícono vaciar lista
+import DeleteIcon from "@mui/icons-material/Delete";
+import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
+import ClearAllIcon from "@mui/icons-material/ClearAll";
+import Skeleton from "@mui/joy/Skeleton";
+// Importa tu archivo CSS donde definas la animación.
+// Por ejemplo: import './favorites-modal.css';
 
 export default function FavoritesModal({ open, onClose }) {
   const [favorites, setFavorites] = useState([]);
-  const [cart, setCart] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [clearing, setClearing] = useState(false); // Estado para la animación de borrado masivo
 
   const token = localStorage.getItem("token");
 
@@ -34,7 +38,6 @@ export default function FavoritesModal({ open, onClose }) {
       .then((res) => res.json())
       .then((data) => {
         if (data.cart) {
-          setCart(data.cart);
           alert("Producto añadido al carrito");
         } else if (data.errors) {
           alert("Error: " + data.errors.join(", "));
@@ -79,6 +82,7 @@ export default function FavoritesModal({ open, onClose }) {
   };
 
   async function fetchFavorites() {
+    setLoading(true);
     try {
       const res = await fetch("https://localhost:4000/api/v1/favorites", {
         headers: {
@@ -87,23 +91,43 @@ export default function FavoritesModal({ open, onClose }) {
       });
       if (res.ok) {
         const data = await res.json();
-        setFavorites(data);
+        // Asegura que cada producto tenga la propiedad 'isRemoving'
+        setFavorites(data.map(p => ({ ...p, isRemoving: false })));
       }
     } catch (err) {
       console.error("Error cargando favoritos", err);
+    } finally {
+      setLoading(false);
     }
   }
 
   async function removeFavorite(id) {
     try {
+      const productToRemove = favorites.find((p) => p.id === id);
+      if (!productToRemove) return;
+
+      // Inicia la animación de borrado
+      setFavorites((prev) =>
+        prev.map((p) => (p.id === id ? { ...p, isRemoving: true } : p))
+      );
+
+      // Espera a que la animación termine (300ms)
+      await new Promise((resolve) => setTimeout(resolve, 300));
+
       const res = await fetch(`https://localhost:4000/api/v1/favorites/${id}`, {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
       });
+
       if (res.ok) {
         setFavorites((prev) => prev.filter((p) => p.id !== id));
+      } else {
+        // Si la eliminación falla, revierte la animación
+        setFavorites((prev) =>
+          prev.map((p) => (p.id === id ? { ...p, isRemoving: false } : p))
+        );
       }
     } catch (err) {
       console.error("Error eliminando favorito", err);
@@ -115,6 +139,22 @@ export default function FavoritesModal({ open, onClose }) {
       alert("No tienes productos en favoritos.");
       return;
     }
+
+    setClearing(true);
+
+    // Animación de borrado secuencial
+    await new Promise((resolve) => {
+      favorites.forEach((product, index) => {
+        setTimeout(() => {
+          setFavorites((prev) =>
+            prev.map((p) => (p.id === product.id ? { ...p, isRemoving: true } : p))
+          );
+          if (index === favorites.length - 1) {
+            resolve();
+          }
+        }, index * 100); // Retraso de 100ms entre cada animación
+      });
+    });
 
     try {
       await Promise.all(
@@ -132,6 +172,8 @@ export default function FavoritesModal({ open, onClose }) {
     } catch (err) {
       console.error("Error vaciando favoritos", err);
       alert("Error al vaciar la lista de favoritos");
+    } finally {
+      setClearing(false);
     }
   };
 
@@ -144,13 +186,41 @@ export default function FavoritesModal({ open, onClose }) {
         </Typography>
 
         <Box id="ModalList">
-          {favorites.length === 0 ? (
+          {loading ? (
+            <Box sx={{ display: "grid", gap: 2 }}>
+              {[...Array(3)].map((_, index) => (
+                <Box
+                  key={index}
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 2,
+                    p: 2,
+                    borderRadius: "12px",
+                    bgcolor: "background.body",
+                    border: "1px solid",
+                    borderColor: "neutral.outlinedBorder",
+                    overflow: "hidden",
+                  }}
+                >
+                  <Skeleton variant="rectangular" width={60} height={60} sx={{ borderRadius: 12, bgcolor: "grey.800" }} />
+                  <Box sx={{ flex: 1 }}>
+                    <Skeleton variant="text" width="80%" sx={{ bgcolor: "grey.800" }} />
+                    <Skeleton variant="text" width="60%" sx={{ bgcolor: "grey.800" }} />
+                  </Box>
+                  <Skeleton variant="rectangular" width={150} height={36} sx={{ borderRadius: "4px", bgcolor: "grey.800" }} />
+                </Box>
+              ))}
+            </Box>
+          ) : favorites.length === 0 ? (
             <Typography>No tienes productos favoritos.</Typography>
           ) : (
             <Box sx={{ display: "grid", gap: 2 }}>
               {favorites.map((product) => (
                 <Box
                   key={product.id}
+                  // Aquí se aplica la clase de animación
+                  className={product.isRemoving ? "slide-out-right" : ""}
                   sx={{
                     display: "flex",
                     alignItems: "center",
@@ -159,17 +229,16 @@ export default function FavoritesModal({ open, onClose }) {
                     border: "1px solid",
                     borderColor: "neutral.outlinedBorder",
                     overflow: "hidden",
+                    // Añade transición suave para que la animación funcione bien
+                    transition: "all 0.3s ease-in-out",
                   }}
                 >
-                  {/* Botón borrar ocupa todo el alto */}
                   <div
                     className="borrarFav"
                     onClick={() => removeFavorite(product.id)}
                   >
                     <DeleteIcon />
                   </div>
-
-                  {/* Info con su padding */}
                   <Box
                     sx={{
                       flex: 1,
@@ -197,16 +266,14 @@ export default function FavoritesModal({ open, onClose }) {
                         ${product.precio_producto}
                       </Typography>
                     </Box>
-
                     <Box>
                       <Typography sx={{ fontWeight: "bold" }}>
                         en stock
                       </Typography>
                     </Box>
                   </Box>
-
-                  {/* Botón añadir al carrito */}
                   <Button
+                    className="colorButon"
                     size="sm"
                     variant="solid"
                     color="primary"
@@ -221,7 +288,6 @@ export default function FavoritesModal({ open, onClose }) {
           )}
         </Box>
 
-        {/* Botones de acción en la parte inferior */}
         <Box sx={{ display: "flex", gap: 2, mt: 2, justifyContent: "flex-end" }}>
           <Button
             size="sm"
@@ -229,16 +295,18 @@ export default function FavoritesModal({ open, onClose }) {
             color="danger"
             onClick={clearFavorites}
             startDecorator={<ClearAllIcon />}
+            disabled={loading || clearing || favorites.length === 0}
           >
             Vaciar favoritos
           </Button>
-
           <Button
+            className="colorButon"
             size="sm"
             variant="solid"
             color="primary"
             onClick={addAllToCart}
             startDecorator={<ShoppingCartIcon />}
+            disabled={loading || clearing || favorites.length === 0}
           >
             Añadir todo al carrito
           </Button>
