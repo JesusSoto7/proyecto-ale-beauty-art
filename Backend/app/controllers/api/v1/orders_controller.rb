@@ -24,7 +24,7 @@ class Api::V1::OrdersController < Api::V1::BaseController
     order = current_user.orders.build(
       correo_cliente: correo_cliente,
       status: :pendiente,
-      pago_total: calcular_monto_actual.to_f,
+      pago_total: calcular_monto_actual.to_f + 10_000,
       shipping_address: shipping_address
     )
 
