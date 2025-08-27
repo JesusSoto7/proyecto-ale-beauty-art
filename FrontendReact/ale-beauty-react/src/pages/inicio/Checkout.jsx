@@ -2,7 +2,6 @@ import { useState } from "react";
 import { Stepper, Step, StepLabel, Button, Box } from "@mui/material";
 import CheckoutShippingAddress from "../../components/CheckoutShippingAddress";
 import CheckoutPago from "../../components/CheckoutPago";
-import CheckoutSuccess from "../../components/CheckoutSuccess";
 
 const steps = ["Dirección de envío", "Pago"];
 

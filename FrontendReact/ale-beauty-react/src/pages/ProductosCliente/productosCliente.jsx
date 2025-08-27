@@ -1,14 +1,16 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import IconButton from '@mui/joy/IconButton';
 import FavoriteBorder from '@mui/icons-material/FavoriteBorder';
 import "../../assets/stylesheets/ProductosCliente.css";
+import { formatCOP } from "../../services/currency";
 
 function ProductosCliente() {
   const [products, setProducts] = useState([]);
   const [token, setToken] = useState(null);
   const [cart, setCart] = useState(null);
-  
+  const { lang } = useParams();
+
 
   useEffect(() => {
     const savedToken = localStorage.getItem("token");
@@ -89,7 +91,7 @@ function ProductosCliente() {
         {products.map(prod => (
           <div className="product-card" key={prod.id}>
             <Link
-              to={`/products/${prod.slug}`}
+              to={`/${lang}/producto/${prod.slug}`}
               style={{ textDecoration: 'none', color: 'inherit' }}
             >
               <div className="image-container">
@@ -99,7 +101,7 @@ function ProductosCliente() {
                 />
               </div>
               <h5>{prod.nombre_producto}</h5>
-              <p>${prod.precio_producto}</p>
+              <p>{formatCOP(prod.precio_producto)}</p>
             </Link>
             <div className="actions">
               <button onClick={() => addToCart(prod.id)}>Añadir al carrito</button>

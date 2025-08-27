@@ -3,13 +3,14 @@ require 'prawn/table'
 include ActionView::Helpers::NumberHelper
 
 class FacturaPdf
+  SHIPPING_COST = 10_000  # costo de envío fijo
+
   def initialize(order)
     @order = order
   end
 
   def render
     Prawn::Document.new do |pdf|
-
       pdf.text "Factura ##{@order.numero_de_orden}", size: 24, style: :bold, align: :center
       pdf.move_down 10
 
@@ -22,14 +23,21 @@ class FacturaPdf
       pdf.stroke_horizontal_rule
       pdf.move_down 20
 
+      subtotal = 0
+
       if @order.order_details.any?
         data = [["Producto", "Cantidad", "Precio unitario", "Subtotal"]]
         @order.order_details.each do |item|
+          unit_price = item.precio_unitario || 0
+          quantity   = item.cantidad || 0
+          line_total = unit_price * quantity
+          subtotal  += line_total
+
           data << [
             item.product&.nombre_producto || "Producto desconocido",
-            item.cantidad || 0,
-            number_to_currency(item.precio_unitario || 0, unit: '$', delimiter: '.', separator: ','),
-            number_to_currency((item.precio_unitario || 0) * (item.cantidad || 0), unit: '$', delimiter: '.', separator: ',')
+            quantity,
+            number_to_currency(unit_price, unit: '$', delimiter: '.', separator: ','),
+            number_to_currency(line_total, unit: '$', delimiter: '.', separator: ',')
           ]
         end
 
@@ -43,10 +51,13 @@ class FacturaPdf
         pdf.move_down 20
       end
 
-      pdf.text "Total: #{number_to_currency(@order.total_con_envio, unit: '$', separator: ',', delimiter: '.')}", size: 16, style: :bold, align: :right
+      total_con_envio = subtotal + SHIPPING_COST
+
+      pdf.text "Subtotal: #{number_to_currency(subtotal, unit: '$', separator: ',', delimiter: '.')}", size: 12, align: :right
+      pdf.text "Envío: #{number_to_currency(SHIPPING_COST, unit: '$', separator: ',', delimiter: '.')}", size: 12, align: :right
+      pdf.stroke_horizontal_rule
+      pdf.move_down 5
+      pdf.text "Total: #{number_to_currency(total_con_envio, unit: '$', separator: ',', delimiter: '.')}", size: 16, style: :bold, align: :right
     end.render
   end
-
-
-
 end

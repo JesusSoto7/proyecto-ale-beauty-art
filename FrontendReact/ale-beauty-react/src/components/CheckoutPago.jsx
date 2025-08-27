@@ -9,98 +9,81 @@ export default function CheckoutPago() {
   const { orderId, total } = location.state || {};
   const { lang } = useParams();
 
-  if (!publicKey) {
-    console.error("No se encontró la clave pública en las variables de entorno");
-    return;
-  }
-
   useEffect(() => {
     const savedToken = localStorage.getItem("token");
-    if (savedToken) {
-      setToken(savedToken);
-    } else {
-      alert("no esta atenticado");
-    }
-  })
+    if (savedToken) setToken(savedToken);
+    else alert("No está autenticado");
+  }, []); // solo se ejecuta al montar
 
   useEffect(() => {
-    if (!token) return;
+    if (!token || !publicKey) return;
 
-    const mp = new window.MercadoPago(publicKey, {
-      locale: "es-CO",
-    });
+    const initBrick = async () => {
+      // Cargar SDK si no está
+      if (!window.MercadoPago) {
+        const script = document.createElement("script");
+        script.src = "https://sdk.mercadopago.com/js/v2";
+        document.body.appendChild(script);
+        await new Promise((res) => (script.onload = res));
+      }
 
-    const bricksBuilder = mp.bricks();
-    let controller;
+      const mp = new window.MercadoPago(publicKey, { locale: "es-CO" });
+      const bricksBuilder = mp.bricks();
 
-    const renderCardPaymentBrick = async () => {
       const settings = {
-        initialization: {
-          amount: Number(total), // total amount to be paid
-          payer: {
-            email: "",
-          },
-        },
-        customization: {
-          visual: {
-            style: {
-              theme: 'default', // | 'dark' | 'bootstrap' | 'flat'
-              customVariables: {
-              },
-            },
-          },
-          paymentMethods: {
-            maxInstallments: 1,
-          },
-        },
+        initialization: { amount: Number(total), payer: { email: "" } },
+        customization: { visual: { style: { theme: "default" } }, paymentMethods: { maxInstallments: 1 } },
         callbacks: {
-          onReady: () => {
-            // callback called when the Brick is ready
-          },
-          onSubmit: (cardFormData) => {
-            //  callback called when the user clicks on the submit data button
-            //  example of sending the data collected by our Brick to your server
-            return new Promise((resolve, reject) => {
-              fetch("https://localhost:4000/api/v1/payments", {
+          onReady: () => console.log("Brick listo"),
+          onSubmit: async (cardFormData) => {
+            try {
+              const res = await fetch("https://localhost:4000/api/v1/payments", {
                 method: "POST",
                 headers: {
                   "Content-Type": "application/json",
-                  Authorization: `Bearer ${token}`
+                  Authorization: `Bearer ${token}`,
                 },
                 body: JSON.stringify({
                   ...cardFormData,
                   transaction_amount: Number(total),
-                  order_id: orderId
-                })
-              })
-                .then((response) => response.json())
-                .then((data) => {
-                  console.log("Respuesta del backend:", data);
-                  navigate(`/${lang}/checkout/success/${data.payment.id}`, { state: { paymentId: data.payment.id } });
-                  resolve();
-                })
-                .catch((error) => {
-                  console.error("Error al procesar el pago:", error);
-                  reject();
-                })
-            });
+                  order_id: orderId,
+                  lang: lang,
+
+                }),
+              });
+              const data = await res.json();
+
+              if (data.redirect_url) {
+                window.location.href = data.redirect_url;
+              } else {
+                alert("Pago procesado, pero no se recibió URL de redirección.");
+              }
+
+            } catch (err) {
+              console.error("Error al procesar el pago:", err);
+              throw err
+            }
           },
-          onError: (error) => {
-            console.error("Error en el Brick:", error);
-          },
+          onError: (err) => console.error("Error en el Brick:", err),
         },
       };
-      controller = await bricksBuilder.create('cardPayment', 'cardPaymentBrick_container', settings);
+
+      // Crear el Brick solo si el contenedor existe
+      if (document.getElementById("cardPaymentBrick_container")) {
+        window.paymentBrickController = await bricksBuilder.create(
+          "cardPayment",
+          "cardPaymentBrick_container",
+          settings
+        );
+      }
     };
-    renderCardPaymentBrick();
+
+    initBrick();
 
     return () => {
-      if (controller) {
-        controller.destroy();
-      }
-    }
-
-  }, [orderId, total, publicKey, navigate, token]);
+      window.paymentBrickController?.destroy();
+    };
+  }, [token, publicKey, orderId, total, navigate, lang]);
 
   return (
     <div>

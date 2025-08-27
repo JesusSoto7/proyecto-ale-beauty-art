@@ -1,8 +1,8 @@
 class Api::V1::PaymentsController < Api::V1::BaseController
-
   def create
     require 'mercadopago'
     sdk = Mercadopago::SDK.new(ENV['MERCADOPAGO_ACCESS_TOKEN'])
+    frontend_url = ENV['FRONTEND_URL'].presence || "https://localhost:3000"
 
     payment_data = {
       transaction_amount: params[:transaction_amount].to_f,
@@ -31,16 +31,14 @@ class Api::V1::PaymentsController < Api::V1::BaseController
 
       render json: {
         message: "Pago exitoso",
-        payment: payment,
-        order: order
+        redirect_url: "#{frontend_url}/#{params[:lang]}/checkout/success/#{payment['id']}"
       }, status: :ok
     else
       order.update(status: :cancelada)
 
       render json: {
         error: "Pago rechazado",
-        payment: payment,
-        order: order
+        redirect_url: "#{ENV['FRONTEND_URL']}/#{params[:lang]}/checkout/failure/#{payment['id']}"
       }, status: :unprocessable_entity
     end
   end

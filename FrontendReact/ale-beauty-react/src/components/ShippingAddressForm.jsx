@@ -123,9 +123,16 @@ function ShippingAddressForm({ onSuccess, initialData }) {
       .then(res => res.ok ? res.json() : res.json().then(data => { throw new Error(data.error || data.errors?.join(', ') || "Error desconocido") }))
       .then(data => {
         alert(isEditing ? "Dirección actualizada con éxito" : "Dirección creada con éxito");
-        onSuccess && onSuccess(data, isEditing);
-        navigate(`/${lang}/direcciones`);
+
+        if (onSuccess) {
+          // Si CheckoutShippingAddress pasó onSuccess, actualizamos el estado del padre
+          onSuccess(data, isEditing);
+        } else {
+          // Si no, redirigimos normalmente
+          navigate(`/${lang}/direcciones`);
+        }
       })
+
       .catch(err => {
         alert(`Error al ${isEditing ? "actualizar" : "crear"} dirección`);
         console.error(err);

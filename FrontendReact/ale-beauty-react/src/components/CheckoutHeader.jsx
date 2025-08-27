@@ -23,9 +23,10 @@ function CheckoutHeader() {
 
           <IconButton edge="start" color="inherit" aria-label="logo">
             <div className="logo">
-              <Link to={`/${lang}/inicio`}>
+              <Link to={`/${lang || 'es'}/inicio`}>
                 <img src={logo} alt="Logo Tienda de Belleza" />
               </Link>
+
             </div>
           </IconButton>
         </Toolbar>
