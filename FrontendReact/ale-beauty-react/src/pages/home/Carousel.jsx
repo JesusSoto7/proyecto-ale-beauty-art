@@ -1,19 +1,16 @@
 import React, { useCallback, useState, useEffect } from "react";
 import { useDropzone } from "react-dropzone";
-import Paper from "@mui/material/Paper";
-import Typography from "@mui/material/Typography";
-import Box from "@mui/material/Box";
-import Button from "@mui/material/Button";
+import ImageIcon from "@mui/icons-material/Image";
+import "./../../assets/stylesheets/home.css";
 
 function Carousel() {
-  const [image, setImage] = useState(null);
   const [file, setFile] = useState(null);
+  const [preview, setPreview] = useState(null);
   const [images, setImages] = useState([]);
-  const [loading, setLoading] = useState(false);
-
+  const [uploadSuccess, setUploadSuccess] = useState(false); // ✅ estado para éxito
   const token = localStorage.getItem("token");
 
-  // Cargar imágenes actuales
+  // 🔹 Cargar banners ya existentes
   const loadImages = async () => {
     try {
       const res = await fetch("https://localhost:4000/api/v1/carousel", {
@@ -28,15 +25,18 @@ function Carousel() {
 
   useEffect(() => {
     loadImages();
-  }, [token]);
+  }, []);
 
   const onDrop = useCallback((acceptedFiles) => {
     const file = acceptedFiles[0];
-    setFile(file);
-    setImage(URL.createObjectURL(file));
+    if (file) {
+      setFile(file);
+      setPreview(URL.createObjectURL(file));
+      setUploadSuccess(false); // resetear mensaje cuando se selecciona otra img
+    }
   }, []);
 
-  const { getRootProps, getInputProps } = useDropzone({
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
     accept: { "image/*": [] },
   });
@@ -47,7 +47,6 @@ function Carousel() {
     const formData = new FormData();
     formData.append("user[carousel_images][]", file);
 
-    setLoading(true);
     try {
       const res = await fetch("https://localhost:4000/api/v1/carousel", {
         method: "PATCH",
@@ -56,18 +55,21 @@ function Carousel() {
       });
 
       if (res.ok) {
-        setImage(null);
         setFile(null);
-        loadImages(); // Actualiza las imágenes automáticamente
+        setPreview(null);
+        loadImages();
+        setUploadSuccess(true); // ✅ mostrar mensaje
+        setTimeout(() => setUploadSuccess(false), 3000); // ocultar en 3s
       } else {
         const data = await res.json();
-        alert("Error: " + (data.errors ? data.errors.join(", ") : "Ocurrió un error"));
+        alert(
+          "Error: " +
+            (data.errors ? data.errors.join(", ") : "Ocurrió un error")
+        );
       }
     } catch (err) {
       console.error(err);
       alert("Error al subir la imagen");
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -81,10 +83,13 @@ function Carousel() {
       });
 
       if (res.ok) {
-        loadImages(); // Actualiza las imágenes automáticamente
+        loadImages();
       } else {
         const data = await res.json();
-        alert("Error: " + (data.errors ? data.errors.join(", ") : "Ocurrió un error"));
+        alert(
+          "Error: " +
+            (data.errors ? data.errors.join(", ") : "Ocurrió un error")
+        );
       }
     } catch (err) {
       console.error(err);
@@ -93,43 +98,64 @@ function Carousel() {
   };
 
   return (
-    <Box className="carouselBox">
-      <Paper {...getRootProps()} sx={{ padding: 4, textAlign: "center", cursor: "pointer", border: "2px dashed #1976d2" }}>
-        <input {...getInputProps()} />
-        <Typography>Arrastra y suelta una imagen aquí, o haz clic para seleccionar</Typography>
-      </Paper>
+    <div className="upload-container">
+      <div className="dropzoneBox">
+        {/* 🔹 Zona Drag & Drop */}
+        <div
+          {...getRootProps()}
+          className={`dropzone ${isDragActive ? "active" : ""}`}
+        >
+          <input {...getInputProps()} />
+          <ImageIcon fontSize="large" sx={{ color: "#7e6bfb" }} />
+          <p>
+            Arrastra y suelta una <span>imagen</span> aquí, o haz clic{" "}
+            para seleccionar un <span>archivo</span>
+          </p>
+        </div>
 
-      {image && (
-        <Box mt={2} textAlign="center">
-          <Typography>Vista previa:</Typography>
-          <img src={image} alt="preview" style={{ maxWidth: "100%", maxHeight: 300, marginTop: 10 }} />
-        </Box>
-      )}
+        {/* 🔹 Vista previa de nueva imagen (entre dropzone y botón) */}
+        {file && (
+          <div className="file-preview">
+            <img src={preview} alt="preview" />
+            <p>{file.name}</p>
+            <button
+              className="remove"
+              onClick={() => {
+                setFile(null);
+                setPreview(null);
+              }}
+            >
+              ✖
+            </button>
+          </div>
+        )}
 
-      <Box mt={2} textAlign="center">
-        <Button variant="contained" color="primary" onClick={handleSave} disabled={loading}>
-          {loading ? "Subiendo..." : "Guardar"}
-        </Button>
-      </Box>
+        {/* 🔹 Botón Upload */}
+        <button className="upload-btn" onClick={handleSave}>
+          Subir
+        </button>
 
-      <Box mt={4}>
-        <Typography variant="h6">Imágenes del carousel:</Typography>
-        <Box display="flex" flexWrap="wrap" gap={2} mt={2}>
+        {/* 🔹 Mensaje de éxito */}
+        {uploadSuccess && (
+          <div className="success-message">
+            <span className="check">✔</span> Archivo subido correctamente
+          </div>
+        )}
+      </div>
+
+      {/* 🔹 Banners ya guardados */}
+      <div className="banners-list">
+        <h3>Imágenes del carousel</h3>
+        <div className="banners-grid">
           {images.map((img) => (
-            <Box key={img.id} textAlign="center">
-              <img
-                src={img.url}
-                alt="carousel"
-                style={{ width: 150, height: 100, objectFit: "cover", display: "block", marginBottom: 5 }}
-              />
-              <Button variant="outlined" color="error" size="small" onClick={() => handleDelete(img.id)}>
-                Eliminar
-              </Button>
-            </Box>
+            <div key={img.id} className="banner-card">
+              <img src={img.url} alt="banner" />
+              <button onClick={() => handleDelete(img.id)}>Eliminar</button>
+            </div>
           ))}
-        </Box>
-      </Box>
-    </Box>
+        </div>
+      </div>
+    </div>
   );
 }
 
