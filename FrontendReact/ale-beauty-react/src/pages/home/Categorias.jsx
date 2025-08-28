@@ -139,7 +139,7 @@ const Categorias = () => {
         </Dialog>
       </div>
 
-      <div
+      <div className="categories-container"
         style={{
           display: "flex",
           gap: "20px",

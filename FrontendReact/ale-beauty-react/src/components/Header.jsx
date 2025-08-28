@@ -147,6 +147,7 @@ export default function Header() {
     if (!slugOrId) return;
     setResults([]);
     setSearchTerm('');
+    setOpenModal(false);
     navigate(`/${lang}/producto/${slugOrId}`);
   }
 
