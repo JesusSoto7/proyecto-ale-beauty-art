@@ -37,9 +37,24 @@
 }
 
 .address-info {
+  display: flex;
+  align-items: center;
+  gap: 20px;
   font-size: 1rem;
   color: #444;
   margin-bottom: 10px;
+}
+
+#editBtn{
+  width: 30px;
+  height: 30px;
+  background-color: #e7e7e7;
+  color: #858585;
+  border-radius: 5px !important;
+  padding: 0 0 3px 0;
+}
+#editBtn:hover{
+  background-color: #d4d4d4;
 }
 
 .button-group {

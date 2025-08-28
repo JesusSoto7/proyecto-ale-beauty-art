@@ -40,9 +40,10 @@ const CategoryProducts = () => {
       ) : (
         <div
           style={{
-            display: "grid",
+            display: "flex",
             gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))",
             gap: "20px",
+            flexWrap: "wrap",
             justifyContent: "center",
             width: "100%",
             maxWidth: "1200px",
@@ -55,7 +56,7 @@ const CategoryProducts = () => {
               style={{
                 display: "flex",
                 flexDirection: "column",
-                background: "#ffff",
+                background: "#242424",
                 color: "black",
                 borderRadius: "12px",
                 boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
@@ -83,14 +84,14 @@ const CategoryProducts = () => {
                     "https://via.placeholder.com/250x200?text=Sin+imagen"
                   }
                   alt={p.nombre_producto}
-                  style={{ width: "100%", height: "200px", objectFit: "contain" }}
+                  style={{ width: "100%", height: "200px", objectFit: "contain", background: "#ffff"}}
                 />
                 <div style={{ padding: "1rem", flex: 1, display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
                   <div>
-                    <h4 style={{ margin: "0 0 10px", fontSize: "18px", lineHeight: "1.2em" }}>
+                    <h4 style={{ margin: "0 0 10px", fontSize: "18px", lineHeight: "1.2em", color: "#beb5b5" }}>
                       {p.nombre_producto}
                     </h4>
-                    <p style={{ margin: "0 0 5px", fontWeight: "bold", fontSize: "16px" }}>
+                    <p style={{ margin: "0 0 5px", fontWeight: "bold", fontSize: "16px", color: "#beb5b5"}}>
                       ${p.precio_producto}
                     </p>
                   </div>

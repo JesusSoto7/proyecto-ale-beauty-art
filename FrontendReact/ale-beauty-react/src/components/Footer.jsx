@@ -1,3 +1,8 @@
+import FacebookIcon from "@mui/icons-material/Facebook";
+import InstagramIcon from "@mui/icons-material/Instagram";
+import TwitterIcon from "@mui/icons-material/Twitter"; // se sigue llamando Twitter
+import PinterestIcon from "@mui/icons-material/Pinterest";
+
 export default function Footer() {
   return (
     <footer>
@@ -18,15 +23,28 @@ export default function Footer() {
             <li><i className="fas fa-map-marker-alt"></i> Barranquilla, Colombia</li>
           </ul>
         </div>
-        <div className="footer-section">
-          <h3>Síguenos</h3>
-          <div className="social-icons">
-            <a href="#"><i className="fab fa-facebook-f"></i></a>
-            <a href="https://www.instagram.com/ale.beautyart/"><i className="fab fa-instagram"></i></a>
-            <a href="#"><i className="fab fa-twitter"></i></a>
-            <a href="#"><i className="fab fa-pinterest-p"></i></a>
-          </div>
+         <div className="footer-section">
+        <h3>Síguenos</h3>
+        <div className="social-icons" style={{ display: "flex", gap: "12px" }}>
+          <a href="https://facebook.com" target="_blank" rel="noopener noreferrer">
+            <FacebookIcon fontSize="large" style={{ color: "#ffffffff", width: "20px" }} />
+          </a>
+          <a
+            href="https://www.instagram.com/ale.beautyart/"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <InstagramIcon fontSize="large" style={{ color: "#ffffffff", width: "20px"}} />
+          </a>
+          <a href="https://x.com" target="_blank" rel="noopener noreferrer">
+            <TwitterIcon fontSize="large" style={{ color: "#ffffffff", width: "20px" }} />
+          </a>
+          <a href="https://pinterest.com" target="_blank" rel="noopener noreferrer">
+            <PinterestIcon fontSize="large" style={{ color: "#ffffffff", width: "20px" }} />
+          </a>
         </div>
+      </div>
+
       </div>
       <div className="footer-bottom">
         © 2025 Tienda de Cosmeticos - Todos los derechos reservados

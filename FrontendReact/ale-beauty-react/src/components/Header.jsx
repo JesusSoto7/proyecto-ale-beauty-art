@@ -147,6 +147,7 @@ export default function Header() {
     if (!slugOrId) return;
     setResults([]);
     setSearchTerm('');
+    setOpenModal(false);
     navigate(`/${lang}/producto/${slugOrId}`);
   }
 
@@ -158,7 +159,7 @@ export default function Header() {
         headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
       });
     } catch { }
-    window.location.href = '/login';
+    window.location.href = `/${lang}/login`;
   }
 
   const renderMenu = (

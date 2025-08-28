@@ -100,7 +100,7 @@ const Categorias = () => {
   };
 
   return (
-    <div style={{ marginTop: "2rem" }}>
+    <div style={{ marginTop: "2rem", width: "80%", }}>
       <div style={{ display: "flex", justifyContent: "space-between" }}>
         <h3>Categorías</h3>
         <Button
@@ -139,16 +139,16 @@ const Categorias = () => {
         </Dialog>
       </div>
 
-      <div
+      <div className="categories-container"
         style={{
           display: "flex",
           gap: "20px",
-          overflowX: "auto",
+          flexWrap: "wrap",
           padding: "10px 0",
         }}
       >
         {categorias.map((cat) => (
-          <div className="category-card" onClick={() => navigate(`/es/home/categories/${cat.id}`)}>
+          <div className="category-card" style={{minWidth: "250px", maxWidth: "250px"}} onClick={() => navigate(`/es/home/categories/${cat.id}`)}>
             {/* Imagen con curvas */}
             <div className="category-image-wrapper">
               <img
@@ -156,13 +156,6 @@ const Categorias = () => {
                 alt={cat.nombre_categoria}
                 className="category-image"
               />
-              <svg
-                className="category-curve"
-                viewBox="0 0 100 20"
-                preserveAspectRatio="none"
-              >
-                <path d="M0,20 C25,0 75,40 100,20 L100,100 L0,100 Z" fill="white" />
-              </svg>
             </div>
 
             {/* Info */}
@@ -175,6 +168,7 @@ const Categorias = () => {
                     event.stopPropagation();
                     openDialog(cat);
                   }}
+                  style={{border: "1px solid #242424" }}
                 >
                   <EditIcon fontSize="small" />
                 </IconButton>
