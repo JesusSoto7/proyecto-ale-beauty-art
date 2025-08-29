@@ -151,7 +151,7 @@ export default function MainGrid() {
 
   const data = [
     {
-      title: 'Usuarios',
+      title: 'Usuarios Registrados',
       value: userCount,
       interval: 'Ultimos 30 dias',
       trend: 'up',
@@ -167,7 +167,7 @@ export default function MainGrid() {
       labels: orderCharData.labels || [],
     },
     {
-      title: 'Total vendidos',
+      title: 'Total vendido',
       value: totalSales,
       interval: 'Ultimos 30 dias',
       trend: 'neutral',
