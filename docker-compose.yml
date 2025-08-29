@@ -27,8 +27,12 @@ services:
       DATABASE_USERNAME: userproy
       DATABASE_PASSWORD: 350rln34y9g85
       DATABASE_NAME: tienda_maquillaje_db_development
+      CLOUDINARY_CLOUD_NAME: duaemsilo
+      CLOUDINARY_API_KEY: 767433366835437
+      CLOUDINARY_API_SECRET: ztiXjvBYwzqCuYOKASTrHTRkq9U
     depends_on:
       - db
+
 
   frontend:
     build:
