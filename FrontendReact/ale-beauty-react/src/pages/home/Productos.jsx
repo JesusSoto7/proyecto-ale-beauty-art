@@ -16,6 +16,7 @@ import {
   TextField,
   MenuItem,
 } from "@mui/material";
+import { useTheme } from "@mui/material/styles";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import AddIcon from "@mui/icons-material/Add";
@@ -23,6 +24,9 @@ import "../../assets/stylesheets/ProductTable.css";
 import { formatCOP } from "../../services/currency";
 
 const ProductTable = () => {
+  const theme = useTheme();
+  const isDark = theme.palette.mode === "dark";
+
   const [validationErrors, setValidationErrors] = useState({});
   const [categories, setCategories] = useState([]);
   const [products, setProducts] = useState([]);
@@ -30,15 +34,11 @@ const ProductTable = () => {
   const [isError, setIsError] = useState(false);
   const [token, setToken] = useState(null);
 
-
   useEffect(() => {
     const savedToken = localStorage.getItem("token");
-    if (savedToken) {
-      setToken(savedToken);
-    } else {
-      alert("no esta atenticado");
-    }
-  })
+    if (savedToken) setToken(savedToken);
+    else alert("No está autenticado");
+  }, []);
 
   // Cargar categorías
   useEffect(() => {
@@ -66,7 +66,6 @@ const ProductTable = () => {
       })
       .finally(() => setIsLoading(false));
   };
-
 
   useEffect(() => {
     fetchProducts();
@@ -102,8 +101,10 @@ const ProductTable = () => {
           ) : (
             "Sin imagen"
           ),
-        Edit: ({ row, column }) => {
-          const [preview, setPreview] = useState(row.original?.imagen_url || null);
+        Edit: ({ row }) => {
+          const [preview, setPreview] = useState(
+            row.original?.imagen_url || null
+          );
 
           const handleChange = (e) => {
             const file = e.target.files[0];
@@ -131,8 +132,6 @@ const ProductTable = () => {
           );
         },
       },
-
-
       {
         accessorKey: "nombre_producto",
         header: "Producto",
@@ -141,29 +140,44 @@ const ProductTable = () => {
           error: !!validationErrors?.nombre_producto,
           helperText: validationErrors?.nombre_producto,
           onFocus: () =>
-            setValidationErrors((prev) => ({ ...prev, nombre_producto: undefined })),
+            setValidationErrors((prev) => ({
+              ...prev,
+              nombre_producto: undefined,
+            })),
         },
       },
       {
         accessorKey: "descripcion",
         header: "Descripción",
         muiEditTextFieldProps: { multiline: true, minRows: 2, maxRows: 4 },
+        enableHiding: true,
+        Cell: ({ cell }) => cell.getValue() || "Sin descripción", // Muestra '-' si no hay descripción
       },
       {
         accessorKey: "category_id",
         header: "Categoría",
         Cell: ({ row }) => row.original?.category?.nombre_categoria || "",
         Edit: ({ row, column }) => {
-          const current =
-            row._valuesCache?.[column.id] ?? (row.original.category_id != null ? String(row.original.category_id) : "");
+          const [current, setCurrent] = useState(
+            row._valuesCache?.[column.id] ??
+            (row.original.category_id != null ? String(row.original.category_id) : "")
+          );
+          useEffect(() => {
+            if (!current && categories.length > 0) {
+              setCurrent(categories[0].id.toString());
+              if (!row._valuesCache) row._valuesCache = {};
+              row._valuesCache[column.id] = categories[0].id.toString();
+            }
+          }, [categories]);
+
           return (
             <TextField
               select
               value={current}
               onChange={(e) => {
-                const v = e.target.value;
+                setCurrent(e.target.value);
                 if (!row._valuesCache) row._valuesCache = {};
-                row._valuesCache[column.id] = v;
+                row._valuesCache[column.id] = e.target.value;
               }}
               fullWidth
             >
@@ -177,6 +191,7 @@ const ProductTable = () => {
         },
         muiEditTextFieldProps: { required: true },
       },
+
       {
         accessorKey: "precio_producto",
         header: "Precio",
@@ -192,7 +207,7 @@ const ProductTable = () => {
     [validationErrors, categories]
   );
 
-  // Crear producto
+  // Funciones de crear, actualizar y eliminar productos
   const handleCreateProduct = async ({ values, table }) => {
     const errors = validateProduct(values);
     if (Object.values(errors).some(Boolean)) {
@@ -201,7 +216,6 @@ const ProductTable = () => {
     }
     setValidationErrors({});
 
-    // FormData para enviar archivos
     const formData = new FormData();
     for (const key in values) {
       if (key === "imagen" && values[key] instanceof File) {
@@ -215,11 +229,9 @@ const ProductTable = () => {
       if (!token) return;
       const res = await fetch("https://localhost:4000/api/v1/products", {
         method: "POST",
-        headers: {
-          Authorization: token ? `Bearer ${token}` : "",
-        },
+        headers: { Authorization: token ? `Bearer ${token}` : "" },
         body: formData,
-      }, [token]);
+      });
 
       if (!res.ok) {
         const errorData = await res.json();
@@ -236,7 +248,6 @@ const ProductTable = () => {
     }
   };
 
-  // Actualizar producto
   const handleSaveProduct = async ({ values, table }) => {
     const errors = validateProduct(values);
     if (Object.values(errors).some(Boolean)) {
@@ -248,25 +259,27 @@ const ProductTable = () => {
     const formData = new FormData();
     for (const key in values) {
       if (key === "imagen" && values[key] instanceof File) {
-        formData.append("product[imagen]", values[key]); // nombre según Rails
+        formData.append("product[imagen]", values[key]);
       } else {
-        formData.append(`product[${key}]`, values[key]); // anidado en `product`
+        formData.append(`product[${key}]`, values[key]);
       }
     }
 
     try {
-      const res = await fetch(`https://localhost:4000/api/v1/products/${values.slug}`, {
-        method: "PUT",
-        headers: {
-          Authorization: token ? `Bearer ${token}` : "",
-          // NO poner 'Content-Type', FormData lo maneja
-        },
-        body: formData,
-      });
+      const res = await fetch(
+        `https://localhost:4000/api/v1/products/${values.slug}`,
+        {
+          method: "PUT",
+          headers: { Authorization: token ? `Bearer ${token}` : "" },
+          body: formData,
+        }
+      );
 
       if (!res.ok) {
         const errorData = await res.json();
-        alert(`Error actualizando producto: ${errorData.error || res.statusText}`);
+        alert(
+          `Error actualizando producto: ${errorData.error || res.statusText}`
+        );
         return;
       }
 
@@ -281,18 +294,18 @@ const ProductTable = () => {
     }
   };
 
-
-  // Eliminar producto
   const handleDelete = async (row) => {
-    if (!window.confirm(`¿Eliminar producto "${row.original.nombre_producto}"?`)) return;
+    if (!window.confirm(`¿Eliminar producto "${row.original.nombre_producto}"?`))
+      return;
 
     try {
-      const res = await fetch(`https://localhost:4000/api/v1/products/${row.original.slug}`, {
-        method: "DELETE",
-        headers: {
-          Authorization: token ? `Bearer ${token}` : "",
-        },
-      });
+      const res = await fetch(
+        `https://localhost:4000/api/v1/products/${row.original.slug}`,
+        {
+          method: "DELETE",
+          headers: { Authorization: token ? `Bearer ${token}` : "" },
+        }
+      );
 
       if (!res.ok) {
         const errorData = await res.json();
@@ -307,6 +320,7 @@ const ProductTable = () => {
     }
   };
 
+  // Configuración de la tabla
   const table = useMaterialReactTable({
     columns,
     data: products,
@@ -318,7 +332,36 @@ const ProductTable = () => {
     muiToolbarAlertBannerProps: isError
       ? { color: "error", children: "Error al cargar productos" }
       : undefined,
-    muiTableContainerProps: { sx: { minHeight: "500px" } },
+    muiTableContainerProps: {
+      sx: {
+        minHeight: "500px",
+        width: "100%",
+        overflowX: "auto",
+        backgroundColor: isDark ? theme.palette.background.default : "#fff",
+      },
+    },
+    muiTablePaperProps: {
+      sx: {
+        width: "100%",
+        overflowX: "auto",
+        backgroundColor: isDark ? theme.palette.background.paper : "#fff",
+        color: isDark ? "#fff" : "#000",
+      },
+    },
+    muiTableProps: {
+      sx: {
+        tableLayout: "auto",
+        minWidth: "900px",
+        "& th": {
+          color: isDark ? "#fff" : "#000",
+          borderBottom: `1px solid ${isDark ? "#555" : "#ccc"}`,
+        },
+        "& td": {
+          color: isDark ? "#fff" : "#000",
+          borderBottom: `1px solid ${isDark ? "#555" : "#ccc"}`,
+        },
+      },
+    },
     onCreatingRowCancel: () => setValidationErrors({}),
     onCreatingRowSave: handleCreateProduct,
     onEditingRowCancel: () => setValidationErrors({}),
