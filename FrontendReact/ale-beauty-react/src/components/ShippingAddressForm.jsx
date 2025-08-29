@@ -149,7 +149,7 @@ function ShippingAddressForm({ onSuccess, initialData }) {
   const inputStyles = {
     "& .MuiOutlinedInput-root": {
       borderRadius: "12px",
-      "& fieldset": { borderColor: "#f8bbd0" },
+      "& fieldset": { borderColor: "#000000ff" },
       "&:hover fieldset": { borderColor: "#ec407a" },
       "&.Mui-focused fieldset": {
         borderColor: "#f06292",

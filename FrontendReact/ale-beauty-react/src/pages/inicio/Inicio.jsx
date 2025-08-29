@@ -6,6 +6,7 @@ import Favorite from "@mui/icons-material/Favorite";
 import { Link, useParams } from 'react-router-dom';
 import Skeleton from '@mui/material/Skeleton';
 import { formatCOP } from '../../services/currency';
+import bannerInicio from '../../assets/images/bannerInicio.jpg'
 
 function Inicio() {
   const [carousel, setCarousel] = useState([]);
@@ -156,95 +157,156 @@ function Inicio() {
         </Carousel>
       ) : null}
 
+
+{/* 🔹 Sección Novedades Maquillaje */}
+<section className="mt-5">
+  <h2 className="mb-4">Novedades Maquillaje</h2>
+  {loading ? (
+    <div className="carousel-container">
+      <div className="carousel-items">
+        {[1, 2, 3, 4].map((skeleton) => (
+          <div className="product-card" key={skeleton}>
+            <div className="image-container">
+              <Skeleton variant="rectangular" width={"100%"} height={200} />
+            </div>
+            <Skeleton variant="text" width={150} height={30} />
+            <Skeleton variant="text" width={80} height={20} />
+            <div className="actions">
+              <Skeleton variant="rectangular" width={120} height={36} />
+              <Skeleton variant="circular" width={36} height={36} />
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  ) : products.length > 0 ? (
+    <div className="carousel-container">
+      {/* Botón izquierdo */}
+      <button
+        className="carousel-btn prev"
+        onClick={() => {
+          document.querySelector(".carousel-items")
+            .scrollBy({ left: -300, behavior: "smooth" });
+        }}
+      >
+        ❮
+      </button>
+
       {/* Productos */}
-      <section className="mt-5">
-        <h2 className="mb-4">Novedades Maquillaje</h2>
-        {loading ? (
-          <div className="carousel-container">
-            <div className="carousel-items">
-              {[1, 2, 3, 4].map((skeleton) => (
-                <div className="product-card" key={skeleton}>
-                  <div className="image-container">
-                    <Skeleton variant="rectangular" width={"100%"} height={200} />
-                  </div>
-                  <Skeleton variant="text" width={150} height={30} />
-                  <Skeleton variant="text" width={80} height={20} />
-                  <div className="actions">
-                    <Skeleton variant="rectangular" width={120} height={36} />
-                    <Skeleton variant="circular" width={36} height={36} />
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        ) : products.length > 0 ? (
-          <div className="carousel-container">
-            {/* Botón izquierdo */}
-            <button
-              className="carousel-btn prev"
-              onClick={() => {
-                document.querySelector(".carousel-items")
-                  .scrollBy({ left: -300, behavior: "smooth" });
+      <div className="carousel-items">
+        {products.map((prod) => (
+          <div className="product-card" key={prod.id} style={{ position: "relative" }}>
+            <IconButton
+              onClick={() => toggleFavorite(prod.id)}
+              sx={{
+                position: "absolute",
+                top: 8,
+                right: 8,
+                bgcolor: "white",
+                "&:hover": { bgcolor: "grey.200" },
               }}
             >
-              ❮
-            </button>
+              {favoriteIds.includes(prod.id) ? (
+                <Favorite sx={{ color: "white" }} />
+              ) : (
+                <FavoriteBorder />
+              )}
+            </IconButton>
 
-            {/* Productos en fila */}
-            <div className="carousel-items">
-              {products.map((prod) => (
-                <div className="product-card" key={prod.id} style={{ position: "relative" }}>
-                  {/* Botón favoritos */}
-                  <IconButton
-                    onClick={() => toggleFavorite(prod.id)}
-                    sx={{
-                      position: "absolute",
-                      top: 8,
-                      right: 8,
-                      bgcolor: "white",
-                      "&:hover": { bgcolor: "grey.200" },
-                    }}
-                  >
-                    {favoriteIds.includes(prod.id) ? (
-                      <Favorite sx={{ color: "white" }} />
-                    ) : (
-                      <FavoriteBorder />
-                    )}
-                  </IconButton>
+            <Link
+              to={`/${lang}/producto/${prod.slug}`}
+              style={{ textDecoration: "none", color: "inherit" }}
+            >
+              <div className="image-container">
+                <img src={prod.imagen_url} alt={prod.nombre_producto} />
+              </div>
+              <h5>{prod.nombre_producto}</h5>
+              <p>{formatCOP(prod.precio_producto)}</p>
+            </Link>
 
-                  <Link
-                    to={`/${lang}/producto/${prod.slug}`}
-                    style={{ textDecoration: "none", color: "inherit" }}
-                  >
-                    <div className="image-container">
-                      <img src={prod.imagen_url} alt={prod.nombre_producto} />
-                    </div>
-                    <h5>{prod.nombre_producto}</h5>
-                    <p>{formatCOP(prod.precio_producto)}</p>
-                  </Link>
-
-                  <div className="actions">
-                    <button onClick={() => addToCart(prod.id)}>Añadir al carrito</button>
-                  </div>
-                </div>
-              ))}
+            <div className="actions">
+              <button onClick={() => addToCart(prod.id)}>Añadir al carrito</button>
             </div>
+          </div>
+        ))}
+      </div>
 
-            {/* Botón derecho */}
-            <button
-              className="carousel-btn next"
-              onClick={() => {
-                document.querySelector(".carousel-items")
-                  .scrollBy({ left: 300, behavior: "smooth" });
+      {/* Botón derecho */}
+      <button
+        className="carousel-btn next"
+        onClick={() => {
+          document.querySelector(".carousel-items")
+            .scrollBy({ left: 300, behavior: "smooth" });
+        }}
+      >
+        ❯
+      </button>
+    </div>
+  ) : (
+    <p>No hay productos disponibles.</p>
+  )}
+</section>
+
+{/* 🔹 Banner (ahora debajo de novedades) */}
+<div style={{ margin: "40px 0" }}>
+  <img
+    src={bannerInicio} 
+    alt="Banner Novedades"
+    style={{
+      width: "100%",
+      height: "350px",   // 🔹 altura fija
+      objectFit: "cover" // 🔹 mantiene proporción
+    }}
+  />
+</div>
+
+
+{/* 🔹 Sección Quizás te puedan interesar */}
+<section className="mt-5">
+  <h2 className="mb-4">Quizás te puedan interesar:</h2>
+  {!loading && products.length > 0 ? (
+    <div className="carousel-container">
+      <div className="carousel-items">
+        {products.slice(0, 6).map((prod) => (
+          <div className="product-card" key={prod.id} style={{ position: "relative" }}>
+            <IconButton
+              onClick={() => toggleFavorite(prod.id)}
+              sx={{
+                position: "absolute",
+                top: 8,
+                right: 8,
+                bgcolor: "white",
+                "&:hover": { bgcolor: "grey.200" },
               }}
             >
-              ❯
-            </button>
+              {favoriteIds.includes(prod.id) ? (
+                <Favorite sx={{ color: "red" }} />
+              ) : (
+                <FavoriteBorder />
+              )}
+            </IconButton>
+
+            <Link
+              to={`/${lang}/producto/${prod.slug}`}
+              style={{ textDecoration: "none", color: "inherit" }}
+            >
+              <div className="image-container">
+                <img src={prod.imagen_url} alt={prod.nombre_producto} />
+              </div>
+              <h5>{prod.nombre_producto}</h5>
+              <p>{formatCOP(prod.precio_producto)}</p>
+            </Link>
+
+            <div className="actions">
+              <button onClick={() => addToCart(prod.id)}>Añadir al carrito</button>
+            </div>
           </div>
-        ) : (
-          <p>No hay productos disponibles.</p>
-        )}
-      </section>
+        ))}
+      </div>
+    </div>
+  ) : null}
+</section>
+
     </div>
   );
 }
