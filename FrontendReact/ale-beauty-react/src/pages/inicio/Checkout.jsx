@@ -27,7 +27,7 @@ export default function Checkout() {
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        bgcolor: "#fff0f6", // Fondo rosado muy suave
+        bgcolor: "#ffffffff", // Fondo rosado muy suave
         p: 3,
       }}
     >
@@ -50,7 +50,7 @@ export default function Checkout() {
             color: "#d63384", // Rosa fuerte
           }}
         >
-          Verificar
+          
         </Typography>
 
         {/* Stepper rosado */}

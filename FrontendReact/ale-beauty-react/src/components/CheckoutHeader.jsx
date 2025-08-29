@@ -16,10 +16,12 @@ function CheckoutHeader() {
         position="static"
         elevation={0}
         sx={{
-          bgcolor: '#fff0f6', // fondo rosa suave
-          borderBottom: '2px solid #f8bbd0',
+          bgcolor: '#ffffff',
+          color: '#000',
+          boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.21)', // 👈 sombra suave abajo
         }}
       >
+
         <Toolbar
           sx={{
             minHeight: { xs: 70, md: 90 },
@@ -34,28 +36,27 @@ function CheckoutHeader() {
             component="div"
             sx={{
               fontWeight: 'bold',
-              color: '#d63384', // rosa fuerte
+              color: '#000', 
               fontSize: { xs: '1.2rem', sm: '1.5rem', md: '2rem' },
             }}
           >
-            Verificar
+            Checkout
           </Typography>
 
           {/* Logo */}
           <IconButton
             edge="end"
-            color="inherit"
             aria-label="logo"
             sx={{
               p: 0,
               '& img': {
                 height: { xs: 35, sm: 45, md: 55 },
                 borderRadius: '50%',
-                border: '2px solid #ffd8e5ff',
+                border: '2px solid #e0e0e0', // gris suave en lugar de rosa
                 transition: '0.3s',
               },
               '& img:hover': {
-                boxShadow: '0 0 10px #f48fb1',
+                boxShadow: '0 0 10px rgba(0,0,0,0.2)',
                 transform: 'scale(1.05)',
               },
             }}

@@ -74,14 +74,15 @@ export default function CustomizedDataGrid() {
       flex: 1,
       renderCell: (params) =>
         params.row.pdf_url ? (
-          <a
-            href={`https://localhost:4000${params.row.pdf_url}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            style={{ color: "red" }}
-          >
-            <DescriptionIcon />
-          </a>
+        <a
+          href={params.row.pdf_url} // ya viene completa desde Cloudinary
+          target="_blank"
+          rel="noopener noreferrer"
+          style={{ color: "red" }}
+        >
+          <DescriptionIcon />
+        </a>
+
         ) : (
 
           <InsertDriveFileIcon style={{ color: "grey" }} />

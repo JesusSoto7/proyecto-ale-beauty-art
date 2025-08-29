@@ -12,7 +12,7 @@ class Api::V1::OrdersController < Api::V1::BaseController
         fecha_pago: o.fecha_pago,
         clientes: o.user ? "#{o.user.nombre} #{o.user.apellido}" : "N/A",
         email: o.user&.email || "N/A",
-        pdf_url: o.invoice_pdf.attached? ? rails_blob_url(o.invoice_pdf, only_path: true) : nil
+        pdf_url: o.invoice_pdf.attached? ? rails_blob_url(o.invoice_pdf) : nil
       }
     }
   end
