@@ -45,7 +45,7 @@ function CheckoutShippingAddress() {
   return (
     <div>
       <h2>Mi dirección de envío</h2>
-
+      
       {address && !isEditing ? (
         <div className="address-info">
           <div>
