@@ -306,9 +306,13 @@ export default function FavoritesModal({ open, onClose }) {
                           <Typography sx={{ fontWeight: "bold", color: "green" }}>
                             en stock
                           </Typography>
-                        ) : product.stock > 0 && product.stock <= 5 ? (
+                        ) : product.stock > 5 ? (
                           <Typography sx={{ fontWeight: "bold", color: "orange" }}>
                             quedan pocas
+                          </Typography>
+                        ) : product.stock > 0 ? (
+                          <Typography sx={{ fontWeight: "bold", color: "#ff5405ff" }}>
+                            últimas unidades
                           </Typography>
                         ) : (
                           <Typography sx={{ fontWeight: "bold", color: "red" }}>
@@ -316,6 +320,7 @@ export default function FavoritesModal({ open, onClose }) {
                           </Typography>
                         )}
                       </Box>
+
                     </Box>
 
 
