@@ -251,6 +251,13 @@ export default function Header() {
     </Menu>
   );
 
+  // Función para calcular el número de columnas según la cantidad de categorías
+  const getCategoryColumns = () => {
+    if (categories.length <= 7) return 1;
+    if (categories.length <= 14) return 2;
+    return 3;
+  };
+
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="static" color="inherit">
@@ -317,15 +324,15 @@ export default function Header() {
                     position: 'absolute',
                     top: '100%',
                     left: 0,
-                    backgroundColor: 'white',
+                    backgroundColor: 'rgba(11, 11, 10, 0.72)',
                     boxShadow: '0 10px 30px rgba(0,0,0,0.15)',
                     borderRadius: '8px',
                     zIndex: 1300,
                     minWidth: '250px',
-                    maxWidth: '300px',
+                    maxWidth: categories.length > 7 ? '500px' : '300px',
                     py: 2,
                     px: 2,
-                    border: `2px solid ${pinkTheme.light}`
+                    border: `2px solid rgba(0,0,0,0.15)`
                   }}
                 >
                   <Typography 
@@ -355,65 +362,43 @@ export default function Header() {
                       borderRadius: '3px'
                     }
                   }}>
-                    {categories.map((category) => {
-                      const name = category?.nombre_categoria || category?.name || 'Sin nombre';
-                      return (
-                        <Box
-                          key={category.id || category.slug || name}
-                          onClick={() => goToCategory(category)}
-                          sx={{
-                            px: 2,
-                            py: 1.5,
-                            color: 'text.primary',
-                            cursor: 'pointer',
-                            display: 'flex',
-                            alignItems: 'center',
-                            transition: 'all 0.2s ease',
-                            borderRadius: '4px',
-                            '&:hover': {
-                              backgroundColor: pinkTheme.light,
-                              color: pinkTheme.primary
-                            }
-                          }}
-                        >
+                    <Box sx={{ 
+                      display: 'grid',
+                      gridTemplateColumns: `repeat(${getCategoryColumns()}, 1fr)`,
+                      gap: '8px',
+                    }}>
+                      {categories.map((category) => {
+                        const name = category?.nombre_categoria || category?.name || 'Sin nombre';
+                        return (
                           <Box
+                            key={category.id || category.slug || name}
+                            onClick={() => goToCategory(category)}
                             sx={{
-                              width: '8px',
-                              height: '8px',
-                              borderRadius: '50%',
-                              backgroundColor: pinkTheme.primary,
-                              mr: 2,
-                              flexShrink: 0
-                            }}
-                          />
-                          
-                          <Typography
-                            variant="body2"
-                            sx={{
-                              fontWeight: '500'
+                              py: 1.5,
+                              color: 'white',
+                              cursor: 'pointer',
+                              transition: 'all 0.2s ease',
+                              '&:hover': {
+                                color: pinkTheme.primary
+                              }
                             }}
                           >
-                            {name}
-                          </Typography>
-                        </Box>
-                      );
-                    })}
-                  </Box>
-
-                  <Box sx={{ 
-                    mt: 2, 
-                    pt: 2, 
-                    borderTop: `1px solid ${pinkTheme.light}`,
-                    textAlign: 'center'
-                  }}>
-                    <Typography 
-                      variant="caption" 
-                      sx={{ 
-                        color: 'text.secondary'
-                      }}
-                    >
-                      {categories.length} categoría{categories.length !== 1 ? 's' : ''}
-                    </Typography>
+                            <Typography
+                              variant="body2"
+                              sx={{
+                                fontWeight: '500',
+                                whiteSpace: 'nowrap',
+                                overflow: 'hidden',
+                                textOverflow: 'ellipsis',
+                                textAlign: 'center'
+                              }}
+                            >
+                              {name}
+                            </Typography>
+                          </Box>
+                        );
+                      })}
+                    </Box>
                   </Box>
                 </Box>
               )}
