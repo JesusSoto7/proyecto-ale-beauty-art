@@ -324,7 +324,7 @@ export default function Header() {
                     position: 'absolute',
                     top: '100%',
                     left: 0,
-                    backgroundColor: 'rgba(11, 11, 10, 0.72)',
+                    backgroundColor: 'white',
                     boxShadow: '0 10px 30px rgba(0,0,0,0.15)',
                     borderRadius: '8px',
                     zIndex: 1300,
@@ -332,7 +332,7 @@ export default function Header() {
                     maxWidth: categories.length > 7 ? '500px' : '300px',
                     py: 2,
                     px: 2,
-                    border: `2px solid rgba(0,0,0,0.15)`
+                    border: `2px solid ${pinkTheme.light}`
                   }}
                 >
                   <Typography 
@@ -375,7 +375,7 @@ export default function Header() {
                             onClick={() => goToCategory(category)}
                             sx={{
                               py: 1.5,
-                              color: 'white',
+                              color: 'text.primary',
                               cursor: 'pointer',
                               transition: 'all 0.2s ease',
                               '&:hover': {
