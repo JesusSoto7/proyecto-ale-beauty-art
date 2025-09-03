@@ -22,6 +22,15 @@ import ModalClose from '@mui/joy/ModalClose';
 import FavoritesModal from './FavoritesModal';
 import { formatCOP } from '../services/currency';
 
+// Paleta de colores rosa
+const pinkTheme = {
+  primary: '#e91e63',
+  secondary: '#f8bbd0',
+  dark: '#ad1457',
+  light: '#fce4ec',
+  background: '#fff5f7'
+};
+
 const Search = styled('div')(({ theme }) => ({
   position: 'relative',
   borderRadius: 20,
@@ -102,7 +111,13 @@ export default function Header() {
       if (res.ok) {
         const data = await res.json();
         // Ajusta según la estructura de tu API
-        setCategories(Array.isArray(data) ? data : Array.isArray(data.categories) ? data.categories : []);
+        const categoriesArray = Array.isArray(data) ? 
+          data : 
+          Array.isArray(data.categories) ? 
+          data.categories : 
+          [];
+        
+        setCategories(categoriesArray);
       }
     } catch (error) {
       console.error('Error fetching categories:', error);
@@ -245,8 +260,34 @@ export default function Header() {
           </Link>
 
           <Box sx={{ display: { xs: 'none', sm: 'flex' }, ml: 3, position: 'relative' }}>
-            <Typography component={Link} to={`/${lang}/inicio`} sx={{ mx: 2, color: 'black', textDecoration: 'none' }}>INICIO</Typography>
-            <Typography component={Link} to={`/${lang}/productos`} sx={{ mx: 2, color: 'black', textDecoration: 'none' }}>PRODUCTOS</Typography>
+            <Typography 
+              component={Link} 
+              to={`/${lang}/inicio`} 
+              sx={{ 
+                mx: 2, 
+                color: 'black', 
+                textDecoration: 'none',
+                fontWeight: 'bold',
+                transition: 'color 0.2s',
+                '&:hover': { color: pinkTheme.primary }
+              }}
+            >
+              INICIO
+            </Typography>
+            <Typography 
+              component={Link} 
+              to={`/${lang}/productos`} 
+              sx={{ 
+                mx: 2, 
+                color: 'black', 
+                textDecoration: 'none',
+                fontWeight: 'bold',
+                transition: 'color 0.2s',
+                '&:hover': { color: pinkTheme.primary }
+              }}
+            >
+              PRODUCTOS
+            </Typography>
             
             {/* Enlace de categorías con menú desplegable */}
             <Box 
@@ -260,13 +301,16 @@ export default function Header() {
                   mx: 2, 
                   color: 'black', 
                   textDecoration: 'none',
-                  cursor: 'pointer'
+                  cursor: 'pointer',
+                  fontWeight: 'bold',
+                  transition: 'color 0.2s',
+                  '&:hover': { color: pinkTheme.primary }
                 }}
               >
                 CATEGORÍAS
               </Typography>
               
-              {/* Menú desplegable de categorías */}
+              {/* Menú desplegable de categorías - SOLO TUS CATEGORÍAS */}
               {showCategories && categories.length > 0 && (
                 <Box
                   sx={{
@@ -274,36 +318,103 @@ export default function Header() {
                     top: '100%',
                     left: 0,
                     backgroundColor: 'white',
-                    boxShadow: 3,
-                    borderRadius: 1,
+                    boxShadow: '0 10px 30px rgba(0,0,0,0.15)',
+                    borderRadius: '8px',
                     zIndex: 1300,
-                    minWidth: 200,
-                    py: 1,
-                    border: '1px solid #eee'
+                    minWidth: '250px',
+                    maxWidth: '300px',
+                    py: 2,
+                    px: 2,
+                    border: `2px solid ${pinkTheme.light}`
                   }}
                 >
-                  {categories.map((category) => {
-                    const name = category?.nombre_categoria || category?.name || 'Sin nombre';
-                    return (
-                      <Typography
-                        key={category.id || category.slug || name}
-                        onClick={() => goToCategory(category)}
-                        sx={{
-                          px: 3,
-                          py: 1,
-                          color: 'black',
-                          textDecoration: 'none',
-                          cursor: 'pointer',
-                          display: 'block',
-                          '&:hover': {
-                            backgroundColor: '#f5f5f5'
-                          }
-                        }}
-                      >
-                        {name}
-                      </Typography>
-                    );
-                  })}
+                  <Typography 
+                    variant="subtitle1" 
+                    sx={{ 
+                      fontWeight: 'bold', 
+                      color: pinkTheme.primary,
+                      mb: 2,
+                      textAlign: 'center'
+                    }}
+                  >
+                    Todas las Categorías
+                  </Typography>
+
+                  <Box sx={{ 
+                    maxHeight: '300px', 
+                    overflowY: 'auto',
+                    '&::-webkit-scrollbar': {
+                      width: '6px'
+                    },
+                    '&::-webkit-scrollbar-track': {
+                      background: pinkTheme.light,
+                      borderRadius: '3px'
+                    },
+                    '&::-webkit-scrollbar-thumb': {
+                      background: pinkTheme.primary,
+                      borderRadius: '3px'
+                    }
+                  }}>
+                    {categories.map((category) => {
+                      const name = category?.nombre_categoria || category?.name || 'Sin nombre';
+                      return (
+                        <Box
+                          key={category.id || category.slug || name}
+                          onClick={() => goToCategory(category)}
+                          sx={{
+                            px: 2,
+                            py: 1.5,
+                            color: 'text.primary',
+                            cursor: 'pointer',
+                            display: 'flex',
+                            alignItems: 'center',
+                            transition: 'all 0.2s ease',
+                            borderRadius: '4px',
+                            '&:hover': {
+                              backgroundColor: pinkTheme.light,
+                              color: pinkTheme.primary
+                            }
+                          }}
+                        >
+                          <Box
+                            sx={{
+                              width: '8px',
+                              height: '8px',
+                              borderRadius: '50%',
+                              backgroundColor: pinkTheme.primary,
+                              mr: 2,
+                              flexShrink: 0
+                            }}
+                          />
+                          
+                          <Typography
+                            variant="body2"
+                            sx={{
+                              fontWeight: '500'
+                            }}
+                          >
+                            {name}
+                          </Typography>
+                        </Box>
+                      );
+                    })}
+                  </Box>
+
+                  <Box sx={{ 
+                    mt: 2, 
+                    pt: 2, 
+                    borderTop: `1px solid ${pinkTheme.light}`,
+                    textAlign: 'center'
+                  }}>
+                    <Typography 
+                      variant="caption" 
+                      sx={{ 
+                        color: 'text.secondary'
+                      }}
+                    >
+                      {categories.length} categoría{categories.length !== 1 ? 's' : ''}
+                    </Typography>
+                  </Box>
                 </Box>
               )}
             </Box>
@@ -347,7 +458,6 @@ export default function Header() {
 
                 {!loading && results.length > 0 && (
                   <>
-                    {/* Grid en pantallas medianas y grandes */}
                     <Box
                       sx={{
                         display: { xs: 'none', sm: 'grid' },
@@ -373,7 +483,10 @@ export default function Header() {
                               border: '1px solid #ddd',
                               borderRadius: 2,
                               cursor: 'pointer',
-                              '&:hover': { boxShadow: 4 },
+                              '&:hover': { 
+                                boxShadow: 4,
+                                borderColor: pinkTheme.primary
+                              },
                             }}
                           >
                             {img ? (
@@ -382,13 +495,16 @@ export default function Header() {
                               <Box sx={{ width: '100%', height: 120, bgcolor: '#eee', borderRadius: 1 }} />
                             )}
                             <Typography variant="body2" sx={{ mt: 1, fontWeight: 500 }}>{name}</Typography>
-                            {price && <Typography variant="caption" color="text.secondary">{formatCOP(price)}</Typography>}
+                            {price && (
+                              <Typography variant="caption" sx={{ color: pinkTheme.primary, fontWeight: 'bold' }}>
+                                {formatCOP(price)}
+                              </Typography>
+                            )}
                           </Box>
                         );
                       })}
                     </Box>
 
-                    {/* Carrusel en móviles */}
                     <Box
                       sx={{
                         display: { xs: 'flex', sm: 'none' },
@@ -415,7 +531,10 @@ export default function Header() {
                               borderRadius: 2,
                               cursor: 'pointer',
                               flexShrink: 0,
-                              '&:hover': { boxShadow: 4 },
+                              '&:hover': { 
+                                boxShadow: 4,
+                                borderColor: pinkTheme.primary
+                              },
                             }}
                           >
                             {img ? (
@@ -424,7 +543,11 @@ export default function Header() {
                               <Box sx={{ width: '100%', height: 120, bgcolor: '#eee', borderRadius: 1 }} />
                             )}
                             <Typography variant="body2" sx={{ mt: 1, fontWeight: 500 }}>{name}</Typography>
-                            {price && <Typography variant="caption" color="text.secondary">${price}</Typography>}
+                            {price && (
+                              <Typography variant="caption" sx={{ color: pinkTheme.primary, fontWeight: 'bold' }}>
+                                {formatCOP(price)}
+                              </Typography>
+                            )}
                           </Box>
                         );
                       })}
@@ -437,13 +560,31 @@ export default function Header() {
 
           {/* Íconos */}
           <Box sx={{ display: { xs: 'none', md: 'flex' }, gap: 2 }}>
-            <IconButton onClick={(e) => setAnchorEl(e.currentTarget)}><IoPersonCircleSharp size={30} /></IconButton>
-            <IconButton component={Link} to={`/${lang}/carrito`}><BsCart4 size={25} /></IconButton>
-            <IconButton onClick={() => setOpenModal(true)}><BsHeart size={22} /></IconButton>
+            <IconButton 
+              onClick={(e) => setAnchorEl(e.currentTarget)}
+              sx={{ color: 'black', '&:hover': { color: pinkTheme.primary } }}
+            >
+              <IoPersonCircleSharp size={30} />
+            </IconButton>
+            <IconButton 
+              component={Link} 
+              to={`/${lang}/carrito`}
+              sx={{ color: 'black', '&:hover': { color: pinkTheme.primary } }}
+            >
+              <BsCart4 size={25} />
+            </IconButton>
+            <IconButton 
+              onClick={() => setOpenModal(true)}
+              sx={{ color: 'black', '&:hover': { color: pinkTheme.primary } }}
+            >
+              <BsHeart size={22} />
+            </IconButton>
           </Box>
 
           <Box sx={{ display: { xs: 'flex', md: 'none' } }}>
-            <IconButton onClick={(e) => setMobileMoreAnchorEl(e.currentTarget)}><MoreIcon /></IconButton>
+            <IconButton onClick={(e) => setMobileMoreAnchorEl(e.currentTarget)}>
+              <MoreIcon />
+            </IconButton>
           </Box>
         </Toolbar>
       </AppBar>
