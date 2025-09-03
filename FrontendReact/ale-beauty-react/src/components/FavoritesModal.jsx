@@ -297,8 +297,8 @@ export default function FavoritesModal({ open, onClose }) {
                       {/* Fecha ejemplo (si quieres mostrarla) */}
                       <Box sx={{ flex: 1 }}>
                         <Typography level="body2" color="neutral">
-                          20/09/2025
-                          {/* {product.fecha_agregado} */}
+                          {/* 20/09/2025 */}
+                          {product.fecha_agregado}
                         </Typography>
                       </Box>
 
