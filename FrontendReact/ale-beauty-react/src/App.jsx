@@ -19,6 +19,7 @@ import Checkout from './pages/inicio/Checkout';
 import CheckoutSuccess from './components/CheckoutSuccess';
 import Perfil from './components/Perfil'
 import CategoryProducts from "./pages/home/CategoryProducts";
+import CategoryProductsUser from './components/CategoryProductsUser';
 
 import './assets/stylesheets/RegisterForm.css';
 import './assets/stylesheets/LoginForm.css';
@@ -79,6 +80,7 @@ function App() {
             <Route path="direcciones/nueva" element={<ShippingAddressForm />} />
             <Route path="carrito" element={<Cart />} />
             <Route path="perfil" element={<Perfil />} />
+             <Route path="categoria/:categoryId" element={<CategoryProductsUser />} />
           </Route>
 
           <Route element={<CheckoutLayout />}>
