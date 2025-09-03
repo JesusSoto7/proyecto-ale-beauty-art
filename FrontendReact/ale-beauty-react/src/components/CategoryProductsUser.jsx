@@ -38,7 +38,7 @@ export default function CategoryProducts() {
     const savedToken = localStorage.getItem("token");
     if (savedToken) setToken(savedToken);
   }, []);
-
+  hello
   useEffect(() => {
     if (!token) return;
     fetchCategoryProducts();
