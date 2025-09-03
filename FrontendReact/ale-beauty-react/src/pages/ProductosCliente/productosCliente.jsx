@@ -5,6 +5,7 @@ import FavoriteBorder from '@mui/icons-material/FavoriteBorder';
 import Favorite from "@mui/icons-material/Favorite";
 import "../../assets/stylesheets/ProductosCliente.css";
 import { formatCOP } from "../../services/currency";
+import noImage from "../../assets/images/no_image.png";
 
 function ProductosCliente() {
   const [products, setProducts] = useState([]);
@@ -141,7 +142,11 @@ function ProductosCliente() {
               style={{ textDecoration: "none", color: "inherit" }}
             >
               <div className="image-container">
-                <img src={prod.imagen_url} alt={prod.nombre_producto} />
+                <img
+                  src={prod.imagen_url || noImage}
+                  alt={prod.nombre_producto}
+                  onError={(e) => { e.currentTarget.src = noImage; }}
+                />
               </div>
               <h5>{prod.nombre_producto}</h5>
               <p>{formatCOP(prod.precio_producto)}</p>

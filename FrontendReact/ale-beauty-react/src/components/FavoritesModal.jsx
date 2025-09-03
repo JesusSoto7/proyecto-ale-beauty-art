@@ -13,6 +13,7 @@ import Skeleton from "@mui/joy/Skeleton";
 import { Link } from "react-router-dom";
 import Not_found from "../assets/images/Not_found.png";
 import { formatCOP } from "../services/currency";
+import noImage from "../assets/images/no_image.png";
 
 
 export default function FavoritesModal({ open, onClose }) {
@@ -265,8 +266,9 @@ export default function FavoritesModal({ open, onClose }) {
 
                       {/* Imagen */}
                       <img
-                        src={product.imagen_url}
+                        src={product.imagen_url || noImage}
                         alt={product.nombre_producto}
+                        onError={(e) => { e.currentTarget.src = noImage; }}
                         style={{
                           width: 60,
                           height: 60,
@@ -295,7 +297,7 @@ export default function FavoritesModal({ open, onClose }) {
                       {/* Fecha ejemplo (si quieres mostrarla) */}
                       <Box sx={{ flex: 1 }}>
                         <Typography level="body2" color="neutral">
-                          18 Febrero 2024
+                          20/09/2025
                           {/* {product.fecha_agregado} */}
                         </Typography>
                       </Box>
