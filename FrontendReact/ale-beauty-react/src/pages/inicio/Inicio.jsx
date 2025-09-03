@@ -7,6 +7,7 @@ import { Link, useParams } from 'react-router-dom';
 import Skeleton from '@mui/material/Skeleton';
 import { formatCOP } from '../../services/currency';
 import bannerInicio from '../../assets/images/bannerInicio.jpg'
+import { useOutletContext } from "react-router-dom";
 
 function Inicio() {
   const [carousel, setCarousel] = useState([]);
@@ -15,8 +16,9 @@ function Inicio() {
   const [cart, setCart] = useState(null);
   const { lang } = useParams();
   const [loading, setLoading] = useState(true);
-  const [favoriteIds, setFavoriteIds] = useState([]); // ✅ lista de favoritos
-
+  // const [favoriteIds, setFavoriteIds] = useState([]); // ✅ lista de favoritos
+  const { favoriteIds, loadFavorites } = useOutletContext();
+  
   const token = localStorage.getItem('token');
 
   // 📌 Cargar productos + favoritos del usuario

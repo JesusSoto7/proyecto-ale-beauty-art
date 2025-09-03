@@ -66,7 +66,7 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
   },
 }));
 
-export default function Header() {
+export default function Header({ loadFavorites }) {
   const [searchTerm, setSearchTerm] = useState('');
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -358,7 +358,13 @@ export default function Header() {
       <Modal open={openModal} onClose={() => setOpenModal(false)}>
         <ModalDialog size="lg">
           <ModalClose />
-          <FavoritesModal open={openModal} onClose={() => setOpenModal(false)} />
+          <FavoritesModal 
+            open={openModal} 
+            onClose={() => {
+              setOpenModal(false);
+              loadFavorites();
+            }} 
+          />
         </ModalDialog>
       </Modal>
     </Box>
