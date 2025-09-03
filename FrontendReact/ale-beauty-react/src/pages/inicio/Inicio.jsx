@@ -7,6 +7,8 @@ import { Link, useParams } from 'react-router-dom';
 import Skeleton from '@mui/material/Skeleton';
 import { formatCOP } from '../../services/currency';
 import bannerInicio from '../../assets/images/bannerInicio.jpg'
+import { useOutletContext } from "react-router-dom";
+import noImage from "../../assets/images/no_image.png";
 
 function Inicio() {
   const [carousel, setCarousel] = useState([]);
@@ -15,8 +17,9 @@ function Inicio() {
   const [cart, setCart] = useState(null);
   const { lang } = useParams();
   const [loading, setLoading] = useState(true);
-  const [favoriteIds, setFavoriteIds] = useState([]); // ✅ lista de favoritos
-
+  // const [favoriteIds, setFavoriteIds] = useState([]); // ✅ lista de favoritos
+  const { favoriteIds, loadFavorites } = useOutletContext();
+  
   const token = localStorage.getItem('token');
 
   // 📌 Cargar productos + favoritos del usuario
@@ -112,7 +115,7 @@ function Inicio() {
           headers: { Authorization: `Bearer ${token}` },
         });
         if (res.ok) {
-          setFavoriteIds(prev => prev.filter(id => id !== productId));
+          await loadFavorites(); // ✅ recarga favoritos desde backend
         }
       } catch (err) {
         console.error("Error quitando favorito:", err);
@@ -124,19 +127,19 @@ function Inicio() {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
+            Authorization: `Bearer ${token}` },
           body: JSON.stringify({ product_id: productId }),
         });
         const data = await res.json();
         if (data.success) {
-          setFavoriteIds(prev => [...prev, productId]);
+          await loadFavorites(); // ✅ recarga favoritos desde backend
         }
       } catch (err) {
         console.error("Error añadiendo favorito:", err);
       }
     }
   };
+
 
   return (
     <div>
@@ -218,7 +221,11 @@ function Inicio() {
               style={{ textDecoration: "none", color: "inherit" }}
             >
               <div className="image-container">
-                <img src={prod.imagen_url} alt={prod.nombre_producto} />
+                <img
+                  src={prod.imagen_url || noImage}
+                  alt={prod.nombre_producto}
+                  onError={(e) => { e.currentTarget.src = noImage; }}
+                />
               </div>
               <h5>{prod.nombre_producto}</h5>
               <p>{formatCOP(prod.precio_producto)}</p>
@@ -280,7 +287,7 @@ function Inicio() {
               }}
             >
               {favoriteIds.includes(prod.id) ? (
-                <Favorite sx={{ color: "red" }} />
+                <Favorite sx={{ color: "white" }} />
               ) : (
                 <FavoriteBorder />
               )}
@@ -291,7 +298,11 @@ function Inicio() {
               style={{ textDecoration: "none", color: "inherit" }}
             >
               <div className="image-container">
-                <img src={prod.imagen_url} alt={prod.nombre_producto} />
+                <img
+                  src={prod.imagen_url || noImage}
+                  alt={prod.nombre_producto}
+                  onError={(e) => { e.currentTarget.src = noImage; }}
+                />
               </div>
               <h5>{prod.nombre_producto}</h5>
               <p>{formatCOP(prod.precio_producto)}</p>

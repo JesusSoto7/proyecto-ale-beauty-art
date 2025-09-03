@@ -12,7 +12,8 @@ class Api::V1::FavoritesController < Api::V1::BaseController
         precio_producto: f.product.precio_producto,
         stock: f.product.stock,
         imagen_url: f.product.imagen.attached? ? url_for(f.product.imagen) : nil,
-        categoria: f.product.category&.nombre_categoria
+        categoria: f.product.category&.nombre_categoria,
+        fecha_agregado: f.product.created_at.strftime("%Y-%m-%d")
       }
     }
   end
