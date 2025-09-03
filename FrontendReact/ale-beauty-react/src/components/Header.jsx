@@ -24,15 +24,15 @@ import { formatCOP } from '../services/currency';
 
 const Search = styled('div')(({ theme }) => ({
   position: 'relative',
-  borderRadius: 20, // 🔹 redondeado
-  border: '1px solid #ccc', // 🔹 borde delgado
+  borderRadius: 20,
+  border: '1px solid #ccc',
   backgroundColor: alpha(theme.palette.common.white, 0.15),
   '&:hover': {
     backgroundColor: alpha(theme.palette.common.white, 0.25),
   },
   marginLeft: theme.spacing(2),
   transition: 'all 0.3s ease',
-  width: '160px', // ancho base
+  width: '160px',
   [theme.breakpoints.up('sm')]: {
     width: '200px',
   },
@@ -70,6 +70,8 @@ export default function Header() {
   const [searchTerm, setSearchTerm] = useState('');
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [categories, setCategories] = useState([]);
+  const [showCategories, setShowCategories] = useState(false);
   const { lang } = useParams();
 
   const [anchorEl, setAnchorEl] = useState(null);
@@ -81,23 +83,50 @@ export default function Header() {
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
 
   const containerRef = useRef(null);
+  const categoriesRef = useRef(null);
   const debounceRef = useRef(null);
   const DEBOUNCE_MS = 250;
 
-  function handleSearchSubmit(e) {
-    e.preventDefault();
+  // Obtener categorías desde el backend
+  useEffect(() => {
+    fetchCategories();
+  }, []);
+
+  async function fetchCategories() {
+    try {
+      const token = localStorage.getItem('token');
+      const res = await fetch('https://localhost:4000/api/v1/categories', {
+        headers: token ? { Authorization: `Bearer ${token}` } : {},
+      });
+      
+      if (res.ok) {
+        const data = await res.json();
+        // Ajusta según la estructura de tu API
+        setCategories(Array.isArray(data) ? data : Array.isArray(data.categories) ? data.categories : []);
+      }
+    } catch (error) {
+      console.error('Error fetching categories:', error);
+    }
   }
 
-  // cerrar dropdown si clic afuera
+  // Cerrar dropdown de categorías si se hace clic fuera
   useEffect(() => {
     const handleClickOutside = (ev) => {
       if (containerRef.current && !containerRef.current.contains(ev.target)) {
         setResults([]);
       }
+      if (categoriesRef.current && !categoriesRef.current.contains(ev.target)) {
+        setShowCategories(false);
+      }
     };
+    
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
+
+  function handleSearchSubmit(e) {
+    e.preventDefault();
+  }
 
   useEffect(() => {
     if (debounceRef.current) clearTimeout(debounceRef.current);
@@ -139,7 +168,7 @@ export default function Header() {
     const filtered = array.filter((prod) =>
       (prod?.nombre_producto || prod?.name || '').toLowerCase().includes(term)
     );
-    return filtered.slice(0, 4); // 🔹 máximo 4 resultados
+    return filtered.slice(0, 4);
   }
 
   function goToProduct(prod) {
@@ -149,6 +178,13 @@ export default function Header() {
     setSearchTerm('');
     setOpenModal(false);
     navigate(`/${lang}/producto/${slugOrId}`);
+  }
+
+  function goToCategory(category) {
+    const slugOrId = category?.slug || category?.id;
+    if (!slugOrId) return;
+    setShowCategories(false);
+    navigate(`/${lang}/categoria/${slugOrId}`);
   }
 
   async function handleLogout() {
@@ -208,9 +244,69 @@ export default function Header() {
             <img src={logo} alt="Logo" style={{ height: 40, borderRadius: 20 }} />
           </Link>
 
-          <Box sx={{ display: { xs: 'none', sm: 'flex' }, ml: 3 }}>
+          <Box sx={{ display: { xs: 'none', sm: 'flex' }, ml: 3, position: 'relative' }}>
             <Typography component={Link} to={`/${lang}/inicio`} sx={{ mx: 2, color: 'black', textDecoration: 'none' }}>INICIO</Typography>
             <Typography component={Link} to={`/${lang}/productos`} sx={{ mx: 2, color: 'black', textDecoration: 'none' }}>PRODUCTOS</Typography>
+            
+            {/* Enlace de categorías con menú desplegable */}
+            <Box 
+              ref={categoriesRef}
+              sx={{ position: 'relative' }}
+              onMouseEnter={() => setShowCategories(true)}
+              onMouseLeave={() => setShowCategories(false)}
+            >
+              <Typography 
+                sx={{ 
+                  mx: 2, 
+                  color: 'black', 
+                  textDecoration: 'none',
+                  cursor: 'pointer'
+                }}
+              >
+                CATEGORÍAS
+              </Typography>
+              
+              {/* Menú desplegable de categorías */}
+              {showCategories && categories.length > 0 && (
+                <Box
+                  sx={{
+                    position: 'absolute',
+                    top: '100%',
+                    left: 0,
+                    backgroundColor: 'white',
+                    boxShadow: 3,
+                    borderRadius: 1,
+                    zIndex: 1300,
+                    minWidth: 200,
+                    py: 1,
+                    border: '1px solid #eee'
+                  }}
+                >
+                  {categories.map((category) => {
+                    const name = category?.nombre_categoria || category?.name || 'Sin nombre';
+                    return (
+                      <Typography
+                        key={category.id || category.slug || name}
+                        onClick={() => goToCategory(category)}
+                        sx={{
+                          px: 3,
+                          py: 1,
+                          color: 'black',
+                          textDecoration: 'none',
+                          cursor: 'pointer',
+                          display: 'block',
+                          '&:hover': {
+                            backgroundColor: '#f5f5f5'
+                          }
+                        }}
+                      >
+                        {name}
+                      </Typography>
+                    );
+                  })}
+                </Box>
+              )}
+            </Box>
           </Box>
 
           {/* Buscador */}
