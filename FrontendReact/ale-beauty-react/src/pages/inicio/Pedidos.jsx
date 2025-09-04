@@ -16,7 +16,7 @@ function Pedidos() {
 
   useEffect(() => {
     if (!token) return;
-    fetch("https://localhost:4000/api/v1/orders", {
+    fetch("https://localhost:4000/api/v1/my_orders", {
       headers: {
         Authorization: `Bearer ${token}`
       } // 👈 necesario si usas cookies para auth

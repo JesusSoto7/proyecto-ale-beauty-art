@@ -45,6 +45,7 @@ Rails.application.routes.draw do
       end
 
       resources :orders, only: [:create, :index]
+      get "/my_orders", to: "orders#ordenes"
       resources :payments, only: [:create]
 
       get "/me", to: "users#me"
