@@ -2,7 +2,9 @@ class Api::V1::OrdersController < Api::V1::BaseController
   include Rails.application.routes.url_helpers
 
   def index
-    orders = Order.includes(:user).order(created_at: :desc)
+      orders = current_user.orders
+                       .where(status: :pagada)
+                       .order(created_at: :desc)
     render json: orders.map { |o|
       {
         id: o.id,
