@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState,  useRef } from 'react';
 import Carousel from 'react-bootstrap/Carousel';
 import IconButton from '@mui/joy/IconButton';
 import FavoriteBorder from '@mui/icons-material/FavoriteBorder';
@@ -21,6 +21,26 @@ function Inicio() {
   const { favoriteIds, loadFavorites } = useOutletContext();
   
   const token = localStorage.getItem('token');
+
+  const interesRef = useRef(null); //Scroll automatico
+  
+  useEffect(() => {
+  const interval = setInterval(() => {
+
+    
+    if (interesRef.current) {
+      const { scrollLeft, scrollWidth, clientWidth } = interesRef.current;
+
+      if (scrollLeft + clientWidth >= scrollWidth) {
+        interesRef.current.scrollTo({ left: 0, behavior: "smooth" });
+      } else {
+        interesRef.current.scrollBy({ left: 305, behavior: "smooth" });
+      }
+    }
+  }, 2500);
+
+  return () => clearInterval(interval); // 🔹 cleanup
+  }, []);
 
   // 📌 Cargar productos + favoritos del usuario
   useEffect(() => {
@@ -197,7 +217,9 @@ function Inicio() {
 
       {/* Productos */}
       <div className="carousel-items">
-        {products.map((prod) => (
+        {[...products] //Productos de manera ramdon
+        .sort(() => 0.5 - Math.random())
+        .map((prod) => (
           <div className="product-card" key={prod.id} style={{ position: "relative" }}>
             <IconButton
               onClick={() => toggleFavorite(prod.id)}
@@ -273,8 +295,11 @@ function Inicio() {
   <h2 className="mb-4">Quizás te puedan interesar:</h2>
   {!loading && products.length > 0 ? (
     <div className="carousel-container">
-      <div className="carousel-items">
-        {products.slice(0, 6).map((prod) => (
+      <div className="carousel-items" ref={interesRef}>
+        {[...products] //Productos de manera ramdon
+        .sort(() => 0.5 - Math.random())
+        .slice(0, 9) //Limite de productos
+        .map((prod) => (
           <div className="product-card" key={prod.id} style={{ position: "relative" }}>
             <IconButton
               onClick={() => toggleFavorite(prod.id)}
