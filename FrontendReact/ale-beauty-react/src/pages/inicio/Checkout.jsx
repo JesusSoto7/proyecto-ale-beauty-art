@@ -15,6 +15,7 @@ const steps = ["Dirección de envío", "Pago"];
 
 export default function Checkout() {
   const [activeStep, setActiveStep] = useState(0);
+  const [hasAddress, setHasAddress] = useState(false); // 👈 guardar si hay dirección
 
   const handleNext = () => setActiveStep((prev) => prev + 1);
   const handleBack = () => setActiveStep((prev) => prev - 1);
@@ -27,7 +28,7 @@ export default function Checkout() {
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        bgcolor: "#ffffffff", // Fondo rosado muy suave
+        bgcolor: "#ffffffff",
         p: 3,
       }}
     >
@@ -40,33 +41,26 @@ export default function Checkout() {
           bgcolor: "#ffffff",
         }}
       >
-        {/* Título */}
         <Typography
           variant="h4"
           align="center"
           sx={{
             mb: 4,
             fontWeight: "bold",
-            color: "#d63384", // Rosa fuerte
+            color: "#d63384",
           }}
         >
-          
+          Checkout
         </Typography>
 
-        {/* Stepper rosado */}
+        {/* Stepper */}
         <Stepper
           activeStep={activeStep}
           alternativeLabel
           sx={{
-            "& .MuiStepIcon-root": {
-              color: "#f8bbd0", // Rosa claro por defecto
-            },
-            "& .MuiStepIcon-root.Mui-active": {
-              color: "#ec407a", // Rosa intenso cuando está activo
-            },
-            "& .MuiStepIcon-root.Mui-completed": {
-              color: "#d63384", // Rosa fuerte cuando completado
-            },
+            "& .MuiStepIcon-root": { color: "#f8bbd0" },
+            "& .MuiStepIcon-root.Mui-active": { color: "#ec407a" },
+            "& .MuiStepIcon-root.Mui-completed": { color: "#d63384" },
           }}
         >
           {steps.map((label) => (
@@ -85,10 +79,10 @@ export default function Checkout() {
           ))}
         </Stepper>
 
-        {/* Contenido de steps */}
+        {/* Contenido */}
         <Box sx={{ mt: 4 }}>
           <div style={{ display: activeStep === 0 ? "block" : "none" }}>
-            <CheckoutShippingAddress onNext={handleNext} />
+            <CheckoutShippingAddress onAddressSelected={setHasAddress} />
           </div>
 
           <div style={{ display: activeStep === 1 ? "block" : "none" }}>
@@ -96,41 +90,43 @@ export default function Checkout() {
           </div>
         </Box>
 
-        {/* Botones globales */}
+        {/* Botones */}
         <Box
           sx={{
             display: "flex",
-            justifyContent: "space-between",
+            justifyContent: "flex-end",
             mt: 4,
+            gap: 2,
           }}
         >
-          <Button
-            disabled={activeStep === 0}
-            onClick={handleBack}
-            variant="outlined"
-            sx={{
-              borderColor: "#ec407a",
-              color: "#ec407a",
-              "&:hover": {
-                borderColor: "#d63384",
-                bgcolor: "#fce4ec",
-              },
-            }}
-          >
-            Atrás
-          </Button>
-          {activeStep < steps.length - 1 && (
+          {activeStep > 0 && (
+            <Button
+              onClick={handleBack}
+              variant="outlined"
+              sx={{
+                borderColor: "#ec407a",
+                color: "#ec407a",
+                "&:hover": {
+                  borderColor: "#d63384",
+                  bgcolor: "#fce4ec",
+                },
+              }}
+            >
+              Atrás
+            </Button>
+          )}
+
+          {/* 👇 Mostrar Continuar solo si hay dirección */}
+          {activeStep < steps.length - 1 && hasAddress && (
             <Button
               onClick={handleNext}
               variant="contained"
               sx={{
                 bgcolor: "#ec407a",
-                "&:hover": {
-                  bgcolor: "#d63384",
-                },
+                "&:hover": { bgcolor: "#d63384" },
               }}
             >
-              Siguiente
+              Continuar
             </Button>
           )}
         </Box>

@@ -1,12 +1,13 @@
 import { useState, useEffect } from "react";
 import ShippingAddressForm from "./ShippingAddressForm";
 import EditIcon from "@mui/icons-material/Edit";
+import { Button } from "@mui/material";
 
-function CheckoutShippingAddress() {
+function CheckoutShippingAddress({ onAddressSelected }) {
   const [token, setToken] = useState(null);
   const [address, setAddress] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [isEditing, setIsEditing] = useState(false); // 👈 Nuevo estado
+  const [isEditing, setIsEditing] = useState(false);
 
   useEffect(() => {
     const savedToken = localStorage.getItem("token");
@@ -33,19 +34,21 @@ function CheckoutShippingAddress() {
       .then((data) => {
         setAddress(data);
         setLoading(false);
+        onAddressSelected(!!data);
       })
       .catch((err) => {
         console.error(err);
         setLoading(false);
+        onAddressSelected(false);
       });
-  }, [token]);
+  }, [token, onAddressSelected]);
 
   if (loading) return <p>Cargando dirección...</p>;
 
   return (
     <div>
       <h2>Mi dirección de envío</h2>
-      
+
       {address && !isEditing ? (
         <div className="address-info">
           <div>
@@ -56,20 +59,45 @@ function CheckoutShippingAddress() {
             {address.direccion} — Barrio: {address.neighborhood?.nombre}
             <br />
           </div>
-          
-          <button id="editBtn" onClick={() => setIsEditing(true)}><EditIcon fontSize="small" /></button>
+
+          <button
+            id="editBtn"
+            onClick={() => {
+              setIsEditing(true);
+            }}
+          >
+            <EditIcon fontSize="small" />
+          </button>
         </div>
       ) : (
         <div>
-          <p>{address ? "Edita tu dirección:" : "No tienes dirección guardada, agrega una:"}</p>
           <ShippingAddressForm
             initialData={address}
             onSuccess={(newAddress) => {
               setAddress(newAddress);
               setIsEditing(false);
+              onAddressSelected(true);
             }}
-            onCancel={() => setIsEditing(false)}
+            onCancel={() => {
+              setIsEditing(false);
+              onAddressSelected(!!address);
+            }}
+            variant="checkout"
           />
+
+          {address && (
+            <Button
+              type="button"
+              onClick={() => {
+                setIsEditing(false);
+                onAddressSelected(!!address);
+              }}
+              variant="checkout"
+              color="secondary"
+            >
+              Cancelar
+            </Button>
+          )}
         </div>
       )}
     </div>

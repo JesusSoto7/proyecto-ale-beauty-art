@@ -19,7 +19,7 @@ function Pedidos() {
     fetch("https://localhost:4000/api/v1/my_orders", {
       headers: {
         Authorization: `Bearer ${token}`
-      } // 👈 necesario si usas cookies para auth
+      }
     })
       .then((res) => res.json())
       .then((data) => setOrders(data))
@@ -36,7 +36,6 @@ function Pedidos() {
           {orders.map((order) => (
             <li key={order.id} className="border rounded-lg p-4 shadow">
               <p><strong>N° de Orden:</strong> {order.numero_de_orden}</p>
-              <p><strong>Estado:</strong> {order.status}</p>
               <p><strong>Total:</strong> {formatCOP(order.pago_total)}</p>
               <p><strong>Fecha de pago:</strong> {order.fecha_pago}</p>
             </li>
