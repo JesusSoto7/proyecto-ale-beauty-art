@@ -17,8 +17,16 @@ function LoginForm({ onLogin }) {
     try {
       const data = await login({ email, password });
       localStorage.setItem("token", data.token);
+      localStorage.setItem("roles", JSON.stringify(data.user.roles));
+
       onLogin();
-      navigate(`/${lang}/inicio`);
+
+      if(data.user.roles.includes("admin")){
+        navigate(`/${lang}/home`);
+      }else{
+        navigate(`/${lang}/inicio`);
+      }
+
     } catch (err) {
       setError(err.message);
     }

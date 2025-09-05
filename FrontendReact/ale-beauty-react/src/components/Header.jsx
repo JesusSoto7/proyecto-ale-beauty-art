@@ -222,6 +222,9 @@ export default function Header() {
       <MenuItem onClick={() => { navigate(`/${lang}/perfil`); setAnchorEl(null); }}>
         Perfil
       </MenuItem>
+      <MenuItem onClick={() => { navigate(`/${lang}/pedidos`); setAnchorEl(null); }}>
+        Mis Pedidos
+      </MenuItem>
 
       <MenuItem onClick={() => { navigate(`/${lang}/direcciones`); setAnchorEl(null); }}>
         Mis direcciones

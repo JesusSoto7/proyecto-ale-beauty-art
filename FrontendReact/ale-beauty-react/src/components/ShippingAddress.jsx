@@ -123,6 +123,7 @@ function ShippingAddresses() {
             token={token}
             onSuccess={handleFormSuccess}
             initialData={editAddress}
+            variant="default" 
           />
           <button
             className="btn btn-cancel"

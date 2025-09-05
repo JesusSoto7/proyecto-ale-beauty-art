@@ -12,7 +12,7 @@ import {
   InputLabel,
 } from "@mui/material";
 
-function ShippingAddressForm({ onSuccess, initialData }) {
+function ShippingAddressForm({ onSuccess, initialData , variant = "default"}) {
   const navigate = useNavigate();
   const { lang } = useParams();
   const [token, setToken] = useState(null);
@@ -168,30 +168,85 @@ function ShippingAddressForm({ onSuccess, initialData }) {
     },
   };
 
+    const containerStyles = {
+      default: {
+        mt: 10,
+        px: 2,
+      },
+      checkout: {
+        mt: 2,
+        px: 0,
+      },
+    };
+
+  const paperStyles = {
+    default: {
+      p: 5,
+      maxWidth: 640,
+      width: "100%",
+      borderRadius: 5,
+      background: "#fff",
+    },
+    checkout: {
+      p: 3,
+      width: "100%",
+      borderRadius: 2,
+      background: "transparent", // sin tarjeta en checkout
+      boxShadow: "none",
+    },
+  };
+
+  const titleStyles = {
+    default: {
+      color: "#c2185b",
+      fontWeight: "bold",
+      mb: 3,
+    },
+    checkout: {
+      color: "#000",
+      fontWeight: 500,
+      mb: 2,
+      fontSize: "18px",
+    },
+  };
+
+  const buttonStyles = {
+    default: {
+      mt: 4,
+      background: "linear-gradient(45deg, #f48fb1, #f06292)",
+      "&:hover": { background: "linear-gradient(45deg, #f06292, #ec407a)" },
+      borderRadius: 3,
+      py: 1.2,
+      fontWeight: "bold",
+      fontSize: "16px",
+      textTransform: "none",
+      boxShadow: "0 4px 10px rgba(240,98,146,0.3)",
+    },
+    checkout: {
+      mt: 3,
+      background: "#000",
+      "&:hover": { background: "#333" },
+      borderRadius: 1,
+      py: 1,
+      fontWeight: "bold",
+      fontSize: "15px",
+      textTransform: "uppercase",
+    },
+  };
+
+
   return (
-    <Box display="flex" justifyContent="center" sx={{ mt: 10, px: 2 }}>
-      <Paper
-        elevation={6}
-        sx={{
-          p: 5,
-          maxWidth: 640,
-          width: "100%",
-          borderRadius: 5,
-          background: "#fff",
-        }}
-      >
+    <Box display="flex" justifyContent="center" sx={containerStyles[variant]}>
+      <Paper elevation={variant === "default" ? 6 : 0} sx={paperStyles[variant]}>
         <Typography
           variant="h5"
           align="center"
           gutterBottom
-          sx={{
-            color: "#c2185b",
-            fontWeight: "bold",
-            mb: 3,
-          }}
+          sx={titleStyles[variant]}
         >
           {isEditing ? "Editar dirección de envío" : "Nueva dirección de envío"}
         </Typography>
+
 
         <form onSubmit={handleSubmit}>
           {[
@@ -277,23 +332,13 @@ function ShippingAddressForm({ onSuccess, initialData }) {
           />
 
           <Button
-            type="submit"
-            fullWidth
-            variant="contained"
-            sx={{
-              mt: 4,
-              background: "linear-gradient(45deg, #f48fb1, #f06292)",
-              "&:hover": { background: "linear-gradient(45deg, #f06292, #ec407a)" },
-              borderRadius: 3,
-              py: 1.2,
-              fontWeight: "bold",
-              fontSize: "16px",
-              textTransform: "none",
-              boxShadow: "0 4px 10px rgba(240,98,146,0.3)",
-            }}
-          >
-            Guardar dirección
-          </Button>
+          type="submit"
+          fullWidth
+          variant="contained"
+          sx={buttonStyles[variant]}
+        >
+          Guardar dirección
+        </Button>
         </form>
       </Paper>
     </Box>

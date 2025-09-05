@@ -13,13 +13,26 @@ class Api::V1::ShippingAddressesController < Api::V1::BaseController
   end
 
   def show
-    render json: @shipping_address, status: :ok
+    render json: @shipping_address.as_json(include: {
+      neighborhood: {
+        include: {
+          municipality: { include: :department }
+        }
+      }
+    }), status: :ok
   end
+
 
   def create
     shipping_address = current_user.shipping_addresses.new(shipping_address_params)
     if shipping_address.save
-      render json: shipping_address, status: :created
+      render json: shipping_address.as_json(include: {
+        neighborhood: {
+          include: {
+            municipality: { include: :department }
+          }
+        }
+      }), status: :created
     else
       render json: { errors: shipping_address.errors.full_messages }, status: :unprocessable_entity
     end
@@ -27,7 +40,13 @@ class Api::V1::ShippingAddressesController < Api::V1::BaseController
 
   def update
     if @shipping_address.update(shipping_address_params)
-      render json: @shipping_address, status: :ok
+      render json: @shipping_address.as_json(include: {
+        neighborhood: {
+          include: {
+            municipality: { include: :department }
+          }
+        }
+      }), status: :ok
     else
       render json: { errors: @shipping_address.errors.full_messages }, status: :unprocessable_entity
     end

@@ -19,7 +19,8 @@ module Api
                 id: user.id,
                 email: user.email,
                 nombre: user.nombre,
-                apellido: user.apellido
+                apellido: user.apellido,
+                roles: user.roles.pluck(:name)
               }
             }, status: :ok
           else

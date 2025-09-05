@@ -32,6 +32,9 @@ import './App.css';
 import "./i18n";
 
 import { useTranslation } from "react-i18next";
+import ProtectedRoute from './pages/home/ProtectedRoute';
+import Forbidden403 from './pages/home/Forbidden403';
+import Pedidos from './pages/inicio/Pedidos';
 
 function Wrapper() {
   const { lang } = useParams();
@@ -80,7 +83,8 @@ function App() {
             <Route path="direcciones/nueva" element={<ShippingAddressForm />} />
             <Route path="carrito" element={<Cart />} />
             <Route path="perfil" element={<Perfil />} />
-             <Route path="categoria/:categoryId" element={<CategoryProductsUser />} />
+            <Route path="categoria/:categoryId" element={<CategoryProductsUser />} />
+            <Route path="pedidos" element={<Pedidos />} />
           </Route>
 
           <Route element={<CheckoutLayout />}>
@@ -91,14 +95,21 @@ function App() {
           <Route path="login" element={<LoginForm onLogin={() => setIsLoggedIn(true)} />} />
           <Route path="register" element={<Register />} />
 
-          <Route path="home" element={<DashboardLayout />}>
-            <Route index element={<Dashboard />} />
-            <Route path="products" element={<ProductTable />} />
-            <Route path="categories" element={<Categorias />} />
-            <Route path="categories/:id" element={<CategoryProducts />} /> 
-            <Route path="carousel" element={<Carousel />} />
+          <Route path="home" element={
+            <ProtectedRoute requiredRole="admin">
+              <DashboardLayout />
+            </ProtectedRoute>
+          }>
+
+              <Route index element={<Dashboard />} />
+              <Route path="products" element={<ProductTable />} />
+              <Route path="categories" element={<Categorias />} />
+              <Route path="categories/:id" element={<CategoryProducts />} /> 
+              <Route path="carousel" element={<Carousel />} />
           </Route>
         </Route>
+        <Route path="/:lang/403" element={<Forbidden403 />} />
+
       </Routes>
     </Router>
   );

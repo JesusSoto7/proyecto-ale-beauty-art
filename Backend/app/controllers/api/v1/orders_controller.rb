@@ -17,6 +17,25 @@ class Api::V1::OrdersController < Api::V1::BaseController
     }
   end
 
+  def ordenes
+    orders = current_user.orders
+                       .where(status: :pagada)
+                       .order(created_at: :desc)
+
+    render json: orders.map { |o|
+      {
+        id: o.id,
+        numero_de_orden: o.numero_de_orden,
+        status: o.status,
+        pago_total: o.pago_total,
+        fecha_pago: o.fecha_pago,
+        clientes: o.user ? "#{o.user.nombre} #{o.user.apellido}" : "N/A",
+        email: o.user&.email || "N/A",
+        pdf_url: o.invoice_pdf.attached? ? rails_blob_url(o.invoice_pdf) : nil
+      }
+    }
+  end
+
   def create
     correo_cliente = current_user.email
     shipping_address = current_user.shipping_addresses.find_by(predeterminada: true)
