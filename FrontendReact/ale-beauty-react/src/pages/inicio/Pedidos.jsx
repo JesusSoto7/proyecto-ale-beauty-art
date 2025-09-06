@@ -1,10 +1,13 @@
+// src/pages/inicio/Pedidos.jsx
 import { useEffect, useState } from "react";
 import { formatCOP } from "../../services/currency";
+import { useNavigate } from "react-router-dom";
 
 function Pedidos() {
   const [orders, setOrders] = useState([]);
   const [token, setToken] = useState(null);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const savedToken = localStorage.getItem("token");
@@ -19,9 +22,7 @@ function Pedidos() {
   useEffect(() => {
     if (!token) return;
     fetch("https://localhost:4000/api/v1/my_orders", {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
+      headers: { Authorization: `Bearer ${token}` },
     })
       .then((res) => res.json())
       .then((data) => setOrders(data))
@@ -29,7 +30,6 @@ function Pedidos() {
       .finally(() => setLoading(false));
   }, [token]);
 
-  // Función para formatear la fecha
   const formatDate = (dateString) => {
     const date = new Date(dateString);
     return date.toLocaleDateString("es-CO", {
@@ -72,7 +72,7 @@ function Pedidos() {
               </div>
 
               <button
-                onClick={() => alert("Función de ver detalles pendiente")}
+                onClick={() => navigate(`/es/pedidos/${order.id}`)}
                 className="mt-2 w-full bg-pink-600 text-white text-sm py-1.5 rounded hover:bg-pink-700 transition-colors"
               >
                 Ver Detalles
@@ -86,3 +86,4 @@ function Pedidos() {
 }
 
 export default Pedidos;
+

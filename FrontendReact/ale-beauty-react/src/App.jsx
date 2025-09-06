@@ -35,6 +35,7 @@ import { useTranslation } from "react-i18next";
 import ProtectedRoute from './pages/home/ProtectedRoute';
 import Forbidden403 from './pages/home/Forbidden403';
 import Pedidos from './pages/inicio/Pedidos';
+import DetallePedido from './pages/inicio/DetallePedido';
 
 function Wrapper() {
   const { lang } = useParams();
@@ -85,6 +86,9 @@ function App() {
             <Route path="perfil" element={<Perfil />} />
             <Route path="categoria/:categoryId" element={<CategoryProductsUser />} />
             <Route path="pedidos" element={<Pedidos />} />
+            <Route path="pedidos/:id" element={<DetallePedido />} />
+
+
           </Route>
 
           <Route element={<CheckoutLayout />}>

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState,  useRef } from 'react';
 import Carousel from 'react-bootstrap/Carousel';
 import IconButton from '@mui/joy/IconButton';
 import FavoriteBorder from '@mui/icons-material/FavoriteBorder';
@@ -6,9 +6,10 @@ import Favorite from "@mui/icons-material/Favorite";
 import { Link, useParams } from 'react-router-dom';
 import Skeleton from '@mui/material/Skeleton';
 import { formatCOP } from '../../services/currency';
-import bannerInicio from '../../assets/images/bannerInicio.jpg'
+import bannerNovedades from '../../assets/images/bannerNovedades.jpg'
 import { useOutletContext } from "react-router-dom";
 import noImage from "../../assets/images/no_image.png";
+import RotatingBanner from "./RotatingBanner";
 
 function Inicio() {
   const [carousel, setCarousel] = useState([]);
@@ -17,12 +18,32 @@ function Inicio() {
   const [cart, setCart] = useState(null);
   const { lang } = useParams();
   const [loading, setLoading] = useState(true);
-  // const [favoriteIds, setFavoriteIds] = useState([]); // ✅ lista de favoritos
+  // const [favoriteIds, setFavoriteIds] = useState([]); // lista de favoritos
   const { favoriteIds, loadFavorites } = useOutletContext();
   
   const token = localStorage.getItem('token');
 
-  // 📌 Cargar productos + favoritos del usuario
+  const interesRef = useRef(null); //Scroll automatico
+  
+  useEffect(() => {
+  const interval = setInterval(() => {
+
+    
+    if (interesRef.current) {
+      const { scrollLeft, scrollWidth, clientWidth } = interesRef.current;
+
+      if (scrollLeft + clientWidth >= scrollWidth) {
+        interesRef.current.scrollTo({ left: 0, behavior: "smooth" });
+      } else {
+        interesRef.current.scrollBy({ left: 305, behavior: "smooth" });
+      }
+    }
+  }, 2700);
+
+  return () => clearInterval(interval); // cleanup
+  }, []);
+
+  // Cargar productos + favoritos del usuario
   useEffect(() => {
     // Productos e inicio
     fetch('https://localhost:4000/api/v1/inicio')
@@ -41,6 +62,9 @@ function Inicio() {
           setLoading(false);
           return;
         }
+        //Productos ramdon al iniciar
+        const productosRandom = [...(data.products || [])].sort(() => 0.5 - Math.random());
+        setProducts(productosRandom);
 
         imgs.forEach(src => {
           const img = new Image();
@@ -50,6 +74,11 @@ function Inicio() {
             if (loadedCount === imgs.length) {
               setCarousel(data.admin_carousel || []);
               setProducts(data.products || []);
+
+              //Productos ramdon al iniciar
+              const productosRandom = [...(data.products || [])].sort(() => 0.5 - Math.random());
+              setProducts(productosRandom);
+
               setCategories(data.categories || []);
               setLoading(false);
             }
@@ -105,23 +134,23 @@ function Inicio() {
       });
   };
 
-  // 📌 Toggle favoritos
+  // Toggle favoritos
   const toggleFavorite = async (productId) => {
     if (favoriteIds.includes(productId)) {
-      // ❌ quitar favorito
+      // quitar favorito
       try {
         const res = await fetch(`https://localhost:4000/api/v1/favorites/${productId}`, {
           method: "DELETE",
           headers: { Authorization: `Bearer ${token}` },
         });
         if (res.ok) {
-          await loadFavorites(); // ✅ recarga favoritos desde backend
+          await loadFavorites(); // recarga favoritos desde backend
         }
       } catch (err) {
         console.error("Error quitando favorito:", err);
       }
     } else {
-      // ❤️ añadir favorito
+      // añadir favorito
       try {
         const res = await fetch("https://localhost:4000/api/v1/favorites", {
           method: "POST",
@@ -132,7 +161,7 @@ function Inicio() {
         });
         const data = await res.json();
         if (data.success) {
-          await loadFavorites(); // ✅ recarga favoritos desde backend
+          await loadFavorites(); // recarga favoritos desde backend
         }
       } catch (err) {
         console.error("Error añadiendo favorito:", err);
@@ -161,7 +190,7 @@ function Inicio() {
       ) : null}
 
 
-{/* 🔹 Sección Novedades Maquillaje */}
+{/* Sección Novedades Maquillaje */}
 <section className="mt-5">
   <h2 className="mb-4">Novedades Maquillaje</h2>
   {loading ? (
@@ -197,7 +226,7 @@ function Inicio() {
 
       {/* Productos */}
       <div className="carousel-items">
-        {products.map((prod) => (
+       {products.map((prod) => (
           <div className="product-card" key={prod.id} style={{ position: "relative" }}>
             <IconButton
               onClick={() => toggleFavorite(prod.id)}
@@ -254,27 +283,69 @@ function Inicio() {
   )}
 </section>
 
-{/* 🔹 Banner (ahora debajo de novedades) */}
-<div style={{ margin: "40px 0" }}>
+{/* Banner (ahora debajo de novedades) */}
+<div>
   <img
-    src={bannerInicio} 
+    src={bannerNovedades} 
     alt="Banner Novedades"
     style={{
       width: "100%",
-      height: "350px",   // 🔹 altura fija
-      objectFit: "cover" // 🔹 mantiene proporción
+      height: "350px",   // altura fija
+      objectFit: "cover" // mantiene proporción
     }}
   />
 </div>
 
+{/* Banner delgado en movimiento */}
+<div className="banner-ticker">
+  <div className="banner-track">
+    <div className="banner-item">Descubre nuestra nueva línea de maquillaje</div>
+    <div className="banner-item">Belleza que resalta tu estilo único</div>
+    <div className="banner-item">Productos de calidad y larga duración</div>
+    <div className="banner-item">Maquillaje inspirado en tendencias globales</div>
+    <div className="banner-item">Cuidado de la piel y cosméticos premium</div>
+    <div className="banner-item">Lo mejor para tu rutina de belleza</div>
+    <div className="banner-item">Sorpréndete con nuestros lanzamientos</div>
+    <div className="banner-item">Encuentra tu color perfecto</div>
 
-{/* 🔹 Sección Quizás te puedan interesar */}
+    {/* Duplicamos los items para animación infinita */}
+    <div className="banner-item">Descubre nuestra nueva línea de maquillaje</div>
+    <div className="banner-item">Belleza que resalta tu estilo único</div>
+    <div className="banner-item">Productos de calidad y larga duración</div>
+    <div className="banner-item">Maquillaje inspirado en tendencias globales</div>
+    <div className="banner-item">Cuidado de la piel y cosméticos premium</div>
+    <div className="banner-item">Lo mejor para tu rutina de belleza</div>
+    <div className="banner-item">Sorpréndete con nuestros lanzamientos</div>
+    <div className="banner-item">Encuentra tu color perfecto</div>
+  </div>
+</div>
+
+{/* Sección Quizás te puedan interesar */}
 <section className="mt-5">
   <h2 className="mb-4">Quizás te puedan interesar:</h2>
-  {!loading && products.length > 0 ? (
+
+  {loading ? (
     <div className="carousel-container">
       <div className="carousel-items">
-        {products.slice(0, 6).map((prod) => (
+        {[1, 2, 3, 4, 5, 6].map((skeleton) => (
+          <div className="product-card" key={skeleton}>
+            <div className="image-container">
+              <Skeleton variant="rectangular" width={"100%"} height={200} />
+            </div>
+            <Skeleton variant="text" width={150} height={30} />
+            <Skeleton variant="text" width={80} height={20} />
+            <div className="actions">
+              <Skeleton variant="rectangular" width={120} height={36} />
+              <Skeleton variant="circular" width={36} height={36} />
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  ) : products.length > 0 ? (
+    <div className="carousel-container">
+      <div className="carousel-items" ref={interesRef}>
+        {products.slice(0, 9).map((prod) => (
           <div className="product-card" key={prod.id} style={{ position: "relative" }}>
             <IconButton
               onClick={() => toggleFavorite(prod.id)}
@@ -315,9 +386,14 @@ function Inicio() {
         ))}
       </div>
     </div>
-  ) : null}
+  ) : (
+    <p>No hay productos disponibles.</p>
+  )}
 </section>
 
+
+{/* Banner rotativo */}
+<RotatingBanner />
     </div>
   );
 }
