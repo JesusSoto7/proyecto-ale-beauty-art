@@ -6,9 +6,10 @@ import Favorite from "@mui/icons-material/Favorite";
 import { Link, useParams } from 'react-router-dom';
 import Skeleton from '@mui/material/Skeleton';
 import { formatCOP } from '../../services/currency';
-import bannerInicio from '../../assets/images/bannerInicio.jpg'
+import bannerNovedades from '../../assets/images/bannerNovedades.jpg'
 import { useOutletContext } from "react-router-dom";
 import noImage from "../../assets/images/no_image.png";
+import RotatingBanner from "./RotatingBanner";
 
 function Inicio() {
   const [carousel, setCarousel] = useState([]);
@@ -37,7 +38,7 @@ function Inicio() {
         interesRef.current.scrollBy({ left: 305, behavior: "smooth" });
       }
     }
-  }, 2500);
+  }, 2700);
 
   return () => clearInterval(interval); // cleanup
   }, []);
@@ -283,9 +284,9 @@ function Inicio() {
 </section>
 
 {/* Banner (ahora debajo de novedades) */}
-<div style={{ margin: "40px 0" }}>
+<div>
   <img
-    src={bannerInicio} 
+    src={bannerNovedades} 
     alt="Banner Novedades"
     style={{
       width: "100%",
@@ -295,6 +296,29 @@ function Inicio() {
   />
 </div>
 
+{/* Banner delgado en movimiento */}
+<div className="banner-ticker">
+  <div className="banner-track">
+    <div className="banner-item">Descubre nuestra nueva línea de maquillaje</div>
+    <div className="banner-item">Belleza que resalta tu estilo único</div>
+    <div className="banner-item">Productos de calidad y larga duración</div>
+    <div className="banner-item">Maquillaje inspirado en tendencias globales</div>
+    <div className="banner-item">Cuidado de la piel y cosméticos premium</div>
+    <div className="banner-item">Lo mejor para tu rutina de belleza</div>
+    <div className="banner-item">Sorpréndete con nuestros lanzamientos</div>
+    <div className="banner-item">Encuentra tu color perfecto</div>
+
+    {/* Duplicamos los items para animación infinita */}
+    <div className="banner-item">Descubre nuestra nueva línea de maquillaje</div>
+    <div className="banner-item">Belleza que resalta tu estilo único</div>
+    <div className="banner-item">Productos de calidad y larga duración</div>
+    <div className="banner-item">Maquillaje inspirado en tendencias globales</div>
+    <div className="banner-item">Cuidado de la piel y cosméticos premium</div>
+    <div className="banner-item">Lo mejor para tu rutina de belleza</div>
+    <div className="banner-item">Sorpréndete con nuestros lanzamientos</div>
+    <div className="banner-item">Encuentra tu color perfecto</div>
+  </div>
+</div>
 
 {/* Sección Quizás te puedan interesar */}
 <section className="mt-5">
@@ -345,7 +369,8 @@ function Inicio() {
     </div>
   ) : null}
 </section>
-
+{/* Banner rotativo */}
+<RotatingBanner />
     </div>
   );
 }

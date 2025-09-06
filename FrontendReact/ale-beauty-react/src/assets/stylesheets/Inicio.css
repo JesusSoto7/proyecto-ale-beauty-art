@@ -271,3 +271,32 @@
   display: block;
   border-radius: 0 !important;
 }
+
+.banner-ticker {
+  width: 100%;
+  overflow: hidden;
+  background: linear-gradient(135deg, #d95d85, #e58bb1); /* color de fondo */
+  height: 40px; /* altura delgada */
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
+.banner-track {
+  display: flex;
+  animation: scroll 25s linear infinite;
+}
+
+.banner-item {
+  flex: 0 0 auto;
+  padding: 0 50px;
+  color: white;
+  font-weight: bold;
+  white-space: nowrap;
+}
+
+/* Animación infinita */
+@keyframes scroll {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); } /* -50% porque duplicamos los items */
+}
