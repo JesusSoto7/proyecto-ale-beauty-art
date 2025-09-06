@@ -1,4 +1,3 @@
-// src/pages/inicio/DetallePedido.jsx
 import React, { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { formatCOP } from "../../services/currency";

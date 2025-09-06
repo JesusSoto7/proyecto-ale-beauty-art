@@ -17,7 +17,7 @@ function Inicio() {
   const [cart, setCart] = useState(null);
   const { lang } = useParams();
   const [loading, setLoading] = useState(true);
-  // const [favoriteIds, setFavoriteIds] = useState([]); // ✅ lista de favoritos
+  // const [favoriteIds, setFavoriteIds] = useState([]); // lista de favoritos
   const { favoriteIds, loadFavorites } = useOutletContext();
   
   const token = localStorage.getItem('token');
@@ -39,10 +39,10 @@ function Inicio() {
     }
   }, 2500);
 
-  return () => clearInterval(interval); // 🔹 cleanup
+  return () => clearInterval(interval); // cleanup
   }, []);
 
-  // 📌 Cargar productos + favoritos del usuario
+  // Cargar productos + favoritos del usuario
   useEffect(() => {
     // Productos e inicio
     fetch('https://localhost:4000/api/v1/inicio')
@@ -61,6 +61,9 @@ function Inicio() {
           setLoading(false);
           return;
         }
+        //Productos ramdon al iniciar
+        const productosRandom = [...(data.products || [])].sort(() => 0.5 - Math.random());
+        setProducts(productosRandom);
 
         imgs.forEach(src => {
           const img = new Image();
@@ -70,6 +73,11 @@ function Inicio() {
             if (loadedCount === imgs.length) {
               setCarousel(data.admin_carousel || []);
               setProducts(data.products || []);
+
+              //Productos ramdon al iniciar
+              const productosRandom = [...(data.products || [])].sort(() => 0.5 - Math.random());
+              setProducts(productosRandom);
+
               setCategories(data.categories || []);
               setLoading(false);
             }
@@ -125,23 +133,23 @@ function Inicio() {
       });
   };
 
-  // 📌 Toggle favoritos
+  // Toggle favoritos
   const toggleFavorite = async (productId) => {
     if (favoriteIds.includes(productId)) {
-      // ❌ quitar favorito
+      // quitar favorito
       try {
         const res = await fetch(`https://localhost:4000/api/v1/favorites/${productId}`, {
           method: "DELETE",
           headers: { Authorization: `Bearer ${token}` },
         });
         if (res.ok) {
-          await loadFavorites(); // ✅ recarga favoritos desde backend
+          await loadFavorites(); // recarga favoritos desde backend
         }
       } catch (err) {
         console.error("Error quitando favorito:", err);
       }
     } else {
-      // ❤️ añadir favorito
+      // añadir favorito
       try {
         const res = await fetch("https://localhost:4000/api/v1/favorites", {
           method: "POST",
@@ -152,7 +160,7 @@ function Inicio() {
         });
         const data = await res.json();
         if (data.success) {
-          await loadFavorites(); // ✅ recarga favoritos desde backend
+          await loadFavorites(); // recarga favoritos desde backend
         }
       } catch (err) {
         console.error("Error añadiendo favorito:", err);
@@ -181,7 +189,7 @@ function Inicio() {
       ) : null}
 
 
-{/* 🔹 Sección Novedades Maquillaje */}
+{/* Sección Novedades Maquillaje */}
 <section className="mt-5">
   <h2 className="mb-4">Novedades Maquillaje</h2>
   {loading ? (
@@ -217,9 +225,7 @@ function Inicio() {
 
       {/* Productos */}
       <div className="carousel-items">
-        {[...products] //Productos de manera ramdon
-        .sort(() => 0.5 - Math.random())
-        .map((prod) => (
+       {products.map((prod) => (
           <div className="product-card" key={prod.id} style={{ position: "relative" }}>
             <IconButton
               onClick={() => toggleFavorite(prod.id)}
@@ -276,30 +282,27 @@ function Inicio() {
   )}
 </section>
 
-{/* 🔹 Banner (ahora debajo de novedades) */}
+{/* Banner (ahora debajo de novedades) */}
 <div style={{ margin: "40px 0" }}>
   <img
     src={bannerInicio} 
     alt="Banner Novedades"
     style={{
       width: "100%",
-      height: "350px",   // 🔹 altura fija
-      objectFit: "cover" // 🔹 mantiene proporción
+      height: "350px",   // altura fija
+      objectFit: "cover" // mantiene proporción
     }}
   />
 </div>
 
 
-{/* 🔹 Sección Quizás te puedan interesar */}
+{/* Sección Quizás te puedan interesar */}
 <section className="mt-5">
   <h2 className="mb-4">Quizás te puedan interesar:</h2>
   {!loading && products.length > 0 ? (
     <div className="carousel-container">
       <div className="carousel-items" ref={interesRef}>
-        {[...products] //Productos de manera ramdon
-        .sort(() => 0.5 - Math.random())
-        .slice(0, 9) //Limite de productos
-        .map((prod) => (
+        {products.slice(0, 9).map((prod) => (
           <div className="product-card" key={prod.id} style={{ position: "relative" }}>
             <IconButton
               onClick={() => toggleFavorite(prod.id)}
