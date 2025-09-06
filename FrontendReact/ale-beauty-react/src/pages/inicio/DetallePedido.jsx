@@ -115,7 +115,7 @@ function DetallePedido() {
         <p>
           <strong>Envío:</strong> {formatCOP(envio)}
         </p>
-        <h3 className="detalle-total" style={{ color: "#ff69b4" }}>
+        <h3 className="detalle-total" style={{ color: "#d95d85" }}>
           <strong>Total:</strong> {formatCOP(total)}
         </h3>
       </div>

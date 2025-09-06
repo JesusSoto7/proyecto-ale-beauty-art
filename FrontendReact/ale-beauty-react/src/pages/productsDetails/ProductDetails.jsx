@@ -11,7 +11,7 @@ function ProductDetails() {
   const [product, setProduct] = useState(null);
   const [token] = useState(localStorage.getItem("token"));
   const [cart, setCart] = useState(null);
-  const [isFavorite, setIsFavorite] = useState(false); // ✅ nuevo estado
+  const [isFavorite, setIsFavorite] = useState(false); // nuevo estado
 
   // Cargar producto + carrito + favoritos
   useEffect(() => {

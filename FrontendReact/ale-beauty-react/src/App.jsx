@@ -86,7 +86,7 @@ function App() {
             <Route path="perfil" element={<Perfil />} />
             <Route path="categoria/:categoryId" element={<CategoryProductsUser />} />
             <Route path="pedidos" element={<Pedidos />} />
-            <Route path="pedidos/detalle/:id" element={<DetallePedido />} />
+            <Route path="pedidos/:id" element={<DetallePedido />} />
 
 
           </Route>

@@ -72,7 +72,7 @@ function Pedidos() {
               </div>
 
               <button
-                onClick={() => navigate(`/es/pedidos/detalle/${order.id}`)}
+                onClick={() => navigate(`/es/pedidos/${order.id}`)}
                 className="mt-2 w-full bg-pink-600 text-white text-sm py-1.5 rounded hover:bg-pink-700 transition-colors"
               >
                 Ver Detalles

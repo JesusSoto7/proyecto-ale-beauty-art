@@ -323,7 +323,26 @@ function Inicio() {
 {/* Sección Quizás te puedan interesar */}
 <section className="mt-5">
   <h2 className="mb-4">Quizás te puedan interesar:</h2>
-  {!loading && products.length > 0 ? (
+
+  {loading ? (
+    <div className="carousel-container">
+      <div className="carousel-items">
+        {[1, 2, 3, 4, 5, 6].map((skeleton) => (
+          <div className="product-card" key={skeleton}>
+            <div className="image-container">
+              <Skeleton variant="rectangular" width={"100%"} height={200} />
+            </div>
+            <Skeleton variant="text" width={150} height={30} />
+            <Skeleton variant="text" width={80} height={20} />
+            <div className="actions">
+              <Skeleton variant="rectangular" width={120} height={36} />
+              <Skeleton variant="circular" width={36} height={36} />
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  ) : products.length > 0 ? (
     <div className="carousel-container">
       <div className="carousel-items" ref={interesRef}>
         {products.slice(0, 9).map((prod) => (
@@ -367,8 +386,12 @@ function Inicio() {
         ))}
       </div>
     </div>
-  ) : null}
+  ) : (
+    <p>No hay productos disponibles.</p>
+  )}
 </section>
+
+
 {/* Banner rotativo */}
 <RotatingBanner />
     </div>
