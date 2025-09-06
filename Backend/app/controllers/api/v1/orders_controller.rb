@@ -1,6 +1,30 @@
 class Api::V1::OrdersController < Api::V1::BaseController
   include Rails.application.routes.url_helpers
 
+   def show
+    order = current_user.orders.includes(order_details: :product).find(params[:id])
+
+    render json: {
+      id: order.id,
+      numero_de_orden: order.numero_de_orden,
+      status: order.status,
+      pago_total: order.pago_total,
+      fecha_pago: order.fecha_pago,
+      productos: order.order_details.map do |od|
+        {
+          id: od.id,
+          nombre_producto: od.product.nombre_producto,
+          slug: od.product.slug, 
+          cantidad: od.cantidad,
+          precio_producto: od.precio_unitario,
+          imagen_url: od.product.imagen.attached? ? url_for(od.product.imagen) : nil
+        }
+      end
+    }
+  rescue ActiveRecord::RecordNotFound
+    render json: { error: "Orden no encontrada" }, status: :not_found
+  end
+
   def index
     orders = Order.includes(:user).order(created_at: :desc)
     render json: orders.map { |o|

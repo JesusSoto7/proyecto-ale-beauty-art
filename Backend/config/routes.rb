@@ -46,6 +46,7 @@ Rails.application.routes.draw do
 
       resources :orders, only: [:create, :index]
       get "/my_orders", to: "orders#ordenes"
+      get "/my_orders/:id", to: "orders#show"
       resources :payments, only: [:create]
 
       get "/me", to: "users#me"
