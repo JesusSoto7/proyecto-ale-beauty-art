@@ -3,34 +3,30 @@ import { pink } from '@mui/material/colors';
 import Checkbox from '@mui/material/Checkbox';
 import ShippingAddressForm from "./ShippingAddressForm";
 import { useNavigate, useParams } from "react-router-dom";
+import { useTranslation } from 'react-i18next';
 import '../assets/stylesheets/ShippingAddresses.css'
 import FormControlLabel from "@mui/material/FormControlLabel";
 
 const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
 
-
-
-
-
 function ShippingAddresses() {
   const navigate = useNavigate();
   const [token, setToken] = useState(null);
-  const [addresses, setAddresses] = useState(null); // null = no cargado aún
+  const [addresses, setAddresses] = useState(null);
   const [showForm, setShowForm] = useState(false);
   const [editAddress, setEditAddress] = useState(null);
   const { lang } = useParams();
-
-
+  const { t } = useTranslation();
 
   useEffect(() => {
     const savedToken = localStorage.getItem("token");
     if (savedToken) {
       setToken(savedToken);
     } else {
-      alert("no estas autenticado");
+      alert(t('shippingAddresses.notAuthenticated'));
     }
-  }, []);
-  // Cargar direcciones al inicio
+  }, [t]);
+
   useEffect(() => {
     if (!token) return;
 
@@ -42,7 +38,7 @@ function ShippingAddresses() {
     })
       .then(res => {
         if (!res.ok) {
-          throw new Error(`Error al cargar direcciones: ${res.status}`);
+          throw new Error(t('shippingAddresses.loadError'));
         }
         return res.json();
       })
@@ -55,13 +51,12 @@ function ShippingAddresses() {
       })
       .catch(error => {
         console.error(error);
-        setAddresses([]);  // para evitar estado null infinito
+        setAddresses([]);
         setShowForm(true);
       });
-  }, [token]);
+  }, [token, t]);
 
   const handleSetPredeterminada = async (id) => {
-
     setAddresses((prev) =>
       prev.map((addr) =>
         addr.id === id
@@ -79,12 +74,11 @@ function ShippingAddresses() {
         },
       });
 
-      if (!res.ok) throw new Error("Error al actualizar predeterminada");
+      if (!res.ok) throw new Error(t('shippingAddresses.updateError'));
 
     } catch (error) {
       console.error(error);
-      alert("No se pudo actualizar la direccion predeterminada");
-
+      alert(t('shippingAddresses.updateFailed'));
 
       setAddresses((prev) =>
         prev.map((addr) =>
@@ -96,15 +90,12 @@ function ShippingAddresses() {
     }
   }
 
-
   const handleFormSuccess = (savedAddress, isEditing) => {
     if (isEditing) {
-      // Si era edición, actualizamos la lista
       setAddresses(prev =>
         prev.map(addr => (addr.id === savedAddress.id ? savedAddress : addr))
       );
     } else {
-      // Si era creación, agregamos
       setAddresses(prev => [...prev, savedAddress]);
     }
     setShowForm(false);
@@ -112,13 +103,14 @@ function ShippingAddresses() {
   };
 
   if (addresses === null) {
-    return <p>Cargando direcciones...</p>;
+    return <p>{t('shippingAddresses.loading')}</p>;
   }
+
   return (
     <div className="shipping-container">
       {showForm ? (
         <div>
-          <h2>Crear nueva dirección</h2>
+          <h2>{editAddress ? t('shippingAddresses.editAddress') : t('shippingAddresses.createAddress')}</h2>
           <ShippingAddressForm
             token={token}
             onSuccess={handleFormSuccess}
@@ -131,13 +123,15 @@ function ShippingAddresses() {
               setShowForm(false);
               setEditAddress(null);
             }}
-          >Cancelar</button>
+          >
+            {t('shippingAddresses.cancel')}
+          </button>
         </div>
       ) : (
         <div>
-          <h2>Mis direcciones</h2>
+          <h2>{t('shippingAddresses.myAddresses')}</h2>
           {addresses.length === 0 ? (
-            <p>No tienes direcciones guardadas.</p>
+            <p>{t('shippingAddresses.noAddresses')}</p>
           ) : (
             <ul className="address-list">
               {addresses.map(addr => (
@@ -145,7 +139,7 @@ function ShippingAddresses() {
                   <div className="address-info">
                     <strong>{addr.nombre} {addr.apellido}</strong>
                     <br />
-                    {addr.direccion} — Barrio: {addr.neighborhood.nombre}
+                    {addr.direccion} — {t('shippingAddresses.neighborhood')}: {addr.neighborhood.nombre}
                   </div>
                   <FormControlLabel
                     control={
@@ -161,7 +155,7 @@ function ShippingAddresses() {
                         }}
                       />
                     }
-                    label="Predeterminada"
+                    label={t('shippingAddresses.default')}
                   />
 
                   <div className="button-group">
@@ -172,15 +166,16 @@ function ShippingAddresses() {
                         setShowForm(true);
                       }}
                     >
-                      Editar
+                      {t('shippingAddresses.edit')}
                     </button>
-
                   </div>
                 </li>
               ))}
             </ul>
           )}
-          <button onClick={() => navigate(`/${lang}/direcciones/nueva`)}>Agregar nueva dirección</button>
+          <button onClick={() => navigate(`/${lang}/direcciones/nueva`)}>
+            {t('shippingAddresses.addNewAddress')}
+          </button>
         </div>
       )}
     </div>

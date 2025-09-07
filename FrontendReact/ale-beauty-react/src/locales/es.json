@@ -1,8 +1,4 @@
 {
-  "welcome": "Bienvenido a la tienda",
-  "register": "Registrarse",
-  "details": "Detalles",
-  "overview": "Perspectiva General",
   "cart": {
     "title": "Tu carrito de compras",
     "empty": "No tienes productos en el carrito.",
@@ -38,7 +34,11 @@
     "shippingAddressTitle": "Mi dirección de envío",
     "neighborhood": "Barrio",
     "noPaymentFound": "No se encontró información del pago",
-    "noPublicKey": "No se encontró la clave pública en las variables de entorno"
+    "noPublicKey": "No se encontró la clave pública en las variables de entorno",
+    "shippingAddressStep": "Dirección de envío",
+    "paymentStep": "Pago",
+    "backButton": "Atrás",
+    "continueButton": "Continuar"
  
   },
   "common": {
@@ -130,6 +130,126 @@
     "logout": "Cerrar Sesión",
     "save": "Guardar",
     "cancel": "Cancelar"
+  },
+   "register": {
+    "createAccount": "Crear cuenta",
+    "firstName": "Nombre",
+    "lastName": "Apellido",
+    "email": "Correo electrónico",
+    "password": "Contraseña",
+    "confirmPassword": "Confirmar contraseña",
+    "registerButton": "Registrarse",
+    "alreadyHaveAccount": "¿Ya tiene una cuenta?",
+    "loginLink": "Inicia Sesión",
+    "passwordsNotMatch": "Las contraseñas no coinciden",
+    "registrationSuccess": "Usuario registrado correctamente",
+    "cosmeticsImageAlt": "Cosméticos"
+  },
+   "shippingAddresses": {
+    "notAuthenticated": "No estás autenticado",
+    "loading": "Cargando direcciones...",
+    "loadError": "Error al cargar direcciones",
+    "updateError": "Error al actualizar predeterminada",
+    "updateFailed": "No se pudo actualizar la dirección predeterminada",
+    "myAddresses": "Mis direcciones",
+    "noAddresses": "No tienes direcciones guardadas.",
+    "createAddress": "Crear nueva dirección",
+    "editAddress": "Editar dirección",
+    "cancel": "Cancelar",
+    "default": "Predeterminada",
+    "edit": "Editar",
+    "addNewAddress": "Agregar nueva dirección",
+    "neighborhood": "Barrio"
+  },
+   "shippingAddressForm": {
+    "notAuthenticated": "No estás autenticado",
+    "noToken": "No hay token válido para enviar la solicitud.",
+    "unknownError": "Error desconocido",
+    "updateSuccess": "Dirección actualizada con éxito",
+    "createSuccess": "Dirección creada con éxito",
+    "errorPrefix": "Error al",
+    "updating": "actualizar",
+    "creating": "crear",
+    "editTitle": "Editar dirección de envío",
+    "newTitle": "Nueva dirección de envío",
+    "firstName": "Nombre",
+    "lastName": "Apellido",
+    "phone": "Teléfono",
+    "address": "Dirección",
+    "postalCode": "Código Postal",
+    "department": "Departamento",
+    "municipality": "Municipio",
+    "neighborhood": "Barrio",
+    "additionalInstructions": "Indicaciones adicionales",
+    "saveButton": "Guardar dirección"
+  },
+  "orderDetail": {
+    "notAuthenticated": "No autenticado",
+    "error": "Error",
+    "loadError": "Error cargando detalle",
+    "loadFailed": "No se pudo cargar el detalle del pedido.",
+    "loading": "Cargando detalle...",
+    "notFound": "No se encontró el pedido.",
+    "title": "Detalles del Pedido",
+    "orderNumber": "N° de Orden",
+    "paymentDate": "Fecha de pago",
+    "product": "Producto",
+    "quantity": "Cant",
+    "subtotal": "Sub Total",
+    "shipping": "Envío",
+    "total": "Total"
+  },
+  "home": {
+    "loadError": "Error cargando datos",
+    "cartError": "Error cargando carrito",
+    "favoritesError": "Error cargando favoritos",
+    "addedToCart": "Producto añadido al carrito",
+    "error": "Error: ",
+    "cartAddError": "Error añadiendo producto al carrito",
+    "removeFavoriteError": "Error quitando favorito",
+    "addFavoriteError": "Error añadiendo favorito",
+    "slide": "Slide",
+    "newMakeup": "Novedades Maquillaje",
+    "noProducts": "No hay productos disponibles.",
+    "newsBannerAlt": "Banner Novedades",
+    "addToCart": "Añadir al carrito",
+    "bannerText1": "Descubre nuestra nueva línea de maquillaje",
+    "bannerText2": "Belleza que resalta tu estilo único",
+    "bannerText3": "Productos de calidad y larga duración",
+    "bannerText4": "Maquillaje inspirado en tendencias globales",
+    "bannerText5": "Cuidado de la piel y cosméticos premium",
+    "bannerText6": "Lo mejor para tu rutina de belleza",
+    "bannerText7": "Sorpréndete con nuestros lanzamientos",
+    "bannerText8": "Encuentra tu color perfecto",
+    "mayInterestYou": "Quizás te puedan interesar:"
+  },
+  "orders": {
+    "notAuthenticated": "No estás autenticado",
+    "loadError": "Error cargando pedidos",
+    "myOrders": "Mis Pedidos",
+    "loading": "Cargando pedidos...",
+    "noOrders": "No tienes pedidos pagados todavía.",
+    "orderNumber": "N° de Orden",
+    "total": "Total",
+    "paymentDate": "Fecha de pago",
+    "viewDetails": "Ver Detalles"
+  },
+  "rotatingBanner": {
+    "altText": "Banner {{number}}"
+  },
+  "products": {
+    "loadError": "Error cargando productos",
+    "cartError": "Error cargando carrito",
+    "favoritesError": "Error cargando favoritos",
+    "addedToCart": "Producto añadido al carrito",
+    "error": "Error: ",
+    "cartAddError": "Error añadiendo producto al carrito",
+    "removeFavoriteError": "Error quitando favorito",
+    "addFavoriteError": "Error añadiendo favorito",
+    "notAuthenticated": "No autenticado",
+    "noProducts": "No hay productos disponibles.",
+    "allProducts": "Todos los productos",
+    "addToCart": "Añadir al carrito"
   }
   }
 

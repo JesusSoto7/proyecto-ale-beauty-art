@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
+import { useTranslation } from 'react-i18next';
 import IconButton from '@mui/joy/IconButton';
 import FavoriteBorder from '@mui/icons-material/FavoriteBorder';
 import Favorite from "@mui/icons-material/Favorite";
@@ -13,6 +14,7 @@ function ProductosCliente() {
   const [cart, setCart] = useState(null);
   const [favoriteIds, setFavoriteIds] = useState([]);
   const { lang } = useParams();
+  const { t } = useTranslation();
 
   // Obtener token
   useEffect(() => {
@@ -30,7 +32,7 @@ function ProductosCliente() {
     })
       .then(res => res.json())
       .then(data => setProducts(data || []))
-      .catch(err => console.error("Error cargando productos:", err));
+      .catch(err => console.error(t('products.loadError'), err));
 
     // Carrito
     fetch('https://localhost:4000/api/v1/cart', {
@@ -38,7 +40,7 @@ function ProductosCliente() {
     })
       .then(res => res.json())
       .then(data => setCart(data.cart))
-      .catch(err => console.error('Error cargando carrito:', err));
+      .catch(err => console.error(t('products.cartError'), err));
 
     // Favoritos
     fetch('https://localhost:4000/api/v1/favorites', {
@@ -49,8 +51,8 @@ function ProductosCliente() {
         const ids = data.map(fav => fav.product_id || fav.id);
         setFavoriteIds(ids);
       })
-      .catch(err => console.error('Error cargando favoritos:', err));
-  }, [token]);
+      .catch(err => console.error(t('products.favoritesError'), err));
+  }, [token, t]);
 
   // Añadir al carrito
   const addToCart = (productId) => {
@@ -66,13 +68,13 @@ function ProductosCliente() {
       .then(data => {
         if (data.cart) {
           setCart(data.cart);
-          alert('Producto añadido al carrito');
+          alert(t('products.addedToCart'));
         } else if (data.errors) {
-          console.warn('Error: ' + data.errors.join(", "));
+          console.warn(t('products.error') + data.errors.join(", "));
         }
       })
       .catch(err => {
-        console.error('Error añadiendo producto al carrito: ', err);
+        console.error(t('products.cartAddError'), err);
       });
   };
 
@@ -88,7 +90,7 @@ function ProductosCliente() {
           setFavoriteIds(prev => prev.filter(id => id !== productId));
         }
       } catch (err) {
-        console.error("Error quitando favorito:", err);
+        console.error(t('products.removeFavoriteError'), err);
       }
     } else {
       try {
@@ -105,17 +107,17 @@ function ProductosCliente() {
           setFavoriteIds(prev => [...prev, productId]);
         }
       } catch (err) {
-        console.error("Error añadiendo favorito:", err);
+        console.error(t('products.addFavoriteError'), err);
       }
     }
   };
 
-  if (!token) return <p>No autenticado</p>;
-  if (products.length === 0) return <p>No hay productos disponibles.</p>;
+  if (!token) return <p>{t('products.notAuthenticated')}</p>;
+  if (products.length === 0) return <p>{t('products.noProducts')}</p>;
 
   return (
     <section className="mt-5">
-      <h2 className="mb-4">Todos los productos</h2>
+      <h2 className="mb-4">{t('products.allProducts')}</h2>
       <div className="productos-grid">
         {products.map((prod) => (
           <div className="product-card" key={prod.id} style={{ position: "relative" }}>
@@ -153,7 +155,9 @@ function ProductosCliente() {
             </Link>
 
             <div className="actions">
-              <button onClick={() => addToCart(prod.id)}>Añadir al carrito</button>
+              <button onClick={() => addToCart(prod.id)}>
+                {t('products.addToCart')}
+              </button>
             </div>
           </div>
         ))}

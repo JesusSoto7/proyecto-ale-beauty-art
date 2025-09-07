@@ -1,6 +1,4 @@
 {
-  "welcome": "Welcome to the store",
-  "register": "Register",
   "cart": {
     "title": "Your shopping cart",
     "empty": "You have no products in the cart.",
@@ -36,7 +34,11 @@
     "shippingAddressTitle": "My shipping address",
     "neighborhood": "Neighborhood",
      "noPaymentFound": "No payment information found",
-        "noPublicKey": "Public key not found in environment variables"
+    "noPublicKey": "Public key not found in environment variables",
+    "shippingAddressStep": "Shipping Address",
+    "paymentStep": "Payment",
+    "backButton": "Back",
+    "continueButton": "Continue"
   },
   "common": {
     "cancel": "Cancel"
@@ -127,6 +129,126 @@
     "logout": "Log Out",
     "save": "Save",
     "cancel": "Cancel"
+  },
+  "register": {
+    "createAccount": "Create account",
+    "firstName": "First name",
+    "lastName": "Last name",
+    "email": "Email",
+    "password": "Password",
+    "confirmPassword": "Confirm password",
+    "registerButton": "Register",
+    "alreadyHaveAccount": "Already have an account?",
+    "loginLink": "Log in",
+    "passwordsNotMatch": "Passwords do not match",
+    "registrationSuccess": "User registered successfully",
+    "cosmeticsImageAlt": "Cosmetics"
+  },
+   "shippingAddresses": {
+    "notAuthenticated": "You are not authenticated",
+    "loading": "Loading addresses...",
+    "loadError": "Error loading addresses",
+    "updateError": "Error updating default address",
+    "updateFailed": "Could not update default address",
+    "myAddresses": "My addresses",
+    "noAddresses": "You don't have saved addresses.",
+    "createAddress": "Create new address",
+    "editAddress": "Edit address",
+    "cancel": "Cancel",
+    "default": "Default",
+    "edit": "Edit",
+    "addNewAddress": "Add new address",
+    "neighborhood": "Neighborhood"
+  },
+   "shippingAddressForm": {
+    "notAuthenticated": "You are not authenticated",
+    "noToken": "No valid token to send the request.",
+    "unknownError": "Unknown error",
+    "updateSuccess": "Address updated successfully",
+    "createSuccess": "Address created successfully",
+    "errorPrefix": "Error",
+    "updating": "updating",
+    "creating": "creating",
+    "editTitle": "Edit shipping address",
+    "newTitle": "New shipping address",
+    "firstName": "First name",
+    "lastName": "Last name",
+    "phone": "Phone",
+    "address": "Address",
+    "postalCode": "Postal code",
+    "department": "Department",
+    "municipality": "Municipality",
+    "neighborhood": "Neighborhood",
+    "additionalInstructions": "Additional instructions",
+    "saveButton": "Save address"
+  },
+   "orderDetail": {
+    "notAuthenticated": "Not authenticated",
+    "error": "Error",
+    "loadError": "Error loading details",
+    "loadFailed": "Could not load order details.",
+    "loading": "Loading details...",
+    "notFound": "Order not found.",
+    "title": "Order Details",
+    "orderNumber": "Order Number",
+    "paymentDate": "Payment date",
+    "product": "Product",
+    "quantity": "Qty",
+    "subtotal": "Subtotal",
+    "shipping": "Shipping",
+    "total": "Total"
+  },
+  "home": {
+    "loadError": "Error loading data",
+    "cartError": "Error loading cart",
+    "favoritesError": "Error loading favorites",
+    "addedToCart": "Product added to cart",
+    "error": "Error: ",
+    "cartAddError": "Error adding product to cart",
+    "removeFavoriteError": "Error removing favorite",
+    "addFavoriteError": "Error adding favorite",
+    "slide": "Slide",
+    "newMakeup": "Makeup News",
+    "noProducts": "No products available.",
+    "newsBannerAlt": "News Banner",
+    "addToCart": "Add to cart",
+    "bannerText1": "Discover our new makeup line",
+    "bannerText2": "Beauty that highlights your unique style",
+    "bannerText3": "Quality and long-lasting products",
+    "bannerText4": "Makeup inspired by global trends",
+    "bannerText5": "Skincare and premium cosmetics",
+    "bannerText6": "The best for your beauty routine",
+    "bannerText7": "Be surprised by our launches",
+    "bannerText8": "Find your perfect color",
+    "mayInterestYou": "You might be interested in:"
+  },
+  "orders": {
+    "notAuthenticated": "You are not authenticated",
+    "loadError": "Error loading orders",
+    "myOrders": "My Orders",
+    "loading": "Loading orders...",
+    "noOrders": "You don't have paid orders yet.",
+    "orderNumber": "Order Number",
+    "total": "Total",
+    "paymentDate": "Payment date",
+    "viewDetails": "View Details"
+  },
+  "rotatingBanner": {
+    "altText": "Banner {{number}}"
+  },
+  "products": {
+    "loadError": "Error loading products",
+    "cartError": "Error loading cart",
+    "favoritesError": "Error loading favorites",
+    "addedToCart": "Product added to cart",
+    "error": "Error: ",
+    "cartAddError": "Error adding product to cart",
+    "removeFavoriteError": "Error removing favorite",
+    "addFavoriteError": "Error adding favorite",
+    "notAuthenticated": "Not authenticated",
+    "noProducts": "No products available.",
+    "allProducts": "All products",
+    "addToCart": "Add to cart"
   }
   }
 

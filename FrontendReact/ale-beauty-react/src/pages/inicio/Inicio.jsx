@@ -1,4 +1,4 @@
-import React, { useEffect, useState,  useRef } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import Carousel from 'react-bootstrap/Carousel';
 import IconButton from '@mui/joy/IconButton';
 import FavoriteBorder from '@mui/icons-material/FavoriteBorder';
@@ -10,6 +10,7 @@ import bannerNovedades from '../../assets/images/bannerNovedades.jpg'
 import { useOutletContext } from "react-router-dom";
 import noImage from "../../assets/images/no_image.png";
 import RotatingBanner from "./RotatingBanner";
+import { useTranslation } from 'react-i18next';
 
 function Inicio() {
   const [carousel, setCarousel] = useState([]);
@@ -18,29 +19,26 @@ function Inicio() {
   const [cart, setCart] = useState(null);
   const { lang } = useParams();
   const [loading, setLoading] = useState(true);
-  // const [favoriteIds, setFavoriteIds] = useState([]); // lista de favoritos
   const { favoriteIds, loadFavorites } = useOutletContext();
+  const { t } = useTranslation();
   
   const token = localStorage.getItem('token');
+  const interesRef = useRef(null);
 
-  const interesRef = useRef(null); //Scroll automatico
-  
   useEffect(() => {
-  const interval = setInterval(() => {
+    const interval = setInterval(() => {
+      if (interesRef.current) {
+        const { scrollLeft, scrollWidth, clientWidth } = interesRef.current;
 
-    
-    if (interesRef.current) {
-      const { scrollLeft, scrollWidth, clientWidth } = interesRef.current;
-
-      if (scrollLeft + clientWidth >= scrollWidth) {
-        interesRef.current.scrollTo({ left: 0, behavior: "smooth" });
-      } else {
-        interesRef.current.scrollBy({ left: 305, behavior: "smooth" });
+        if (scrollLeft + clientWidth >= scrollWidth) {
+          interesRef.current.scrollTo({ left: 0, behavior: "smooth" });
+        } else {
+          interesRef.current.scrollBy({ left: 305, behavior: "smooth" });
+        }
       }
-    }
-  }, 2700);
+    }, 2700);
 
-  return () => clearInterval(interval); // cleanup
+    return () => clearInterval(interval);
   }, []);
 
   // Cargar productos + favoritos del usuario
@@ -62,7 +60,7 @@ function Inicio() {
           setLoading(false);
           return;
         }
-        //Productos ramdon al iniciar
+
         const productosRandom = [...(data.products || [])].sort(() => 0.5 - Math.random());
         setProducts(productosRandom);
 
@@ -74,11 +72,8 @@ function Inicio() {
             if (loadedCount === imgs.length) {
               setCarousel(data.admin_carousel || []);
               setProducts(data.products || []);
-
-              //Productos ramdon al iniciar
               const productosRandom = [...(data.products || [])].sort(() => 0.5 - Math.random());
               setProducts(productosRandom);
-
               setCategories(data.categories || []);
               setLoading(false);
             }
@@ -86,7 +81,7 @@ function Inicio() {
         });
       })
       .catch(err => {
-        console.error('Error cargando datos: ' + err);
+        console.error(t('home.loadError'), err);
         setLoading(false);
       });
 
@@ -96,7 +91,7 @@ function Inicio() {
     })
       .then(res => res.json())
       .then(data => setCart(data.cart))
-      .catch(err => console.error('Error cargando carrito:', err));
+      .catch(err => console.error(t('home.cartError'), err));
 
     // Favoritos del usuario
     fetch('https://localhost:4000/api/v1/favorites', {
@@ -104,11 +99,11 @@ function Inicio() {
     })
       .then(res => res.json())
       .then(data => {
-        const ids = data.map(fav => fav.id); // el backend devuelve { id, nombre_producto... }
+        const ids = data.map(fav => fav.id);
         setFavoriteIds(ids);
       })
-      .catch(err => console.error('Error cargando favoritos:', err));
-  }, [token]);
+      .catch(err => console.error(t('home.favoritesError'), err));
+  }, [token, t]);
 
   const addToCart = (productId) => {
     fetch('https://localhost:4000/api/v1/cart/add_product', {
@@ -123,34 +118,32 @@ function Inicio() {
       .then(data => {
         if (data.cart) {
           setCart(data.cart);
-          alert('Producto añadido al carrito');
+          alert(t('home.addedToCart'));
         } else if (data.errors) {
-          alert('Error: ' + data.errors.join(", "));
+          alert(t('home.error') + data.errors.join(", "));
         }
       })
       .catch(err => {
-        console.error('Error añadiendo producto al carrito: ', err);
-        alert('Error añadiendo producto al carrito');
+        console.error(t('home.cartAddError'), err);
+        alert(t('home.cartAddError'));
       });
   };
 
   // Toggle favoritos
   const toggleFavorite = async (productId) => {
     if (favoriteIds.includes(productId)) {
-      // quitar favorito
       try {
         const res = await fetch(`https://localhost:4000/api/v1/favorites/${productId}`, {
           method: "DELETE",
           headers: { Authorization: `Bearer ${token}` },
         });
         if (res.ok) {
-          await loadFavorites(); // recarga favoritos desde backend
+          await loadFavorites();
         }
       } catch (err) {
-        console.error("Error quitando favorito:", err);
+        console.error(t('home.removeFavoriteError'), err);
       }
     } else {
-      // añadir favorito
       try {
         const res = await fetch("https://localhost:4000/api/v1/favorites", {
           method: "POST",
@@ -161,14 +154,13 @@ function Inicio() {
         });
         const data = await res.json();
         if (data.success) {
-          await loadFavorites(); // recarga favoritos desde backend
+          await loadFavorites();
         }
       } catch (err) {
-        console.error("Error añadiendo favorito:", err);
+        console.error(t('home.addFavoriteError'), err);
       }
     }
   };
-
 
   return (
     <div>
@@ -181,7 +173,7 @@ function Inicio() {
               <img
                 className="d-block w-100"
                 src={img}
-                alt={`Slide ${idx + 1}`}
+                alt={`${t('home.slide')} ${idx + 1}`}
                 style={{ height: "400px", objectFit: "cover" }}
               />
             </Carousel.Item>
@@ -189,211 +181,215 @@ function Inicio() {
         </Carousel>
       ) : null}
 
-
-{/* Sección Novedades Maquillaje */}
-<section className="mt-5">
-  <h2 className="mb-4">Novedades Maquillaje</h2>
-  {loading ? (
-    <div className="carousel-container">
-      <div className="carousel-items">
-        {[1, 2, 3, 4].map((skeleton) => (
-          <div className="product-card" key={skeleton}>
-            <div className="image-container">
-              <Skeleton variant="rectangular" width={"100%"} height={200} />
-            </div>
-            <Skeleton variant="text" width={150} height={30} />
-            <Skeleton variant="text" width={80} height={20} />
-            <div className="actions">
-              <Skeleton variant="rectangular" width={120} height={36} />
-              <Skeleton variant="circular" width={36} height={36} />
+      {/* Sección Novedades Maquillaje */}
+      <section className="mt-5">
+        <h2 className="mb-4">{t('home.newMakeup')}</h2>
+        {loading ? (
+          <div className="carousel-container">
+            <div className="carousel-items">
+              {[1, 2, 3, 4].map((skeleton) => (
+                <div className="product-card" key={skeleton}>
+                  <div className="image-container">
+                    <Skeleton variant="rectangular" width={"100%"} height={200} />
+                  </div>
+                  <Skeleton variant="text" width={150} height={30} />
+                  <Skeleton variant="text" width={80} height={20} />
+                  <div className="actions">
+                    <Skeleton variant="rectangular" width={120} height={36} />
+                    <Skeleton variant="circular" width={36} height={36} />
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
-        ))}
-      </div>
-    </div>
-  ) : products.length > 0 ? (
-    <div className="carousel-container">
-      {/* Botón izquierdo */}
-      <button
-        className="carousel-btn prev"
-        onClick={() => {
-          document.querySelector(".carousel-items")
-            .scrollBy({ left: -300, behavior: "smooth" });
-        }}
-      >
-        ❮
-      </button>
-
-      {/* Productos */}
-      <div className="carousel-items">
-       {products.map((prod) => (
-          <div className="product-card" key={prod.id} style={{ position: "relative" }}>
-            <IconButton
-              onClick={() => toggleFavorite(prod.id)}
-              sx={{
-                position: "absolute",
-                top: 8,
-                right: 8,
-                bgcolor: "white",
-                "&:hover": { bgcolor: "grey.200" },
+        ) : products.length > 0 ? (
+          <div className="carousel-container">
+            <button
+              className="carousel-btn prev"
+              onClick={() => {
+                document.querySelector(".carousel-items")
+                  .scrollBy({ left: -300, behavior: "smooth" });
               }}
             >
-              {favoriteIds.includes(prod.id) ? (
-                <Favorite sx={{ color: "white" }} />
-              ) : (
-                <FavoriteBorder />
-              )}
-            </IconButton>
+              ❮
+            </button>
 
-            <Link
-              to={`/${lang}/producto/${prod.slug}`}
-              style={{ textDecoration: "none", color: "inherit" }}
-            >
-              <div className="image-container">
-                <img
-                  src={prod.imagen_url || noImage}
-                  alt={prod.nombre_producto}
-                  onError={(e) => { e.currentTarget.src = noImage; }}
-                />
-              </div>
-              <h5>{prod.nombre_producto}</h5>
-              <p>{formatCOP(prod.precio_producto)}</p>
-            </Link>
+            <div className="carousel-items">
+              {products.map((prod) => (
+                <div className="product-card" key={prod.id} style={{ position: "relative" }}>
+                  <IconButton
+                    onClick={() => toggleFavorite(prod.id)}
+                    sx={{
+                      position: "absolute",
+                      top: 8,
+                      right: 8,
+                      bgcolor: "white",
+                      "&:hover": { bgcolor: "grey.200" },
+                    }}
+                  >
+                    {favoriteIds.includes(prod.id) ? (
+                      <Favorite sx={{ color: "white" }} />
+                    ) : (
+                      <FavoriteBorder />
+                    )}
+                  </IconButton>
 
-            <div className="actions">
-              <button onClick={() => addToCart(prod.id)}>Añadir al carrito</button>
+                  <Link
+                    to={`/${lang}/producto/${prod.slug}`}
+                    style={{ textDecoration: "none", color: "inherit" }}
+                  >
+                    <div className="image-container">
+                      <img
+                        src={prod.imagen_url || noImage}
+                        alt={prod.nombre_producto}
+                        onError={(e) => { e.currentTarget.src = noImage; }}
+                      />
+                    </div>
+                    <h5>{prod.nombre_producto}</h5>
+                    <p>{formatCOP(prod.precio_producto)}</p>
+                  </Link>
+
+                  <div className="actions">
+                    <button onClick={() => addToCart(prod.id)}>
+                      {t('home.addToCart')}
+                    </button>
+                  </div>
+                </div>
+              ))}
             </div>
-          </div>
-        ))}
-      </div>
 
-      {/* Botón derecho */}
-      <button
-        className="carousel-btn next"
-        onClick={() => {
-          document.querySelector(".carousel-items")
-            .scrollBy({ left: 300, behavior: "smooth" });
-        }}
-      >
-        ❯
-      </button>
-    </div>
-  ) : (
-    <p>No hay productos disponibles.</p>
-  )}
-</section>
-
-{/* Banner (ahora debajo de novedades) */}
-<div>
-  <img
-    src={bannerNovedades} 
-    alt="Banner Novedades"
-    style={{
-      width: "100%",
-      height: "350px",   // altura fija
-      objectFit: "cover" // mantiene proporción
-    }}
-  />
-</div>
-
-{/* Banner delgado en movimiento */}
-<div className="banner-ticker">
-  <div className="banner-track">
-    <div className="banner-item">Descubre nuestra nueva línea de maquillaje</div>
-    <div className="banner-item">Belleza que resalta tu estilo único</div>
-    <div className="banner-item">Productos de calidad y larga duración</div>
-    <div className="banner-item">Maquillaje inspirado en tendencias globales</div>
-    <div className="banner-item">Cuidado de la piel y cosméticos premium</div>
-    <div className="banner-item">Lo mejor para tu rutina de belleza</div>
-    <div className="banner-item">Sorpréndete con nuestros lanzamientos</div>
-    <div className="banner-item">Encuentra tu color perfecto</div>
-
-    {/* Duplicamos los items para animación infinita */}
-    <div className="banner-item">Descubre nuestra nueva línea de maquillaje</div>
-    <div className="banner-item">Belleza que resalta tu estilo único</div>
-    <div className="banner-item">Productos de calidad y larga duración</div>
-    <div className="banner-item">Maquillaje inspirado en tendencias globales</div>
-    <div className="banner-item">Cuidado de la piel y cosméticos premium</div>
-    <div className="banner-item">Lo mejor para tu rutina de belleza</div>
-    <div className="banner-item">Sorpréndete con nuestros lanzamientos</div>
-    <div className="banner-item">Encuentra tu color perfecto</div>
-  </div>
-</div>
-
-{/* Sección Quizás te puedan interesar */}
-<section className="mt-5">
-  <h2 className="mb-4">Quizás te puedan interesar:</h2>
-
-  {loading ? (
-    <div className="carousel-container">
-      <div className="carousel-items">
-        {[1, 2, 3, 4, 5, 6].map((skeleton) => (
-          <div className="product-card" key={skeleton}>
-            <div className="image-container">
-              <Skeleton variant="rectangular" width={"100%"} height={200} />
-            </div>
-            <Skeleton variant="text" width={150} height={30} />
-            <Skeleton variant="text" width={80} height={20} />
-            <div className="actions">
-              <Skeleton variant="rectangular" width={120} height={36} />
-              <Skeleton variant="circular" width={36} height={36} />
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  ) : products.length > 0 ? (
-    <div className="carousel-container">
-      <div className="carousel-items" ref={interesRef}>
-        {products.slice(0, 9).map((prod) => (
-          <div className="product-card" key={prod.id} style={{ position: "relative" }}>
-            <IconButton
-              onClick={() => toggleFavorite(prod.id)}
-              sx={{
-                position: "absolute",
-                top: 8,
-                right: 8,
-                bgcolor: "white",
-                "&:hover": { bgcolor: "grey.200" },
+            <button
+              className="carousel-btn next"
+              onClick={() => {
+                document.querySelector(".carousel-items")
+                  .scrollBy({ left: 300, behavior: "smooth" });
               }}
             >
-              {favoriteIds.includes(prod.id) ? (
-                <Favorite sx={{ color: "white" }} />
-              ) : (
-                <FavoriteBorder />
-              )}
-            </IconButton>
+              ❯
+            </button>
+          </div>
+        ) : (
+          <p>{t('home.noProducts')}</p>
+        )}
+      </section>
 
-            <Link
-              to={`/${lang}/producto/${prod.slug}`}
-              style={{ textDecoration: "none", color: "inherit" }}
-            >
-              <div className="image-container">
-                <img
-                  src={prod.imagen_url || noImage}
-                  alt={prod.nombre_producto}
-                  onError={(e) => { e.currentTarget.src = noImage; }}
-                />
-              </div>
-              <h5>{prod.nombre_producto}</h5>
-              <p>{formatCOP(prod.precio_producto)}</p>
-            </Link>
+      {/* Banner */}
+      <div>
+        <img
+          src={bannerNovedades} 
+          alt={t('home.newsBannerAlt')}
+          style={{
+            width: "100%",
+            height: "350px",
+            objectFit: "cover"
+          }}
+        />
+      </div>
 
-            <div className="actions">
-              <button onClick={() => addToCart(prod.id)}>Añadir al carrito</button>
+      {/* Banner delgado en movimiento */}
+      <div className="banner-ticker">
+        <div className="banner-track">
+          {[
+            t('home.bannerText1'),
+            t('home.bannerText2'),
+            t('home.bannerText3'),
+            t('home.bannerText4'),
+            t('home.bannerText5'),
+            t('home.bannerText6'),
+            t('home.bannerText7'),
+            t('home.bannerText8')
+          ].concat([
+            t('home.bannerText1'),
+            t('home.bannerText2'),
+            t('home.bannerText3'),
+            t('home.bannerText4'),
+            t('home.bannerText5'),
+            t('home.bannerText6'),
+            t('home.bannerText7'),
+            t('home.bannerText8')
+          ]).map((text, index) => (
+            <div className="banner-item" key={index}>
+              {text}
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Sección Quizás te puedan interesar */}
+      <section className="mt-5">
+        <h2 className="mb-4">{t('home.mayInterestYou')}</h2>
+
+        {loading ? (
+          <div className="carousel-container">
+            <div className="carousel-items">
+              {[1, 2, 3, 4, 5, 6].map((skeleton) => (
+                <div className="product-card" key={skeleton}>
+                  <div className="image-container">
+                    <Skeleton variant="rectangular" width={"100%"} height={200} />
+                  </div>
+                  <Skeleton variant="text" width={150} height={30} />
+                  <Skeleton variant="text" width={80} height={20} />
+                  <div className="actions">
+                    <Skeleton variant="rectangular" width={120} height={36} />
+                    <Skeleton variant="circular" width={36} height={36} />
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
-        ))}
-      </div>
-    </div>
-  ) : (
-    <p>No hay productos disponibles.</p>
-  )}
-</section>
+        ) : products.length > 0 ? (
+          <div className="carousel-container">
+            <div className="carousel-items" ref={interesRef}>
+              {products.slice(0, 9).map((prod) => (
+                <div className="product-card" key={prod.id} style={{ position: "relative" }}>
+                  <IconButton
+                    onClick={() => toggleFavorite(prod.id)}
+                    sx={{
+                      position: "absolute",
+                      top: 8,
+                      right: 8,
+                      bgcolor: "white",
+                      "&:hover": { bgcolor: "grey.200" },
+                    }}
+                  >
+                    {favoriteIds.includes(prod.id) ? (
+                      <Favorite sx={{ color: "white" }} />
+                    ) : (
+                      <FavoriteBorder />
+                    )}
+                  </IconButton>
 
+                  <Link
+                    to={`/${lang}/producto/${prod.slug}`}
+                    style={{ textDecoration: "none", color: "inherit" }}
+                  >
+                    <div className="image-container">
+                      <img
+                        src={prod.imagen_url || noImage}
+                        alt={prod.nombre_producto}
+                        onError={(e) => { e.currentTarget.src = noImage; }}
+                      />
+                    </div>
+                    <h5>{prod.nombre_producto}</h5>
+                    <p>{formatCOP(prod.precio_producto)}</p>
+                  </Link>
 
-{/* Banner rotativo */}
-<RotatingBanner />
+                  <div className="actions">
+                    <button onClick={() => addToCart(prod.id)}>
+                      {t('home.addToCart')}
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        ) : (
+          <p>{t('home.noProducts')}</p>
+        )}
+      </section>
+
+      {/* Banner rotativo */}
+      <RotatingBanner />
     </div>
   );
 }
