@@ -250,6 +250,20 @@
     "noProducts": "No hay productos disponibles.",
     "allProducts": "Todos los productos",
     "addToCart": "Añadir al carrito"
+  },
+  "productDetails": {
+    "notAuthenticated": "No está autenticado",
+    "favoritesError": "Error cargando favoritos",
+    "cartError": "Error cargando carrito",
+    "loading": "Cargando producto...",
+    "addedToCart": "Producto añadido al carrito 🛒",
+    "error": "Error: ",
+    "cartAddError": "Error añadiendo producto al carrito",
+    "removeFavoriteError": "Error quitando favorito",
+    "addFavoriteError": "Error añadiendo favorito",
+    "price": "Precio",
+    "category": "Categoría",
+    "addToCart": "Añadir al carrito"
   }
   }
 

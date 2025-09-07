@@ -249,6 +249,20 @@
     "noProducts": "No products available.",
     "allProducts": "All products",
     "addToCart": "Add to cart"
+  },
+   "productDetails": {
+    "notAuthenticated": "You are not authenticated",
+    "favoritesError": "Error loading favorites",
+    "cartError": "Error loading cart",
+    "loading": "Loading product...",
+    "addedToCart": "Product added to cart 🛒",
+    "error": "Error: ",
+    "cartAddError": "Error adding product to cart",
+    "removeFavoriteError": "Error removing favorite",
+    "addFavoriteError": "Error adding favorite",
+    "price": "Price",
+    "category": "Category",
+    "addToCart": "Add to cart"
   }
   }
 
