@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import user_icon from "../assets/images/user_default.png";
 
 export default function Perfil() {
@@ -12,17 +13,17 @@ export default function Perfil() {
     direccion: "",
   });
 
+  const { t } = useTranslation();
+
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token) return;
 
     fetch("https://localhost:4000/api/v1/me", {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
+      headers: { Authorization: `Bearer ${token}` },
     })
       .then((res) => {
-        if (!res.ok) throw new Error("Error al cargar perfil");
+        if (!res.ok) throw new Error(t("profile.loadError"));
         return res.json();
       })
       .then((data) => {
@@ -36,13 +37,10 @@ export default function Perfil() {
         });
       })
       .catch((err) => console.error(err));
-  }, []);
+  }, [t]);
 
   const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   const handleSave = () => {
@@ -57,7 +55,7 @@ export default function Perfil() {
       body: JSON.stringify(formData),
     })
       .then((res) => {
-        if (!res.ok) throw new Error("Error al actualizar perfil");
+        if (!res.ok) throw new Error(t("profile.updateError"));
         return res.json();
       })
       .then((updatedUser) => {
@@ -68,25 +66,21 @@ export default function Perfil() {
   };
 
   if (!user) {
-    return <p className="text-center mt-5">Cargando perfil...</p>;
+    return <p className="text-center mt-5">{t("profile.loading")}</p>;
   }
 
   return (
     <div className="d-flex justify-content-center align-items-center">
       <div
         className="shadow-lg rounded-4 p-4"
-        style={{
-          maxWidth: "800px",
-          width: "100%",
-          backgroundColor: "#fff",
-        }}
+        style={{ maxWidth: "800px", width: "100%", backgroundColor: "#fff" }}
       >
         <div className="row align-items-center g-4">
           {/* Columna izquierda - Avatar */}
           <div className="col-md-4 text-center">
             <img
               src={user_icon}
-              alt="Foto de perfil"
+              alt={t("profile.avatarAlt")}
               className="rounded-3 img-fluid"
               style={{
                 width: "220px",
@@ -102,17 +96,17 @@ export default function Perfil() {
             {!editMode ? (
               <>
                 <p>
-                  <strong>Nombre:</strong> {user.nombre}
+                  <strong>{t("profile.name")}:</strong> {user.nombre}
                 </p>
                 <p>
-                  <strong>Apellido:</strong> {user.apellido}
+                  <strong>{t("profile.lastname")}:</strong> {user.apellido}
                 </p>
                 <p>
-                  <strong>Teléfono:</strong>{" "}
-                  {user.telefono || "No registrado"}
+                  <strong>{t("profile.phone")}:</strong>{" "}
+                  {user.telefono || t("profile.notRegistered")}
                 </p>
                 <p>
-                  <strong>Email:</strong> {user.email}
+                  <strong>{t("profile.email")}:</strong> {user.email}
                 </p>
 
                 <div className="mt-4">
@@ -125,7 +119,7 @@ export default function Perfil() {
                     }}
                     onClick={() => setEditMode(true)}
                   >
-                    Editar Perfil
+                    {t("profile.edit")}
                   </button>
                   <button
                     className="btn btn-outline-danger ms-2 px-4 py-2"
@@ -134,14 +128,14 @@ export default function Perfil() {
                       window.location.href = "/login";
                     }}
                   >
-                    Cerrar Sesión
+                    {t("profile.logout")}
                   </button>
                 </div>
               </>
             ) : (
               <>
                 <div className="mb-2">
-                  <label className="form-label">Nombre</label>
+                  <label className="form-label">{t("profile.name")}</label>
                   <input
                     type="text"
                     name="nombre"
@@ -151,7 +145,7 @@ export default function Perfil() {
                   />
                 </div>
                 <div className="mb-2">
-                  <label className="form-label">Apellido</label>
+                  <label className="form-label">{t("profile.lastname")}</label>
                   <input
                     type="text"
                     name="apellido"
@@ -161,7 +155,7 @@ export default function Perfil() {
                   />
                 </div>
                 <div className="mb-2">
-                  <label className="form-label">Email</label>
+                  <label className="form-label">{t("profile.email")}</label>
                   <input
                     type="email"
                     name="email"
@@ -171,7 +165,7 @@ export default function Perfil() {
                   />
                 </div>
                 <div className="mb-2">
-                  <label className="form-label">Teléfono</label>
+                  <label className="form-label">{t("profile.phone")}</label>
                   <input
                     type="text"
                     name="telefono"
@@ -181,7 +175,7 @@ export default function Perfil() {
                   />
                 </div>
                 <div className="mb-2">
-                  <label className="form-label">Dirección</label>
+                  <label className="form-label">{t("profile.address")}</label>
                   <input
                     type="text"
                     name="direccion"
@@ -201,13 +195,13 @@ export default function Perfil() {
                     }}
                     onClick={handleSave}
                   >
-                    Guardar
+                    {t("profile.save")}
                   </button>
                   <button
                     className="btn btn-secondary px-4 py-2"
                     onClick={() => setEditMode(false)}
                   >
-                    Cancelar
+                    {t("profile.cancel")}
                   </button>
                 </div>
               </>

@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import logo from '../assets/images/ale_logo.jpg';
 import { BsHeart, BsCart4 } from "react-icons/bs";
 import { IoPersonCircleSharp } from "react-icons/io5";
@@ -82,6 +83,7 @@ export default function Header() {
   const [categories, setCategories] = useState([]);
   const [showCategories, setShowCategories] = useState(false);
   const { lang } = useParams();
+  const { t } = useTranslation();
 
   const [anchorEl, setAnchorEl] = useState(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = useState(null);
@@ -220,16 +222,16 @@ export default function Header() {
       onClose={() => setAnchorEl(null)}
     >
       <MenuItem onClick={() => { navigate(`/${lang}/perfil`); setAnchorEl(null); }}>
-        Perfil
+        {t('header.profile')}
       </MenuItem>
       <MenuItem onClick={() => { navigate(`/${lang}/pedidos`); setAnchorEl(null); }}>
-        Mis Pedidos
+        {t('header.myOrders')}
       </MenuItem>
 
       <MenuItem onClick={() => { navigate(`/${lang}/direcciones`); setAnchorEl(null); }}>
-        Mis direcciones
+        {t('header.myAddresses')}
       </MenuItem>
-      <MenuItem onClick={handleLogout}>Cerrar sesión</MenuItem>
+      <MenuItem onClick={handleLogout}>{t('header.logout')}</MenuItem>
     </Menu>
   );
 
@@ -241,15 +243,15 @@ export default function Header() {
     >
       <MenuItem onClick={(e) => setAnchorEl(e.currentTarget)}>
         <IoPersonCircleSharp size={25} />
-        <p style={{ marginLeft: 10 }}>Perfil</p>
+        <p style={{ marginLeft: 10 }}>{t('header.profile')}</p>
       </MenuItem>
       <MenuItem component={Link} to={`/${lang}/carrito`}>
         <BsCart4 size={22} />
-        <p style={{ marginLeft: 10 }}>Carrito</p>
+        <p style={{ marginLeft: 10 }}>{t('header.cart')}</p>
       </MenuItem>
       <MenuItem onClick={() => setOpenModal(true)}>
         <BsHeart size={20} />
-        <p style={{ marginLeft: 10 }}>Favoritos</p>
+        <p style={{ marginLeft: 10 }}>{t('header.favorites')}</p>
       </MenuItem>
     </Menu>
   );
@@ -282,7 +284,7 @@ export default function Header() {
                 '&:hover': { color: pinkTheme.primary }
               }}
             >
-              INICIO
+              {t('header.home')}
             </Typography>
             <Typography 
               component={Link} 
@@ -296,7 +298,7 @@ export default function Header() {
                 '&:hover': { color: pinkTheme.primary }
               }}
             >
-              PRODUCTOS
+              {t('header.products')}
             </Typography>
             
             {/* Enlace de categorías con menú desplegable */}
@@ -317,7 +319,7 @@ export default function Header() {
                   '&:hover': { color: pinkTheme.primary }
                 }}
               >
-                CATEGORÍAS
+                {t('header.categories')}
               </Typography>
               
               {/* Menú desplegable de categorías - SOLO TUS CATEGORÍAS */}
@@ -347,7 +349,7 @@ export default function Header() {
                       textAlign: 'center'
                     }}
                   >
-                    Todas las Categorías
+                    {t('header.allCategories')}
                   </Typography>
 
                   <Box sx={{ 
@@ -371,7 +373,7 @@ export default function Header() {
                       gap: '8px',
                     }}>
                       {categories.map((category) => {
-                        const name = category?.nombre_categoria || category?.name || 'Sin nombre';
+                        const name = category?.nombre_categoria || category?.name || t('header.noName');
                         return (
                           <Box
                             key={category.id || category.slug || name}
@@ -418,7 +420,7 @@ export default function Header() {
             <Search>
               <SearchIconWrapper><SearchIcon /></SearchIconWrapper>
               <StyledInputBase
-                placeholder="Buscar…"
+                placeholder={t('header.searchPlaceholder')}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
@@ -442,7 +444,7 @@ export default function Header() {
                   p: 2,
                 }}
               >
-                {loading && <Box sx={{ p: 1 }}>Buscando...</Box>}
+                {loading && <Box sx={{ p: 1 }}>{t('header.searching')}</Box>}
 
                 {!loading && results.length > 0 && (
                   <>
@@ -458,7 +460,7 @@ export default function Header() {
                       }}
                     >
                       {results.map((prod) => {
-                        const name = prod?.nombre_producto || prod?.name || 'Sin nombre';
+                        const name = prod?.nombre_producto || prod?.name || t('header.noName');
                         const img = prod?.imagen_url || prod?.image || null;
                         const price = prod?.precio_producto || prod?.price || null;
                         return (
@@ -503,7 +505,7 @@ export default function Header() {
                       }}
                     >
                       {results.map((prod) => {
-                        const name = prod?.nombre_producto || prod?.name || 'Sin nombre';
+                        const name = prod?.nombre_producto || prod?.name || t('header.noName');
                         const img = prod?.imagen_url || prod?.image || null;
                         const price = prod?.precio_producto || prod?.price || null;
                         return (

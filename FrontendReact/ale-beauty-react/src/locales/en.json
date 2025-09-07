@@ -1,5 +1,134 @@
 {
   "welcome": "Welcome to the store",
-  "login": "Log In",
-  "register": "Register"
-}
+  "register": "Register",
+  "cart": {
+    "title": "Your shopping cart",
+    "empty": "You have no products in the cart.",
+    "set": "Set",
+    "remove": "Remove",
+    "summary": "Purchase summary",
+    "products": "Products",
+    "subtotal": "Subtotal",
+    "shipping": "Shipping",
+    "total": "Total",
+    "buy": "Buy",
+    "orderError": "Could not create the order",
+    "updatingError": "Error updating cart"
+  },
+  "categoryProducts": {
+    "notAuth": "Not authenticated",
+    "loading": "Loading products...",
+    "retry": "Retry",
+    "errorLoad": "Could not load products",
+    "defaultCategory": "Category",
+    "noProducts": "No products in this category",
+    "soon": "We will add new products soon",
+    "addToCart": "Add to cart",
+    "addedToCart": "Product added to cart"
+  },
+   "checkout": {
+    "title": "Checkout",
+    "cardPayment": "Card Payment",
+    "notAuthenticated": "You are not authenticated",
+    "noRedirect": "Payment processed, but no redirect URL was received.",
+    "errorLoadingAddress": "Error loading address",
+    "loadingAddress": "Loading address...",
+    "shippingAddressTitle": "My shipping address",
+    "neighborhood": "Neighborhood",
+     "noPaymentFound": "No payment information found",
+        "noPublicKey": "Public key not found in environment variables"
+  },
+  "common": {
+    "cancel": "Cancel"
+  },
+  "address": {
+    "neighborhood": "Neighborhood",
+    "noNeighborhood": "No neighborhood",
+    "edit": "Edit"
+  },
+  "favorites": {
+    "myFavorites": "My Favorites",
+    "noFavorites": "You don't have favorite products.",
+    "addToCart": "Add to cart",
+    "addAllToCart": "Add all to cart",
+    "clearAll": "Clear favorites",
+    "addedToCart": "Product added to cart",
+    "allAddedToCart": "All products were added to cart ✅",
+    "someNotAdded": "Some products could not be added.",
+    "noProducts": "You don't have products in favorites.",
+    "cleared": "Favorites list cleared ✅",
+    "error": "Error: ",
+    "cartError": "Error adding product to cart",
+    "allCartError": "Error adding all products to cart",
+    "loadError": "Error loading favorites",
+    "removeError": "Error removing favorite",
+    "clearError": "Error clearing favorites list",
+    "remove": "Remove from favorites",
+    "inStock": "in stock",
+    "fewLeft": "few left",
+    "lastUnits": "last units",
+    "soldOut": "sold out"
+  },
+   "footer": {
+    "information": {
+      "title": "Information",
+      "about": "About us",
+      "terms": "Terms and conditions",
+      "privacy": "Privacy policy"
+    },
+    "contact": {
+      "title": "Contact"
+    },
+    "followUs": {
+      "title": "Follow us"
+    },
+    "rights": "Cosmetics Store - All rights reserved"
+  },
+    "header": {
+    "home": "HOME",
+    "products": "PRODUCTS",
+    "categories": "CATEGORIES",
+    "allCategories": "All Categories",
+    "searchPlaceholder": "Search…",
+    "searching": "Searching...",
+    "profile": "Profile",
+    "myOrders": "My Orders",
+    "myAddresses": "My Addresses",
+    "logout": "Logout",
+    "cart": "Cart",
+    "favorites": "Favorites",
+    "noName": "No name"
+  },
+  "login": {
+     "login": "Log In",
+    "welcome": "Welcome!",
+    "emailPlaceholder": "youremail@gmail.com",
+    "passwordPlaceholder": "password",
+    "signIn": "Sign in",
+    "noAccount": "Don’t have an account?",
+    "register": "Register",
+    "terms1": "You acknowledge that you have read, and agree to, our",
+    "termsOfService": "Terms of Service",
+    "and": "and",
+    "privacyPolicy": "Privacy Policy"
+  },
+  "profile": {
+    "loading": "Loading profile...",
+    "loadError": "Error loading profile",
+    "updateError": "Error updating profile",
+    "avatarAlt": "Profile picture",
+    "name": "First Name",
+    "lastname": "Last Name",
+    "phone": "Phone",
+    "email": "Email",
+    "address": "Address",
+    "notRegistered": "Not registered",
+    "edit": "Edit Profile",
+    "logout": "Log Out",
+    "save": "Save",
+    "cancel": "Cancel"
+  }
+  }
+
+
+

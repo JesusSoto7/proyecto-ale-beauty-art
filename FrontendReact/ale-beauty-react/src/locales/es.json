@@ -1,7 +1,140 @@
 {
   "welcome": "Bienvenido a la tienda",
-  "login": "Iniciar sesión",
   "register": "Registrarse",
   "details": "Detalles",
-  "overview": "Perspectiva General"
-}
+  "overview": "Perspectiva General",
+  "cart": {
+    "title": "Tu carrito de compras",
+    "empty": "No tienes productos en el carrito.",
+    "set": "Set",
+    "remove": "Eliminar",
+    "summary": "Resumen de compra",
+    "products": "Productos",
+    "subtotal": "Sub Total",
+    "shipping": "Envío",
+    "total": "Total",
+    "buy": "Comprar",
+    "orderError": "No se pudo crear la orden",
+    "updatingError": "Error actualizando carrito"
+  },
+  "categoryProducts": {
+    "notAuth": "No autenticado",
+    "loading": "Cargando productos...",
+    "retry": "Reintentar",
+    "errorLoad": "No se pudieron cargar los productos",
+    "defaultCategory": "Categoría",
+    "noProducts": "No hay productos en esta categoría",
+    "soon": "Pronto agregaremos nuevos productos",
+    "addToCart": "Añadir al carrito",
+    "addedToCart": "Producto añadido al carrito"
+  },
+  "checkout": {
+    "title": "Finalizar compra",
+    "cardPayment": "Pago con tarjeta",
+    "notAuthenticated": "No está autenticado",
+    "noRedirect": "Pago procesado, pero no se recibió URL de redirección.",
+    "errorLoadingAddress": "Error al cargar la dirección",
+    "loadingAddress": "Cargando dirección...",
+    "shippingAddressTitle": "Mi dirección de envío",
+    "neighborhood": "Barrio",
+    "noPaymentFound": "No se encontró información del pago",
+    "noPublicKey": "No se encontró la clave pública en las variables de entorno"
+ 
+  },
+  "common": {
+    "cancel": "Cancelar"
+  },
+  "address": {
+    "neighborhood": "Barrio",
+    "noNeighborhood": "Sin barrio",
+    "edit": "Editar"
+  },
+   "favorites": {
+    "myFavorites": "Mis Favoritos",
+    "noFavorites": "No tienes productos favoritos.",
+    "addToCart": "Añadir al carrito",
+    "addAllToCart": "Añadir todo al carrito",
+    "clearAll": "Vaciar favoritos",
+    "addedToCart": "Producto añadido al carrito",
+    "allAddedToCart": "Todos los productos fueron añadidos al carrito ✅",
+    "someNotAdded": "Algunos productos no se pudieron añadir.",
+    "noProducts": "No tienes productos en favoritos.",
+    "cleared": "Lista de favoritos vaciada ✅",
+    "error": "Error: ",
+    "cartError": "Error añadiendo producto al carrito",
+    "allCartError": "Error añadiendo todos los productos al carrito",
+    "loadError": "Error cargando favoritos",
+    "removeError": "Error eliminando favorito",
+    "clearError": "Error al vaciar la lista de favoritos",
+    "remove": "Eliminar de favoritos",
+    "inStock": "en stock",
+    "fewLeft": "quedan pocas",
+    "lastUnits": "últimas unidades",
+    "soldOut": "agotado"
+  },
+   "footer": {
+    "information": {
+      "title": "Información",
+      "about": "Sobre nosotros",
+      "terms": "Términos y condiciones",
+      "privacy": "Política de privacidad"
+    },
+    "contact": {
+      "title": "Contacto"
+    },
+    "followUs": {
+      "title": "Síguenos"
+    },
+    "rights": "Tienda de Cosméticos - Todos los derechos reservados"
+  },
+ "header": {
+    "home": "INICIO",
+    "products": "PRODUCTOS",
+    "categories": "CATEGORÍAS",
+    "allCategories": "Todas las Categorías",
+    "searchPlaceholder": "Buscar…",
+    "searching": "Buscando...",
+    "profile": "Perfil",
+    "myOrders": "Mis Pedidos",
+    "myAddresses": "Mis direcciones",
+    "logout": "Cerrar sesión",
+    "cart": "Carrito",
+    "favorites": "Favoritos",
+    "noName": "Sin nombre"
+  },
+  "login": {
+    "login": "Iniciar sesión",
+    "welcome": "¡Bienvenido!",
+    "emailPlaceholder": "tucorreo@gmail.com",
+    "passwordPlaceholder": "contraseña",
+    "signIn": "Iniciar sesión",
+    "noAccount": "¿No tienes una cuenta?",
+    "register": "Regístrate",
+    "terms1": "Al continuar confirmas que aceptas nuestros",
+    "termsOfService": "Términos de Servicio",
+    "and": "y",
+    "privacyPolicy": "Política de Privacidad"
+  },
+  "profile": {
+    "loading": "Cargando perfil...",
+    "loadError": "Error al cargar perfil",
+    "updateError": "Error al actualizar perfil",
+    "avatarAlt": "Foto de perfil",
+    "name": "Nombre",
+    "lastname": "Apellido",
+    "phone": "Teléfono",
+    "email": "Email",
+    "address": "Dirección",
+    "notRegistered": "No registrado",
+    "edit": "Editar Perfil",
+    "logout": "Cerrar Sesión",
+    "save": "Guardar",
+    "cancel": "Cancelar"
+  }
+  }
+
+
+
+
+
+
