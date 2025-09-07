@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useTranslation } from 'react-i18next';
 import banner1 from "../../assets/images/banner1.jpg";
 import banner2 from "../../assets/images/banner2.jpg";
 import banner3 from "../../assets/images/banner3.jpg";
@@ -7,6 +8,7 @@ import "../../assets/stylesheets/RotatingBanner.css";
 export default function RotatingBanner() {
   const banners = [banner1, banner2, banner3];
   const [index, setIndex] = useState(0);
+  const { t } = useTranslation();
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -21,11 +23,10 @@ export default function RotatingBanner() {
         <img
           key={i}
           src={banner}
-          alt={`Banner ${i + 1}`}
+          alt={t('rotatingBanner.altText', { number: i + 1 })}
           className={`banner-image ${i === index ? "active" : ""}`}
         />
       ))}
     </div>
   );
 }
-

@@ -1,23 +1,25 @@
-// src/pages/inicio/Pedidos.jsx
 import { useEffect, useState } from "react";
+import { useTranslation } from 'react-i18next';
 import { formatCOP } from "../../services/currency";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 function Pedidos() {
   const [orders, setOrders] = useState([]);
   const [token, setToken] = useState(null);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+  const { lang } = useParams();
+  const { t } = useTranslation();
 
   useEffect(() => {
     const savedToken = localStorage.getItem("token");
     if (savedToken) {
       setToken(savedToken);
     } else {
-      alert("No estás autenticado");
+      alert(t('orders.notAuthenticated'));
       setLoading(false);
     }
-  }, []);
+  }, [t]);
 
   useEffect(() => {
     if (!token) return;
@@ -26,13 +28,13 @@ function Pedidos() {
     })
       .then((res) => res.json())
       .then((data) => setOrders(data))
-      .catch((err) => console.error("Error cargando pedidos:", err))
+      .catch((err) => console.error(t('orders.loadError'), err))
       .finally(() => setLoading(false));
-  }, [token]);
+  }, [token, t]);
 
   const formatDate = (dateString) => {
     const date = new Date(dateString);
-    return date.toLocaleDateString("es-CO", {
+    return date.toLocaleDateString(lang === 'en' ? "en-US" : "es-CO", {
       day: "2-digit",
       month: "2-digit",
       year: "numeric",
@@ -41,13 +43,15 @@ function Pedidos() {
 
   return (
     <div className="p-4 max-w-4xl mx-auto">
-      <h2 className="text-xl font-semibold mb-4 text-pink-600">Mis Pedidos</h2>
+      <h2 className="text-xl font-semibold mb-4 text-pink-600">
+        {t('orders.myOrders')}
+      </h2>
 
       {loading ? (
-        <p className="text-gray-500">Cargando pedidos...</p>
+        <p className="text-gray-500">{t('orders.loading')}</p>
       ) : orders.length === 0 ? (
         <div className="text-center py-10">
-          <p className="text-gray-400">No tienes pedidos pagados todavía.</p>
+          <p className="text-gray-400">{t('orders.noOrders')}</p>
         </div>
       ) : (
         <div className="grid gap-4 md:grid-cols-2">
@@ -57,25 +61,37 @@ function Pedidos() {
               className="border border-gray-200 rounded-lg p-4 shadow-sm hover:shadow-md transition-shadow bg-white"
             >
               <div className="flex justify-between items-center mb-2 text-sm">
-                <span className="font-medium text-gray-700">N° de Orden:</span>
-                <span className="font-semibold text-gray-900">{order.numero_de_orden}</span>
+                <span className="font-medium text-gray-700">
+                  {t('orders.orderNumber')}:
+                </span>
+                <span className="font-semibold text-gray-900">
+                  {order.numero_de_orden}
+                </span>
               </div>
 
               <div className="flex justify-between items-center mb-2 text-sm">
-                <span className="font-medium text-gray-700">Total:</span>
-                <span className="font-semibold text-pink-600">{formatCOP(order.pago_total)}</span>
+                <span className="font-medium text-gray-700">
+                  {t('orders.total')}:
+                </span>
+                <span className="font-semibold text-pink-600">
+                  {formatCOP(order.pago_total)}
+                </span>
               </div>
 
               <div className="flex justify-between items-center mb-2 text-sm">
-                <span className="font-medium text-gray-700">Fecha de pago:</span>
-                <span className="text-gray-500">{formatDate(order.fecha_pago)}</span>
+                <span className="font-medium text-gray-700">
+                  {t('orders.paymentDate')}:
+                </span>
+                <span className="text-gray-500">
+                  {formatDate(order.fecha_pago)}
+                </span>
               </div>
 
               <button
-                onClick={() => navigate(`/es/pedidos/${order.id}`)}
+                onClick={() => navigate(`/${lang}/pedidos/${order.id}`)}
                 className="mt-2 w-full bg-pink-600 text-white text-sm py-1.5 rounded hover:bg-pink-700 transition-colors"
               >
-                Ver Detalles
+                {t('orders.viewDetails')}
               </button>
             </div>
           ))}
@@ -86,4 +102,3 @@ function Pedidos() {
 }
 
 export default Pedidos;
-

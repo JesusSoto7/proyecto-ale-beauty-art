@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 export default function CheckoutPago() {
   const publicKey = import.meta.env.VITE_MERCADOPAGO_PUBLIC_KEY;
@@ -8,18 +9,18 @@ export default function CheckoutPago() {
   const [token, setToken] = useState(null);
   const { orderId, total } = location.state || {};
   const { lang } = useParams();
+  const { t } = useTranslation();
 
   useEffect(() => {
     const savedToken = localStorage.getItem("token");
     if (savedToken) setToken(savedToken);
-    else alert("No está autenticado");
+    else alert(t("checkout.notAuthenticated"));
   }, []); // solo se ejecuta al montar
 
   useEffect(() => {
     if (!token || !publicKey) return;
 
     const initBrick = async () => {
-      // Cargar SDK si no está
       if (!window.MercadoPago) {
         const script = document.createElement("script");
         script.src = "https://sdk.mercadopago.com/js/v2";
@@ -32,7 +33,10 @@ export default function CheckoutPago() {
 
       const settings = {
         initialization: { amount: Number(total), payer: { email: "" } },
-        customization: { visual: { style: { theme: "default" } }, paymentMethods: { maxInstallments: 1 } },
+        customization: { 
+          visual: { style: { theme: "default" } }, 
+          paymentMethods: { maxInstallments: 1 } 
+        },
         callbacks: {
           onReady: () => console.log("Brick listo"),
           onSubmit: async (cardFormData) => {
@@ -48,7 +52,6 @@ export default function CheckoutPago() {
                   transaction_amount: Number(total),
                   order_id: orderId,
                   lang: lang,
-
                 }),
               });
               const data = await res.json();
@@ -56,19 +59,17 @@ export default function CheckoutPago() {
               if (data.redirect_url) {
                 window.location.href = data.redirect_url;
               } else {
-                alert("Pago procesado, pero no se recibió URL de redirección.");
+                alert(t("checkout.noRedirect"));
               }
-
             } catch (err) {
               console.error("Error al procesar el pago:", err);
-              throw err
+              throw err;
             }
           },
           onError: (err) => console.error("Error en el Brick:", err),
         },
       };
 
-      // Crear el Brick solo si el contenedor existe
       if (document.getElementById("cardPaymentBrick_container")) {
         window.paymentBrickController = await bricksBuilder.create(
           "cardPayment",
@@ -83,11 +84,11 @@ export default function CheckoutPago() {
     return () => {
       window.paymentBrickController?.destroy();
     };
-  }, [token, publicKey, orderId, total, navigate, lang]);
+  }, [token, publicKey, orderId, total, navigate, lang, t]);
 
   return (
     <div>
-      <h2>Pago con tarjeta</h2>
+      <h2>{t("checkout.cardPayment")}</h2>
       <div id="cardPaymentBrick_container" />
     </div>
   );

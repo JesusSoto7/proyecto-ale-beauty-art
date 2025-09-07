@@ -1,12 +1,12 @@
 import { useEffect } from "react";
 import { useLocation, useParams } from "react-router-dom";
-
+import { useTranslation } from "react-i18next";
 
 export default function CheckoutSuccess() {
   const publicKey = import.meta.env.VITE_MERCADOPAGO_PUBLIC_KEY;
   const location = useLocation();
-  const { paymentId } = useParams();
-  const { lang } = useParams();
+  const { paymentId, lang } = useParams();
+  const { t } = useTranslation();
 
   useEffect(() => {
     if (!publicKey || !paymentId) return;
@@ -15,39 +15,40 @@ export default function CheckoutSuccess() {
       locale: "es-CO",
     });
 
-
     const bricksBuilder = mp.bricks();
     const renderStatusScreenBrick = async () => {
       const settings = {
         initialization: {
-          paymentId: String(paymentId),  // Payment identifier, from which the status will be checked
+          paymentId: String(paymentId),
         },
         customization: {
           visual: {
             hideStatusDetails: true,
             hideTransactionDate: true,
             style: {
-              theme: 'default', // 'default' | 'dark' | 'bootstrap' | 'flat'
+              theme: "default",
               successColor: "pink",
-              outlineSecondaryColor: "pink"
+              outlineSecondaryColor: "pink",
             },
           },
           backUrls: {
-            'error': 'https://localhost:3000/inicio',
-            'return': `https://localhost:3000/${lang}/inicio`
-          }
+            error: "https://localhost:3000/inicio",
+            return: `https://localhost:3000/${lang}/inicio`,
+          },
         },
         callbacks: {
-          onReady: () => {
-            // Callback called when Brick is ready
-          },
+          onReady: () => {},
           onError: (error) => {
-            // Callback called for all Brick error cases
+            console.error("Error en statusScreen:", error);
           },
         },
       };
 
-      await bricksBuilder.create('statusScreen', 'statusScreenBrick_container', settings);
+      window.statusScreenBrickController = await bricksBuilder.create(
+        "statusScreen",
+        "statusScreenBrick_container",
+        settings
+      );
     };
 
     setTimeout(renderStatusScreenBrick, 0);
@@ -57,11 +58,12 @@ export default function CheckoutSuccess() {
         window.statusScreenBrickController.destroy();
       }
     };
+  }, [publicKey, paymentId, lang]);
 
-  }, [publicKey, paymentId]);
   if (!paymentId) {
-    return <p>No se encontró información del pago</p>;
+    return <p>{t("checkout.noPaymentFound")}</p>;
   }
+
   return (
     <div>
       <div id="statusScreenBrick_container"></div>

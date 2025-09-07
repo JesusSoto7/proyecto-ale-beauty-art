@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { useTranslation } from 'react-i18next';
 import {
   TextField,
   MenuItem,
@@ -12,9 +13,10 @@ import {
   InputLabel,
 } from "@mui/material";
 
-function ShippingAddressForm({ onSuccess, initialData , variant = "default"}) {
+function ShippingAddressForm({ onSuccess, initialData, variant = "default" }) {
   const navigate = useNavigate();
   const { lang } = useParams();
+  const { t } = useTranslation();
   const [token, setToken] = useState(null);
 
   const isEditing = !!initialData;
@@ -39,8 +41,8 @@ function ShippingAddressForm({ onSuccess, initialData , variant = "default"}) {
   useEffect(() => {
     const savedToken = localStorage.getItem("token");
     if (savedToken) setToken(savedToken);
-    else alert("No estás autenticado");
-  }, []);
+    else alert(t('shippingAddressForm.notAuthenticated'));
+  }, [t]);
 
   // Cargar departamentos
   useEffect(() => {
@@ -105,7 +107,7 @@ function ShippingAddressForm({ onSuccess, initialData , variant = "default"}) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!token) return alert("No hay token válido para enviar la solicitud.");
+    if (!token) return alert(t('shippingAddressForm.noToken'));
 
     const { department_id, municipality_id, ...addressToSend } = form;
 
@@ -128,18 +130,18 @@ function ShippingAddressForm({ onSuccess, initialData , variant = "default"}) {
           ? res.json()
           : res.json().then((data) => {
               throw new Error(
-                data.error || data.errors?.join(", ") || "Error desconocido"
+                data.error || data.errors?.join(", ") || t('shippingAddressForm.unknownError')
               );
             })
       )
       .then((data) => {
-        alert(isEditing ? "Dirección actualizada con éxito" : "Dirección creada con éxito");
+        alert(isEditing ? t('shippingAddressForm.updateSuccess') : t('shippingAddressForm.createSuccess'));
         if (onSuccess) onSuccess(data, isEditing);
         else navigate(`/${lang}/direcciones`);
       })
       .catch((err) => {
         alert(
-          `Error al ${isEditing ? "actualizar" : "crear"} dirección: ${err.message}`
+          `${t('shippingAddressForm.errorPrefix')} ${isEditing ? t('shippingAddressForm.updating') : t('shippingAddressForm.creating')}: ${err.message}`
         );
         console.error(err);
       });
@@ -168,16 +170,16 @@ function ShippingAddressForm({ onSuccess, initialData , variant = "default"}) {
     },
   };
 
-    const containerStyles = {
-      default: {
-        mt: 10,
-        px: 2,
-      },
-      checkout: {
-        mt: 2,
-        px: 0,
-      },
-    };
+  const containerStyles = {
+    default: {
+      mt: 10,
+      px: 2,
+    },
+    checkout: {
+      mt: 2,
+      px: 0,
+    },
+  };
 
   const paperStyles = {
     default: {
@@ -191,7 +193,7 @@ function ShippingAddressForm({ onSuccess, initialData , variant = "default"}) {
       p: 3,
       width: "100%",
       borderRadius: 2,
-      background: "transparent", // sin tarjeta en checkout
+      background: "transparent",
       boxShadow: "none",
     },
   };
@@ -234,6 +236,13 @@ function ShippingAddressForm({ onSuccess, initialData , variant = "default"}) {
     },
   };
 
+  const formFields = [
+    { name: "nombre", label: t('shippingAddressForm.firstName') },
+    { name: "apellido", label: t('shippingAddressForm.lastName') },
+    { name: "telefono", label: t('shippingAddressForm.phone') },
+    { name: "direccion", label: t('shippingAddressForm.address') },
+    { name: "codigo_postal", label: t('shippingAddressForm.postalCode') },
+  ];
 
   return (
     <Box display="flex" justifyContent="center" sx={containerStyles[variant]}>
@@ -244,18 +253,11 @@ function ShippingAddressForm({ onSuccess, initialData , variant = "default"}) {
           gutterBottom
           sx={titleStyles[variant]}
         >
-          {isEditing ? "Editar dirección de envío" : "Nueva dirección de envío"}
+          {isEditing ? t('shippingAddressForm.editTitle') : t('shippingAddressForm.newTitle')}
         </Typography>
 
-
         <form onSubmit={handleSubmit}>
-          {[
-            { name: "nombre", label: "Nombre" },
-            { name: "apellido", label: "Apellido" },
-            { name: "telefono", label: "Teléfono" },
-            { name: "direccion", label: "Dirección" },
-            { name: "codigo_postal", label: "Código Postal" },
-          ].map((field) => (
+          {formFields.map((field) => (
             <TextField
               key={field.name}
               name={field.name}
@@ -270,7 +272,7 @@ function ShippingAddressForm({ onSuccess, initialData , variant = "default"}) {
           ))}
 
           <FormControl fullWidth margin="normal" sx={inputStyles}>
-            <InputLabel>Departamento</InputLabel>
+            <InputLabel>{t('shippingAddressForm.department')}</InputLabel>
             <Select
               name="department_id"
               value={form.department_id}
@@ -286,7 +288,7 @@ function ShippingAddressForm({ onSuccess, initialData , variant = "default"}) {
           </FormControl>
 
           <FormControl fullWidth margin="normal" sx={inputStyles}>
-            <InputLabel>Municipio</InputLabel>
+            <InputLabel>{t('shippingAddressForm.municipality')}</InputLabel>
             <Select
               name="municipality_id"
               value={form.municipality_id}
@@ -303,7 +305,7 @@ function ShippingAddressForm({ onSuccess, initialData , variant = "default"}) {
           </FormControl>
 
           <FormControl fullWidth margin="normal" sx={inputStyles}>
-            <InputLabel>Barrio</InputLabel>
+            <InputLabel>{t('shippingAddressForm.neighborhood')}</InputLabel>
             <Select
               name="neighborhood_id"
               value={form.neighborhood_id}
@@ -321,7 +323,7 @@ function ShippingAddressForm({ onSuccess, initialData , variant = "default"}) {
 
           <TextField
             name="indicaciones_adicionales"
-            label="Indicaciones adicionales"
+            label={t('shippingAddressForm.additionalInstructions')}
             fullWidth
             margin="normal"
             multiline
@@ -332,13 +334,13 @@ function ShippingAddressForm({ onSuccess, initialData , variant = "default"}) {
           />
 
           <Button
-          type="submit"
-          fullWidth
-          variant="contained"
-          sx={buttonStyles[variant]}
-        >
-          Guardar dirección
-        </Button>
+            type="submit"
+            fullWidth
+            variant="contained"
+            sx={buttonStyles[variant]}
+          >
+            {t('shippingAddressForm.saveButton')}
+          </Button>
         </form>
       </Paper>
     </Box>

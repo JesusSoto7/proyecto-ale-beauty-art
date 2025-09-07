@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
+import { useTranslation } from 'react-i18next';
 import { formatCOP } from "../../services/currency";
 import "../../assets/stylesheets/DetallePedido.css";
 import noImage from "../../assets/images/no_image.png";
@@ -9,11 +10,12 @@ function DetallePedido() {
   const [pedido, setPedido] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const { t } = useTranslation();
 
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token) {
-      setError("No autenticado");
+      setError(t('orderDetail.notAuthenticated'));
       setLoading(false);
       return;
     }
@@ -22,22 +24,22 @@ function DetallePedido() {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then((res) => {
-        if (!res.ok) throw new Error(`Error ${res.status}`);
+        if (!res.ok) throw new Error(`${t('orderDetail.error')} ${res.status}`);
         return res.json();
       })
       .then((data) => {
         setPedido(data.order ? data.order : data);
       })
       .catch((err) => {
-        console.error("Error cargando detalle:", err);
-        setError("No se pudo cargar el detalle del pedido.");
+        console.error(t('orderDetail.loadError'), err);
+        setError(t('orderDetail.loadFailed'));
       })
       .finally(() => setLoading(false));
-  }, [id]);
+  }, [id, t]);
 
-  if (loading) return <p className="text-gray-500">Cargando detalle...</p>;
+  if (loading) return <p className="text-gray-500">{t('orderDetail.loading')}</p>;
   if (error) return <p className="text-red-500">{error}</p>;
-  if (!pedido) return <p className="text-red-500">No se encontró el pedido.</p>;
+  if (!pedido) return <p className="text-red-500">{t('orderDetail.notFound')}</p>;
 
   // Calcular totales
   const subTotal = (pedido.productos || []).reduce((acc, p) => {
@@ -46,12 +48,12 @@ function DetallePedido() {
     return acc + cantidad * precio;
   }, 0);
 
-  const envio = pedido.envio || 10000; //Valor fijo por el momento
+  const envio = pedido.envio || 10000;
   const total = subTotal + envio;
 
   const formatDate = (dateString) => {
     if (!dateString) return "—";
-    return new Date(dateString).toLocaleDateString("es-CO", {
+    return new Date(dateString).toLocaleDateString(lang === 'en' ? "en-US" : "es-CO", {
       day: "2-digit",
       month: "2-digit",
       year: "numeric",
@@ -60,14 +62,14 @@ function DetallePedido() {
 
   return (
     <div className="detalle-container">
-      <h2 className="detalle-title">Detalles del Pedido</h2>
+      <h2 className="detalle-title">{t('orderDetail.title')}</h2>
 
       <div className="detalle-header">
         <p>
-          <strong>N° de Orden:</strong> {pedido.numero_de_orden ?? pedido.id}
+          <strong>{t('orderDetail.orderNumber')}:</strong> {pedido.numero_de_orden ?? pedido.id}
         </p>
         <p>
-          <strong>Fecha de pago:</strong> {formatDate(pedido.fecha_pago)}
+          <strong>{t('orderDetail.paymentDate')}:</strong> {formatDate(pedido.fecha_pago)}
         </p>
       </div>
 
@@ -76,7 +78,7 @@ function DetallePedido() {
         {(pedido.productos || []).map((p) => {
           const cantidad = p.cantidad;
           const precio = p.precio_unitario || p.precio_producto;
-          const nombre = p.nombre_producto || (p.product?.nombre_producto ?? "Producto");
+          const nombre = p.nombre_producto || (p.product?.nombre_producto ?? t('orderDetail.product'));
           const imagen = p.imagen_url || (p.product?.imagen_url ?? noImage);
           const slug = p.slug || p.product?.slug; 
 
@@ -95,7 +97,7 @@ function DetallePedido() {
               />
               <div className="detalle-info">
                 <span className="detalle-nombre">{nombre}</span>
-                <span>Cant: {cantidad}</span>
+                <span>{t('orderDetail.quantity')}: {cantidad}</span>
                 <span className="detalle-subtotal">
                   {formatCOP(precio * cantidad)}
                 </span>
@@ -110,13 +112,13 @@ function DetallePedido() {
       {/* Totales */}
       <div className="detalle-totales">
         <p>
-          <strong>Sub Total:</strong> {formatCOP(subTotal)}
+          <strong>{t('orderDetail.subtotal')}:</strong> {formatCOP(subTotal)}
         </p>
         <p>
-          <strong>Envío:</strong> {formatCOP(envio)}
+          <strong>{t('orderDetail.shipping')}:</strong> {formatCOP(envio)}
         </p>
         <h3 className="detalle-total" style={{ color: "#d95d85" }}>
-          <strong>Total:</strong> {formatCOP(total)}
+          <strong>{t('orderDetail.total')}:</strong> {formatCOP(total)}
         </h3>
       </div>
     </div>
@@ -124,12 +126,3 @@ function DetallePedido() {
 }
 
 export default DetallePedido;
-
-
-
-
-
-
-
-
-

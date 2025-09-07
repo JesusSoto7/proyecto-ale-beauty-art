@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import { useTranslation } from 'react-i18next';
 import IconButton from "@mui/joy/IconButton";
 import FavoriteBorder from "@mui/icons-material/FavoriteBorder";
 import Favorite from "@mui/icons-material/Favorite";
@@ -11,12 +12,13 @@ function ProductDetails() {
   const [product, setProduct] = useState(null);
   const [token] = useState(localStorage.getItem("token"));
   const [cart, setCart] = useState(null);
-  const [isFavorite, setIsFavorite] = useState(false); // nuevo estado
+  const [isFavorite, setIsFavorite] = useState(false);
+  const { t } = useTranslation();
 
   // Cargar producto + carrito + favoritos
   useEffect(() => {
     if (!token) {
-      alert("No está autenticado");
+      alert(t('productDetails.notAuthenticated'));
       return;
     }
 
@@ -38,7 +40,7 @@ function ProductDetails() {
             setIsFavorite(isFav);
           })
           .catch((err) =>
-            console.error("Error cargando favoritos:", err)
+            console.error(t('productDetails.favoritesError'), err)
           );
       })
       .catch((err) => console.error(err));
@@ -50,11 +52,11 @@ function ProductDetails() {
       .then((res) => res.json())
       .then((data) => setCart(data.cart))
       .catch((err) =>
-        console.error("Error cargando carrito:", err)
+        console.error(t('productDetails.cartError'), err)
       );
-  }, [slug, token]);
+  }, [slug, token, t]);
 
-  if (!product) return <p>Cargando producto...</p>;
+  if (!product) return <p>{t('productDetails.loading')}</p>;
 
   // --- funciones de acciones ---
   const addToCart = (productId) => {
@@ -70,14 +72,14 @@ function ProductDetails() {
       .then((data) => {
         if (data.cart) {
           setCart(data.cart);
-          alert("Producto añadido al carrito 🛒");
+          alert(t('productDetails.addedToCart'));
         } else if (data.errors) {
-          alert("Error: " + data.errors.join(", "));
+          alert(t('productDetails.error') + data.errors.join(", "));
         }
       })
       .catch((err) => {
-        console.error("Error añadiendo producto al carrito: ", err);
-        alert("Error añadiendo producto al carrito");
+        console.error(t('productDetails.cartAddError'), err);
+        alert(t('productDetails.cartAddError'));
       });
   };
 
@@ -97,7 +99,7 @@ function ProductDetails() {
           setIsFavorite(false);
         }
       } catch (err) {
-        console.error("Error quitando favorito:", err);
+        console.error(t('productDetails.removeFavoriteError'), err);
       }
     } else {
       // ❤️ añadir favorito
@@ -115,7 +117,7 @@ function ProductDetails() {
           setIsFavorite(true);
         }
       } catch (err) {
-        console.error("Error añadiendo favorito:", err);
+        console.error(t('productDetails.addFavoriteError'), err);
       }
     }
   };
@@ -136,13 +138,13 @@ function ProductDetails() {
         <div className="product-info">
           <h2>{product.nombre_producto}</h2>
           <p>{product.descripcion}</p>
-          <p className="price">Precio: {formatCOP(product.precio_producto)}</p>
-          <p>Categoría: {product.categoria_nombre}</p>
+          <p className="price">{t('productDetails.price')}: {formatCOP(product.precio_producto)}</p>
+          <p>{t('productDetails.category')}: {product.categoria_nombre}</p>
 
           {/* botones de acción */}
           <div className="actions">
             <button onClick={() => addToCart(product.id)}>
-              Añadir al carrito
+              {t('productDetails.addToCart')}
             </button>
             <IconButton onClick={() => toggleFavorite(product.id)}>
               {isFavorite ? (

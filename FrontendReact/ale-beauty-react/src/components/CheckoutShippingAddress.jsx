@@ -2,21 +2,23 @@ import { useState, useEffect } from "react";
 import ShippingAddressForm from "./ShippingAddressForm";
 import EditIcon from "@mui/icons-material/Edit";
 import { Button } from "@mui/material";
+import { useTranslation } from "react-i18next";
 
 function CheckoutShippingAddress({ onAddressSelected }) {
   const [token, setToken] = useState(null);
   const [address, setAddress] = useState(null);
   const [loading, setLoading] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
+  const { t } = useTranslation();
 
   useEffect(() => {
     const savedToken = localStorage.getItem("token");
     if (savedToken) {
       setToken(savedToken);
     } else {
-      alert("No está autenticado");
+      alert(t("checkout.notAuthenticated"));
     }
-  }, []);
+  }, [t]);
 
   useEffect(() => {
     if (!token) return;
@@ -27,7 +29,7 @@ function CheckoutShippingAddress({ onAddressSelected }) {
       .then((res) => {
         if (!res.ok) {
           if (res.status === 404) return null;
-          throw new Error(`Error al cargar la dirección: ${res.status}`);
+          throw new Error(`${t("checkout.errorLoadingAddress")}: ${res.status}`);
         }
         return res.json();
       })
@@ -41,13 +43,13 @@ function CheckoutShippingAddress({ onAddressSelected }) {
         setLoading(false);
         onAddressSelected(false);
       });
-  }, [token, onAddressSelected]);
+  }, [token, onAddressSelected, t]);
 
-  if (loading) return <p>Cargando dirección...</p>;
+  if (loading) return <p>{t("checkout.loadingAddress")}</p>;
 
   return (
     <div>
-      <h2>Mi dirección de envío</h2>
+      <h2>{t("checkout.shippingAddressTitle")}</h2>
 
       {address && !isEditing ? (
         <div className="address-info">
@@ -56,7 +58,8 @@ function CheckoutShippingAddress({ onAddressSelected }) {
               {address.nombre} {address.apellido}
             </strong>
             <br />
-            {address.direccion} — Barrio: {address.neighborhood?.nombre}
+            {address.direccion} — {t("checkout.neighborhood")}:{" "}
+            {address.neighborhood?.nombre}
             <br />
           </div>
 
@@ -92,10 +95,9 @@ function CheckoutShippingAddress({ onAddressSelected }) {
                 setIsEditing(false);
                 onAddressSelected(!!address);
               }}
-              variant="checkout"
               color="secondary"
             >
-              Cancelar
+              {t("common.cancel")}
             </Button>
           )}
         </div>

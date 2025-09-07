@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslation } from 'react-i18next';
 import {
   Stepper,
   Step,
@@ -11,11 +12,15 @@ import {
 import CheckoutShippingAddress from "../../components/CheckoutShippingAddress";
 import CheckoutPago from "../../components/CheckoutPago";
 
-const steps = ["Dirección de envío", "Pago"];
-
 export default function Checkout() {
   const [activeStep, setActiveStep] = useState(0);
-  const [hasAddress, setHasAddress] = useState(false); // 👈 guardar si hay dirección
+  const [hasAddress, setHasAddress] = useState(false);
+  const { t } = useTranslation();
+
+  const steps = [
+    t('checkout.shippingAddressStep'),
+    t('checkout.paymentStep')
+  ];
 
   const handleNext = () => setActiveStep((prev) => prev + 1);
   const handleBack = () => setActiveStep((prev) => prev - 1);
@@ -50,7 +55,7 @@ export default function Checkout() {
             color: "#d63384",
           }}
         >
-          Checkout
+          {t('checkout.title')}
         </Typography>
 
         {/* Stepper */}
@@ -112,7 +117,7 @@ export default function Checkout() {
                 },
               }}
             >
-              Atrás
+              {t('checkout.backButton')}
             </Button>
           )}
 
@@ -126,7 +131,7 @@ export default function Checkout() {
                 "&:hover": { bgcolor: "#d63384" },
               }}
             >
-              Continuar
+              {t('checkout.continueButton')}
             </Button>
           )}
         </Box>

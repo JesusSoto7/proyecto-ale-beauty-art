@@ -1,7 +1,9 @@
-import { useState, useEffect } from "react";
-import { Edit2 } from "lucide-react"; // <-- ícono bonito opcional
+import { Edit2 } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 export default function DireccionCard({ address, onEdit }) {
+  const { t } = useTranslation();
+
   if (!address) return null;
 
   return (
@@ -12,15 +14,15 @@ export default function DireccionCard({ address, onEdit }) {
         </p>
         <p style={styles.text}>{address.direccion}</p>
         <p style={styles.text}>
-          <span style={styles.label}>Barrio:</span>{" "}
-          {address.neighborhood?.nombre || "Sin barrio"}
+          <span style={styles.label}>{t("address.neighborhood")}:</span>{" "}
+          {address.neighborhood?.nombre || t("address.noNeighborhood")}
         </p>
       </div>
 
       <div style={styles.actions}>
         <button style={styles.button} onClick={onEdit}>
           <Edit2 size={16} style={{ marginRight: "6px" }} />
-          Editar
+          {t("address.edit")}
         </button>
       </div>
     </div>

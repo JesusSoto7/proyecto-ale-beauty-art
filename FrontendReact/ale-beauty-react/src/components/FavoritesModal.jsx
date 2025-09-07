@@ -1,4 +1,3 @@
-// src/components/FavoritesModal.jsx
 import React, { useState, useEffect } from "react";
 import Modal from "@mui/joy/Modal";
 import ModalDialog from "@mui/joy/ModalDialog";
@@ -11,15 +10,16 @@ import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import ClearAllIcon from "@mui/icons-material/ClearAll";
 import Skeleton from "@mui/joy/Skeleton";
 import { Link } from "react-router-dom";
+import { useTranslation } from 'react-i18next';
 import Not_found from "../assets/images/Not_found.png";
 import { formatCOP } from "../services/currency";
 import noImage from "../assets/images/no_image.png";
 
-
 export default function FavoritesModal({ open, onClose }) {
   const [favorites, setFavorites] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [clearing, setClearing] = useState(false); // Estado para la animación de borrado masivo
+  const [clearing, setClearing] = useState(false);
+  const { t } = useTranslation();
 
   const token = localStorage.getItem("token");
 
@@ -41,20 +41,20 @@ export default function FavoritesModal({ open, onClose }) {
       .then((res) => res.json())
       .then((data) => {
         if (data.cart) {
-          alert("Producto añadido al carrito");
+          alert(t('favorites.addedToCart'));
         } else if (data.errors) {
-          alert("Error: " + data.errors.join(", "));
+          alert(t('favorites.error') + data.errors.join(", "));
         }
       })
       .catch((err) => {
-        console.error("Error añadiendo producto al carrito: ", err);
-        alert("Error añadiendo producto al carrito");
+        console.error(t('favorites.cartError'), err);
+        alert(t('favorites.cartError'));
       });
   };
 
   const addAllToCart = () => {
     if (favorites.length === 0) {
-      alert("No tienes productos en favoritos.");
+      alert(t('favorites.noProducts'));
       return;
     }
 
@@ -73,14 +73,14 @@ export default function FavoritesModal({ open, onClose }) {
       .then((results) => {
         const errors = results.filter((r) => r.errors);
         if (errors.length > 0) {
-          alert("Algunos productos no se pudieron añadir.");
+          alert(t('favorites.someNotAdded'));
         } else {
-          alert("Todos los productos fueron añadidos al carrito ✅");
+          alert(t('favorites.allAddedToCart'));
         }
       })
       .catch((err) => {
-        console.error("Error añadiendo todos al carrito: ", err);
-        alert("Error añadiendo todos los productos al carrito");
+        console.error(t('favorites.allCartError'), err);
+        alert(t('favorites.allCartError'));
       });
   };
 
@@ -97,7 +97,7 @@ export default function FavoritesModal({ open, onClose }) {
         setFavorites(data.map(p => ({ ...p, isRemoving: false })));
       }
     } catch (err) {
-      console.error("Error cargando favoritos", err);
+      console.error(t('favorites.loadError'), err);
     } finally {
       setLoading(false);
     }
@@ -108,12 +108,10 @@ export default function FavoritesModal({ open, onClose }) {
       const productToRemove = favorites.find((p) => p.id === id);
       if (!productToRemove) return;
 
-      // Inicia la animación de borrado
       setFavorites((prev) =>
         prev.map((p) => (p.id === id ? { ...p, isRemoving: true } : p))
       );
 
-      // Espera a que la animación termine (300ms)
       await new Promise((resolve) => setTimeout(resolve, 300));
 
       const res = await fetch(`https://localhost:4000/api/v1/favorites/${id}`, {
@@ -126,25 +124,23 @@ export default function FavoritesModal({ open, onClose }) {
       if (res.ok) {
         setFavorites((prev) => prev.filter((p) => p.id !== id));
       } else {
-        // Si la eliminación falla, revierte la animación
         setFavorites((prev) =>
           prev.map((p) => (p.id === id ? { ...p, isRemoving: false } : p))
         );
       }
     } catch (err) {
-      console.error("Error eliminando favorito", err);
+      console.error(t('favorites.removeError'), err);
     }
   }
 
   const clearFavorites = async () => {
     if (favorites.length === 0) {
-      alert("No tienes productos en favoritos.");
+      alert(t('favorites.noProducts'));
       return;
     }
 
     setClearing(true);
 
-    // Animación de borrado secuencial
     await new Promise((resolve) => {
       favorites.forEach((product, index) => {
         setTimeout(() => {
@@ -154,7 +150,7 @@ export default function FavoritesModal({ open, onClose }) {
           if (index === favorites.length - 1) {
             resolve();
           }
-        }, index * 100); // Retraso de 100ms entre cada animación
+        }, index * 100);
       });
     });
 
@@ -170,10 +166,10 @@ export default function FavoritesModal({ open, onClose }) {
         )
       );
       setFavorites([]);
-      alert("Lista de favoritos vaciada ✅");
+      alert(t('favorites.cleared'));
     } catch (err) {
-      console.error("Error vaciando favoritos", err);
-      alert("Error al vaciar la lista de favoritos");
+      console.error(t('favorites.clearError'), err);
+      alert(t('favorites.clearError'));
     } finally {
       setClearing(false);
     }
@@ -184,7 +180,7 @@ export default function FavoritesModal({ open, onClose }) {
       <ModalDialog className="modal" size="lg" sx={{ borderRadius: "16px" }}>
         <ModalClose />
         <Typography level="h4" sx={{ mb: 2 }}>
-          Mis Favoritos
+          {t('favorites.myFavorites')}
         </Typography>
 
         <Box id="ModalList">
@@ -216,8 +212,8 @@ export default function FavoritesModal({ open, onClose }) {
             </Box>
           ) : favorites.length === 0 ? (
             <Box className="vacio">
-              <img src={Not_found} />
-              <Typography>No tienes productos favoritos.</Typography>
+              <img src={Not_found} alt={t('favorites.noFavorites')} />
+              <Typography>{t('favorites.noFavorites')}</Typography>
             </Box>
           ) : (
             <Box sx={{ display: "grid", gap: 2 }}>
@@ -239,6 +235,7 @@ export default function FavoritesModal({ open, onClose }) {
                   <div
                     className="borrarFav"
                     onClick={() => removeFavorite(product.id)}
+                    title={t('favorites.remove')}
                   >
                     <DeleteIcon />
                   </div>
@@ -264,7 +261,6 @@ export default function FavoritesModal({ open, onClose }) {
                       }}
                     >
 
-                      {/* Imagen */}
                       <img
                         src={product.imagen_url || noImage}
                         alt={product.nombre_producto}
@@ -277,7 +273,6 @@ export default function FavoritesModal({ open, onClose }) {
                         }}
                       />
 
-                      {/* Nombre + categoría */}
                       <Box sx={{ flex: 2 }}>
                         <Typography level="body1" sx={{ fontWeight: "bold" }}>
                           {product.nombre_producto}
@@ -287,45 +282,39 @@ export default function FavoritesModal({ open, onClose }) {
                         </Typography>
                       </Box>
 
-                      {/* Precio */}
                       <Box sx={{ flex: 1 }}>
                         <Typography level="body2" sx={{ fontWeight: "bold" }}>
                           {formatCOP(product.precio_producto)}
                         </Typography>
                       </Box>
 
-                      {/* Fecha ejemplo (si quieres mostrarla) */}
                       <Box sx={{ flex: 1 }}>
                         <Typography level="body2" color="neutral">
-                          {/* 20/09/2025 */}
                           {product.fecha_agregado}
                         </Typography>
                       </Box>
 
-                      {/* Stock */}
                       <Box sx={{ flex: 1 }}>
                         {product.stock > 9 ? (
                           <Typography sx={{ fontWeight: "bold", color: "green" }}>
-                            en stock
+                            {t('favorites.inStock')}
                           </Typography>
                         ) : product.stock > 5 ? (
                           <Typography sx={{ fontWeight: "bold", color: "orange" }}>
-                            quedan pocas
+                            {t('favorites.fewLeft')}
                           </Typography>
                         ) : product.stock > 0 ? (
                           <Typography sx={{ fontWeight: "bold", color: "#ff5405ff" }}>
-                            últimas unidades
+                            {t('favorites.lastUnits')}
                           </Typography>
                         ) : (
                           <Typography sx={{ fontWeight: "bold", color: "red" }}>
-                            agotado
+                            {t('favorites.soldOut')}
                           </Typography>
                         )}
                       </Box>
 
                     </Box>
-
-
                   </Link>
 
                   <Button
@@ -336,7 +325,7 @@ export default function FavoritesModal({ open, onClose }) {
                     onClick={() => addToCart(product.id)}
                     sx={{ marginRight: 4 }}
                   >
-                    Añadir al carrito
+                    {t('favorites.addToCart')}
                   </Button>
                 </Box>
               ))}
@@ -353,7 +342,7 @@ export default function FavoritesModal({ open, onClose }) {
             startDecorator={<ClearAllIcon />}
             disabled={loading || clearing || favorites.length === 0}
           >
-            Vaciar favoritos
+            {t('favorites.clearAll')}
           </Button>
           <Button
             className="colorButon"
@@ -364,7 +353,7 @@ export default function FavoritesModal({ open, onClose }) {
             startDecorator={<ShoppingCartIcon />}
             disabled={loading || clearing || favorites.length === 0}
           >
-            Añadir todo al carrito
+            {t('favorites.addAllToCart')}
           </Button>
         </Box>
       </ModalDialog>

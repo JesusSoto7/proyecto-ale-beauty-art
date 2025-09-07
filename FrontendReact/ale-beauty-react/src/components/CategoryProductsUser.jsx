@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, Link, useNavigate } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import {
   Container,
   CircularProgress,
@@ -11,16 +11,16 @@ import {
 import IconButton from '@mui/joy/IconButton';
 import FavoriteBorder from '@mui/icons-material/FavoriteBorder';
 import Favorite from "@mui/icons-material/Favorite";
-import ArrowBack from '@mui/icons-material/ArrowBack';
+import { useTranslation } from "react-i18next";
 import { formatCOP } from '../services/currency';
 import '../assets/stylesheets/ProductosCliente.css';
 
 // Estilos para el tema rosa
 const pinkTheme = {
-  primary: '#e91e63', // Rosa principal
-  secondary: '#f8bbd0', // Rosa claro
-  dark: '#ad1457', // Rosa oscuro
-  light: '#fce4ec' // Rosa muy claro
+  primary: '#e91e63',
+  secondary: '#f8bbd0',
+  dark: '#ad1457',
+  light: '#fce4ec'
 };
 
 export default function CategoryProducts() {
@@ -31,7 +31,13 @@ export default function CategoryProducts() {
   const [error, setError] = useState(null);
   const [token, setToken] = useState(null);
   const [favoriteIds, setFavoriteIds] = useState([]);
-  const navigate = useNavigate();
+  const { t, i18n } = useTranslation();
+
+  useEffect(() => {
+    if (lang) {
+      i18n.changeLanguage(lang);
+    }
+  }, [lang, i18n]);
 
   // Obtener token
   useEffect(() => {
@@ -50,7 +56,6 @@ export default function CategoryProducts() {
       setLoading(true);
       setError(null);
       
-      // Obtener información de la categoría
       const categoryRes = await fetch(`https://localhost:4000/api/v1/categories/${categoryId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -60,7 +65,6 @@ export default function CategoryProducts() {
         setCategory(categoryData);
       }
       
-      // Obtener productos de esta categoría
       const productsRes = await fetch(`https://localhost:4000/api/v1/categories/${categoryId}/products`, {
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -69,7 +73,7 @@ export default function CategoryProducts() {
         const productsData = await productsRes.json();
         setProducts(Array.isArray(productsData) ? productsData : []);
       } else {
-        throw new Error('No se pudieron cargar los productos');
+        throw new Error(t("categoryProducts.errorLoad"));
       }
     } catch (error) {
       console.error('Error fetching category products:', error);
@@ -79,7 +83,6 @@ export default function CategoryProducts() {
     }
   }
 
-  // Cargar favoritos
   const loadFavorites = async () => {
     try {
       const res = await fetch('https://localhost:4000/api/v1/favorites', {
@@ -93,7 +96,6 @@ export default function CategoryProducts() {
     }
   };
 
-  // Añadir al carrito
   const addToCart = (productId) => {
     fetch('https://localhost:4000/api/v1/cart/add_product', {
       method: 'POST',
@@ -106,7 +108,7 @@ export default function CategoryProducts() {
       .then(res => res.json())
       .then(data => {
         if (data.cart) {
-          alert('Producto añadido al carrito');
+          alert(t("categoryProducts.addedToCart"));
         } else if (data.errors) {
           console.warn('Error: ' + data.errors.join(", "));
         }
@@ -116,7 +118,6 @@ export default function CategoryProducts() {
       });
   };
 
-  // Añadir / quitar de favoritos
   const toggleFavorite = async (productId) => {
     if (favoriteIds.includes(productId)) {
       try {
@@ -153,7 +154,7 @@ export default function CategoryProducts() {
   if (!token) {
     return (
       <Container sx={{ py: 4, textAlign: 'center' }}>
-        <Typography variant="h6">No autenticado</Typography>
+        <Typography variant="h6">{t("categoryProducts.notAuth")}</Typography>
       </Container>
     );
   }
@@ -164,7 +165,7 @@ export default function CategoryProducts() {
         <Box sx={{ textAlign: 'center' }}>
           <CircularProgress size={60} thickness={4} sx={{ color: pinkTheme.primary }} />
           <Typography variant="h6" sx={{ mt: 2, color: pinkTheme.primary }}>
-            Cargando productos...
+            {t("categoryProducts.loading")}
           </Typography>
         </Box>
       </Container>
@@ -177,16 +178,10 @@ export default function CategoryProducts() {
         <Alert severity="error" sx={{ width: '100%' }}>
           {error}
           <Button 
-            sx={{ 
-              ml: 2, 
-              color: pinkTheme.primary,
-              '&:hover': {
-                backgroundColor: pinkTheme.light
-              }
-            }} 
+            sx={{ ml: 2, color: pinkTheme.primary, '&:hover': { backgroundColor: pinkTheme.light } }} 
             onClick={fetchCategoryProducts}
           >
-            Reintentar
+            {t("categoryProducts.retry")}
           </Button>
         </Alert>
       </Container>
@@ -195,41 +190,23 @@ export default function CategoryProducts() {
 
   return (
     <Container maxWidth="xl" sx={{ py: 4 }}>
-      {/* Solo botón de volver */}
       <Box sx={{ mb: 4 }}>
-        {/* Solo título de la categoría */}
         <Typography 
           variant="h3" 
           component="h1" 
-          sx={{ 
-            fontWeight: 'bold',
-            color: pinkTheme.primary,
-            fontSize: { xs: '2rem', md: '2.5rem' },
-            textAlign: 'center',
-            mb: 4
-          }}
+          sx={{ fontWeight: 'bold', color: pinkTheme.primary, fontSize: { xs: '2rem', md: '2.5rem' }, textAlign: 'center', mb: 4 }}
         >
-          {category?.nombre_categoria || category?.name || 'Categoría'}
+          {category?.nombre_categoria || category?.name || t("categoryProducts.defaultCategory")}
         </Typography>
       </Box>
 
       {products.length === 0 ? (
-        <Box sx={{ 
-          textAlign: 'center', 
-          py: 8,
-          backgroundColor: pinkTheme.light,
-          borderRadius: 2,
-          minHeight: '300px',
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center'
-        }}>
+        <Box sx={{ textAlign: 'center', py: 8, backgroundColor: pinkTheme.light, borderRadius: 2, minHeight: '300px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
           <Typography variant="h5" color={pinkTheme.dark} gutterBottom>
-            No hay productos en esta categoría
+            {t("categoryProducts.noProducts")}
           </Typography>
           <Typography variant="body1" color={pinkTheme.dark} sx={{ mb: 3 }}>
-            Pronto agregaremos nuevos productos
+            {t("categoryProducts.soon")}
           </Typography>
         </Box>
       ) : (
@@ -237,17 +214,9 @@ export default function CategoryProducts() {
           <div className="productos-grid">
             {products.map((prod) => (
               <div className="product-card" key={prod.id} style={{ position: "relative" }}>
-                {/* Botón de favoritos */}
                 <IconButton
                   onClick={() => toggleFavorite(prod.id)}
-                  sx={{
-                    position: "absolute",
-                    top: 8,
-                    right: 8,
-                    bgcolor: "white",
-                    "&:hover": { bgcolor: "grey.200" },
-                    zIndex: 10
-                  }}
+                  sx={{ position: "absolute", top: 8, right: 8, bgcolor: "white", "&:hover": { bgcolor: "grey.200" }, zIndex: 10 }}
                 >
                   {favoriteIds.includes(prod.id) ? (
                     <Favorite sx={{ color: pinkTheme.primary }} />
@@ -256,17 +225,12 @@ export default function CategoryProducts() {
                   )}
                 </IconButton>
 
-                <Link
-                  to={`/${lang}/producto/${prod.slug || prod.id}`}
-                  style={{ textDecoration: "none", color: "inherit" }}
-                >
+                <Link to={`/${lang}/producto/${prod.slug || prod.id}`} style={{ textDecoration: "none", color: "inherit" }}>
                   <div className="image-container">
                     <img 
                       src={prod.imagen_url || prod.image} 
                       alt={prod.nombre_producto || prod.name} 
-                      onError={(e) => {
-                        e.target.src = 'https://via.placeholder.com/300x300?text=Imagen+no+disponible';
-                      }}
+                      onError={(e) => { e.target.src = 'https://via.placeholder.com/300x300?text=Imagen+no+disponible'; }}
                     />
                   </div>
                   <h5>{prod.nombre_producto || prod.name}</h5>
@@ -278,16 +242,9 @@ export default function CategoryProducts() {
                 <div className="actions">
                   <button 
                     onClick={() => addToCart(prod.id)}
-                    style={{
-                      backgroundColor: pinkTheme.primary,
-                      color: 'white',
-                      border: 'none',
-                      '&:hover': {
-                        backgroundColor: pinkTheme.dark
-                      }
-                    }}
+                    style={{ backgroundColor: pinkTheme.primary, color: 'white', border: 'none' }}
                   >
-                    Añadir al carrito
+                    {t("categoryProducts.addToCart")}
                   </button>
                 </div>
               </div>
