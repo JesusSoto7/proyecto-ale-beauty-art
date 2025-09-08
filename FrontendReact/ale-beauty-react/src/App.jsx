@@ -17,7 +17,7 @@ import ProductosCliente from "./pages/ProductosCliente/productosCliente";
 import CheckoutLayout from './components/CheckoutLayout';
 import Checkout from './pages/inicio/Checkout';
 import CheckoutSuccess from './components/CheckoutSuccess';
-import Perfil from './components/Perfil'
+import Perfil from './components/perfil'
 import CategoryProducts from "./pages/home/CategoryProducts";
 import CategoryProductsUser from './components/CategoryProductsUser';
 
@@ -63,12 +63,12 @@ function App() {
         <Route
           path="/"
           element={
-            <Navigate
-              to={`/${(navigator.language || "es").startsWith("es") ? "es" : "en"}/login`}
-              replace
-            />
+            !!localStorage.getItem('token') 
+              ? <Navigate to={`/${(navigator.language || "es").startsWith("es") ? "es" : "en"}/inicio`} replace />
+              : <Navigate to={`/${(navigator.language || "es").startsWith("es") ? "es" : "en"}/login`} replace />
           }
         />
+
 
 
         {/* Rutas con idioma */}
