@@ -1,0 +1,118 @@
+.pedido-card {
+    display: flex;
+    justify-content: space-between;
+    justify-self: center;
+    align-items: baseline;
+    position: relative;
+    width: 100%;
+    max-width: 900px;
+    border: 1px solid #e5e7eb;
+    margin-bottom: 10px;
+    border-radius: 8px;
+    padding: 16px;
+    background: #fff;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+    transition: box-shadow 0.3s;
+    overflow: hidden;
+}
+
+
+.pedido-card:hover {
+  box-shadow: 0 6px 16px rgba(0,0,0,0.12);
+}
+
+.pedido-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(
+    circle at 90% 50%, /* luz en el lado derecho */
+    rgba(255, 200, 80, 0.25) 0%,
+    rgba(255, 80, 180, 0.12) 25%,
+    rgba(120, 100, 255, 0.08) 40%,
+    transparent 60%
+  );
+  filter: blur(36px);
+  opacity: var(--glow, 0); /* controlado por el botón */
+  transition: opacity 0.4s ease;
+}
+
+
+.pedido-card:hover::before {
+  opacity: 1;
+}
+
+
+.pedido-card:hover::before {
+  opacity: 1;
+}
+
+/* ---- textos y filas ---- */
+.pedido-row {
+  display: flex;
+  justify-content: space-between;
+  align-self: center;
+  margin-bottom: 8px;
+  font-size: 14px;
+  gap: 5px;
+}
+
+.label {
+  font-weight: 500;
+  font-size: large;
+  margin-top: 10px;
+  color: #374151;
+}
+
+.value {
+  font-weight: 600;
+  margin-top: 10px;
+  font-size: large;
+  color: #111827;
+}
+
+.value.pink {
+  color: #ff86b2a3;
+}
+
+.value.muted {
+  color: #6b7280;
+}
+
+/* ---- botón ---- */
+.pedido-btn {
+  width: 10%;
+  padding: 8px 12px;
+  font-size: 14px;
+  border: none;
+  border-radius: 6px;
+  background: #ff86b2a3;
+  color: #fff;
+  cursor: pointer;
+  transition: background 0.25s;
+}
+
+.pedido-btn:hover {
+  background: #ff6daa;
+}
+
+
+@media (max-width: 600px) {
+  .pedido-card {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .pedido-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+  }
+  
+  .pedido-btn {
+    width: 100%;
+    margin-top: 12px;
+  }
+    
+}

@@ -33,7 +33,7 @@
 .cart-product img {
   width: 70px;
   height: 70px;
-  object-fit: cover;
+  object-fit: contain;
   border-radius: 8px;
   border: 2px solid pink;
 }

@@ -1,7 +1,8 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useTranslation } from 'react-i18next';
 import { formatCOP } from "../../services/currency";
 import { useNavigate, useParams } from "react-router-dom";
+import "../../assets/stylesheets/pedidos.css";
 
 function Pedidos() {
   const [orders, setOrders] = useState([]);
@@ -58,38 +59,35 @@ function Pedidos() {
           {orders.map((order) => (
             <div
               key={order.id}
-              className="border border-gray-200 rounded-lg p-4 shadow-sm hover:shadow-md transition-shadow bg-white"
+              className="pedido-card glow-effect"
+              style={{ "--glow": "0" }} // empieza sin luz
             >
-              <div className="flex justify-between items-center mb-2 text-sm">
-                <span className="font-medium text-gray-700">
-                  {t('orders.orderNumber')}:
-                </span>
-                <span className="font-semibold text-gray-900">
-                  {order.numero_de_orden}
-                </span>
+              <div className="pedido-row">
+                <span className="label">{t('orders.orderNumber')}:</span>
+                <span className="value">{order.numero_de_orden}</span>
               </div>
 
-              <div className="flex justify-between items-center mb-2 text-sm">
-                <span className="font-medium text-gray-700">
-                  {t('orders.total')}:
-                </span>
-                <span className="font-semibold text-pink-600">
-                  {formatCOP(order.pago_total)}
-                </span>
+              <div className="pedido-row">
+                <span className="label">{t('orders.total')}:</span>
+                <span className="value pink">{formatCOP(order.pago_total)}</span>
               </div>
 
-              <div className="flex justify-between items-center mb-2 text-sm">
-                <span className="font-medium text-gray-700">
-                  {t('orders.paymentDate')}:
-                </span>
-                <span className="text-gray-500">
-                  {formatDate(order.fecha_pago)}
-                </span>
+              <div className="pedido-row">
+                <span className="label">{t('orders.paymentDate')}:</span>
+                <span className="value muted">{formatDate(order.fecha_pago)}</span>
               </div>
 
               <button
                 onClick={() => navigate(`/${lang}/pedidos/${order.id}`)}
-                className="mt-2 w-full bg-pink-600 text-white text-sm py-1.5 rounded hover:bg-pink-700 transition-colors"
+                className="pedido-btn"
+                onMouseEnter={(e) => {
+                  const card = e.currentTarget.closest(".pedido-card");
+                  card.style.setProperty("--glow", "1"); // enciende luz
+                }}
+                onMouseLeave={(e) => {
+                  const card = e.currentTarget.closest(".pedido-card");
+                  card.style.setProperty("--glow", "0"); // apaga luz
+                }}
               >
                 {t('orders.viewDetails')}
               </button>
