@@ -13,6 +13,8 @@ import { formatCOP } from "../../services/currency";
 import { BsCart4 } from "react-icons/bs";
 import Skeleton from "@mui/joy/Skeleton";
 import noImage from "../../assets/images/no_image.png";
+import { useOutletContext } from "react-router-dom";
+
 
 function ProductDetails() {
   const { slug } = useParams();
@@ -21,8 +23,9 @@ function ProductDetails() {
   const [relatedProducts, setRelatedProducts] = useState([]); 
   const [token] = useState(localStorage.getItem("token"));
   const [cart, setCart] = useState(null);
-  const [isFavorite, setIsFavorite] = useState(false);
+  const { favoriteIds, loadFavorites } = useOutletContext();
   const { t } = useTranslation();
+  const isFavorite = product ? favoriteIds.includes(product.id) : false;
 
   // Cargar producto + carrito + favoritos
   useEffect(() => {
@@ -54,18 +57,6 @@ function ProductDetails() {
           })
           .catch((err) => console.error("Error cargando relacionados:", err));
 
-        // 🔍 verificar si este producto está en favoritos
-        fetch("https://localhost:4000/api/v1/favorites", {
-          headers: { Authorization: `Bearer ${token}` },
-        })
-          .then((res) => res.json())
-          .then((favorites) => {
-            const isFav = favorites.some((fav) => fav.id === data.id);
-            setIsFavorite(isFav);
-          })
-          .catch((err) =>
-            console.error(t('productDetails.favoritesError'), err)
-          );
       })
       .catch((err) => console.error(err));
 
@@ -79,6 +70,33 @@ function ProductDetails() {
         console.error(t('productDetails.cartError'), err)
       );
   }, [slug, token, t]);
+
+  function ProductImage({ product, noImage }) {
+    const [imgLoaded, setImgLoaded] = useState(false);
+
+    return (
+      <div className="product-image" style={{ position: "relative" }}>
+        {!imgLoaded && (
+          <Skeleton
+            variant="rectangular"
+            width={"400px"}
+            height={400}
+            sx={{ position: "absolute", top: 0, left: 100 }}
+          />
+        )}
+
+        <img
+          src={product.imagen_url || noImage}
+          alt={product.nombre_producto}
+          onLoad={() => setImgLoaded(true)}
+          onError={(e) => {
+            e.currentTarget.src = noImage;
+            setImgLoaded(true);
+          }}
+        />
+      </div>
+    );
+  }
 
   if (!product) return <p>{t('productDetails.loading')}</p>;
 
@@ -177,9 +195,9 @@ function ProductDetails() {
 
   // ✅ toggle favoritos
   const toggleFavorite = async (productId) => {
-    if (isFavorite) {
-      // ❌ quitar favorito
-      try {
+    try {
+      if (favoriteIds.includes(productId)) {
+        // ❌ quitar favorito
         const res = await fetch(
           `https://localhost:4000/api/v1/favorites/${productId}`,
           {
@@ -188,14 +206,10 @@ function ProductDetails() {
           }
         );
         if (res.ok) {
-          setIsFavorite(false);
+          await loadFavorites(); // 🔄 refresca favoritos globales
         }
-      } catch (err) {
-        console.error(t('productDetails.removeFavoriteError'), err);
-      }
-    } else {
-      // ❤️ añadir favorito
-      try {
+      } else {
+        // ❤️ añadir favorito
         const res = await fetch("https://localhost:4000/api/v1/favorites", {
           method: "POST",
           headers: {
@@ -206,25 +220,19 @@ function ProductDetails() {
         });
         const data = await res.json();
         if (data.success) {
-          setIsFavorite(true);
+          await loadFavorites(); // 🔄 refresca favoritos globales
         }
-      } catch (err) {
-        console.error(t('productDetails.addFavoriteError'), err);
       }
+    } catch (err) {
+      console.error("Error al cambiar favorito:", err);
     }
   };
+
 
   return (
     <div className="product-details-page">
       <div className="product-container">
-        <div className="product-image">
-          <img
-            src={
-              product.imagen_url || noImage
-            }
-            alt={product.nombre_producto}
-          />
-        </div>
+        <ProductImage product={product} noImage={noImage} />
 
         <div className="product-info">
           <div className="title-category">
@@ -305,16 +313,17 @@ function ProductDetails() {
                       "&:hover": { bgcolor: "grey.200" },
                     }}
                   >
-                    {isFavorite && rp.id === product.id ? ( // 👈 ajusta según tu lógica de favoritos
-                      <Favorite sx={{ color: "white" }} />
+                    {favoriteIds.includes(rp.id) ? (
+                      <Favorite sx={{ color: "#ffffffff" }} />
                     ) : (
                       <FavoriteBorder />
                     )}
+
                   </IconButton>
 
                   {/* Enlace al producto */}
                   <Link
-                    to={`${lang}/products/${rp.slug}`}
+                    to={`/${lang}/producto/${rp.slug}`}
                     style={{ textDecoration: "none", color: "inherit" }}
                   >
                     <div className="image-container">
@@ -343,7 +352,7 @@ function ProductDetails() {
         </section>
       ) : (
         <section className="related-products">
-          <h3>Productos relacionados</h3>
+          <h3 style={{display: "flex", justifySelf: "center"}}>Productos relacionados</h3>
           <hr style={{display: "flex", justifySelf: "center", width: "70%", color: "#ccc"}}></hr>
           {/* Skeletons mientras carga */}
           <div className="carousel-container">

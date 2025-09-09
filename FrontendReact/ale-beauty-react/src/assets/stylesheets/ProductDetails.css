@@ -53,7 +53,6 @@
   max-height: 400px;
   object-fit: contain; /* 🔑 nunca se corta */
   border-radius: 12px;
-  background: #f9f9f9;
 }
 
 /* Texto y botones */
@@ -156,4 +155,18 @@
 }
 .related-card:hover {
   transform: scale(1.05);
+}
+
+@media (max-width: 560px) {
+  .datails-section {
+    width: 100%;
+    flex-direction: column;
+    gap: 40px;
+  }
+  .description-section {
+    width: 100%;
+  }
+  .product-info {
+    flex: 1;
+  }
 }
