@@ -289,12 +289,6 @@ export default function FavoritesModal({ open, onClose }) {
                       </Box>
 
                       <Box sx={{ flex: 1 }}>
-                        <Typography level="body2" color="neutral">
-                          {product.fecha_agregado}
-                        </Typography>
-                      </Box>
-
-                      <Box sx={{ flex: 1 }}>
                         {product.stock > 9 ? (
                           <Typography sx={{ fontWeight: "bold", color: "green" }}>
                             {t('favorites.inStock')}

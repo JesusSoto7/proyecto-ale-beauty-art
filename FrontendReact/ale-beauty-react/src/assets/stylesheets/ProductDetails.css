@@ -1,3 +1,39 @@
+.negrita {
+  font-weight: bold;
+  margin-bottom: 0px;
+  color: #ccc;
+}
+
+.datails-section{
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  gap: 20px;
+  padding: 50px;
+}
+
+.description-section{
+  display: flex;
+  flex-direction: column;
+  width: 50%;
+}
+
+.description-section button{
+  background-color: transparent;
+  border-radius: 0 !important;
+  color: #ccc;
+  /* color: #f896b8; */
+}
+
+.description-section button :hover{
+  background-color: #eee !important;
+
+}
+
+.title-category{
+  gap: 0;
+}
+
 .product-details-page {
   padding: 2rem;
 }
@@ -8,6 +44,7 @@
   flex-direction: column; /* por defecto: columnas en móvil */
   gap: 2rem;
   align-items: center;
+  margin-bottom: 60px;
 }
 
 .product-image img {
@@ -16,24 +53,27 @@
   max-height: 400px;
   object-fit: contain; /* 🔑 nunca se corta */
   border-radius: 12px;
-  background: #f9f9f9;
 }
 
 /* Texto y botones */
 .product-info {
-  max-width: 500px;
+    height: 53vh;
+    display: flex;
+    flex-direction: column;
+    max-width: 500px;
+    justify-content: center;
 }
 
 .product-info h2 {
-  font-size: 2rem;
-  margin-bottom: 1rem;
+  display: flex;
+  align-items: start;
+  font-size: 2.5rem;
 }
 
 .price {
   font-size: 1.3rem;
   font-weight: bold;
-  color: #e63946;
-  margin-top: 1rem;
+  color: #f896b8;
 }
 
 .stock {
@@ -44,8 +84,24 @@
 .actions {
   display: flex;
   gap: 1rem;
-  margin-top: 1.5rem;
+  margin-top: 0.8rem;
   align-items: center;
+  justify-content: end;
+  border-top: solid 1px #eee;
+  padding-top: 10px;
+}
+
+#favBtn {
+  background-color: #f896b8;
+  color: white;
+  padding: 0.8rem 1.2rem;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+#favBtn:hover {
+  background-color: #f35471;
 }
 
 .actions button {
@@ -76,6 +132,40 @@
     text-align: center;
   }
 
+  .product-info {
+    flex: 1;
+  }
+}
+
+
+.related-products {
+  margin-top: 2rem;
+}
+.related-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+}
+.related-card {
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  padding: 10px;
+  text-align: center;
+  transition: transform 0.2s;
+}
+.related-card:hover {
+  transform: scale(1.05);
+}
+
+@media (max-width: 560px) {
+  .datails-section {
+    width: 100%;
+    flex-direction: column;
+    gap: 40px;
+  }
+  .description-section {
+    width: 100%;
+  }
   .product-info {
     flex: 1;
   }

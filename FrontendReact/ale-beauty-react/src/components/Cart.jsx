@@ -4,6 +4,7 @@ import { Box, Typography } from "@mui/joy";
 import { useTranslation } from "react-i18next";
 import Not_found from "../assets/images/not_found.png";
 import { formatCOP } from "../services/currency";
+import noImage from "../assets/images/no_image.png";
 
 function Cart() {
   const navigate = useNavigate();
@@ -97,7 +98,7 @@ function Cart() {
         {cart.products.map((product) => (
           <div className="cart-row" key={product.product_id}>
             <div className="cart-product">
-              <img src={product.imagen_url} alt={product.nombre_producto} />
+              <img src={product.imagen_url || noImage} alt={product.nombre_producto} />
               <div>
                 <h4>{product.nombre_producto}</h4>
                 <p>{t("cart.set")}: {product.color || "N/A"}</p>
