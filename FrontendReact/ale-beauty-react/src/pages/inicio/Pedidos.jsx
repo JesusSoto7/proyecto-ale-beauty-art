@@ -1,7 +1,8 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import { useTranslation } from 'react-i18next';
 import { formatCOP } from "../../services/currency";
 import { useNavigate, useParams } from "react-router-dom";
+import CircularProgress from "@mui/material/CircularProgress"; // ⬅️ spinner
 import "../../assets/stylesheets/pedidos.css";
 
 function Pedidos() {
@@ -48,11 +49,10 @@ function Pedidos() {
         {t('orders.myOrders')}
       </h2>
 
-      {loading ? (
-        <p className="text-gray-500">{t('orders.loading')}</p>
-      ) : orders.length === 0 ? (
+      {loading || orders.length === 0 ? (
         <div className="text-center py-10">
-          <p className="text-gray-400">{t('orders.noOrders')}</p>
+          <CircularProgress style={{ color: "pink" }} />
+          <p className="text-pink-500 mt-2">Cargando...</p>
         </div>
       ) : (
         <div className="grid gap-4 md:grid-cols-2">
@@ -60,7 +60,7 @@ function Pedidos() {
             <div
               key={order.id}
               className="pedido-card glow-effect"
-              style={{ "--glow": "0" }} // empieza sin luz
+              style={{ "--glow": "0" }}
             >
               <div className="pedido-row">
                 <span className="label">{t('orders.orderNumber')}:</span>
@@ -82,11 +82,11 @@ function Pedidos() {
                 className="pedido-btn"
                 onMouseEnter={(e) => {
                   const card = e.currentTarget.closest(".pedido-card");
-                  card.style.setProperty("--glow", "1"); // enciende luz
+                  card.style.setProperty("--glow", "1");
                 }}
                 onMouseLeave={(e) => {
                   const card = e.currentTarget.closest(".pedido-card");
-                  card.style.setProperty("--glow", "0"); // apaga luz
+                  card.style.setProperty("--glow", "0");
                 }}
               >
                 {t('orders.viewDetails')}
