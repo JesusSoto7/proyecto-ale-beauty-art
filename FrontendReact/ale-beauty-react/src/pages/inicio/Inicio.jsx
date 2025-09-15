@@ -5,6 +5,7 @@ import FavoriteBorder from '@mui/icons-material/FavoriteBorder';
 import Favorite from "@mui/icons-material/Favorite";
 import { Link, useParams } from 'react-router-dom';
 import Skeleton from '@mui/material/Skeleton';
+import CircularProgress from '@mui/material/CircularProgress';
 import { formatCOP } from '../../services/currency';
 import bannerNovedades from '../../assets/images/bannerNovedades.jpg'
 import { useOutletContext } from "react-router-dom";
@@ -43,7 +44,6 @@ function Inicio() {
 
   // Cargar productos + favoritos del usuario
   useEffect(() => {
-    // Productos e inicio
     fetch('https://localhost:4000/api/v1/inicio')
       .then(res => res.json())
       .then(data => {
@@ -93,7 +93,7 @@ function Inicio() {
       .then(data => setCart(data.cart))
       .catch(err => console.error(t('home.cartError'), err));
 
-    // Favoritos del usuario
+    // Favoritos
     fetch('https://localhost:4000/api/v1/favorites', {
       headers: { Authorization: `Bearer ${token}` },
     })
@@ -181,39 +181,15 @@ function Inicio() {
         </Carousel>
       ) : null}
 
-      {/* Sección Novedades Maquillaje */}
+      {/* Sección Novedades */}
       <section className="mt-5">
         <h2 className="mb-4">{t('home.newMakeup')}</h2>
         {loading ? (
-          <div className="carousel-container">
-            <div className="carousel-items">
-              {[1, 2, 3, 4].map((skeleton) => (
-                <div className="product-card" key={skeleton}>
-                  <div className="image-container">
-                    <Skeleton variant="rectangular" width={"100%"} height={200} />
-                  </div>
-                  <Skeleton variant="text" width={150} height={30} />
-                  <Skeleton variant="text" width={80} height={20} />
-                  <div className="actions">
-                    <Skeleton variant="rectangular" width={120} height={36} />
-                    <Skeleton variant="circular" width={36} height={36} />
-                  </div>
-                </div>
-              ))}
-            </div>
+          <div style={{ display: "flex", justifyContent: "center", padding: "2rem" }}>
+            <CircularProgress />
           </div>
         ) : products.length > 0 ? (
           <div className="carousel-container">
-            <button
-              className="carousel-btn prev"
-              onClick={() => {
-                document.querySelector(".carousel-items")
-                  .scrollBy({ left: -300, behavior: "smooth" });
-              }}
-            >
-              ❮
-            </button>
-
             <div className="carousel-items">
               {products.map((prod) => (
                 <div className="product-card" key={prod.id} style={{ position: "relative" }}>
@@ -238,12 +214,16 @@ function Inicio() {
                     to={`/${lang}/producto/${prod.slug}`}
                     style={{ textDecoration: "none", color: "inherit" }}
                   >
-                    <div className="image-container">
-                      <img
-                        src={prod.imagen_url || noImage}
-                        alt={prod.nombre_producto}
-                        onError={(e) => { e.currentTarget.src = noImage; }}
-                      />
+                    <div className="image-container" style={{ display: "flex", justifyContent: "center", alignItems: "center", minHeight: "200px" }}>
+                      {prod.imagen_url ? (
+                        <img
+                          src={prod.imagen_url}
+                          alt={prod.nombre_producto}
+                          onError={(e) => { e.currentTarget.src = noImage; }}
+                        />
+                      ) : (
+                        <CircularProgress />
+                      )}
                     </div>
                     <h5>{prod.nombre_producto}</h5>
                     <p>{formatCOP(prod.precio_producto)}</p>
@@ -257,19 +237,11 @@ function Inicio() {
                 </div>
               ))}
             </div>
-
-            <button
-              className="carousel-btn next"
-              onClick={() => {
-                document.querySelector(".carousel-items")
-                  .scrollBy({ left: 300, behavior: "smooth" });
-              }}
-            >
-              ❯
-            </button>
           </div>
         ) : (
-          <p>{t('home.noProducts')}</p>
+          <div style={{ display: "flex", justifyContent: "center", padding: "2rem" }}>
+            <CircularProgress />
+          </div>
         )}
       </section>
 
@@ -286,56 +258,12 @@ function Inicio() {
         />
       </div>
 
-      {/* Banner delgado en movimiento */}
-      <div className="banner-ticker">
-        <div className="banner-track">
-          {[
-            t('home.bannerText1'),
-            t('home.bannerText2'),
-            t('home.bannerText3'),
-            t('home.bannerText4'),
-            t('home.bannerText5'),
-            t('home.bannerText6'),
-            t('home.bannerText7'),
-            t('home.bannerText8')
-          ].concat([
-            t('home.bannerText1'),
-            t('home.bannerText2'),
-            t('home.bannerText3'),
-            t('home.bannerText4'),
-            t('home.bannerText5'),
-            t('home.bannerText6'),
-            t('home.bannerText7'),
-            t('home.bannerText8')
-          ]).map((text, index) => (
-            <div className="banner-item" key={index}>
-              {text}
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Sección Quizás te puedan interesar */}
+      {/* Quizás te interesen */}
       <section className="mt-5">
         <h2 className="mb-4">{t('home.mayInterestYou')}</h2>
-
         {loading ? (
-          <div className="carousel-container">
-            <div className="carousel-items">
-              {[1, 2, 3, 4, 5, 6].map((skeleton) => (
-                <div className="product-card" key={skeleton}>
-                  <div className="image-container">
-                    <Skeleton variant="rectangular" width={"100%"} height={200} />
-                  </div>
-                  <Skeleton variant="text" width={150} height={30} />
-                  <Skeleton variant="text" width={80} height={20} />
-                  <div className="actions">
-                    <Skeleton variant="rectangular" width={120} height={36} />
-                    <Skeleton variant="circular" width={36} height={36} />
-                  </div>
-                </div>
-              ))}
-            </div>
+          <div style={{ display: "flex", justifyContent: "center", padding: "2rem" }}>
+            <CircularProgress />
           </div>
         ) : products.length > 0 ? (
           <div className="carousel-container">
@@ -363,12 +291,16 @@ function Inicio() {
                     to={`/${lang}/producto/${prod.slug}`}
                     style={{ textDecoration: "none", color: "inherit" }}
                   >
-                    <div className="image-container">
-                      <img
-                        src={prod.imagen_url || noImage}
-                        alt={prod.nombre_producto}
-                        onError={(e) => { e.currentTarget.src = noImage; }}
-                      />
+                    <div className="image-container" style={{ display: "flex", justifyContent: "center", alignItems: "center", minHeight: "200px" }}>
+                      {prod.imagen_url ? (
+                        <img
+                          src={prod.imagen_url}
+                          alt={prod.nombre_producto}
+                          onError={(e) => { e.currentTarget.src = noImage; }}
+                        />
+                      ) : (
+                        <CircularProgress />
+                      )}
                     </div>
                     <h5>{prod.nombre_producto}</h5>
                     <p>{formatCOP(prod.precio_producto)}</p>
@@ -384,7 +316,9 @@ function Inicio() {
             </div>
           </div>
         ) : (
-          <p>{t('home.noProducts')}</p>
+          <div style={{ display: "flex", justifyContent: "center", padding: "2rem" }}>
+            <CircularProgress />
+          </div>
         )}
       </section>
 
