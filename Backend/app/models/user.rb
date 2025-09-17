@@ -5,7 +5,7 @@ class User < ApplicationRecord
   has_many :orders
   has_many :favorites
   has_many :favorite_products, through: :favorites, source: :product
-
+  has_many :reviews, dependent: :destroy
 
   rolify
   # Include default devise modules. Others available are:
