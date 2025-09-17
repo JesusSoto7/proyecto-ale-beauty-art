@@ -31,7 +31,10 @@ Rails.application.routes.draw do
  # Quitar producto
        get "inicio", to: "inicio#index"
       # Categorías y productos  
-      resources :products, param: :slug
+      resources :products, param: :slug do
+        resources :reviews, only: [:index, :create, :update, :destroy]
+      end
+
 
       resources :categories
 
@@ -63,7 +66,7 @@ Rails.application.routes.draw do
       get 'locations/municipalities/:department_id', to: 'locations#municipalities'
       get 'locations/neighborhoods/:municipality_id', to: 'locations#neighborhoods'
 
-
+      resources :reviews, only: [:index, :create]
     end
   end
 
