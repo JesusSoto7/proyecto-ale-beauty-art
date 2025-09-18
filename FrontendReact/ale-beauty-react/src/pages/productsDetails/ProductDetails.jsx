@@ -26,6 +26,13 @@ function ProductDetails() {
   const { favoriteIds, loadFavorites } = useOutletContext();
   const { t } = useTranslation();
   const isFavorite = product ? favoriteIds.includes(product.id) : false;
+  const [reviews, setReviews] = useState([]);
+  const averageRating = reviews.length > 0 
+  ? reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length 
+  : 0;
+  const [visibleReviews, setVisibleReviews] = useState(5);
+  const [newReview, setNewReview] = useState({ rating: 0, comentario: "" });
+  const [imgLoaded, setImgLoaded] = useState(false);
 
   // Cargar producto + carrito + favoritos
   useEffect(() => {
@@ -33,6 +40,7 @@ function ProductDetails() {
       alert(t('productDetails.notAuthenticated'));
       return;
     }
+
 
     // cargar producto
     fetch(`https://localhost:4000/api/v1/products/${slug}`, {
@@ -71,9 +79,22 @@ function ProductDetails() {
       );
   }, [slug, token, t]);
 
-  function ProductImage({ product, noImage }) {
-    const [imgLoaded, setImgLoaded] = useState(false);
+  useEffect(() => {
+    if(!product) return;
+    fetch(`https://localhost:4000/api/v1/products/${slug}/reviews`, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    })
+    .then((res) => res.json())
+    .then((data) => setReviews(data))
+    .catch((err) => console.error("Error cargando reseñas:", err));
 
+  }, [product, slug, token]);
+
+  
+
+  function ProductImage({ product, noImage }) {
     return (
       <div className="product-image" style={{ position: "relative" }}>
         {!imgLoaded && (
@@ -192,6 +213,34 @@ function ProductDetails() {
         alert(t('productDetails.cartAddError'));
       });
   };
+  const handleSubmitReview = async (e) => {
+    e.preventDefault();
+
+    try {
+      const res = await fetch(`https://localhost:4000/api/v1/products/${product.slug}/reviews`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(newReview),
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        // ✅ refrescamos las reseñas después de guardar
+        setReviews((prev) => [...prev, data]);
+        setNewReview({ rating: 0, comentario: "" }); // limpiamos formulario
+      } else {
+        alert("Error al enviar reseña: " + (data.errors || "desconocido"));
+      }
+    } catch (err) {
+      console.error("Error enviando reseña:", err);
+      alert("No se pudo enviar la reseña");
+    }
+  };
+
 
   // ✅ toggle favoritos
   const toggleFavorite = async (productId) => {
@@ -252,7 +301,8 @@ function ProductDetails() {
             
           </div>
           {/* componente de rating */}
-          <ProductRating value={5.0} count={9} />
+           <ProductRating value={averageRating} count={reviews.length} />
+
           {/* <ProductRating value={product.promedio_rating} count={product.total_reviews} /> */}
 
 
@@ -273,25 +323,85 @@ function ProductDetails() {
         </div>
       </div>
 
-      <section id="detalles-producto" className="datails-section">
-        <div className="description-section">
-          <div style={{ display: 'flex', flexDirection: 'row', borderBottom: '1px solid #eee', marginBottom: '1rem' }}>
-              <button style={activeBtnStyle}>
-                Descripción
-              </button>
-              <button>Reseñas</button>
-          </div>
-          <p style={{ color: '#3d3d3dff', overflowWrap: "anywhere"}}>{product.descripcion}</p>
+    <section id="detalles-producto" className="details-reviews-container">
+      {/* Descripción */}
+      <div className="description-section">
+        <div style={{ 
+          display: 'flex', 
+          flexDirection: 'row', 
+          borderBottom: '1px solid #eee', 
+          marginBottom: '1rem' 
+        }}>
+          <button style={activeBtnStyle}>Descripción</button>
         </div>
-        <div style={{ paddingTop: "10px"}} className="additional-info">
-          <h5 style={{ color: '#f896b8'}}>información adicional</h5>
-          <ul>
-            <li>{t('productDetails.info1')}</li>
-            <li>{t('productDetails.info2')}</li>
-          </ul>
-        </div>
-        
-      </section>
+        <p style={{ color: '#3d3d3dff', overflowWrap: "anywhere" }}>
+          {product.descripcion}
+        </p>
+      </div>
+
+      {/* Reseñas */}
+      <div className="reviews-section">
+        <h3>Reseñas</h3>
+
+        <form onSubmit={handleSubmitReview} style={{ marginBottom: "1.5rem" }}>
+          <Rating
+            name="new-rating"
+            value={newReview.rating}
+            onChange={(e, value) =>
+              setNewReview({ ...newReview, rating: value })
+            }
+            sx={{ color: "#f896b8" }}
+          />
+          <textarea
+            placeholder="Escribe tu reseña..."
+            value={newReview.comentario}
+            onChange={(e) =>
+              setNewReview({ ...newReview, comentario: e.target.value })
+            }
+            rows={3}
+            style={{ width: "100%", marginTop: "0.5rem" }}
+          />
+          <button type="submit" style={{ marginTop: "0.5rem" }}>
+            Enviar reseña
+          </button>
+        </form>
+
+        {reviews.length === 0 ? (
+          <p>No hay reseñas todavía.</p>
+        ) : (
+          reviews.slice(0, visibleReviews).map((review) => (
+            <div key={review.id} style={{ borderBottom: "1px solid #eee", marginBottom: "1rem" }}>
+              <Rating value={review.rating} readOnly sx={{ color: "#f896b8" }} />
+              <p>{review.comentario}</p>
+              <small>
+                Por {review.user?.nombre || "Usuario"} -{" "}
+                {new Date(review.created_at).toLocaleDateString()}
+              </small>
+            </div>
+          ))
+        )}
+
+        {reviews.length > visibleReviews && (
+          <button 
+            onClick={() => setVisibleReviews((prev) => prev + 5)} 
+            style={{ marginTop: "1rem", backgroundColor: "#f896b8", color: "white", padding: "8px 12px", borderRadius: "5px" }}
+          >
+            Ver más
+          </button>
+        )}
+
+        {visibleReviews > 5 && (
+          <button 
+            onClick={() => setVisibleReviews(5)} 
+            style={{ marginTop: "1rem", marginLeft: "10px", backgroundColor: "#ccc", color: "black", padding: "8px 12px", borderRadius: "5px" }}
+          >
+            Ver menos
+          </button>
+        )}
+
+      </div>
+    </section>
+
 
       {relatedProducts.length > 0 ? (
         <section className="related-products">

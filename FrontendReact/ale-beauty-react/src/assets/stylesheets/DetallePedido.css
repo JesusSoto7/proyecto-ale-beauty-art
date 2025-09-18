@@ -94,3 +94,21 @@
   color: #e91e63; /* rosado */
 }
 
+.details-reviews-container {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  margin-top: 2rem;
+}
+
+.details-reviews-container .description-section {
+  flex: none; 
+}
+
+.details-reviews-container .reviews-section {
+  flex: none;
+  border-left: none;
+  padding-left: 0;
+  border-top: 1px solid #eee; 
+  padding-top: 1.5rem;
+}

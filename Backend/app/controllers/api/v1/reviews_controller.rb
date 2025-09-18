@@ -18,10 +18,10 @@ class Api::V1::ReviewsController < Api::V1::BaseController
   private
 
   def set_product
-    @product = Product.find(params[:product_id])
+    @product = Product.find_by!(slug: params[:product_slug])
   end
 
   def review_params
-    params.require(:review).permit(:rating, :comment)
+    params.require(:review).permit(:rating, :comentario)
   end
 end
