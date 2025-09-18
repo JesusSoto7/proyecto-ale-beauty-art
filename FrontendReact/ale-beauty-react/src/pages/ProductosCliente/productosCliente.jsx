@@ -72,8 +72,8 @@ function ProductosCliente() {
   if (loading) {
     return (
       <div style={{ textAlign: "center", marginTop: "50px" }}>
-        <CircularProgress style={{ color: "pink" }} />
-        <p style={{ color: "pink", marginTop: "10px" }}>Cargando...</p>
+        <CircularProgress style={{ color: "#ff4d94" }} />
+        <p style={{ color: "#ff4d94", marginTop: "10px" }}>Cargando...</p>
       </div>
     );
   }

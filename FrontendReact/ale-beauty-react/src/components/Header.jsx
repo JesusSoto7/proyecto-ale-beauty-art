@@ -2,8 +2,11 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import logo from '../assets/images/ale_logo.jpg';
-import { BsHeart, BsCart4 } from "react-icons/bs";
+import { BsHeart, BsCart4, BsPerson, BsBag, BsGeoAlt, BsBoxArrowRight, BsGear, BsCreditCard, BsTruck, BsArrowRepeat, BsListCheck, BsStar } from "react-icons/bs";
 import { IoPersonCircleSharp } from "react-icons/io5";
+import { MdAccountCircle, MdOutlinePayment, MdLocalShipping } from "react-icons/md";
+import { RiAccountPinBoxLine, RiCouponLine } from "react-icons/ri";
+import { AiOutlineOrderedList, AiOutlineHistory } from "react-icons/ai";
 
 import { styled, alpha } from '@mui/material/styles';
 import AppBar from '@mui/material/AppBar';
@@ -220,18 +223,71 @@ export default function Header({ loadFavorites }) {
       anchorEl={anchorEl}
       open={isMenuOpen}
       onClose={() => setAnchorEl(null)}
+      PaperProps={{
+        style: {
+          width: '320px',
+          padding: '10px 0',
+          borderRadius: '12px',
+          boxShadow: '0 10px 30px rgba(0,0,0,0.15)',
+        },
+      }}
     >
-      <MenuItem onClick={() => { navigate(`/${lang}/perfil`); setAnchorEl(null); }}>
-        {t('header.profile')}
+      {/* Encabezado del menú */}
+      <Box sx={{ px: 2, py: 1, borderBottom: `1px solid ${pinkTheme.light}`, mb: 1 }}>
+        <Typography variant="h6" sx={{ fontWeight: 'bold', color: pinkTheme.primary }}>
+          Mi Cuenta
+        </Typography>
+        <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+          Bienvenido a tu espacio personal
+        </Typography>
+      </Box>
+      
+      {/* Perfil */}
+      <MenuItem 
+        onClick={() => { navigate(`/${lang}/perfil`); setAnchorEl(null); }}
+        sx={{ py: 1.5, display: 'flex', alignItems: 'center' }}
+      >
+        <BsPerson style={{ marginRight: '12px', color: pinkTheme.primary, fontSize: '18px' }} />
+        <Box>
+          <Typography variant="body1" sx={{ fontWeight: 500 }}>{t('header.profile')}</Typography>
+          <Typography variant="caption" sx={{ color: 'text.secondary' }}>Gestiona tu información personal</Typography>
+        </Box>
       </MenuItem>
-      <MenuItem onClick={() => { navigate(`/${lang}/pedidos`); setAnchorEl(null); }}>
-        {t('header.myOrders')}
+      
+      {/* Pedidos */}
+      <MenuItem 
+        onClick={() => { navigate(`/${lang}/pedidos`); setAnchorEl(null); }}
+        sx={{ py: 1.5, display: 'flex', alignItems: 'center' }}
+      >
+        <BsBag style={{ marginRight: '12px', color: pinkTheme.primary, fontSize: '18px' }} />
+        <Box>
+          <Typography variant="body1" sx={{ fontWeight: 500 }}>{t('header.myOrders')}</Typography>
+          <Typography variant="caption" sx={{ color: 'text.secondary' }}>Consulta tu historial de pedidos</Typography>
+        </Box>
       </MenuItem>
-
-      <MenuItem onClick={() => { navigate(`/${lang}/direcciones`); setAnchorEl(null); }}>
-        {t('header.myAddresses')}
+      
+      {/* Direcciones */}
+      <MenuItem 
+        onClick={() => { navigate(`/${lang}/direcciones`); setAnchorEl(null); }}
+        sx={{ py: 1.5, display: 'flex', alignItems: 'center' }}
+      >
+        <BsGeoAlt style={{ marginRight: '12px', color: pinkTheme.primary, fontSize: '18px' }} />
+        <Box>
+          <Typography variant="body1" sx={{ fontWeight: 500 }}>{t('header.myAddresses')}</Typography>
+          <Typography variant="caption" sx={{ color: 'text.secondary' }}>Gestiona tus direcciones de envío</Typography>
+        </Box>
       </MenuItem>
-      <MenuItem onClick={handleLogout}>{t('header.logout')}</MenuItem>
+      {/* Divider */}
+      <Box sx={{ borderBottom: `1px solid ${pinkTheme.light}`, my: 1 }} />
+      
+      {/* Cerrar sesión */}
+      <MenuItem 
+        onClick={handleLogout}
+        sx={{ py: 1.5, display: 'flex', alignItems: 'center' }}
+      >
+        <BsBoxArrowRight style={{ marginRight: '12px', color: pinkTheme.dark, fontSize: '18px' }} />
+        <Typography variant="body1" sx={{ fontWeight: 500, color: pinkTheme.dark }}>{t('header.logout')}</Typography>
+      </MenuItem>
     </Menu>
   );
 
