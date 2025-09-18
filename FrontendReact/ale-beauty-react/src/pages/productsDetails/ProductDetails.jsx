@@ -71,6 +71,37 @@ function ProductDetails() {
       );
   }, [slug, token, t]);
 
+  // Rueda de carga rosa
+  const PinkLoadingSpinner = () => (
+    <div style={{ 
+      display: 'flex', 
+      flexDirection: 'column', 
+      justifyContent: 'center', 
+      alignItems: 'center', 
+      height: '50vh',
+      width: '100%'
+    }}>
+      <div style={{
+        width: '50px',
+        height: '50px',
+        border: '5px solid rgba(248, 150, 184, 0.3)',
+        borderRadius: '50%',
+        borderTop: '5px solid #f896b8',
+        animation: 'spin 1s linear infinite',
+        marginBottom: '20px'
+      }}></div>
+      <p style={{ color: '#f896b8', fontSize: '18px', fontWeight: '500' }}>Cargando productos</p>
+      <style>
+        {`
+          @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+          }
+        `}
+      </style>
+    </div>
+  );
+
   function ProductImage({ product, noImage }) {
     const [imgLoaded, setImgLoaded] = useState(false);
 
@@ -98,7 +129,7 @@ function ProductDetails() {
     );
   }
 
-  if (!product) return <p>{t('productDetails.loading')}</p>;
+  if (!product) return <PinkLoadingSpinner />;
 
   const activeBtnStyle = {
     borderBottom: "2px solid #f896b8",

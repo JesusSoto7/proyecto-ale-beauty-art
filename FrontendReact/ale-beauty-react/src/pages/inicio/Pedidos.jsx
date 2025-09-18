@@ -51,8 +51,8 @@ function Pedidos() {
 
       {loading || orders.length === 0 ? (
         <div className="text-center py-10">
-          <CircularProgress style={{ color: "pink" }} />
-          <p className="text-pink-500 mt-2">Cargando...</p>
+          <CircularProgress style={{ color: "#ff4d94" }} />
+          <p className="text-pink-500 mt-2" style={{color:"#ff4d94"}}>Cargando...</p>
         </div>
       ) : (
         <div className="grid gap-4 md:grid-cols-2">
