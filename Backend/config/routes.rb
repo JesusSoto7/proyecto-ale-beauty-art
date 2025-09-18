@@ -32,6 +32,9 @@ Rails.application.routes.draw do
        get "inicio", to: "inicio#index"
       # Categorías y productos  
       resources :products, param: :slug do
+        member do
+          get :can_review
+        end
         resources :reviews, only: [:index, :create, :update, :destroy]
       end
 
