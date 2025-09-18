@@ -170,3 +170,117 @@
     flex: 1;
   }
 }
+.detalle-container {
+  max-width: 800px;
+  margin: 30px auto;
+  padding: 20px;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+  font-family: "Poppins", sans-serif;
+}
+
+.detalle-title {
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: #d95d85; /* rosado */
+  margin-bottom: 15px;
+  text-align: center;
+}
+
+.detalle-header {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.95rem;
+  color: #555;
+  margin-bottom: 20px;
+  padding: 10px 15px;
+  background: #fdf1f6;
+  border-radius: 10px;
+}
+
+.detalle-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.detalle-item {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 12px;
+  border: 1px solid #f0f0f0;
+  border-radius: 12px;
+  transition: all 0.2s ease-in-out;
+  cursor: pointer;
+  background: #fafafa;
+}
+
+.detalle-item:hover {
+  background: #ffe4ef;
+  transform: scale(1.01);
+}
+
+.detalle-img {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 10px;
+  border: 1px solid #eee;
+}
+
+.detalle-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+}
+
+.detalle-nombre {
+  font-weight: 600;
+  color: #333;
+  font-size: 1rem;
+}
+
+.detalle-subtotal {
+  font-weight: bold;
+  color: #444;
+}
+
+.detalle-totales {
+  margin-top: 20px;
+  text-align: right;
+}
+
+.detalle-totales p {
+  font-size: 1rem;
+  margin: 5px 0;
+  color: #555;
+}
+
+.detalle-totales h3 {
+  font-size: 1.3rem;
+  font-weight: bold;
+  margin-top: 10px;
+  color: #e91e63; /* rosado */
+}
+
+.details-reviews-container {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  margin-top: 2rem;
+}
+
+.details-reviews-container .description-section {
+  flex: none; 
+}
+
+.details-reviews-container .reviews-section {
+  flex: none;
+  border-left: none;
+  padding-left: 0;
+  border-top: 1px solid #eee; 
+  padding-top: 1.5rem;
+}

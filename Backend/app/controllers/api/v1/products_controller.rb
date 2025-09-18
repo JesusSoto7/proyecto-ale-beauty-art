@@ -55,6 +55,21 @@ class Api::V1::ProductsController < Api::V1::BaseController
     end
   end
 
+  def can_review
+    product = Product.find_by!(slug: params[:slug])
+
+    purchased = Order.joins(:order_details)
+                    .where(
+                      user_id: @current_user.id,
+                      order_details: { product_id: product.id },
+                      status: 1 # solo pagadas
+                    )
+                    .exists?
+
+    render json: { can_review: purchased }
+  end
+
+
   private
 
   def set_product

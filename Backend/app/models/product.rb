@@ -7,7 +7,7 @@ class Product < ApplicationRecord
   has_many :order_details, dependent: :destroy
   has_many :favorites, dependent: :destroy
   has_many :favorited_by, through: :favorites, source: :user
-
+  has_many :reviews, dependent: :destroy
 
   validates :slug, uniqueness: true
   validates :nombre_producto, presence: true
