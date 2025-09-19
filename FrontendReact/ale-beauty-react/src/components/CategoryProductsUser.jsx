@@ -219,7 +219,7 @@ export default function CategoryProducts() {
                   sx={{ position: "absolute", top: 8, right: 8, bgcolor: "white", "&:hover": { bgcolor: "grey.200" }, zIndex: 10 }}
                 >
                   {favoriteIds.includes(prod.id) ? (
-                    <Favorite sx={{ color: pinkTheme.primary }} />
+                    <Favorite sx={{ color: pinkTheme.light }} />
                   ) : (
                     <FavoriteBorder />
                   )}

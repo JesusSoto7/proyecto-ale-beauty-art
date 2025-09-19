@@ -14,8 +14,21 @@
 
 .description-section{
   display: flex;
+  width: 85%;
+  gap: 10px;
   flex-direction: column;
-  width: 50%;
+}
+
+#newReview{
+  width: 100%;
+}
+
+#formReviewCard{
+  border-radius: 15px;
+  border: solid 1px #ccc;
+  overflow: hidden;
+  margin-bottom: 10px;
+  background-color: #eee;
 }
 
 .description-section button{
@@ -60,6 +73,7 @@
     height: 53vh;
     display: flex;
     flex-direction: column;
+    width: 80%;
     max-width: 500px;
     justify-content: center;
 }
@@ -119,11 +133,18 @@
   background-color: #f35471;
 }
 
+#areaRating{
+  display: "flex"; 
+  flex-direction: "row"; 
+  gap: "50px";
+  margin-bottom: 10;
+}
+
 /* --- 📺 Pantallas grandes --- */
 @media (min-width: 992px) {
   .product-container {
     flex-direction: row; /* imagen izquierda, texto derecha */
-    align-items: flex-start;
+    align-items: center;
     justify-content: center;
   }
 
@@ -169,6 +190,15 @@
   .product-info {
     flex: 1;
   }
+
+  #areaRating{
+    display: flex;
+    flex-direction: column;
+  }
+
+  #detalles-producto{
+    width: 90%;
+  }
 }
 .detalle-container {
   max-width: 800px;
@@ -186,6 +216,16 @@
   color: #d95d85; /* rosado */
   margin-bottom: 15px;
   text-align: center;
+}
+
+#textReview{
+  padding: 10px;
+  /* border: none !important;
+  border-bottom: solid 1px rgb(255, 165, 165) !important; */
+}
+
+#ReviewUP{
+  border-radius: 0 !important;
 }
 
 .detalle-header {
@@ -268,9 +308,22 @@
 
 .details-reviews-container {
   display: flex;
+  width: 60%;
+  justify-self: center;
   flex-direction: column;
   gap: 2rem;
   margin-top: 2rem;
+}
+
+.botonTap{
+  background-color: transparent;
+  color: #ccc;
+  border-radius: 0 !important;
+}
+
+.botonTap:hover{
+  background-color: transparent;
+  color: #f896b8;
 }
 
 .details-reviews-container .description-section {
@@ -281,6 +334,4 @@
   flex: none;
   border-left: none;
   padding-left: 0;
-  border-top: 1px solid #eee; 
-  padding-top: 1.5rem;
 }

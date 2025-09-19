@@ -14,13 +14,14 @@ import Typography from '@mui/material/Typography';
 import "../../assets/stylesheets/ProductosCliente.css";
 import { formatCOP } from "../../services/currency";
 import noImage from "../../assets/images/no_image.png";
+import { useOutletContext } from "react-router-dom";
 
 function ProductosCliente() {
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]); 
   const [token, setToken] = useState(null);
   const [cart, setCart] = useState(null);
-  const [favoriteIds, setFavoriteIds] = useState([]);
+  const { favoriteIds, loadFavorites } = useOutletContext();
   const [selectedCategory, setSelectedCategory] = useState("Todos");
   const [anchorEl, setAnchorEl] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -61,7 +62,6 @@ function ProductosCliente() {
       }));
       setCategories(normalized);
       setCart(cartData.cart);
-      setFavoriteIds(favoritesData.map(fav => fav.product_id || fav.id));
     })
     .catch(err => console.error("Error cargando datos", err))
     .finally(() => setLoading(false));
@@ -128,6 +128,64 @@ function ProductosCliente() {
 
   const handleApplyPriceRange = () => {
     handleFilterClose();
+  };
+
+  const toggleFavorite = async (productId) => {
+    try {
+      if (favoriteIds.includes(productId)) {
+        // ❌ quitar favorito
+        const res = await fetch(
+          `https://localhost:4000/api/v1/favorites/${productId}`,
+          {
+            method: "DELETE",
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
+        if (res.ok) {
+          await loadFavorites(); // 🔄 refresca favoritos globales
+        }
+      } else {
+        // ❤️ añadir favorito
+        const res = await fetch("https://localhost:4000/api/v1/favorites", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ product_id: productId }),
+        });
+        const data = await res.json();
+        if (data.success) {
+          await loadFavorites(); // 🔄 refresca favoritos globales
+        }
+      }
+    } catch (err) {
+      console.error("Error al cambiar favorito:", err);
+    }
+  };
+
+  const addToCart = (productId) => {
+    fetch("https://localhost:4000/api/v1/cart/add_product", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ product_id: productId }),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.cart) {
+          setCart(data.cart);
+          alert(t('productDetails.addedToCart'));
+        } else if (data.errors) {
+          alert(t('productDetails.error') + data.errors.join(", "));
+        }
+      })
+      .catch((err) => {
+        console.error(t('productDetails.cartAddError'), err);
+        alert(t('productDetails.cartAddError'));
+      });
   };
 
   return (

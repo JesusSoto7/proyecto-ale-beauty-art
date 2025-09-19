@@ -67,19 +67,36 @@ class Api::V1::OrdersController < Api::V1::BaseController
     order = current_user.orders.build(
       correo_cliente: correo_cliente,
       status: :pendiente,
-      pago_total: calcular_monto_actual.to_f + 10_000,
+      pago_total: 0,
       shipping_address: shipping_address
     )
 
     if order.save
-      # copiar productos del carrito a la orden
-      current_cart.cart_products.includes(:product).each do |item|
-        order.order_details.create!(
-          product: item.product,
-          cantidad: item.cantidad,
-          precio_unitario: item.product.precio_producto
-        )
+      if params[:order] && params[:order][:products]
+        # Crear orden directa (buy now)
+        params[:order][:products].each do |product_params|
+          product = Product.find(product_params[:product_id])
+          cantidad = product_params[:quantity].to_i
+          order.order_details.create!(
+            product: product,
+            cantidad: cantidad,
+            precio_unitario: product.precio_producto
+          )
+        end
+      else
+        # Flujo normal: copiar carrito
+        current_cart.cart_products.includes(:product).each do |item|
+          order.order_details.create!(
+            product: item.product,
+            cantidad: item.cantidad,
+            precio_unitario: item.product.precio_producto
+          )
+        end
       end
+
+      # Recalcular total (productos + envío fijo de 10k)
+      total = order.order_details.sum("cantidad * precio_unitario")
+      order.update!(pago_total: total + 10_000)
 
       render json: {
         message: "Orden creada correctamente",
