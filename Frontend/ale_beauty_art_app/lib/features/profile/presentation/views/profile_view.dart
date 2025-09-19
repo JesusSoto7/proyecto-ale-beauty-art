@@ -1,5 +1,6 @@
 import 'package:ale_beauty_art_app/core/views/login_view.dart';
 import 'package:ale_beauty_art_app/features/auth/bloc/auth_bloc.dart';
+import 'package:ale_beauty_art_app/features/shipping_address/presentation/views/shipping_address_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ale_beauty_art_app/styles/colors.dart';
@@ -12,7 +13,7 @@ class ProfileView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      backgroundColor: AppColors.background,
+      backgroundColor: const Color.fromARGB(255, 247, 246, 246),
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -128,6 +129,25 @@ class ProfileView extends StatelessWidget {
                   }),
                   _buildOptionTile(Icons.favorite, 'Favoritos', () {
                     // TODO: Navegar a favoritos
+                  }),
+                   _buildOptionTile(Icons.location_on, 'Mis direcciones', () async {
+                    final authState = context.read<AuthBloc>().state;
+
+                    if (authState is! AuthSuccess) {
+                      // Si no está autenticado, enviamos a LoginPage
+                      final result = await Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (_) => const LoginPage()),
+                      );
+
+                      if (result != true) return;
+                    }
+
+                    // Ya autenticado: navegamos a la lista de direcciones
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => const ShippingAddressPage()),
+                    );
                   }),
                 ],
               ),

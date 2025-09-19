@@ -3,6 +3,7 @@ import 'package:ale_beauty_art_app/features/cart/presentation/bloc/cart_bloc.dar
 import 'package:ale_beauty_art_app/features/categories/presentation/bloc/categories_bloc.dart';
 import 'package:ale_beauty_art_app/features/navigation/bloc/navigation_bloc.dart';
 import 'package:ale_beauty_art_app/features/profile/presentation/bloc/profile_bloc.dart';
+import 'package:ale_beauty_art_app/features/shipping_address/presentation/bloc/shipping_address_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ale_beauty_art_app/features/home/presentation/bloc/home_bloc.dart';
@@ -13,6 +14,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 void main() async {
   await dotenv.load(fileName: ".env");
   runApp(const MyApp());
+  
 }
 
 class MyApp extends StatelessWidget {
@@ -29,7 +31,8 @@ class MyApp extends StatelessWidget {
         BlocProvider(create: (_) => NavigationBloc()),
         BlocProvider(create: (_) => ProfileBloc()),
         BlocProvider(create: (_) => AuthBloc()),
-        BlocProvider(create: (_) => CartBloc())
+        BlocProvider(create: (_) => CartBloc()),
+        BlocProvider(create: (_) => ShippingAddressBloc()),
       ],
       child: const MaterialApp(
         debugShowCheckedModeBanner: false,
