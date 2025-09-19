@@ -3,6 +3,8 @@ import { register } from '../services/authService';
 import { useNavigate, Link, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import bannerImg from '../assets/images/bannreg.png';
+import Visibility from "@mui/icons-material/Visibility";
+import VisibilityOff from "@mui/icons-material/VisibilityOff";
 
 function Register() {
   const [email, setEmail] = useState('');
@@ -10,6 +12,8 @@ function Register() {
   const [apellido, setApellido] = useState('');
   const [password, setPassword] = useState('');
   const [passwordConfirmation, setPasswordConfirmation] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const navigate = useNavigate();
@@ -63,22 +67,47 @@ function Register() {
               </div>
               <input 
                 value={email} 
+                name="email"
                 onChange={e => setEmail(e.target.value)} 
                 placeholder={t('register.email')} 
+                autoComplete="email"
               />
               <div className="row-card">
-                <input 
-                  type="password" 
-                  value={password} 
-                  onChange={e => setPassword(e.target.value)} 
-                  placeholder={t('register.password')} 
-                />
-                <input
-                  type="password"
-                  value={passwordConfirmation}
-                  onChange={e => setPasswordConfirmation(e.target.value)}
-                  placeholder={t('register.confirmPassword')}
-                />
+                {/* Password */}
+                <div className="position-relative">
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    value={password}
+                    onChange={e => setPassword(e.target.value)}
+                    placeholder={t("register.password")}
+                    className="pe-5"
+                  />
+                  <button
+                    type="button"
+                    className="btn position-absolute top-50 end-0 translate-middle-y border-0 bg-transparent"
+                    onClick={() => setShowPassword(!showPassword)}
+                  >
+                    {showPassword ? <VisibilityOff /> : <Visibility />}
+                  </button>
+                </div>
+
+                {/* Confirm Password */}
+                <div className="position-relative mt-2">
+                  <input
+                    type={showConfirmPassword ? "text" : "password"}
+                    value={passwordConfirmation}
+                    onChange={e => setPasswordConfirmation(e.target.value)}
+                    placeholder={t("register.confirmPassword")}
+                    className="pe-5"
+                  />
+                  <button
+                    type="button"
+                    className="btn position-absolute top-50 end-0 translate-middle-y border-0 bg-transparent"
+                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  >
+                    {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
+                  </button>
+                </div>
               </div>
               <button type="submit">{t('register.registerButton')}</button>
               {error && <p className="error">{error}</p>}

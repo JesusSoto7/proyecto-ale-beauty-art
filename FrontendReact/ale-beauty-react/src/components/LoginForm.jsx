@@ -3,10 +3,13 @@ import { useNavigate, Link, useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { login } from "../services/authService";
 import ale_logo from "../assets/images/ale_logo.jpg";
+import Visibility from "@mui/icons-material/Visibility";
+import VisibilityOff from "@mui/icons-material/VisibilityOff";
 
 function LoginForm({ onLogin }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const navigate = useNavigate();
   const { lang } = useParams();
@@ -52,22 +55,33 @@ function LoginForm({ onLogin }) {
           <div className="mb-3">
             <input
               type="email"
+              name="email"
               className="login-input"
               placeholder={t("login.emailPlaceholder")}
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              autoComplete="email"
               required
             />
+
           </div>
-          <div className="mb-3">
+          
+          <div className="mb-3 position-relative">
             <input
-              type="password"
-              className="login-input"
+              type={showPassword ? "text" : "password"}
+              className="login-input pe-5"
               placeholder={t("login.passwordPlaceholder")}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
             />
+            <button
+              type="button"
+              className="btn position-absolute top-50 end-0 translate-middle-y border-0 bg-transparent"
+              onClick={() => setShowPassword(!showPassword)}
+            >
+              {showPassword ? <VisibilityOff /> : <Visibility />}
+            </button>
           </div>
 
           {error && <p className="text-danger small">{error}</p>}
