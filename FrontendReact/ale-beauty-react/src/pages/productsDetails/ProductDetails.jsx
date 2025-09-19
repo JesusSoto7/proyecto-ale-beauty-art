@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { useTranslation } from 'react-i18next';
 import Rating from "@mui/material/Rating";
 import Box from "@mui/material/Box";
@@ -20,10 +20,12 @@ import CircularProgress from "@mui/material/CircularProgress";
 function ProductDetails() {
   const { slug } = useParams();
   const { lang } = useParams();
+  const navigate = useNavigate();
   const [product, setProduct] = useState(null);
   const [relatedProducts, setRelatedProducts] = useState([]); 
   const [token] = useState(localStorage.getItem("token"));
   const [cart, setCart] = useState(null);
+  const [error, setError] = useState(null);
   const { favoriteIds, loadFavorites } = useOutletContext();
   const { t } = useTranslation();
   const isFavorite = product ? favoriteIds.includes(product.id) : false;
@@ -229,6 +231,40 @@ function ProductDetails() {
     );
   }
 
+  const handleBuyNow = (productId, quantity = 1) => {
+    fetch("https://localhost:4000/api/v1/orders", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        order: {
+          products: [
+            { product_id: productId, quantity: quantity }
+          ]
+        }
+      }),
+    })
+      .then((res) => {
+        if (!res.ok) throw new Error("Buy now failed");
+        return res.json();
+      })
+      .then((data) => {
+        if (data.order) {
+          navigate(`/${lang}/checkout`, {
+            state: {
+              orderId: data.order.id,
+              total: data.order.pago_total
+            }
+          });
+        } else {
+          setError(t("cart.orderError"));
+        }
+      })
+      .catch(() => setError(t("cart.orderError")));
+  };
+
 
   // --- funciones de acciones ---
   const addToCart = (productId) => {
@@ -351,7 +387,7 @@ function ProductDetails() {
 
           {/* botones de acción */}
           <div className="actions">
-            <button onClick={() => addToCart(product.id)}>
+            <button onClick={() => handleBuyNow(product.id)}>
               {t("productDetails.buy")}
             </button>
 
