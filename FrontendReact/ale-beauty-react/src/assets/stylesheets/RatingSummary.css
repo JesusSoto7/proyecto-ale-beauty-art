@@ -78,3 +78,11 @@
   font-size: 13px;
   color: #777;
 }
+
+
+@media (max-width: 560px) {
+  .rating-summary{
+    width: 100%;
+  }
+  
+}

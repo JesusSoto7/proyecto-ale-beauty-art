@@ -73,6 +73,7 @@
     height: 53vh;
     display: flex;
     flex-direction: column;
+    width: 80%;
     max-width: 500px;
     justify-content: center;
 }
@@ -132,11 +133,18 @@
   background-color: #f35471;
 }
 
+#areaRating{
+  display: "flex"; 
+  flex-direction: "row"; 
+  gap: "50px";
+  margin-bottom: 10;
+}
+
 /* --- 📺 Pantallas grandes --- */
 @media (min-width: 992px) {
   .product-container {
     flex-direction: row; /* imagen izquierda, texto derecha */
-    align-items: flex-start;
+    align-items: center;
     justify-content: center;
   }
 
@@ -181,6 +189,15 @@
   }
   .product-info {
     flex: 1;
+  }
+
+  #areaRating{
+    display: flex;
+    flex-direction: column;
+  }
+
+  #detalles-producto{
+    width: 90%;
   }
 }
 .detalle-container {

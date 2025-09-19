@@ -457,7 +457,7 @@ function ProductDetails() {
 
       {activeTab === "reviews" && (
         <div className="reviews-section">
-          <div style={{display: "flex", flexDirection: "row", gap: "50px", marginBottom: 10}}>
+          <div id="areaRating" >
             <RatingSummary ratings={ratings} />
             <div style={{display: "flex", flexDirection: "column", gap: "10px", alignItems: "center", marginTop: 20}}>
               <RateReviewIcon style={{ fontSize: 80, color: "#ccc" }} />
