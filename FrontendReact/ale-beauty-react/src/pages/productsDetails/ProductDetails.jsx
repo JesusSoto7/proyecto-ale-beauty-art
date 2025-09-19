@@ -132,7 +132,35 @@ function ProductDetails() {
     );
   }
 
-  if (!product) return <p>{t('productDetails.loading')}</p>;
+  if (!product) {
+    return(
+            <div style={{
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center",
+        alignItems: "center",
+        height: "50vh",
+        gap: "16px"
+      }}>
+        <div style={{
+          width: "60px",
+          height: "60px",
+          border: "4px solid #f3f3f3",
+          borderTop: "4px solid #ff4d94",
+          borderRadius: "50%",
+          animation: "spin 1s linear infinite"
+        }}></div>
+        <style>
+          {`
+            @keyframes spin {
+              0% { transform: rotate(0deg); }
+              100% { transform: rotate(360deg); }
+            }
+          `}
+        </style>
+      </div>
+    );
+  }
 
   const activeBtnStyle = {
     borderBottom: "2px solid #f896b8",
@@ -194,7 +222,7 @@ function ProductDetails() {
               fontWeight: "bold",
             }}
           >
-            Ver más
+            {t("productDetails.viewMore")}
           </a>
         )}
       </p>
@@ -318,14 +346,13 @@ function ProductDetails() {
 
           {/* <ProductRating value={product.promedio_rating} count={product.total_reviews} /> */}
 
-
-          <p style={{color: "#ccc"}}>Disponibles: {product.stock}</p>
+          <br></br>
           <p className="price"> {formatCOP(product.precio_producto)}</p>
 
           {/* botones de acción */}
           <div className="actions">
             <button onClick={() => addToCart(product.id)}>
-              comprar ahora
+              {t("productDetails.buy")}
             </button>
 
             <button onClick={() => addToCart(product.id)}>
@@ -344,7 +371,7 @@ function ProductDetails() {
           borderBottom: '1px solid #eee', 
           marginBottom: '1rem' 
         }}>
-          <button style={activeBtnStyle}>Descripción</button>
+          <button style={activeBtnStyle}>{t("productDetails.description")}</button>
         </div>
         <p style={{ color: '#3d3d3dff', overflowWrap: "anywhere" }}>
           {product.descripcion}
@@ -353,7 +380,7 @@ function ProductDetails() {
 
 
     <div className="reviews-section">
-      <h3>Reseñas</h3>
+      <h3>{t("productDetails.reviews")}</h3>
 
       {loadingReviews ? (
         // Un único spinner para todo
@@ -373,7 +400,7 @@ function ProductDetails() {
                 sx={{ color: "#f896b8" }}
               />
               <textarea
-                placeholder="Escribe tu reseña..."
+                placeholder={t("productDetails.writeReview")}
                 value={newReview.comentario}
                 onChange={(e) =>
                   setNewReview({ ...newReview, comentario: e.target.value })
@@ -382,18 +409,18 @@ function ProductDetails() {
                 style={{ width: "100%", marginTop: "0.5rem" }}
               />
               <button type="submit" style={{ marginTop: "0.5rem" }}>
-                Enviar reseña
+                {t("productDetails.submitReview")}
               </button>
             </form>
           ) : (
             <p style={{ color: "gray" }}>
-              Solo los clientes que han comprado este producto pueden dejar una reseña.
+              {t("productDetails.onlyClients")}
             </p>
           )}
 
           <div>
             {reviews.length === 0 ? (
-              <p>No hay reseñas todavía.</p>
+              <p>{t("productDetails.noReviews")}</p>
             ) : (
               reviews.slice(0, visibleReviews).map((review) => (
                 <div
@@ -418,7 +445,7 @@ function ProductDetails() {
               onClick={() => setVisibleReviews((prev) => prev + 5)} 
               style={{ marginTop: "1rem", backgroundColor: "#f896b8", color: "white", padding: "8px 12px", borderRadius: "5px" }}
             >
-              Ver más
+              {t("productDetails.viewMore")}
             </button>
           )}
 
@@ -427,7 +454,7 @@ function ProductDetails() {
               onClick={() => setVisibleReviews(5)} 
               style={{ marginTop: "1rem", marginLeft: "10px", backgroundColor: "#ccc", color: "black", padding: "8px 12px", borderRadius: "5px" }}
             >
-              Ver menos
+              {t("productDetails.viewLess")}
             </button>
           )}
         </>
@@ -438,7 +465,7 @@ function ProductDetails() {
 
       {relatedProducts.length > 0 ? (
         <section className="related-products">
-          <h3 style={{display: "flex", justifySelf: "center"}}>Productos relacionados</h3>
+          <h3 style={{display: "flex", justifySelf: "center"}}>{t("productDetails.relatedproducts")}</h3>
           <hr style={{display: "flex", justifySelf: "center", width: "70%", color: "#ccc"}}></hr>
           <div className="carousel-container">
             <div className="carousel-items">
@@ -495,7 +522,7 @@ function ProductDetails() {
         </section>
       ) : (
         <section className="related-products">
-          <h3 style={{display: "flex", justifySelf: "center"}}>Productos relacionados</h3>
+          <h3 style={{display: "flex", justifySelf: "center"}}>{t("productDetails.relatedproducts")}</h3>
           <hr style={{display: "flex", justifySelf: "center", width: "70%", color: "#ccc"}}></hr>
           {/* Skeletons mientras carga */}
           <div className="carousel-container">

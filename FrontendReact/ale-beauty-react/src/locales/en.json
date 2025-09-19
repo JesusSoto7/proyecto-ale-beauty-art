@@ -99,7 +99,13 @@
     "logout": "Logout",
     "cart": "Cart",
     "favorites": "Favorites",
-    "noName": "No name"
+    "noName": "No name",
+    "myAccount": "My Account",
+    "personalSpace": "Welcome to your personal space",
+    "manageYourPersonalInformation": "Manage your personal information",
+    "checkYourOrders": "View your order history",
+    "manageYourAddresses": "Manage your shipping addresses"
+
   },
   "login": {
      "login": "Log In",
@@ -262,7 +268,18 @@
     "addFavoriteError": "Error adding favorite",
     "price": "Price",
     "category": "Category",
-    "addToCart": "Add to cart"
+    "addToCart": "Add to cart",
+    "reviews": "Reviews",
+    "buy": "Buy",
+    "description": "Description",
+    "onlyClients": "Only customers who have purchased this product can leave a review.",
+    "noReviews": "There are no reviews yet.",
+    "viewMore": "View More",
+    "viewLess": "View Less",
+    "relatedproducts": "Related Products",
+    "submitReview": "Submit Review",
+    "writeReview": "Write your review",
+    "inStock": "In Stock"
   }
   }
 
