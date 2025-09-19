@@ -14,8 +14,21 @@
 
 .description-section{
   display: flex;
+  width: 85%;
+  gap: 10px;
   flex-direction: column;
-  width: 50%;
+}
+
+#newReview{
+  width: 100%;
+}
+
+#formReviewCard{
+  border-radius: 15px;
+  border: solid 1px black;
+  overflow: hidden;
+  margin-bottom: 10px;
+  background-color: #eee;
 }
 
 .description-section button{
@@ -188,6 +201,16 @@
   text-align: center;
 }
 
+#textReview{
+  padding: 10px;
+  /* border: none !important;
+  border-bottom: solid 1px rgb(255, 165, 165) !important; */
+}
+
+#ReviewUP{
+  border-radius: 0 !important;
+}
+
 .detalle-header {
   display: flex;
   justify-content: space-between;
@@ -268,9 +291,22 @@
 
 .details-reviews-container {
   display: flex;
+  width: 60%;
+  justify-self: center;
   flex-direction: column;
   gap: 2rem;
   margin-top: 2rem;
+}
+
+.botonTap{
+  background-color: transparent;
+  color: #ccc;
+  border-radius: 0 !important;
+}
+
+.botonTap:hover{
+  background-color: transparent;
+  color: #f896b8;
 }
 
 .details-reviews-container .description-section {
