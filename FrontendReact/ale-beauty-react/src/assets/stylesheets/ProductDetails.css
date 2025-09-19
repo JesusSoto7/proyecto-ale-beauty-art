@@ -25,7 +25,7 @@
 
 #formReviewCard{
   border-radius: 15px;
-  border: solid 1px black;
+  border: solid 1px #ccc;
   overflow: hidden;
   margin-bottom: 10px;
   background-color: #eee;
@@ -317,6 +317,4 @@
   flex: none;
   border-left: none;
   padding-left: 0;
-  border-top: 1px solid #eee; 
-  padding-top: 1.5rem;
 }

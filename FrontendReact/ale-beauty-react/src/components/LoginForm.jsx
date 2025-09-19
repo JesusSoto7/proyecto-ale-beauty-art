@@ -80,7 +80,7 @@ function LoginForm({ onLogin }) {
               className="btn position-absolute top-50 end-0 translate-middle-y border-0 bg-transparent"
               onClick={() => setShowPassword(!showPassword)}
             >
-              {showPassword ? <VisibilityOff /> : <Visibility />}
+              {showPassword ? <VisibilityOff style={{color: "#ccc"}} /> : <Visibility style={{color: "#ccc"}} />}
             </button>
           </div>
 

@@ -43,6 +43,7 @@ function ProductDetails() {
   const [loading, setLoading] = useState(true);
   const [loadingReviews, setLoadingReviews] = useState(true);
   const [activeTab, setActiveTab] = useState("description");
+  const [showReviewForm, setShowReviewForm] = useState(false);
 
   // Cargar producto + carrito + favoritos
   useEffect(() => {
@@ -341,11 +342,11 @@ function ProductDetails() {
   };
 
 
-  // ✅ toggle favoritos
+  // toggle favoritos
   const toggleFavorite = async (productId) => {
     try {
       if (favoriteIds.includes(productId)) {
-        // ❌ quitar favorito
+        // quitar favorito
         const res = await fetch(
           `https://localhost:4000/api/v1/favorites/${productId}`,
           {
@@ -354,10 +355,10 @@ function ProductDetails() {
           }
         );
         if (res.ok) {
-          await loadFavorites(); // 🔄 refresca favoritos globales
+          await loadFavorites(); // refresca favoritos globales
         }
       } else {
-        // ❤️ añadir favorito
+        // añadir favorito
         const res = await fetch("https://localhost:4000/api/v1/favorites", {
           method: "POST",
           headers: {
@@ -368,7 +369,7 @@ function ProductDetails() {
         });
         const data = await res.json();
         if (data.success) {
-          await loadFavorites(); // 🔄 refresca favoritos globales
+          await loadFavorites(); // refresca favoritos globales
         }
       }
     } catch (err) {
@@ -456,17 +457,50 @@ function ProductDetails() {
 
       {activeTab === "reviews" && (
         <div className="reviews-section">
-          <div style={{display: "flex", flexDirection: "row", gap: "50px"}}>
+          <div style={{display: "flex", flexDirection: "row", gap: "50px", marginBottom: 10}}>
             <RatingSummary ratings={ratings} />
             <div style={{display: "flex", flexDirection: "column", gap: "10px", alignItems: "center", marginTop: 20}}>
               <RateReviewIcon style={{ fontSize: 80, color: "#ccc" }} />
-              <button id="newReview">
-                Escribe  una reseña
+              <button id="newReview" onClick={() => setShowReviewForm(prev => !prev)}>
+                {showReviewForm ? "Cancelar reseña" : "Escribe una reseña"}
               </button>
             </div>
-            
           </div>
-           
+
+          {showReviewForm && canReview && (
+            <div id="formReviewCard" style={{ marginTop: "1rem" }}>
+              <form onSubmit={handleSubmitReview} style={{gap: 0}}>
+                <textarea
+                  id="textReview"
+                  placeholder={t("productDetails.writeReview")}
+                  value={newReview.comentario}
+                  onChange={(e) =>
+                    setNewReview({ ...newReview, comentario: e.target.value })
+                  }
+                  rows={3}
+                  style={{ width: "100%", border: "none", borderBottom: "solid 1px #ccc"}}
+                />
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                  <Rating
+                    name="new-rating"
+                    value={newReview.rating}
+                    onChange={(e, value) =>
+                      setNewReview({ ...newReview, rating: value })
+                    }
+                    sx={{ color: "#f896b8", marginLeft: 2 }}
+                  />
+                  <div>
+                    <button type="submit" id="ReviewUP">
+                      {t("productDetails.submitReview")}
+                    </button>
+                  </div>
+                </div>
+              </form>
+            </div>
+          )}
+
+          <hr/>
+
           <h3>{t("productDetails.reviews")}</h3>
 
           {loadingReviews ? (
@@ -475,41 +509,6 @@ function ProductDetails() {
             </div>
           ) : (
             <>
-              {canReview ? (
-                <div id="formReviewCard">
-                  <form onSubmit={handleSubmitReview} style={{gap: 0}}>
-                    <textarea
-                      id="textReview"
-                      placeholder={t("productDetails.writeReview")}
-                      value={newReview.comentario}
-                      onChange={(e) =>
-                        setNewReview({ ...newReview, comentario: e.target.value })
-                      }
-                      rows={3}
-                      style={{ width: "100%", border: "none", borderBottom: "solid 1px black"}}
-                    />
-                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                      <Rating
-                        name="new-rating"
-                        value={newReview.rating}
-                        onChange={(e, value) =>
-                          setNewReview({ ...newReview, rating: value })
-                        }
-                        sx={{ color: "#f896b8", marginLeft: 2 }}
-                      />
-                      <div>
-                        <button type="submit" id="ReviewUP">
-                          {t("productDetails.submitReview")}
-                        </button>
-                      </div>
-
-                    </div>
-                  </form>
-                </div>
-              ) : (
-                <p style={{ color: "gray" }}>{t("productDetails.onlyClients")}</p>
-              )}
-
               <div>
                 {reviews.length === 0 ? (
                   <p>{t("productDetails.noReviews")}</p>

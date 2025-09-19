@@ -2,7 +2,7 @@
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  max-width: 700px;
+  max-width: 850px;
   background: #fff;
   padding: 20px;
   border-radius: 12px;
@@ -10,7 +10,7 @@
   box-shadow: 0 2px 6px rgba(0,0,0,0.05);
   font-family: Arial, sans-serif;
   gap: 10px;
-  width: 70%;
+  width: 80%;
 }
 
 .rating-distribution {

@@ -87,12 +87,12 @@ function Register() {
                     className="btn position-absolute top-50 end-0 translate-middle-y border-0 bg-transparent"
                     onClick={() => setShowPassword(!showPassword)}
                   >
-                    {showPassword ? <VisibilityOff /> : <Visibility />}
+                    {showPassword ? <VisibilityOff style={{color: "#ccc"}} /> : <Visibility style={{color: "#ccc"}} />}
                   </button>
                 </div>
 
                 {/* Confirm Password */}
-                <div className="position-relative mt-2">
+                <div className="position-relative">
                   <input
                     type={showConfirmPassword ? "text" : "password"}
                     value={passwordConfirmation}
@@ -105,7 +105,7 @@ function Register() {
                     className="btn position-absolute top-50 end-0 translate-middle-y border-0 bg-transparent"
                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                   >
-                    {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
+                    {showConfirmPassword ? <VisibilityOff style={{color: "#ccc"}} /> : <Visibility style={{color: "#ccc"}} />}
                   </button>
                 </div>
               </div>
