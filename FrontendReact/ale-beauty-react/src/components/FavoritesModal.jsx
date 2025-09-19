@@ -135,7 +135,6 @@ export default function FavoritesModal({ open, onClose }) {
 
   const clearFavorites = async () => {
     if (favorites.length === 0) {
-      alert(t('favorites.noProducts'));
       return;
     }
 
