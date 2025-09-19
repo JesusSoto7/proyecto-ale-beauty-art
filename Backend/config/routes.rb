@@ -35,6 +35,11 @@ Rails.application.routes.draw do
         member do
           get :can_review
         end
+        
+        collection do
+          get :novedades
+        end
+        
         resources :reviews, only: [:index, :create, :update, :destroy]
       end
 

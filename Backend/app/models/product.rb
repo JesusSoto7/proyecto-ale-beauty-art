@@ -15,7 +15,8 @@ class Product < ApplicationRecord
 
   
   before_validation :generate_slug, on: [:create, :update]
-
+  
+  scope :novedades, -> { order(created_at: :desc).limit(10) }
 
   def imagen_url
     Rails.application.routes.url_helpers.url_for(imagen) if imagen.attached?

@@ -21,6 +21,8 @@ function Inicio() {
   const [loading, setLoading] = useState(true);
   const { favoriteIds, loadFavorites } = useOutletContext();
   const { t } = useTranslation();
+  const [newProducts, setNewProducts] = useState([]);
+
   
   const token = localStorage.getItem('token');
   const interesRef = useRef(null);
@@ -61,8 +63,16 @@ function Inicio() {
           return;
         }
 
-        const productosRandom = [...(data.products || [])].sort(() => 0.5 - Math.random());
-        setProducts(productosRandom);
+        // Novedades
+        fetch('https://localhost:4000/api/v1/products/novedades', {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          }
+        })
+          .then(res => res.json())
+          .then(data => setNewProducts(data))
+          .catch(err => console.error("Error cargando novedades", err));
+
 
         imgs.forEach(src => {
           const img = new Image();
@@ -202,7 +212,7 @@ function Inicio() {
               ))}
             </div>
           </div>
-        ) : products.length > 0 ? (
+        ) : newProducts.length > 0 ? (
           <div className="carousel-container">
             <button
               className="carousel-btn prev"
@@ -215,7 +225,7 @@ function Inicio() {
             </button>
 
             <div className="carousel-items">
-              {products.map((prod) => (
+              {newProducts.map((prod) => (
                 <div className="product-card" key={prod.id} style={{ position: "relative" }}>
                   <IconButton
                     onClick={() => toggleFavorite(prod.id)}

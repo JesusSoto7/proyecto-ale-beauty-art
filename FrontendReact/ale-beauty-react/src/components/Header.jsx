@@ -235,10 +235,10 @@ export default function Header({ loadFavorites }) {
       {/* Encabezado del menú */}
       <Box sx={{ px: 2, py: 1, borderBottom: `1px solid ${pinkTheme.light}`, mb: 1 }}>
         <Typography variant="h6" sx={{ fontWeight: 'bold', color: pinkTheme.primary }}>
-          Mi Cuenta
+          {t("header.myAccount")}
         </Typography>
         <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-          Bienvenido a tu espacio personal
+          {t("header.personalSpace")}
         </Typography>
       </Box>
       
@@ -250,7 +250,7 @@ export default function Header({ loadFavorites }) {
         <BsPerson style={{ marginRight: '12px', color: pinkTheme.primary, fontSize: '18px' }} />
         <Box>
           <Typography variant="body1" sx={{ fontWeight: 500 }}>{t('header.profile')}</Typography>
-          <Typography variant="caption" sx={{ color: 'text.secondary' }}>Gestiona tu información personal</Typography>
+          <Typography variant="caption" sx={{ color: 'text.secondary' }}>{t("header.manageYourPersonalInformation")}</Typography>
         </Box>
       </MenuItem>
       
@@ -262,7 +262,7 @@ export default function Header({ loadFavorites }) {
         <BsBag style={{ marginRight: '12px', color: pinkTheme.primary, fontSize: '18px' }} />
         <Box>
           <Typography variant="body1" sx={{ fontWeight: 500 }}>{t('header.myOrders')}</Typography>
-          <Typography variant="caption" sx={{ color: 'text.secondary' }}>Consulta tu historial de pedidos</Typography>
+          <Typography variant="caption" sx={{ color: 'text.secondary' }}>{t("header.checkYourOrders")}</Typography>
         </Box>
       </MenuItem>
       
@@ -274,7 +274,7 @@ export default function Header({ loadFavorites }) {
         <BsGeoAlt style={{ marginRight: '12px', color: pinkTheme.primary, fontSize: '18px' }} />
         <Box>
           <Typography variant="body1" sx={{ fontWeight: 500 }}>{t('header.myAddresses')}</Typography>
-          <Typography variant="caption" sx={{ color: 'text.secondary' }}>Gestiona tus direcciones de envío</Typography>
+          <Typography variant="caption" sx={{ color: 'text.secondary' }}>{t("header.manageYourAddresses")}</Typography>
         </Box>
       </MenuItem>
       {/* Divider */}

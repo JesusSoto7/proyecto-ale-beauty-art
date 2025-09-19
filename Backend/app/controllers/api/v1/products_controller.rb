@@ -69,6 +69,11 @@ class Api::V1::ProductsController < Api::V1::BaseController
     render json: { can_review: purchased }
   end
 
+  def novedades
+    @products = Product.novedades
+    render json: @products.as_json(methods: [:imagen_url])
+  end
+
 
   private
 
