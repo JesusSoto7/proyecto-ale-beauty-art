@@ -3,6 +3,7 @@ import 'package:ale_beauty_art_app/core/http/custom_http_client.dart';
 import 'package:ale_beauty_art_app/models/ShippingAddress.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import '../bloc/shipping_address_bloc.dart';
 import '../bloc/shipping_address_event.dart';
 import 'package:ale_beauty_art_app/styles/colors.dart';
@@ -17,6 +18,7 @@ class ShippingAddressAdd extends StatefulWidget {
 
 class _ShippingAddressFormPageState extends State<ShippingAddressAdd> {
   final _formKey = GlobalKey<FormState>();
+  final storage = const FlutterSecureStorage();
 
   final nombreController = TextEditingController();
   final apellidoController = TextEditingController();
@@ -38,8 +40,17 @@ class _ShippingAddressFormPageState extends State<ShippingAddressAdd> {
   @override
   void initState() {
     super.initState();
+
+    _ensureTokenInBloc();
     _fillForm();
     _fetchDepartments();
+  }
+
+  Future<void> _ensureTokenInBloc() async {
+    final token = await storage.read(key: 'jwt_token');
+    if (token != null && token.isNotEmpty) {
+      context.read<ShippingAddressBloc>().add(UpdateShippingToken(token));
+    }
   }
 
   void _fillForm() {
@@ -61,21 +72,47 @@ class _ShippingAddressFormPageState extends State<ShippingAddressAdd> {
 
   Future<void> _fetchDepartments() async {
     try {
-      final res = await CustomHttpClient.getRequest('/api/v1/locations/departments');
+      final token = await storage.read(key: 'jwt_token');
+      final client = await CustomHttpClient.client;
+      final res = await client.get(
+        Uri.parse('${CustomHttpClient.baseUrl}/api/v1/locations/departments'),
+        headers: {
+          'Content-Type': 'application/json',
+          if (token != null && token.isNotEmpty) 'Authorization': 'Bearer $token'
+        },
+      );
       if (res.statusCode == 200) setState(() => departments = jsonDecode(res.body));
-    } catch (e) {}
+    } catch (e) {
+      // debug: print(e);
+    }
   }
 
   Future<void> _fetchMunicipalities(String deptId) async {
     try {
-      final res = await CustomHttpClient.getRequest('/api/v1/locations/municipalities/$deptId');
+      final token = await storage.read(key: 'jwt_token');
+      final client = await CustomHttpClient.client;
+      final res = await client.get(
+        Uri.parse('${CustomHttpClient.baseUrl}/api/v1/locations/municipalities/$deptId'),
+        headers: {
+          'Content-Type': 'application/json',
+          if (token != null && token.isNotEmpty) 'Authorization': 'Bearer $token'
+        },
+      );
       if (res.statusCode == 200) setState(() => municipalities = jsonDecode(res.body));
     } catch (e) {}
   }
 
   Future<void> _fetchNeighborhoods(String munId) async {
     try {
-      final res = await CustomHttpClient.getRequest('/api/v1/locations/neighborhoods/$munId');
+      final token = await storage.read(key: 'jwt_token');
+      final client = await CustomHttpClient.client;
+      final res = await client.get(
+        Uri.parse('${CustomHttpClient.baseUrl}/api/v1/locations/neighborhoods/$munId'),
+        headers: {
+          'Content-Type': 'application/json',
+          if (token != null && token.isNotEmpty) 'Authorization': 'Bearer $token'
+        },
+      );
       if (res.statusCode == 200) setState(() => neighborhoods = jsonDecode(res.body));
     } catch (e) {}
   }
@@ -84,38 +121,29 @@ class _ShippingAddressFormPageState extends State<ShippingAddressAdd> {
     if (!_formKey.currentState!.validate()) return;
 
     final data = {
-      'shipping_address': {
-        'nombre': nombreController.text,
-        'apellido': apellidoController.text,
-        'telefono': telefonoController.text,
-        'direccion': direccionController.text,
-        'codigo_postal': codigoPostalController.text,
-        'indicaciones_adicionales': indicacionesController.text,
-        'department_id': departmentId,
-        'municipality_id': municipalityId,
-        'neighborhood_id': neighborhoodId,
-      }
+      'nombre': nombreController.text,
+      'apellido': apellidoController.text,
+      'telefono': telefonoController.text,
+      'direccion': direccionController.text,
+      'codigo_postal': codigoPostalController.text,
+      'indicaciones_adicionales': indicacionesController.text,
+      'department_id': departmentId,
+      'municipality_id': municipalityId,
+      'neighborhood_id': neighborhoodId,
     };
 
     try {
-      final res = isEditing
-          ? await CustomHttpClient.putRequest('/api/v1/shipping_addresses/${widget.editAddress!.id}', data)
-          : await CustomHttpClient.postRequest('/api/v1/shipping_addresses', data);
+      await _ensureTokenInBloc();
 
-      if (res.statusCode == 200 || res.statusCode == 201) {
-        context.read<ShippingAddressBloc>().add(LoadAddresses());
-        Navigator.pop(context);
+      if (isEditing) {
+        context.read<ShippingAddressBloc>().add(UpdateAddress(widget.editAddress!.id, data));
       } else {
-        final body = res.body.isNotEmpty ? jsonDecode(res.body) : {};
-        final error = body['errors']?.join(', ') ?? body['message'] ?? 'Error desconocido';
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error: $error')),
-        );
+        context.read<ShippingAddressBloc>().add(AddAddress(data));
       }
+
+      Navigator.pop(context);
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error: $e')),
-      );
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: $e')));
     }
   }
 
@@ -151,47 +179,22 @@ class _ShippingAddressFormPageState extends State<ShippingAddressAdd> {
           key: _formKey,
           child: ListView(
             children: [
-              TextFormField(
-                controller: nombreController,
-                decoration: _inputDecoration('Nombre'),
-                validator: (v) => v!.isEmpty ? 'Requerido' : null,
-              ),
+              TextFormField(controller: nombreController, decoration: _inputDecoration('Nombre'), validator: (v) => v!.isEmpty ? 'Requerido' : null),
               const SizedBox(height: 12),
-              TextFormField(
-                controller: apellidoController,
-                decoration: _inputDecoration('Apellido'),
-                validator: (v) => v!.isEmpty ? 'Requerido' : null,
-              ),
+              TextFormField(controller: apellidoController, decoration: _inputDecoration('Apellido'), validator: (v) => v!.isEmpty ? 'Requerido' : null),
               const SizedBox(height: 12),
-              TextFormField(
-                controller: telefonoController,
-                decoration: _inputDecoration('Teléfono'),
-                validator: (v) => v!.isEmpty ? 'Requerido' : null,
-              ),
+              TextFormField(controller: telefonoController, decoration: _inputDecoration('Teléfono'), validator: (v) => v!.isEmpty ? 'Requerido' : null),
               const SizedBox(height: 12),
-              TextFormField(
-                controller: direccionController,
-                decoration: _inputDecoration('Dirección'),
-                validator: (v) => v!.isEmpty ? 'Requerido' : null,
-              ),
+              TextFormField(controller: direccionController, decoration: _inputDecoration('Dirección'), validator: (v) => v!.isEmpty ? 'Requerido' : null),
               const SizedBox(height: 12),
-              TextFormField(
-                controller: codigoPostalController,
-                decoration: _inputDecoration('Código postal'),
-              ),
+              TextFormField(controller: codigoPostalController, decoration: _inputDecoration('Código postal')),
               const SizedBox(height: 12),
-              TextFormField(
-                controller: indicacionesController,
-                decoration: _inputDecoration('Indicaciones adicionales'),
-                maxLines: 3,
-              ),
+              TextFormField(controller: indicacionesController, decoration: _inputDecoration('Indicaciones adicionales'), maxLines: 3),
               const SizedBox(height: 12),
               DropdownButtonFormField<String>(
                 value: departmentId,
                 decoration: _inputDecoration('Departamento'),
-                items: departments
-                    .map((d) => DropdownMenuItem(value: d['id'].toString(), child: Text(d['nombre'])))
-                    .toList(),
+                items: departments.map((d) => DropdownMenuItem(value: d['id'].toString(), child: Text(d['nombre']))).toList(),
                 onChanged: (val) {
                   setState(() {
                     departmentId = val;
@@ -208,9 +211,7 @@ class _ShippingAddressFormPageState extends State<ShippingAddressAdd> {
               DropdownButtonFormField<String>(
                 value: municipalityId,
                 decoration: _inputDecoration('Municipio'),
-                items: municipalities
-                    .map((m) => DropdownMenuItem(value: m['id'].toString(), child: Text(m['nombre'])))
-                    .toList(),
+                items: municipalities.map((m) => DropdownMenuItem(value: m['id'].toString(), child: Text(m['nombre']))).toList(),
                 onChanged: (val) {
                   setState(() {
                     municipalityId = val;
@@ -225,9 +226,7 @@ class _ShippingAddressFormPageState extends State<ShippingAddressAdd> {
               DropdownButtonFormField<String>(
                 value: neighborhoodId,
                 decoration: _inputDecoration('Barrio'),
-                items: neighborhoods
-                    .map((n) => DropdownMenuItem(value: n['id'].toString(), child: Text(n['nombre'])))
-                    .toList(),
+                items: neighborhoods.map((n) => DropdownMenuItem(value: n['id'].toString(), child: Text(n['nombre']))).toList(),
                 onChanged: (val) => setState(() => neighborhoodId = val),
                 validator: (v) => v == null ? 'Seleccione un barrio' : null,
               ),

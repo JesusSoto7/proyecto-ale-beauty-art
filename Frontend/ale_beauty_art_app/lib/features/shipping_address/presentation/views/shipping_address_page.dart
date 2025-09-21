@@ -1,3 +1,4 @@
+import 'package:ale_beauty_art_app/features/auth/bloc/auth_bloc.dart';
 import 'package:ale_beauty_art_app/styles/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -100,11 +101,13 @@ class ShippingAddressPage extends StatelessWidget {
                               icon: const Icon(Icons.edit, color: Colors.blue),
                               tooltip: 'Editar',
                               onPressed: () {
+                                final auth = context.read<AuthBloc>().state as AuthSuccess;
+                                context.read<ShippingAddressBloc>().add(UpdateShippingToken(auth.token));
+
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (_) =>
-                                        ShippingAddressAdd(editAddress: a),
+                                    builder: (_) => ShippingAddressAdd(editAddress: a),
                                   ),
                                 );
                               },
@@ -150,8 +153,11 @@ class ShippingAddressPage extends StatelessWidget {
           return const SizedBox.shrink();
         },
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
+     floatingActionButton: FloatingActionButton(
+       onPressed: () {
+          final auth = context.read<AuthBloc>().state as AuthSuccess;
+          context.read<ShippingAddressBloc>().add(UpdateShippingToken(auth.token));
+
           Navigator.push(
             context,
             MaterialPageRoute(builder: (_) => const ShippingAddressAdd()),

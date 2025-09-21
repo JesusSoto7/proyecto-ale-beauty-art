@@ -7,6 +7,14 @@ abstract class ShippingAddressEvent extends Equatable {
   List<Object?> get props => [];
 }
 
+class UpdateShippingToken extends ShippingAddressEvent {
+  final String token;
+  const UpdateShippingToken(this.token);
+
+  @override
+  List<Object?> get props => [token];
+}
+
 class LoadAddresses extends ShippingAddressEvent {}
 
 class AddAddress extends ShippingAddressEvent {
@@ -40,12 +48,4 @@ class SetDefaultAddress extends ShippingAddressEvent {
 
   @override
   List<Object?> get props => [id];
-}
-
-class UpdateShippingToken extends ShippingAddressEvent {
-  final String token;
-  const UpdateShippingToken(this.token);
-
-  @override
-  List<Object?> get props => [token];
 }
