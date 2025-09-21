@@ -2,7 +2,7 @@ import 'package:equatable/equatable.dart';
 
 class CartState extends Equatable {
   final bool isLoading;
-  final List<Map<String, dynamic>> products; // Puedes cambiar a modelo si lo deseas
+  final List<Map<String, dynamic>> products;
   final String? error;
 
   const CartState({

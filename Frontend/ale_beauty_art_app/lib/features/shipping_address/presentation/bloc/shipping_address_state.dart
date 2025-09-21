@@ -1,6 +1,5 @@
-import 'package:ale_beauty_art_app/models/ShippingAddress.dart';
 import 'package:equatable/equatable.dart';
-
+import 'package:ale_beauty_art_app/models/ShippingAddress.dart';
 
 abstract class ShippingAddressState extends Equatable {
   const ShippingAddressState();
