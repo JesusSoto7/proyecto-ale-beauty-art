@@ -53,7 +53,12 @@ Rails.application.routes.draw do
       resources :orders, only: [:create, :index]
       get "/my_orders", to: "orders#ordenes"
       get "/my_orders/:id", to: "orders#show"
-      resources :payments, only: [:create]
+
+      resources :payments, only: [:create] do
+        collection do
+          post :create_preference   # POST /api/v1/payments/create_preference
+        end
+      end
 
       get "/me", to: "users#me"
       get "/count", to: "users#count"

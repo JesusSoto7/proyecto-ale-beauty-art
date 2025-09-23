@@ -1,4 +1,15 @@
-part of 'payment_bloc.dart';
+import 'package:equatable/equatable.dart';
 
-@immutable
-sealed class PaymentEvent {}
+abstract class PaymentEvent extends Equatable {
+  const PaymentEvent();
+  @override
+  List<Object?> get props => [];
+}
+
+class CreateOrderAndPreference extends PaymentEvent {
+  final int orderId;
+  const CreateOrderAndPreference(this.orderId);
+
+  @override
+  List<Object?> get props => [orderId];
+}

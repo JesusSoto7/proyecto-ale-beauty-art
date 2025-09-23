@@ -18,6 +18,7 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     on<LoadCart>(_onLoadCart);
     on<AddProductToCart>(_onAddProductToCart);
     on<RemoveProductFromCart>(_onRemoveProductFromCart);
+    on<CreateOrder>(_onCreateOrder);
   }
 
   void _onUpdateCartToken(UpdateCartToken event, Emitter<CartState> emit) {
@@ -109,6 +110,53 @@ class CartBloc extends Bloc<CartEvent, CartState> {
       }
     } catch (e) {
       emit(state.copyWith(error: e.toString()));
+    }
+  }
+
+    Future<void> _onCreateOrder(CreateOrder event, Emitter<CartState> emit) async {
+    if (_jwtToken == null) {
+      emit(state.copyWith(error: 'Token no disponible'));
+      return;
+    }
+
+    emit(state.copyWith(isLoading: true, error: null));
+
+    try {
+      final token = await secureStorage.read(key: 'jwt_token');
+      final client = await CustomHttpClient.client;
+
+      final body = {
+        'shipping_address': {
+          'nombre': event.selectedAddress.nombre,
+          'apellido': event.selectedAddress.apellido,
+          'direccion': event.selectedAddress.direccion,
+          'telefono': event.selectedAddress.telefono,
+          'predeterminada': event.selectedAddress.predeterminada,
+        },
+        'products': state.products,
+      };
+
+      final response = await client.post(
+        Uri.parse('$apiUrl/orders'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+        body: jsonEncode(body),
+      );
+
+      if (response.statusCode == 201 || response.statusCode == 200) {
+        final Map<String, dynamic> json = jsonDecode(response.body);
+        final int id = json['order']['id'];
+        emit(state.copyWith(isLoading: false, orderId: id));
+      } else {
+        emit(state.copyWith(
+          isLoading: false,
+          error: 'Error al crear orden: ${response.body}',
+        ));
+      }
+    } catch (e) {
+      emit(state.copyWith(isLoading: false, error: e.toString()));
     }
   }
 }
