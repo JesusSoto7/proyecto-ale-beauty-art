@@ -189,8 +189,6 @@ class _ShippingAddressFormPageState extends State<ShippingAddressAdd> {
               const SizedBox(height: 12),
               TextFormField(controller: codigoPostalController, decoration: _inputDecoration('Código postal')),
               const SizedBox(height: 12),
-              TextFormField(controller: indicacionesController, decoration: _inputDecoration('Indicaciones adicionales'), maxLines: 3),
-              const SizedBox(height: 12),
               DropdownButtonFormField<String>(
                 value: departmentId,
                 decoration: _inputDecoration('Departamento'),
@@ -230,6 +228,8 @@ class _ShippingAddressFormPageState extends State<ShippingAddressAdd> {
                 onChanged: (val) => setState(() => neighborhoodId = val),
                 validator: (v) => v == null ? 'Seleccione un barrio' : null,
               ),
+              const SizedBox(height: 12),
+              TextFormField(controller: indicacionesController, decoration: _inputDecoration('Indicaciones adicionales'), maxLines: 3),
               const SizedBox(height: 20),
               SizedBox(
                 width: double.infinity,
