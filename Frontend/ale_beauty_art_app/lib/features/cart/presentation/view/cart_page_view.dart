@@ -2,6 +2,7 @@ import 'package:ale_beauty_art_app/features/cart/presentation/bloc/cart_bloc.dar
 import 'package:ale_beauty_art_app/features/cart/presentation/bloc/cart_event.dart';
 import 'package:ale_beauty_art_app/features/cart/presentation/bloc/cart_state.dart';
 import 'package:ale_beauty_art_app/features/payments/presentation/bloc/payment_bloc.dart';
+import 'package:ale_beauty_art_app/features/payments/presentation/bloc/payment_event.dart';
 import 'package:ale_beauty_art_app/features/payments/presentation/bloc/payment_state.dart';
 import 'package:ale_beauty_art_app/features/payments/presentation/views/payment_webview_page.dart';
 import 'package:ale_beauty_art_app/features/shipping_address/presentation/views/select_address_Page.dart';
@@ -127,12 +128,18 @@ class CartPageView extends StatelessWidget {
         child: BlocListener<PaymentBloc, PaymentState>(
           listener: (context, state) {
             if (state is PaymentPreferenceReady) {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (_) => PaymentWebViewPage(url: state.initPoint),
-                ),
-              );
+              final orderId = context.read<CartBloc>().state.orderId;
+              if (orderId != null) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => PaymentPage(
+                      url: state.initPoint,
+                      orderId: orderId, // ✅ pasar aquí el orderId
+                    ),
+                  ),
+                );
+              }
             } else if (state is PaymentFailure) {
               ScaffoldMessenger.of(context)
                   .showSnackBar(SnackBar(content: Text(state.message)));
@@ -140,7 +147,10 @@ class CartPageView extends StatelessWidget {
           },
           child: ElevatedButton.icon(
             onPressed: () async {
-              final cartState = context.read<CartBloc>().state;
+              final cartBloc = context.read<CartBloc>();
+              final paymentBloc = context.read<PaymentBloc>();
+              final cartState = cartBloc.state;
+
               if (cartState.products.isEmpty) return;
 
               // Abrir selección de dirección
@@ -150,11 +160,27 @@ class CartPageView extends StatelessWidget {
               );
 
               if (selectedAddress != null) {
-                // Aquí lanzamos la creación de la orden y el pago directamente
-                context.read<CartBloc>().add(CreateOrder(selectedAddress: selectedAddress));
+                // 1️⃣ Crear la orden
+                cartBloc.add(CreateOrder(selectedAddress: selectedAddress));
 
-                // Si usas PaymentBloc para abrir WebView de pago, puedes escuchar el estado
-                // y navegar a PaymentWebViewPage dentro de un BlocListener<PaymentBloc>
+                // 2️⃣ Esperar que CartBloc actualice orderId
+                // Usamos un listener temporal en el contexto de Flutter
+                // para disparar PaymentBloc cuando la orden ya tenga ID
+                // Esto evita usar StreamSubscription manual
+                final listener = BlocListener<CartBloc, CartState>(
+                  listener: (context, state) {
+                    if (state.orderId != null) {
+                      paymentBloc.add(CreateOrderAndPreference(state.orderId!));
+                      // Eliminamos el listener una vez disparado
+                      Navigator.of(context).pop(); // Cierra listener temporal
+                    }
+                  },
+                  child: const SizedBox.shrink(),
+                );
+
+                Navigator.of(context).push(
+                  MaterialPageRoute(builder: (_) => listener),
+                );
               }
             },
             icon: const Icon(Icons.payment, color: Colors.white),
@@ -164,6 +190,7 @@ class CartPageView extends StatelessWidget {
               padding: const EdgeInsets.symmetric(vertical: 16),
             ),
           ),
+
         ),
       ),
     );

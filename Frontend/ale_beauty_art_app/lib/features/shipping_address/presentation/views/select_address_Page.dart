@@ -1,9 +1,3 @@
-import 'package:ale_beauty_art_app/features/cart/presentation/bloc/cart_bloc.dart';
-import 'package:ale_beauty_art_app/features/cart/presentation/bloc/cart_event.dart';
-import 'package:ale_beauty_art_app/features/payments/presentation/bloc/payment_bloc.dart';
-import 'package:ale_beauty_art_app/features/payments/presentation/bloc/payment_event.dart';
-import 'package:ale_beauty_art_app/features/payments/presentation/bloc/payment_state.dart';
-import 'package:ale_beauty_art_app/features/payments/presentation/views/payment_webview_page.dart';
 import 'package:ale_beauty_art_app/features/shipping_address/presentation/bloc/shipping_address_bloc.dart';
 import 'package:ale_beauty_art_app/features/shipping_address/presentation/bloc/shipping_address_event.dart';
 import 'package:ale_beauty_art_app/features/shipping_address/presentation/bloc/shipping_address_state.dart';
@@ -13,15 +7,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ale_beauty_art_app/styles/colors.dart';
 import 'package:ale_beauty_art_app/styles/text_styles.dart';
 import 'package:ale_beauty_art_app/models/ShippingAddress.dart';
-import 'dart:async';
-
 
 class SelectAddressPage extends StatelessWidget {
   const SelectAddressPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    // Carga inicial de direcciones
     context.read<ShippingAddressBloc>().add(LoadAddresses());
 
     return Scaffold(
@@ -68,7 +59,7 @@ class SelectAddressPage extends StatelessWidget {
                       return GestureDetector(
                         onTap: () {
                           selectedAddress = addr;
-                          (context as Element).markNeedsBuild(); // refresca UI
+                          (context as Element).markNeedsBuild();
                         },
                         child: Container(
                           margin: const EdgeInsets.only(bottom: 12),
@@ -86,11 +77,9 @@ class SelectAddressPage extends StatelessWidget {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(
-                                '${addr.nombre} ${addr.apellido}',
-                                style: (AppTextStyles.body ?? const TextStyle())
-                                    .copyWith(fontWeight: FontWeight.bold),
-                              ),
+                              Text('${addr.nombre} ${addr.apellido}',
+                                  style: (AppTextStyles.body ?? const TextStyle())
+                                      .copyWith(fontWeight: FontWeight.bold)),
                               const SizedBox(height: 4),
                               Text(addr.direccion, style: AppTextStyles.subtitle),
                               const SizedBox(height: 2),
@@ -98,11 +87,9 @@ class SelectAddressPage extends StatelessWidget {
                               if (addr.predeterminada)
                                 Padding(
                                   padding: const EdgeInsets.only(top: 4),
-                                  child: Text(
-                                    'Predeterminada',
-                                    style: (AppTextStyles.price)
-                                        .copyWith(color: AppColors.primaryPink),
-                                  ),
+                                  child: Text('Predeterminada',
+                                      style: AppTextStyles.price
+                                          .copyWith(color: AppColors.primaryPink)),
                                 ),
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.end,
@@ -117,9 +104,7 @@ class SelectAddressPage extends StatelessWidget {
                                               ShippingAddressAdd(editAddress: addr),
                                         ),
                                       );
-                                      context
-                                          .read<ShippingAddressBloc>()
-                                          .add(LoadAddresses());
+                                      context.read<ShippingAddressBloc>().add(LoadAddresses());
                                     },
                                   ),
                                 ],
@@ -131,63 +116,31 @@ class SelectAddressPage extends StatelessWidget {
                     },
                   ),
                 ),
-                  ElevatedButton(
+                Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: ElevatedButton(
                     onPressed: () {
-                      if (selectedAddress == null) {
+                      if (selectedAddress != null) {
+                        Navigator.pop(context, selectedAddress);
+                      } else {
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(content: Text('Debes seleccionar una dirección')),
                         );
-                        return;
                       }
-
-                      final cartBloc = context.read<CartBloc>();
-                      final paymentBloc = context.read<PaymentBloc>();
-
-                      // Declarar las suscripciones como nulas inicialmente
-                      StreamSubscription? cartSubscription;
-                      StreamSubscription? paymentSubscription;
-
-                      // Escuchar PaymentBloc para abrir WebView o mostrar error
-                      paymentSubscription = paymentBloc.stream.listen((paymentState) {
-                        if (paymentState is PaymentPreferenceReady) {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (_) => PaymentWebViewPage(url: paymentState.initPoint),
-                            ),
-                          );
-                          cartSubscription?.cancel();
-                          paymentSubscription?.cancel();
-                        } else if (paymentState is PaymentFailure) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text(paymentState.message)),
-                          );
-                          cartSubscription?.cancel();
-                          paymentSubscription?.cancel();
-                        }
-                      });
-
-                      // Crear la orden y escuchar CartBloc para obtener orderId
-                      cartSubscription = cartBloc.stream.listen((cartState) {
-                        if (cartState.orderId != null) {
-                          paymentBloc.add(CreateOrderAndPreference(cartState.orderId!));
-                        }
-                      });
-
-                      // 1️⃣ Crear la orden con la dirección seleccionada
-                      cartBloc.add(CreateOrder(selectedAddress: selectedAddress!));
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.primaryPink,
                       padding: const EdgeInsets.symmetric(vertical: 16),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
                     ),
                     child: const Text(
                       'Continuar',
                       style: TextStyle(color: Colors.white, fontSize: 16),
                     ),
                   ),
-
+                ),
               ],
             );
           }

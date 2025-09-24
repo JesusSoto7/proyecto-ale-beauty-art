@@ -148,6 +148,8 @@ Rails.application.routes.draw do
 
   get '/locations/municipalities', to: 'locations#municipalities'
   get '/locations/neighborhoods', to: 'locations#neighborhoods'
+  # Para consultar el estado de la orden desde Flutter
+  get '/api/v1/orders/:id/status', to: 'api/v1/orders#status'
 
 
 
