@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_09_17_230424) do
+ActiveRecord::Schema[8.0].define(version: 2025_09_26_192011) do
   create_table "active_storage_attachments", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
@@ -139,13 +139,13 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_17_230424) do
     t.string "nombre_producto"
     t.decimal "precio_producto", precision: 10
     t.text "descripcion"
-    t.bigint "category_id", null: false
     t.integer "stock"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "slug"
-    t.index ["category_id"], name: "index_products_on_category_id"
+    t.bigint "sub_category_id", null: false
     t.index ["slug"], name: "index_products_on_slug", unique: true
+    t.index ["sub_category_id"], name: "index_products_on_sub_category_id"
   end
 
   create_table "reviews", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
@@ -186,6 +186,14 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_17_230424) do
     t.index ["user_id"], name: "index_shipping_addresses_on_user_id"
   end
 
+  create_table "sub_categories", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.string "nombre", null: false
+    t.bigint "category_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["category_id"], name: "index_sub_categories_on_category_id"
+  end
+
   create_table "users", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "email", default: "", null: false
     t.string "encrypted_password", default: "", null: false
@@ -223,9 +231,10 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_17_230424) do
   add_foreign_key "orders", "payment_methods"
   add_foreign_key "orders", "shipping_addresses"
   add_foreign_key "orders", "users"
-  add_foreign_key "products", "categories"
+  add_foreign_key "products", "sub_categories"
   add_foreign_key "reviews", "products"
   add_foreign_key "reviews", "users"
   add_foreign_key "shipping_addresses", "neighborhoods"
   add_foreign_key "shipping_addresses", "users"
+  add_foreign_key "sub_categories", "categories"
 end
