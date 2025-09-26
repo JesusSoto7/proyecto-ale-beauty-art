@@ -15,9 +15,8 @@ class PaymentPage extends StatefulWidget {
 class _PaymentPageState extends State<PaymentPage> {
   bool isLoading = false;
 
-  String get baseUrl => '/api/v1'; // ya CustomHttpClient usa API_BASE_URL
+  String get baseUrl => '/api/v1';
 
-  // Crear preferencia de pago
   Future<String?> createPreference() async {
     try {
       final response = await CustomHttpClient.postRequest(
@@ -38,7 +37,6 @@ class _PaymentPageState extends State<PaymentPage> {
     }
   }
 
-  // Consultar estado de la orden
   Future<String?> checkOrderStatus() async {
     try {
       final response = await CustomHttpClient.getRequest(
@@ -47,7 +45,7 @@ class _PaymentPageState extends State<PaymentPage> {
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
-        return data['status']; // pagada, pendiente, cancelada
+        return data['status']; 
       } else {
         debugPrint('Error consultando estado: ${response.body}');
         return null;
