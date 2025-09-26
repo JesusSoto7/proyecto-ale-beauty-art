@@ -3,18 +3,28 @@ class Api::V1::ProductsController < Api::V1::BaseController
   before_action :set_product, only: [:show, :update, :destroy]
 
   def index
-    products = Product.with_attached_imagen.includes(:category).all
-    products = products.where(category_id: params[:category_id]) if params[:category_id].present?
+    products = Product.with_attached_imagen.includes(sub_category: :category).all
+    products = products.where(sub_category_id: params[:sub_category_id]) if params[:sub_category_id].present?
 
     render json: products.as_json(
-      include: { category: { only: [:nombre_categoria, :id] } },
+      include: {
+        sub_category: {
+          only: [:id, :nombre],
+          include: { category: { only: [:id, :nombre_categoria] } }
+        }
+      },
       methods: [:slug, :imagen_url]
     ), status: :ok
   end
 
   def show
     render json: @product.as_json(
-      include: { category: { only: [:nombre_categoria] } },
+      include: {
+        sub_category: {
+          only: [:id, :nombre],
+          include: { category: { only: [:id, :nombre_categoria] } }
+        }
+      },
       methods: [:imagen_url]
     ), status: :ok
   end
@@ -25,7 +35,12 @@ class Api::V1::ProductsController < Api::V1::BaseController
 
     if @product.save
       render json: @product.as_json(
-        include: { category: { only: [:nombre_categoria] } },
+        include: {
+          sub_category: {
+            only: [:id, :nombre],
+            include: { category: { only: [:id, :nombre_categoria] } }
+          }
+        },
         methods: [:imagen_url]
       ), status: :created
     else
@@ -39,7 +54,12 @@ class Api::V1::ProductsController < Api::V1::BaseController
 
     if @product.save
       render json: @product.as_json(
-        include: { category: { only: [:nombre_categoria] } },
+        include: {
+          subcategory: {
+            only: [:id, :nombre],
+            include: { category: { only: [:id, :nombre_categoria] } }
+          }
+        },
         methods: [:imagen_url]
       ), status: :ok
     else
@@ -74,11 +94,10 @@ class Api::V1::ProductsController < Api::V1::BaseController
     render json: @products.as_json(methods: [:imagen_url])
   end
 
-
   private
 
   def set_product
-    @product = Product.with_attached_imagen.includes(:category).find_by(slug: params[:slug])
+    @product = Product.with_attached_imagen.includes(subcategory: :category).find_by(slug: params[:slug])
     render json: { error: "Producto no encontrado" }, status: :not_found unless @product
   end
 
@@ -88,7 +107,7 @@ class Api::V1::ProductsController < Api::V1::BaseController
       :descripcion,
       :precio_producto,
       :stock,
-      :category_id,
+      :subcategory_id,
       :imagen
     )
   end

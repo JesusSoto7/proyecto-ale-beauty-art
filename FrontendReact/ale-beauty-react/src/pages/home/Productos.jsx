@@ -1,4 +1,3 @@
-// src/components/ProductTable.jsx
 import React, { useState, useMemo, useEffect } from "react";
 import {
   MRT_EditActionButtons,
@@ -28,7 +27,7 @@ const ProductTable = () => {
   const isDark = theme.palette.mode === "dark";
 
   const [validationErrors, setValidationErrors] = useState({});
-  const [categories, setCategories] = useState([]);
+  const [subcategories, setSubcategories] = useState([]);
   const [products, setProducts] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isError, setIsError] = useState(false);
@@ -41,7 +40,7 @@ const ProductTable = () => {
   }, []);
 
   // Cargar categorías
-  useEffect(() => {
+/*   useEffect(() => {
     if (!token) return;
     fetch("https://localhost:4000/api/v1/categories", {
       headers: token ? { Authorization: `Bearer ${token}` } : {},
@@ -49,6 +48,17 @@ const ProductTable = () => {
       .then((res) => res.json())
       .then((data) => setCategories(Array.isArray(data) ? data : []))
       .catch((err) => console.error("Error cargando categorías", err));
+  }, [token]);
+ */
+  // Cargar subcategorías
+  useEffect(() => {
+    if (!token) return;
+    fetch("https://localhost:4000/api/v1/subcategories", {
+      headers: token ? { Authorization: `Bearer ${token}` } : {},
+    })
+      .then((res) => res.json())
+      .then((data) => setSubcategories(Array.isArray(data) ? data : []))
+      .catch((err) => console.error("Error cargando subcategorías", err));
   }, [token]);
 
   // Cargar productos
@@ -154,21 +164,21 @@ const ProductTable = () => {
         Cell: ({ cell }) => cell.getValue() || "Sin descripción", // Muestra '-' si no hay descripción
       },
       {
-        accessorKey: "category_id",
-        header: "Categoría",
-        Cell: ({ row }) => row.original?.category?.nombre_categoria || "",
+        accessorKey: "subcategory_id",
+        header: "Subcategoría",
+        Cell: ({ row }) => row.original?.subcategory?.nombre_subcategoria || "",
         Edit: ({ row, column }) => {
           const [current, setCurrent] = useState(
             row._valuesCache?.[column.id] ??
-            (row.original.category_id != null ? String(row.original.category_id) : "")
+            (row.original.subcategory_id != null ? String(row.original.subcategory_id) : "")
           );
           useEffect(() => {
-            if (!current && categories.length > 0) {
-              setCurrent(categories[0].id.toString());
+            if (!current && subcategories.length > 0) {
+              setCurrent(subcategories[0].id.toString());
               if (!row._valuesCache) row._valuesCache = {};
-              row._valuesCache[column.id] = categories[0].id.toString();
+              row._valuesCache[column.id] = subcategories[0].id.toString();
             }
-          }, [categories]);
+          }, [subcategories]);
 
           return (
             <TextField
@@ -181,9 +191,9 @@ const ProductTable = () => {
               }}
               fullWidth
             >
-              {categories.map((cat) => (
-                <MenuItem key={cat.id} value={String(cat.id)}>
-                  {cat.nombre_categoria}
+              {subcategories.map((sub) => (
+                <MenuItem key={sub.id} value={String(sub.id)}>
+                  {sub.nombre_subcategoria}
                 </MenuItem>
               ))}
             </TextField>
@@ -204,7 +214,7 @@ const ProductTable = () => {
         muiEditTextFieldProps: { type: "number", required: true },
       },
     ],
-    [validationErrors, categories]
+    [validationErrors, subcategories]
   );
 
   // Funciones de crear, actualizar y eliminar productos
@@ -420,7 +430,7 @@ const ProductTable = () => {
 function validateProduct(product) {
   return {
     nombre_producto: !product.nombre_producto ? "El nombre es obligatorio" : "",
-    category_id: !product.category_id ? "La categoría es obligatoria" : "",
+    subcategory_id: !product.subcategory_id ? "La subcategoría es obligatoria" : "",
     precio_producto:
       product.precio_producto === "" || Number(product.precio_producto) <= 0
         ? "El precio debe ser mayor a 0"
@@ -431,5 +441,6 @@ function validateProduct(product) {
         : "",
   };
 }
+
 
 export default ProductTable;
