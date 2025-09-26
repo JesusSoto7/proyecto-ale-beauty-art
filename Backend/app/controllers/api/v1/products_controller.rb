@@ -55,7 +55,7 @@ class Api::V1::ProductsController < Api::V1::BaseController
     if @product.save
       render json: @product.as_json(
         include: {
-          subcategory: {
+          sub_category: {
             only: [:id, :nombre],
             include: { category: { only: [:id, :nombre_categoria] } }
           }
@@ -97,7 +97,7 @@ class Api::V1::ProductsController < Api::V1::BaseController
   private
 
   def set_product
-    @product = Product.with_attached_imagen.includes(subcategory: :category).find_by(slug: params[:slug])
+    @product = Product.with_attached_imagen.includes(sub_category: :category).find_by(slug: params[:slug])
     render json: { error: "Producto no encontrado" }, status: :not_found unless @product
   end
 
@@ -107,8 +107,8 @@ class Api::V1::ProductsController < Api::V1::BaseController
       :descripcion,
       :precio_producto,
       :stock,
-      :subcategory_id,
-      :imagen
+      :sub_category_id,
+      :imagen 
     )
   end
 end

@@ -52,10 +52,10 @@ class Api::V1::SubCategoriesController < Api::V1::BaseController
   private
 
   def set_category
-    @category = Category.find_by!(slug: params[:category_slug])
-  rescue ActiveRecord::RecordNotFound
-    render json: { error: "Categoría no encontrada" }, status: :not_found
+    @category = Category.find_by(slug: params[:category_slug]) || Category.find_by(id: params[:category_slug])
+    render json: { error: "Categoría no encontrada" }, status: :not_found unless @category
   end
+
 
   def set_sub_category
     @sub_category = @category.sub_categories.find_by(id: params[:id])
