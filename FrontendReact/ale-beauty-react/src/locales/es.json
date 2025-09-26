@@ -331,7 +331,54 @@
     "ctaTitle": "Únete a la Comunidad Ale Beauty Art",
     "ctaDescription": "Descubre la belleza que hay en ti con productos que realmente funcionan",
     "exploreButton": "Explorar Productos"
+  },
+  
+  "terms": {
+    "title": "Términos y Condiciones",
+    "intro": {
+      "part1": "Bienvenido/a a",
+      "part2": "Al acceder y usar nuestra tienda online de maquillaje, productos de skincare, cuidado del cabello y cosméticos, aceptas cumplir con los siguientes términos y condiciones. Te recomendamos leerlos atentamente antes de realizar una compra."
+    },
+    "section1": {
+      "title": "1. Uso del Sitio",
+      "text": "El sitio web está destinado únicamente a mayores de edad. El uso de la plataforma con fines fraudulentos o ilegales está estrictamente prohibido."
+    },
+    "section2": {
+      "title": "2. Productos",
+      "text": "Nos especializamos en ofrecer maquillaje, productos de skincare, tratamientos capilares y cosméticos de alta calidad. Sin embargo, las imágenes de los productos son ilustrativas y pueden variar respecto al producto final. Siempre recomendamos revisar la descripción antes de realizar una compra."
+    },
+    "section3": {
+      "title": "3. Precios y Pagos",
+      "text": "Todos los precios están expresados en pesos colombianos (COP) e incluyen impuestos aplicables. Nos reservamos el derecho de modificar precios sin previo aviso. Los pagos deben realizarse a través de los métodos de pago habilitados en la tienda."
+    },
+    "section4": {
+      "title": "4. Envíos y Entregas",
+      "text": "Los pedidos se procesan en un plazo de 1 a 3 días hábiles. Los tiempos de entrega pueden variar según la ciudad de destino. No nos hacemos responsables por retrasos ocasionados por la empresa transportadora."
+    },
+    "section5": {
+      "title": "5. Devoluciones",
+      "text": "Por razones de higiene y seguridad, no se aceptan devoluciones de maquillaje, skincare ni cosméticos una vez abiertos o usados. Solo se aceptarán devoluciones por productos defectuosos o enviados de manera incorrecta."
+    },
+    "section6": {
+      "title": "6. Responsabilidad del Usuario",
+      "text": "Es responsabilidad del usuario leer las instrucciones y componentes de cada producto, especialmente en caso de alergias o sensibilidad en la piel.",
+      "text2": "no se hace responsable por reacciones adversas derivadas del mal uso de los productos."
+    },
+    "section7": {
+      "title": "7. Propiedad Intelectual",
+      "text": "Todo el contenido de este sitio web, incluyendo logotipos, imágenes y textos, es propiedad exclusiva de Ale Beauty Art. Queda prohibida su reproducción total o parcial sin autorización previa."
+    },
+    "section8": {
+      "title": "8. Modificaciones a los Términos",
+      "text": "Nos reservamos el derecho de actualizar estos términos y condiciones en cualquier momento. Las modificaciones entrarán en vigor a partir de su publicación en el sitio web."
+    },
+    "section9": {
+      "title": "9. Contacto",
+      "text": "Si tienes preguntas sobre estos términos y condiciones, puedes contactarnos a través de nuestro correo"
+    },
+    "lastUpdate": "Última actualización:"
   }
+
   }
 
 

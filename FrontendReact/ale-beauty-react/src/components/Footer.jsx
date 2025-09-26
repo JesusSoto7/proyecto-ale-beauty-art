@@ -14,7 +14,7 @@ export default function Footer() {
           <h3>{t("footer.information.title")}</h3>
           <ul>
             <li><a href="https://localhost:3000/es/about">{t("footer.information.about")}</a></li>
-            <li><a href="#">{t("footer.information.terms")}</a></li>
+            <li><a href="https://localhost:3000/en/terms">{t("footer.information.terms")}</a></li>
             <li><a href="#">{t("footer.information.privacy")}</a></li>
           </ul>
         </div>
