@@ -100,7 +100,7 @@ class InitialView extends StatelessWidget {
                 child: SafeArea(
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 8),
-                    child: FittedBox( // <- Aquí agregamos FittedBox
+                    child: FittedBox( 
                       fit: BoxFit.scaleDown,
                       child: GNav(
                         gap: 8,

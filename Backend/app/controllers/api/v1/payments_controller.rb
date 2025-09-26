@@ -1,4 +1,38 @@
 class Api::V1::PaymentsController < Api::V1::BaseController
+
+  def create_preference
+    require 'mercadopago'
+    sdk = Mercadopago::SDK.new(ENV['MERCADOPAGO_PROD_ACCESS_TOKEN'])
+
+    order = current_user.orders.find(params[:order_id])
+
+    preference_data = {
+      items: [
+        {
+          title: "Orden #{order.numero_de_orden}",
+          quantity: 1,
+          currency_id: 'COP',
+          unit_price: order.pago_total.to_f
+        }
+      ],
+      back_urls: {
+        success: "#{ENV['API_BASE_URL']}/checkout/success",
+        failure: "#{ENV['API_BASE_URL']}/checkout/failure",
+        pending: "#{ENV['API_BASE_URL']}/checkout/pending"
+      },
+      auto_return: 'approved',
+      external_reference: "ORDER-#{order.id}"
+    }
+
+    preference = sdk.preference.create(preference_data)
+    render json: {
+      init_point: preference[:response]['init_point'],
+      preference_id: preference[:response]['id']
+    }
+  rescue => e
+    render json: { error: e.message }, status: :unprocessable_entity
+  end
+
   def create
     require 'mercadopago'
     sdk = Mercadopago::SDK.new(ENV['MERCADOPAGO_ACCESS_TOKEN'])

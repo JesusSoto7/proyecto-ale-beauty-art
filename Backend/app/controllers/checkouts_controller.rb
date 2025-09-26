@@ -97,13 +97,18 @@ class CheckoutsController < ApplicationController
 
 
   def show
-    @order = Order.find_by(id: params[:id])
-    if @order.nil?
-      redirect_to root_path, alert: "Orden no encontrada."
-      return
+    if params[:collection_status] == "approved"
+      order_id = params[:external_reference].to_s.split('-').last
+      order = Order.find_by(id: order_id)
+
+      if order && order.status != "pagada"
+        order.update(status: :pagada, fecha_pago: Time.current)
+        InvoiceMailer.enviar_factura(order).deliver_later
+      end
     end
-    @shipping_address = @order.shipping_address || current_user&.shipping_addresses&.last
+
   end
+
 
   def success
     @order = Order.find(params[:id])

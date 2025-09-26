@@ -1,5 +1,8 @@
 import 'package:ale_beauty_art_app/core/views/login_view.dart';
 import 'package:ale_beauty_art_app/features/auth/bloc/auth_bloc.dart';
+import 'package:ale_beauty_art_app/features/shipping_address/presentation/bloc/shipping_address_bloc.dart';
+import 'package:ale_beauty_art_app/features/shipping_address/presentation/bloc/shipping_address_event.dart';
+import 'package:ale_beauty_art_app/features/shipping_address/presentation/views/shipping_address_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ale_beauty_art_app/styles/colors.dart';
@@ -12,7 +15,7 @@ class ProfileView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      backgroundColor: AppColors.background,
+      backgroundColor: const Color.fromARGB(255, 247, 246, 246),
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -118,7 +121,7 @@ class ProfileView extends StatelessWidget {
             ),
             const SizedBox(height: 20),
 
-            // 🌸 Opciones de perfil
+            // Opciones de perfil
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: Column(
@@ -129,6 +132,29 @@ class ProfileView extends StatelessWidget {
                   _buildOptionTile(Icons.favorite, 'Favoritos', () {
                     // TODO: Navegar a favoritos
                   }),
+                  _buildOptionTile(
+                    Icons.location_on,
+                    'Mis direcciones',
+                    () async {
+                      final authState = context.read<AuthBloc>().state;
+
+                      if (authState is! AuthSuccess) {
+                        final result = await Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (_) => const LoginPage()),
+                        );
+                        if (result != true) return;
+                      }
+
+                      final auth = context.read<AuthBloc>().state as AuthSuccess;
+                      context.read<ShippingAddressBloc>().add(UpdateShippingToken(auth.token));
+
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (_) => const ShippingAddressPage()),
+                      );
+                    },
+                  ),
                 ],
               ),
             ),
@@ -138,7 +164,7 @@ class ProfileView extends StatelessWidget {
     );
   }
 
-  // 🌸 Widget reutilizable para las opciones
+  // Widget reutilizable para las opciones
   Widget _buildOptionTile(IconData icon, String title, VoidCallback onTap) {
     return Card(
       elevation: 2,

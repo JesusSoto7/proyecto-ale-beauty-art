@@ -1,3 +1,5 @@
+import 'package:ale_beauty_art_app/models/ShippingAddress.dart';
+
 abstract class CartEvent {}
 
 class LoadCart extends CartEvent {}
@@ -21,3 +23,8 @@ class UpdateCartToken extends CartEvent {
   UpdateCartToken(this.token);
 }
 
+class CreateOrder extends CartEvent {
+  final ShippingAddress selectedAddress; // ← propiedad agregada
+
+  CreateOrder({required this.selectedAddress}); // ← constructor con required
+}

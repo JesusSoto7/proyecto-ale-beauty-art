@@ -159,7 +159,16 @@ class Api::V1::OrdersController < Api::V1::BaseController
 
     render json: data
   end
-
+  
+  def status
+      order = current_user.orders.find(params[:id])
+      render json: {
+        order_id: order.id,
+        status: order.status
+      }
+    rescue ActiveRecord::RecordNotFound
+      render json: { error: "Orden no encontrada" }, status: :not_found
+    end
 
 
 
