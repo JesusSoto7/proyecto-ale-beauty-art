@@ -1,0 +1,475 @@
+/* src/assets/stylesheets/AboutUs.css */
+.about-us-alebeauty {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  line-height: 1.6;
+}
+
+/* Hero Banner Mejorado */
+.hero-banner {
+  height: 70vh;
+  min-height: 500px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+}
+
+.hero-background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.hero-background img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.hero-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, rgba(255, 107, 157, 0.8) 0%, rgba(196, 69, 105, 0.9) 100%);
+}
+
+.hero-content {
+  position: relative;
+  z-index: 2;
+  color: white;
+  text-align: center;
+  width: 100%;
+}
+
+.hero-content h1 {
+  font-size: clamp(2.5rem, 5vw, 4.5rem);
+  font-weight: 300;
+  margin-bottom: 1rem;
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+}
+
+.hero-subtitle {
+  font-size: clamp(1.2rem, 2.5vw, 1.8rem);
+  font-weight: 300;
+  margin-bottom: 0.5rem;
+  opacity: 0.95;
+}
+
+.hero-description {
+  font-size: clamp(1rem, 1.5vw, 1.2rem);
+  opacity: 0.9;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+/* Secciones generales */
+.section-history,
+.section-categories,
+.section-values,
+.section-store,
+.section-cta {
+  padding: clamp(40px, 8vw, 80px) 0;
+}
+
+.section-title {
+  text-align: center;
+  font-size: clamp(2rem, 4vw, 2.5rem);
+  margin-bottom: clamp(2rem, 4vw, 3rem);
+  color: #2c3e50;
+  font-weight: 300;
+}
+
+.section-mission {
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  padding: clamp(40px, 8vw, 80px) 0;
+}
+
+/* Historia Mejorada */
+.history-content h2 {
+  font-size: clamp(2rem, 4vw, 2.5rem);
+  color: #2c3e50;
+  margin-bottom: 1.5rem;
+}
+
+.history-content p {
+  font-size: clamp(1rem, 1.5vw, 1.1rem);
+  line-height: 1.7;
+  color: #555;
+  margin-bottom: 1.5rem;
+}
+
+.history-image {
+  position: relative;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+}
+
+.history-image img {
+  width: 100%;
+  height: 400px;
+  object-fit: cover;
+}
+
+.achievements {
+  display: flex;
+  gap: clamp(1rem, 3vw, 2rem);
+  margin-top: 2rem;
+  flex-wrap: wrap;
+}
+
+.achievement-item {
+  text-align: center;
+  flex: 1;
+  min-width: 100px;
+}
+
+.achievement-number {
+  display: block;
+  font-size: clamp(1.5rem, 3vw, 2rem);
+  font-weight: bold;
+  color: #ff6b9d;
+}
+
+.achievement-text {
+  font-size: 0.9rem;
+  color: #666;
+}
+
+/* Misión y Visión Mejoradas */
+.mission-card {
+  text-align: center;
+  padding: clamp(2rem, 4vw, 3rem) clamp(1.5rem, 3vw, 2rem);
+  background: white;
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+  height: 100%;
+  transition: all 0.3s ease;
+  border: 1px solid rgba(255, 107, 157, 0.1);
+}
+
+.mission-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+}
+
+.mission-icon {
+  width: clamp(70px, 10vw, 80px);
+  height: clamp(70px, 10vw, 80px);
+  background: linear-gradient(135deg, #ff6b9d 0%, #c44569 100%);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1.5rem;
+  color: white;
+  font-size: clamp(1.5rem, 3vw, 2rem);
+}
+
+.mission-card h3 {
+  color: #2c3e50;
+  margin-bottom: 1rem;
+  font-size: clamp(1.3rem, 2.5vw, 1.5rem);
+}
+
+.mission-card p {
+  color: #666;
+  line-height: 1.7;
+  font-size: clamp(0.9rem, 1.5vw, 1rem);
+}
+
+/* Categorías Mejoradas */
+.category-card {
+  background: white;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+  transition: all 0.3s ease;
+  height: 100%;
+}
+
+.category-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+}
+
+.category-image {
+  height: 200px;
+  overflow: hidden;
+}
+
+.category-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.category-card:hover .category-image img {
+  transform: scale(1.05);
+}
+
+.category-content {
+  padding: 1.5rem;
+}
+
+.category-content h3 {
+  color: #2c3e50;
+  margin-bottom: 0.5rem;
+  font-size: 1.3rem;
+}
+
+.category-content > p {
+  color: #666;
+  margin-bottom: 1rem;
+  font-size: 0.95rem;
+}
+
+.category-content ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.category-content li {
+  margin-bottom: 0.5rem;
+  position: relative;
+  padding-left: 1.5rem;
+  color: #555;
+  font-size: 0.9rem;
+}
+
+.category-content li:before {
+  content: "✓";
+  position: absolute;
+  left: 0;
+  color: #ff6b9d;
+  font-weight: bold;
+}
+
+/* Valores Mejorados */
+.value-item {
+  text-align: center;
+  padding: 2rem 1rem;
+  transition: transform 0.3s ease;
+}
+
+.value-item:hover {
+  transform: translateY(-5px);
+}
+
+.value-icon {
+  width: 70px;
+  height: 70px;
+  background: linear-gradient(135deg, #ff6b9d 0%, #c44569 100%);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1.5rem;
+  color: white;
+  font-size: 1.8rem;
+}
+
+.value-item h4 {
+  color: #2c3e50;
+  margin-bottom: 1rem;
+  font-size: 1.2rem;
+}
+
+.value-item p {
+  color: #666;
+  line-height: 1.6;
+  font-size: 0.95rem;
+}
+
+/* Punto Físico Mejorado */
+.store-image {
+  position: relative;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+}
+
+.store-image img {
+  width: 100%;
+  height: 400px;
+  object-fit: cover;
+}
+
+.store-badge {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  background: white;
+  color: #ff6b9d;
+  padding: 10px 15px;
+  border-radius: 25px;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.store-info h2 {
+  font-size: clamp(1.8rem, 3vw, 2.2rem);
+  color: #2c3e50;
+  margin-bottom: 1.5rem;
+}
+
+.store-info > p {
+  font-size: 1.1rem;
+  line-height: 1.7;
+  color: #555;
+  margin-bottom: 2rem;
+}
+
+.store-features .feature {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 1.5rem;
+  gap: 1rem;
+}
+
+.store-features .bi {
+  font-size: 1.5rem;
+  color: #ff6b9d;
+  margin-top: 0.2rem;
+  flex-shrink: 0;
+}
+
+.store-features strong {
+  display: block;
+  color: #2c3e50;
+  margin-bottom: 0.2rem;
+}
+
+.store-features span {
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.info-item {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  margin-bottom: 0.8rem;
+  color: #555;
+}
+
+/* CTA Mejorado */
+.section-cta {
+  background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+  color: white;
+  text-align: center;
+  padding: clamp(50px, 10vw, 100px) 0;
+}
+
+.cta-content h2 {
+  font-size: clamp(2rem, 4vw, 2.5rem);
+  margin-bottom: 1rem;
+}
+
+.cta-content p {
+  font-size: clamp(1.1rem, 2vw, 1.3rem);
+  margin-bottom: 2rem;
+  opacity: 0.9;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #ff6b9d 0%, #c44569 100%);
+  border: none;
+  padding: 12px 30px;
+  font-size: 1.1rem;
+  border-radius: 25px;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(255, 107, 157, 0.3);
+  background: linear-gradient(135deg, #c44569 0%, #ff6b9d 100%);
+}
+
+/* Responsive Mejorado */
+@media (max-width: 768px) {
+  .hero-banner {
+    height: 60vh;
+    min-height: 400px;
+  }
+  
+  .history-image,
+  .store-image {
+    margin-bottom: 2rem;
+  }
+  
+  .mission-card {
+    margin-bottom: 1.5rem;
+  }
+  
+  .achievements {
+    justify-content: center;
+  }
+  
+  .achievement-item {
+    flex: none;
+    width: calc(33.333% - 1rem);
+  }
+  
+  .store-features .feature {
+    flex-direction: column;
+    text-align: center;
+    gap: 0.5rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .hero-banner {
+    height: 50vh;
+    min-height: 350px;
+  }
+  
+  .achievement-item {
+    width: calc(50% - 1rem);
+  }
+  
+  .category-content {
+    padding: 1rem;
+  }
+  
+  .value-item {
+    padding: 1.5rem 0.5rem;
+  }
+}
+
+/* Animaciones suaves */
+.fade-in {
+  animation: fadeIn 0.8s ease-in;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Scroll suave */
+html {
+  scroll-behavior: smooth;
+}

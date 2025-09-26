@@ -20,6 +20,7 @@ import CheckoutSuccess from './components/CheckoutSuccess';
 import Perfil from './components/perfil'
 import CategoryProducts from "./pages/home/CategoryProducts";
 import CategoryProductsUser from './components/CategoryProductsUser';
+import AboutUs from './components/AboutUs';
 
 import './assets/stylesheets/RegisterForm.css';
 import './assets/stylesheets/LoginForm.css';
@@ -87,7 +88,8 @@ function App() {
             <Route path="categoria/:categoryId" element={<CategoryProductsUser />} />
             <Route path="pedidos" element={<Pedidos />} />
             <Route path="pedidos/:id" element={<DetallePedido />} />
-
+            <Route path="about" element={<AboutUs />} />
+            <Route path="about" element={<AboutUs />} />
 
           </Route>
 
