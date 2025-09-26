@@ -16,9 +16,9 @@ class Api::V1::PaymentsController < Api::V1::BaseController
         }
       ],
       back_urls: {
-        success: "#{ENV['FRONTEND_URL']}/checkout/success",
-        failure: "#{ENV['FRONTEND_URL']}/checkout/failure",
-        pending: "#{ENV['FRONTEND_URL']}/checkout/pending"
+        success: "#{ENV['API_BASE_URL']}/checkout/success",
+        failure: "#{ENV['API_BASE_URL']}/checkout/failure",
+        pending: "#{ENV['API_BASE_URL']}/checkout/pending"
       },
       auto_return: 'approved',
       external_reference: "ORDER-#{order.id}"
