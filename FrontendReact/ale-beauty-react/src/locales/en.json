@@ -331,7 +331,53 @@
     "ctaTitle": "Join the Ale Beauty Art Community",
     "ctaDescription": "Discover the beauty within you with products that really work",
     "exploreButton": "Explore Products"
+  },
+  "terms": {
+    "title": "Terms and Conditions",
+    "intro": {
+      "part1": "Welcome to",
+      "part2": "By accessing and using our online store for makeup, skincare products, hair care and cosmetics, you agree to comply with the following terms and conditions. We recommend that you read them carefully before making a purchase."
+    },
+    "section1": {
+      "title": "1. Use of the Site",
+      "text": "The website is intended for adults only. Use of the platform for fraudulent or illegal purposes is strictly prohibited."
+    },
+    "section2": {
+      "title": "2. Products",
+      "text": "We specialize in offering makeup, skincare products, hair treatments and high-quality cosmetics. However, product images are illustrative and may differ from the final product. We always recommend reviewing the description before making a purchase."
+    },
+    "section3": {
+      "title": "3. Prices and Payments",
+      "text": "All prices are shown in Colombian pesos (COP) and include applicable taxes. We reserve the right to modify prices without prior notice. Payments must be made through the payment methods enabled in the store."
+    },
+    "section4": {
+      "title": "4. Shipping and Delivery",
+      "text": "Orders are processed within 1 to 3 business days. Delivery times may vary depending on the destination city. We are not responsible for delays caused by the shipping company."
+    },
+    "section5": {
+      "title": "5. Returns",
+      "text": "For hygiene and safety reasons, returns are not accepted for makeup, skincare or cosmetics once opened or used. Returns will only be accepted for defective products or items shipped incorrectly."
+    },
+    "section6": {
+      "title": "6. User Responsibility",
+      "text": "It is the user's responsibility to read the instructions and ingredients of each product, especially in case of allergies or skin sensitivity.",
+      "text2": "is not responsible for adverse reactions resulting from misuse of the products."
+    },
+    "section7": {
+      "title": "7. Intellectual Property",
+      "text": "All content on this website, including logos, images and texts, is the exclusive property of Ale Beauty Art. Reproduction in whole or in part without prior authorization is prohibited."
+    },
+    "section8": {
+      "title": "8. Changes to the Terms",
+      "text": "We reserve the right to update these terms and conditions at any time. Changes will take effect from the date they are published on the website."
+    },
+    "section9": {
+      "title": "9. Contact",
+      "text": "If you have questions about these terms and conditions, you can contact us via email"
+    },
+    "lastUpdate": "Last updated:"
   }
+
   }
 
 
