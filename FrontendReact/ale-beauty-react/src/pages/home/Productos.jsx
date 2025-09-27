@@ -1,4 +1,3 @@
-// src/components/ProductTable.jsx
 import React, { useState, useMemo, useEffect } from "react";
 import {
   MRT_EditActionButtons,
@@ -29,6 +28,7 @@ const ProductTable = () => {
 
   const [validationErrors, setValidationErrors] = useState({});
   const [categories, setCategories] = useState([]);
+  const [subcategories, setSubcategories] = useState([]);
   const [products, setProducts] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isError, setIsError] = useState(false);
@@ -40,7 +40,7 @@ const ProductTable = () => {
     else alert("No está autenticado");
   }, []);
 
-  // Cargar categorías
+  // ✅ Cargar categorías
   useEffect(() => {
     if (!token) return;
     fetch("https://localhost:4000/api/v1/categories", {
@@ -51,7 +51,7 @@ const ProductTable = () => {
       .catch((err) => console.error("Error cargando categorías", err));
   }, [token]);
 
-  // Cargar productos
+  // ✅ Cargar productos
   const fetchProducts = () => {
     if (!token) return;
     setIsLoading(true);
@@ -70,6 +70,26 @@ const ProductTable = () => {
   useEffect(() => {
     fetchProducts();
   }, [token]);
+
+  // ✅ Subcategorías dependientes
+  const handleCategoryChange = async (categoryId, row, column) => {
+    try {
+      const response = await fetch(
+        `https://localhost:4000/api/v1/categories/${categoryId}/sub_categories`,
+        {
+          headers: token ? { Authorization: `Bearer ${token}` } : {},
+        }
+      );
+      if (!response.ok) throw new Error("Error cargando subcategorías");
+      const data = await response.json();
+      setSubcategories(data);
+
+      if (!row._valuesCache) row._valuesCache = {};
+      row._valuesCache["sub_category_id"] = "";
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
   const columns = useMemo(
     () => [
@@ -91,16 +111,16 @@ const ProductTable = () => {
         accessorKey: "imagen_url",
         header: "Imagen",
         enableEditing: true,
-        Cell: ({ cell }) =>
-          cell.getValue() ? (
-            <img
-              src={cell.getValue()}
-              alt="Producto"
-              style={{ width: "60px", height: "60px", objectFit: "cover" }}
-            />
-          ) : (
-            "Sin imagen"
-          ),
+        Cell: ({ cell }) => (
+          <img
+            src={
+              cell.getValue() ||
+              "https://placehold.co/60x60?text=Sin+imagen"
+            }
+            alt="Producto"
+            style={{ width: "60px", height: "60px", objectFit: "cover" }}
+          />
+        ),
         Edit: ({ row }) => {
           const [preview, setPreview] = useState(
             row.original?.imagen_url || null
@@ -124,7 +144,11 @@ const ProductTable = () => {
                 <img
                   src={preview}
                   alt="Preview"
-                  style={{ width: "60px", height: "60px", objectFit: "cover" }}
+                  style={{
+                    width: "60px",
+                    height: "60px",
+                    objectFit: "cover",
+                  }}
                 />
               )}
               <input type="file" accept="image/*" onChange={handleChange} />
@@ -151,7 +175,7 @@ const ProductTable = () => {
         header: "Descripción",
         muiEditTextFieldProps: { multiline: true, minRows: 2, maxRows: 4 },
         enableHiding: true,
-        Cell: ({ cell }) => cell.getValue() || "Sin descripción", // Muestra '-' si no hay descripción
+        Cell: ({ cell }) => cell.getValue() || "Sin descripción",
       },
       {
         accessorKey: "category_id",
@@ -160,15 +184,49 @@ const ProductTable = () => {
         Edit: ({ row, column }) => {
           const [current, setCurrent] = useState(
             row._valuesCache?.[column.id] ??
-            (row.original.category_id != null ? String(row.original.category_id) : "")
+              (row.original.category_id != null
+                ? String(row.original.category_id)
+                : "")
           );
-          useEffect(() => {
-            if (!current && categories.length > 0) {
-              setCurrent(categories[0].id.toString());
-              if (!row._valuesCache) row._valuesCache = {};
-              row._valuesCache[column.id] = categories[0].id.toString();
-            }
-          }, [categories]);
+
+          return (
+            <TextField
+              select
+              value={current}
+              onChange={(e) => {
+                const newCategoryId = e.target.value;
+                setCurrent(newCategoryId);
+                if (!row._valuesCache) row._valuesCache = {};
+                row._valuesCache[column.id] = newCategoryId;
+                handleCategoryChange(newCategoryId, row, column);
+              }}
+              fullWidth
+            >
+              {categories.map((cat, idx) => (
+                <MenuItem
+                  key={cat.id ? `cat-${cat.id}` : `cat-${idx}`}
+                  value={String(cat.id)}
+                >
+                  {cat.nombre_categoria}
+                </MenuItem>
+              ))}
+            </TextField>
+          );
+        },
+        muiEditTextFieldProps: { required: true },
+      },
+      {
+        accessorKey: "sub_category_id",
+        header: "Subcategoría",
+        Cell: ({ row }) =>
+          row.original?.sub_category?.nombre || "",
+        Edit: ({ row, column }) => {
+          const [current, setCurrent] = useState(
+            row._valuesCache?.[column.id] ??
+              (row.original.sub_category_id != null
+                ? String(row.original.sub_category_id)
+                : "")
+          );
 
           return (
             <TextField
@@ -181,9 +239,12 @@ const ProductTable = () => {
               }}
               fullWidth
             >
-              {categories.map((cat) => (
-                <MenuItem key={cat.id} value={String(cat.id)}>
-                  {cat.nombre_categoria}
+              {subcategories.map((sub, idx) => (
+                <MenuItem
+                  key={sub.id ? `sub-${sub.id}` : `sub-${idx}`}
+                  value={String(sub.id)}
+                >
+                  {sub.nombre}
                 </MenuItem>
               ))}
             </TextField>
@@ -191,7 +252,6 @@ const ProductTable = () => {
         },
         muiEditTextFieldProps: { required: true },
       },
-
       {
         accessorKey: "precio_producto",
         header: "Precio",
@@ -204,10 +264,12 @@ const ProductTable = () => {
         muiEditTextFieldProps: { type: "number", required: true },
       },
     ],
-    [validationErrors, categories]
+    [validationErrors, categories, subcategories]
   );
 
-  // Funciones de crear, actualizar y eliminar productos
+  // ------------------------------
+  // CRUD
+  // ------------------------------
   const handleCreateProduct = async ({ values, table }) => {
     const errors = validateProduct(values);
     if (Object.values(errors).some(Boolean)) {
@@ -320,7 +382,6 @@ const ProductTable = () => {
     }
   };
 
-  // Configuración de la tabla
   const table = useMaterialReactTable({
     columns,
     data: products,
@@ -369,7 +430,9 @@ const ProductTable = () => {
     renderCreateRowDialogContent: ({ table, row, internalEditComponents }) => (
       <>
         <DialogTitle>Agregar Producto</DialogTitle>
-        <DialogContent sx={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+        <DialogContent
+          sx={{ display: "flex", flexDirection: "column", gap: "1rem" }}
+        >
           {internalEditComponents}
         </DialogContent>
         <DialogActions>
@@ -380,7 +443,9 @@ const ProductTable = () => {
     renderEditRowDialogContent: ({ table, row, internalEditComponents }) => (
       <>
         <DialogTitle>Editar Producto</DialogTitle>
-        <DialogContent sx={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
+        <DialogContent
+          sx={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}
+        >
           {internalEditComponents}
         </DialogContent>
         <DialogActions>
@@ -419,10 +484,15 @@ const ProductTable = () => {
 
 function validateProduct(product) {
   return {
-    nombre_producto: !product.nombre_producto ? "El nombre es obligatorio" : "",
-    category_id: !product.category_id ? "La categoría es obligatoria" : "",
+    nombre_producto: !product.nombre_producto
+      ? "El nombre es obligatorio"
+      : "",
+    sub_category_id: !product.sub_category_id
+      ? "La subcategoría es obligatoria"
+      : "",
     precio_producto:
-      product.precio_producto === "" || Number(product.precio_producto) <= 0
+      product.precio_producto === "" ||
+      Number(product.precio_producto) <= 0
         ? "El precio debe ser mayor a 0"
         : "",
     stock:

@@ -38,6 +38,7 @@ import ProtectedRoute from './pages/home/ProtectedRoute';
 import Forbidden403 from './pages/home/Forbidden403';
 import Pedidos from './pages/inicio/Pedidos';
 import DetallePedido from './pages/inicio/DetallePedido';
+import SubCategorias from './pages/home/SubCategories';
 
 function Wrapper() {
   const { lang } = useParams();
@@ -111,6 +112,7 @@ function App() {
               <Route index element={<Dashboard />} />
               <Route path="products" element={<ProductTable />} />
               <Route path="categories" element={<Categorias />} />
+              <Route path="categories/:slug" element={<SubCategorias />} />
               <Route path="categories/:id" element={<CategoryProducts />} /> 
               <Route path="carousel" element={<Carousel />} />
           </Route>

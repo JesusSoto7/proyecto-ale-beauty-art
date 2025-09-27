@@ -8,7 +8,7 @@ class Api::V1::CategoriesController < Api::V1::BaseController
     categories = Category.with_attached_imagen.all
     render json: categories.as_json(
       only: [:id, :nombre_categoria],
-      methods: [:imagen_url]
+      methods: [:slug, :imagen_url]
     ), status: :ok
   end
 
