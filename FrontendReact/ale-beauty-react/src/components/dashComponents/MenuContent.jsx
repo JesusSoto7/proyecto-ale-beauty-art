@@ -25,7 +25,6 @@ export default function MenuContent() {
     { text: 'Home', icon: <HomeRoundedIcon />, path: `/${lang}/home` },
     { text: 'Productos', icon: <AnalyticsRoundedIcon />, path: `/${lang}/home/products` },
     { text: 'Categorias', icon: <PeopleRoundedIcon />, path: `/${lang}/home/categories` },
-    { text: 'SubCategorias', icon: <PeopleRoundedIcon />, path: `/${lang}/home/subcategories` },
     { text: 'Carousel', icon: <AssignmentRoundedIcon />, path: `/${lang}/home/carousel` },
   ];
 

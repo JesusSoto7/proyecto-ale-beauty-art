@@ -154,7 +154,6 @@ const SubCategorias = () => {
             key={sc.id}
             className="subcategory-card"
             style={{ minWidth: "250px", maxWidth: "250px" }}
-            onClick={() => navigate(`/es/home/subcategories/${sc.slug}`)}
           >
             <div className="subcategory-image-wrapper">
               <img
