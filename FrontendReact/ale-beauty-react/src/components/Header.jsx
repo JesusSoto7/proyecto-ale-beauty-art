@@ -362,6 +362,8 @@ export default function Header({ loadFavorites }) {
                 color: 'black', 
                 textDecoration: 'none',
                 fontWeight: 'bold',
+                display: 'flex',
+                alignItems: 'center',
                 transition: 'color 0.2s',
                 '&:hover': { color: pinkTheme.primary }
               }}
@@ -384,6 +386,9 @@ export default function Header({ loadFavorites }) {
                   cursor: 'pointer',
                   fontWeight: 'bold',
                   transition: 'color 0.2s',
+                  height: 40,
+                  display: 'flex',
+                  alignItems: 'center',
                   '&:hover': { color: pinkTheme.primary }
                 }}
               >
@@ -395,14 +400,15 @@ export default function Header({ loadFavorites }) {
                 <Box
                   sx={{
                     position: 'absolute',
-                    top: '100%',
-                    left: 0,
+                    top: '40px',
+                    left: -210,
                     backgroundColor: 'white',
                     boxShadow: '0 10px 30px rgba(0,0,0,0.15)',
                     borderRadius: '8px',
                     zIndex: 1300,
-                    minWidth: '250px',
-                    maxWidth: categories.length > 7 ? '500px' : '300px',
+                    height: '80vh',
+                    width: '192.5vh',
+                    maxHeight: '100vh',
                     py: 2,
                     px: 2,
                     border: `2px solid ${pinkTheme.light}`
@@ -414,7 +420,7 @@ export default function Header({ loadFavorites }) {
                       fontWeight: 'bold', 
                       color: pinkTheme.primary,
                       mb: 2,
-                      textAlign: 'center'
+                      textAlign: 'start'
                     }}
                   >
                     {t('header.allCategories')}
@@ -437,6 +443,8 @@ export default function Header({ loadFavorites }) {
                   }}>
                     <Box sx={{ 
                       display: 'flex',
+                      alignItems: 'start',
+                      flexDirection: 'column',
                       // flexWrap: 'wrap',
                       gap: '8px',
                     }}>
@@ -623,7 +631,7 @@ export default function Header({ loadFavorites }) {
               <Box  
                 onClick={(e) => setAnchorEl(e.currentTarget)}
                 sx={{ 
-                  backgroundColor: pinkTheme.primary, 
+                  backgroundColor: "#f896b8", 
                   borderRadius: '50%', 
                   width: 26, 
                   height: 26, 
@@ -633,7 +641,8 @@ export default function Header({ loadFavorites }) {
                   alignSelf: 'center',
                   justifyContent: 'center',
                   cursor: 'pointer',
-                  '&:hover': { opacity: 0.85 }
+                  transition: 'background-color 0.2s',
+                  '&:hover': { opacity: 0.85, backgroundColor: pinkTheme.primary }
                 }}
               >
                 <Typography 
