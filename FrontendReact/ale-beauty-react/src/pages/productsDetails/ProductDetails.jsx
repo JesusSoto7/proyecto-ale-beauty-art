@@ -68,11 +68,10 @@ function ProductDetails() {
           .then((allProducts) => {
             // console.log("Todos los productos:", allProducts);
             const filtered = allProducts
-              .filter((p) => p.category_id === data.category_id && p.id !== data.id)
+              .filter((p) => p.sub_category?.category?.id === data.sub_category?.category?.id && p.id !== data.id)
               .slice(0, 5);
-              // console.log(allProducts[0])
-            // console.log("Relacionados filtrados:", filtered);
             setRelatedProducts(filtered);
+
           })
           .catch((err) => console.error("Error cargando relacionados:", err));
 
@@ -385,7 +384,8 @@ function ProductDetails() {
 
         <div className="product-info">
           <div className="title-category">
-            <p className="negrita">{product.category.nombre_categoria}</p>
+            <p className="negrita">{product.sub_category?.category?.nombre_categoria
+}</p>
             <div style={{ display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center"
              }}>
               <h2>{product.nombre_producto}</h2>

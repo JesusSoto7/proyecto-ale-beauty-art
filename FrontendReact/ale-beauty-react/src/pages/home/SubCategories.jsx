@@ -12,37 +12,38 @@ import {
   ListItemText,
   IconButton,
 } from "@mui/material";
+import "../../assets/stylesheets/SubCategories.css";
 import AddIcon from "@mui/icons-material/Add";
 import EditIcon from "@mui/icons-material/Edit";
 import { useParams, useNavigate } from "react-router-dom";
 
-const Categorias = () => {
+const SubCategorias = () => {
   const { slug } = useParams();
   const [open, setOpen] = useState(false);
-  const [categorias, setCategorias] = useState([]);
+  const [subCategorias, setSubCategorias] = useState([]);
   const [nombre, setNombre] = useState("");
   const [imagen, setImagen] = useState(null);
-  const [categoriaEdit, setCategoriaEdit] = useState(null);
+  const [subCategoriaEdit, setSubCategoriaEdit] = useState(null);
   const token = localStorage.getItem("token");
   const navigate = useNavigate();
 
   // Cargar categorías al inicio
   useEffect(() => {
     if (!token) return;
-    fetch("https://localhost:4000/api/v1/categories", {
+    fetch(`https://localhost:4000/api/v1/categories/${slug}/sub_categories`, {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then((res) => res.json())
-      .then((data) => setCategorias(Array.isArray(data) ? data : []))
-      .catch((err) => console.error("Error cargando categorías", err));
-  }, [token]);
+      .then((data) => setSubCategorias(Array.isArray(data) ? data : []))
+      .catch((err) => console.error("Error cargando subcategorías", err));
+  }, [token, slug]);
 
-  const openDialog = (categoria = null) => {
-    if (categoria) {
-      setCategoriaEdit(categoria);
-      setNombre(categoria.nombre_categoria);
+  const openDialog = (sub_category = null) => {
+    if (sub_category) {
+      setSubCategoriaEdit(sub_category);
+      setNombre(sub_category.nombre);
     } else {
-      setCategoriaEdit(null);
+      setSubCategoriaEdit(null);
       setNombre("");
       setImagen(null);
     }
@@ -54,15 +55,15 @@ const Categorias = () => {
     if (!nombre) return;
 
     const formData = new FormData();
-    formData.append("category[nombre_categoria]", nombre);
-    if (imagen) formData.append("category[imagen]", imagen);
+    formData.append("sub_category[nombre]", nombre);
+    if (imagen) formData.append("sub_category[imagen]", imagen);
 
     try {
-      let url = "https://localhost:4000/api/v1/categories";
+      let url = `https://localhost:4000/api/v1/categories/${slug}/sub_categories`;
       let method = "POST";
 
-      if (categoriaEdit) {
-        url += `/${categoriaEdit.id}`;
+      if (subCategoriaEdit) {
+        url += `/${subCategoriaEdit.id}`;
         method = "PATCH";
       }
 
@@ -80,19 +81,19 @@ const Categorias = () => {
         return;
       }
 
-      const categoriaActualizada = await res.json();
+      const subCategoriaActualizada = await res.json();
 
-      if (categoriaEdit) {
-        setCategorias((prev) =>
-          prev.map((cat) => (cat.id === categoriaActualizada.id ? categoriaActualizada : cat))
+      if (subCategoriaEdit) {
+        setSubCategorias((prev) =>
+          prev.map((cat) => (cat.id === subCategoriaActualizada.id ? subCategoriaActualizada : cat))
         );
       } else {
-        setCategorias((prev) => [...prev, categoriaActualizada]);
+        setSubCategorias((prev) => [...prev, subCategoriaActualizada]);
       }
 
       setNombre("");
       setImagen(null);
-      setCategoriaEdit(null);
+      setSubCategoriaEdit(null);
       setOpen(false);
     } catch (err) {
       console.error("Error:", err);
@@ -103,18 +104,18 @@ const Categorias = () => {
   return (
     <div style={{ marginTop: "2rem", width: "80%", }}>
       <div style={{ display: "flex", justifyContent: "space-between" }}>
-        <h3>Categorías</h3>
+        <h3>SubCategorías</h3>
         <Button
           variant="contained"
           color="primary"
           startIcon={<AddIcon />}
           onClick={() => openDialog()}
         >
-          Agregar Categoría
+          Agregar SubCategoria
         </Button>
 
         <Dialog open={open} onClose={() => setOpen(false)}>
-          <DialogTitle>{categoriaEdit ? "Editar categoría" : "Crear nueva categoría"}</DialogTitle>
+          <DialogTitle>{subCategoriaEdit ? "Editar subCategoria" : "Crear nueva SubCategoria"}</DialogTitle>
           <DialogContent>
             <Stack spacing={2} sx={{ marginTop: 1 }}>
               <TextField
@@ -134,7 +135,7 @@ const Categorias = () => {
           <DialogActions>
             <Button onClick={() => setOpen(false)}>Cancelar</Button>
             <Button onClick={handleSubmit} variant="contained">
-              {categoriaEdit ? "Actualizar" : "Crear"}
+              {subCategoriaEdit ? "Actualizar" : "Crear"}
             </Button>
           </DialogActions>
         </Dialog>
@@ -148,41 +149,49 @@ const Categorias = () => {
           padding: "10px 0",
         }}
       >
-        {categorias.map((cat) => (
-          <div className="category-card" style={{minWidth: "250px", maxWidth: "250px"}} onClick={() => navigate(`/es/home/categories/${cat.slug}`)}>
-            {/* Imagen con curvas */}
-            <div className="category-image-wrapper">
+        {subCategorias.map((sc) => (
+          <div
+            key={sc.id}
+            className="subcategory-card"
+            style={{ minWidth: "250px", maxWidth: "250px" }}
+          >
+            <div className="subcategory-image-wrapper">
               <img
-                src={cat.imagen_url || "https://via.placeholder.com/300x200?text=Sin+imagen"}
-                alt={cat.nombre_categoria}
-                className="category-image"
+                src={
+                  sc.imagen_url || "https://via.placeholder.com/300x200?text=Sin+imagen"
+                }
+                alt={sc.nombre_subcategoria}
+                className="subcategory-image"
               />
             </div>
 
-            {/* Info */}
-            <div className="category-info" style={{ padding: "16px" }}>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                <h4 style={{ margin: 0 }}>{cat.nombre_categoria}</h4>
+            <div className="subcategory-info" style={{ padding: "16px" }}>
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                }}
+              >
+                <h4 style={{ margin: 0 }}>{sc.nombre}</h4>
                 <IconButton
                   size="small"
                   onClick={(event) => {
                     event.stopPropagation();
-                    openDialog(cat);
+                    openDialog(sc);
                   }}
-                  style={{border: "1px solid #242424" }}
+                  style={{ border: "1px solid #242424" }}
                 >
                   <EditIcon fontSize="small" />
                 </IconButton>
               </div>
               <span style={{ fontSize: "12px", color: "#888" }}>2 hours ago</span>
             </div>
-
           </div>
-
         ))}
       </div>
     </div>
   );
 };
 
-export default Categorias;
+export default SubCategorias;
