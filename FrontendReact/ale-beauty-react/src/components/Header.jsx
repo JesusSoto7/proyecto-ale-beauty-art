@@ -87,6 +87,7 @@ export default function Header({ loadFavorites }) {
   const [showCategories, setShowCategories] = useState(false);
   const { lang } = useParams();
   const { t } = useTranslation();
+  const [user, setUser] = useState(null);
 
   const [anchorEl, setAnchorEl] = useState(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = useState(null);
@@ -147,6 +148,30 @@ export default function Header({ loadFavorites }) {
   function handleSearchSubmit(e) {
     e.preventDefault();
   }
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) return;
+
+    fetch("https://localhost:4000/api/v1/me", {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+      .then((res) => {
+        if (!res.ok) throw new Error(t("profile.loadError"));
+        return res.json();
+      })
+      .then((data) => {
+        setUser(data);
+        setFormData({
+          nombre: data.nombre || "",
+          apellido: data.apellido || "",
+          email: data.email || "",
+          telefono: data.telefono || "",
+          direccion: data.direccion || "",
+        });
+      })
+      .catch((err) => console.error(err));
+  }, [t]);
 
   useEffect(() => {
     if (debounceRef.current) clearTimeout(debounceRef.current);
@@ -328,20 +353,7 @@ export default function Header({ loadFavorites }) {
           </Link>
 
           <Box sx={{ display: { xs: 'none', sm: 'flex' }, ml: 3, position: 'relative' }}>
-            <Typography 
-              component={Link} 
-              to={`/${lang}/inicio`} 
-              sx={{ 
-                mx: 2, 
-                color: 'black', 
-                textDecoration: 'none',
-                fontWeight: 'bold',
-                transition: 'color 0.2s',
-                '&:hover': { color: pinkTheme.primary }
-              }}
-            >
-              {t('header.home')}
-            </Typography>
+            
             <Typography 
               component={Link} 
               to={`/${lang}/productos`} 
@@ -424,8 +436,8 @@ export default function Header({ loadFavorites }) {
                     }
                   }}>
                     <Box sx={{ 
-                      display: 'grid',
-                      gridTemplateColumns: `repeat(${getCategoryColumns()}, 1fr)`,
+                      display: 'flex',
+                      // flexWrap: 'wrap',
                       gap: '8px',
                     }}>
                       {categories.map((category) => {
@@ -606,12 +618,48 @@ export default function Header({ loadFavorites }) {
 
           {/* Íconos */}
           <Box sx={{ display: { xs: 'none', md: 'flex' }, gap: 2 }}>
-            <IconButton 
-              onClick={(e) => setAnchorEl(e.currentTarget)}
-              sx={{ color: 'black', '&:hover': { color: pinkTheme.primary } }}
-            >
-              <IoPersonCircleSharp size={30} />
-            </IconButton>
+            
+            {user ? (
+              <Box  
+                onClick={(e) => setAnchorEl(e.currentTarget)}
+                sx={{ 
+                  backgroundColor: pinkTheme.primary, 
+                  borderRadius: '50%', 
+                  width: 26, 
+                  height: 26, 
+                  display: 'flex', 
+                  alignItems: 'center',
+                  paddingTop: 0.1,
+                  alignSelf: 'center',
+                  justifyContent: 'center',
+                  cursor: 'pointer',
+                  '&:hover': { opacity: 0.85 }
+                }}
+              >
+                <Typography 
+                  variant="caption" 
+                  sx={{ 
+                    color: 'white', 
+                    fontWeight: 'bold',
+                    fontSize: '14px',
+                  }}
+                >
+                  {user.nombre?.charAt(0).toUpperCase()}
+                </Typography>
+              </Box>
+            ) : (
+              <IconButton  
+                onClick={(e) => setAnchorEl(e.currentTarget)}
+                sx={{ 
+                  color: 'black', 
+                  '&:hover': { color: pinkTheme.primary } 
+                }}
+              >
+                <IoPersonCircleSharp size={30} />
+              </IconButton>
+            )}
+
+
             <IconButton 
               component={Link} 
               to={`/${lang}/carrito`}
