@@ -19,6 +19,7 @@ import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import SearchIcon from '@mui/icons-material/Search';
 import MoreIcon from '@mui/icons-material/MoreVert';
+import noImage from '../assets/images/no_image.png';
 
 import Modal from '@mui/joy/Modal';
 import ModalDialog from '@mui/joy/ModalDialog';
@@ -101,6 +102,8 @@ export default function Header({ loadFavorites }) {
   const categoriesRef = useRef(null);
   const debounceRef = useRef(null);
   const DEBOUNCE_MS = 250;
+
+  const [selectedCategory, setSelectedCategory] = useState(null);
 
   // Obtener categorías desde el backend
   useEffect(() => {
@@ -344,6 +347,23 @@ export default function Header({ loadFavorites }) {
     return 3;
   };
 
+  const handleSelectCategory = (category) => {
+    setSelectedCategory(category);
+  };
+
+  const subcategories = selectedCategory?.sub_categories || [];
+
+  useEffect(() => {
+    categories.forEach(cat => {
+      const img = new Image();
+      img.src = cat.imagen_url;
+      cat.sub_categories?.forEach(sub => {
+        const subImg = new Image();
+        subImg.src = sub.imagen_url;
+      });
+    });
+  }, [categories]);
+
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="static" color="inherit">
@@ -372,114 +392,165 @@ export default function Header({ loadFavorites }) {
             </Typography>
             
             {/* Enlace de categorías con menú desplegable */}
-            <Box 
-              ref={categoriesRef}
-              sx={{ position: 'relative' }}
+            <Box
+              sx={{ position: "relative" }}
               onMouseEnter={() => setShowCategories(true)}
               onMouseLeave={() => setShowCategories(false)}
             >
-              <Typography 
-                sx={{ 
-                  mx: 2, 
-                  color: 'black', 
-                  textDecoration: 'none',
-                  cursor: 'pointer',
-                  fontWeight: 'bold',
-                  transition: 'color 0.2s',
+              <Typography
+                sx={{
+                  mx: 2,
+                  color: "black",
+                  textDecoration: "none",
+                  cursor: "pointer",
+                  fontWeight: "bold",
+                  transition: "color 0.2s",
                   height: 40,
-                  display: 'flex',
-                  alignItems: 'center',
-                  '&:hover': { color: pinkTheme.primary }
+                  display: "flex",
+                  alignItems: "center",
+                  "&:hover": { color: pinkTheme.primary },
                 }}
               >
-                {t('header.categories')}
+                {t("header.categories")}
               </Typography>
-              
-              {/* Menú desplegable de categorías - SOLO TUS CATEGORÍAS */}
+
               {showCategories && categories.length > 0 && (
                 <Box
                   sx={{
-                    position: 'absolute',
-                    top: '40px',
+                    position: "absolute",
+                    top: "40px",
                     left: -210,
-                    backgroundColor: 'white',
-                    boxShadow: '0 10px 30px rgba(0,0,0,0.15)',
-                    borderRadius: '8px',
+                    backgroundColor: "white",
+                    boxShadow: "0 10px 30px rgba(0,0,0,0.15)",
+                    borderRadius: "8px",
                     zIndex: 1300,
-                    height: '80vh',
-                    width: '192.5vh',
-                    maxHeight: '100vh',
+                    height: "80vh",
+                    width: "99vw",
+                    maxHeight: "100vh",
+                    maxWidth: "98.5vw",
                     py: 2,
                     px: 2,
-                    border: `2px solid ${pinkTheme.light}`
+                    border: `2px solid ${pinkTheme.light}`,
                   }}
                 >
-                  <Typography 
-                    variant="subtitle1" 
-                    sx={{ 
-                      fontWeight: 'bold', 
+                  {/* Título */}
+                  <Typography
+                    variant="subtitle1"
+                    sx={{
+                      fontWeight: "bold",
                       color: pinkTheme.primary,
                       mb: 2,
-                      textAlign: 'start'
+                      textAlign: "start",
+                      fontSize: "25px",
                     }}
                   >
-                    {t('header.allCategories')}
+                    {t("header.allCategories")}
                   </Typography>
 
-                  <Box sx={{ 
-                    maxHeight: '300px', 
-                    overflowY: 'auto',
-                    '&::-webkit-scrollbar': {
-                      width: '6px'
-                    },
-                    '&::-webkit-scrollbar-track': {
-                      background: pinkTheme.light,
-                      borderRadius: '3px'
-                    },
-                    '&::-webkit-scrollbar-thumb': {
-                      background: pinkTheme.primary,
-                      borderRadius: '3px'
-                    }
-                  }}>
-                    <Box sx={{ 
-                      display: 'flex',
-                      alignItems: 'start',
-                      flexDirection: 'column',
-                      // flexWrap: 'wrap',
-                      gap: '8px',
-                    }}>
-                      {categories.map((category) => {
-                        const name = category?.nombre_categoria || category?.name || t('header.noName');
-                        return (
-                          <Box
-                            key={category.id || category.slug || name}
-                            onClick={() => goToCategory(category)}
+                  {/* Lista categorías */}
+                  <Box
+                    sx={{
+                      display: "flex",
+                      alignItems: "start",
+                      flexDirection: "row",
+                      gap: "8px",
+                      maxHeight: "300px",
+                      overflowY: "auto",
+                      "&::-webkit-scrollbar": {
+                        width: "6px",
+                      },
+                      "&::-webkit-scrollbar-track": {
+                        background: pinkTheme.light,
+                        borderRadius: "3px",
+                      },
+                      "&::-webkit-scrollbar-thumb": {
+                        background: pinkTheme.primary,
+                        borderRadius: "3px",
+                      },
+                    }}
+                  >
+                    {categories.map((category) => {
+                      const name =
+                        category?.nombre_categoria || category?.name || t("header.noName");
+                      const isActive = selectedCategory?.id === category.id;
+
+                      return (
+                        <Box
+                          key={category.id || category.slug || name}
+                          onClick={() => handleSelectCategory(category)}
+                          sx={{
+                            py: 1.5,
+                            cursor: "pointer",
+                            color: isActive ? pinkTheme.primary : "#202020",
+                            transition: "all 0.2s ease",
+                            "&:hover": {
+                              color: pinkTheme.primary,
+                            },
+                          }}
+                        >
+                          <Typography
+                            variant="body2"
                             sx={{
-                              py: 1.5,
-                              color: 'text.primary',
-                              cursor: 'pointer',
-                              transition: 'all 0.2s ease',
-                              '&:hover': {
-                                color: pinkTheme.primary
-                              }
+                              fontWeight: "600",
+                              fontSize: "18px",
+                              whiteSpace: "nowrap",
+                              overflow: "hidden",
+                              textOverflow: "ellipsis",
+                              textAlign: "center",
                             }}
                           >
-                            <Typography
-                              variant="body2"
-                              sx={{
-                                fontWeight: '500',
-                                whiteSpace: 'nowrap',
-                                overflow: 'hidden',
-                                textOverflow: 'ellipsis',
-                                textAlign: 'center'
-                              }}
-                            >
-                              {name}
-                            </Typography>
-                          </Box>
-                        );
-                      })}
+                            {name}
+                          </Typography>
+                        </Box>
+                      );
+                    })}
+                  </Box>
+
+                  {/* Grid imágenes */}
+                  <Box
+                    sx={{
+                      display: "grid",
+                      gridTemplateColumns: "repeat(5, 1fr)",
+                      gridTemplateRows: "repeat(5, 1fr)",
+                      gap: "10px",
+                      height: "100%",
+                      mt: 2,
+                    }}
+                  >
+                    {/* Imagen grande → categoría seleccionada */}
+                    <Box sx={{ gridArea: "1 / 1 / 6 / 3" }}>
+                      <img
+                        src={selectedCategory?.imagen_url || noImage}
+                        alt=""
+                        style={{ width: "75%", height: "70%", objectFit: "cover" }}
+                      />
                     </Box>
+
+                    {/* Imágenes pequeñas → subcategorías */}
+                    {subcategories.slice(0, 6).map((sub, index) => {
+                      const gridAreas = [
+                        "1 / 3 / 3 / 4",
+                        "1 / 4 / 3 / 5",
+                        "1 / 5 / 3 / 6",
+                        "3 / 3 / 5 / 4",
+                        "3 / 4 / 5 / 5",
+                        "3 / 5 / 5 / 6",
+                      ];
+                      return (
+                        <Box key={sub.id || index} sx={{ gridArea: gridAreas[index] }}>
+                          <img
+                            src={sub.imagen_url || noImage}
+                            alt={sub.nombre || ""}
+                            style={{
+                              border: `2px solid ${pinkTheme.light}`,
+                              width: "75%",
+                              height: "70%",
+                              objectFit: "cover",
+                            }}
+                          />
+                        </Box>
+                      );
+                    })}
                   </Box>
                 </Box>
               )}

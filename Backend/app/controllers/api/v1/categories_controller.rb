@@ -5,17 +5,29 @@ class Api::V1::CategoriesController < Api::V1::BaseController
   skip_before_action :authorize_request, only: [:index, :show]
 
   def index
-    categories = Category.with_attached_imagen.all
+    categories = Category.includes(:sub_categories).with_attached_imagen.all
     render json: categories.as_json(
       only: [:id, :nombre_categoria],
-      methods: [:slug, :imagen_url]
+      methods: [:slug, :imagen_url],
+      include: {
+        sub_categories: {
+          only: [:id, :nombre],
+          methods: [:slug, :imagen_url]
+        }
+      }
     ), status: :ok
   end
 
   def show
     render json: @category.as_json(
       only: [:id, :nombre_categoria],
-      methods: [:imagen_url]
+      methods: [:slug, :imagen_url],
+      include: {
+        sub_categories: {
+          only: [:id, :nombre],
+          methods: [:slug, :imagen_url]
+        }
+      }
     ), status: :ok
   end
 
@@ -44,7 +56,7 @@ class Api::V1::CategoriesController < Api::V1::BaseController
   private
 
   def set_category
-    @category = Category.find_by(id: params[:id])
+    @category = Category.includes(:sub_categories).find_by(id: params[:id])
     unless @category
       render json: { error: "Categoría no encontrada" }, status: :not_found
     end
