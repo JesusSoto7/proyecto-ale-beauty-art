@@ -10,7 +10,7 @@ import { AiOutlineOrderedList, AiOutlineHistory } from "react-icons/ai";
 
 import { styled, alpha } from '@mui/material/styles';
 import AppBar from '@mui/material/AppBar';
-import Box from '@mui/material/Box';
+import {Box, Button} from '@mui/material';
 import Toolbar from '@mui/material/Toolbar';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
@@ -104,6 +104,15 @@ export default function Header({ loadFavorites }) {
   const DEBOUNCE_MS = 250;
 
   const [selectedCategory, setSelectedCategory] = useState(null);
+
+  const [page, setPage] = useState(0);
+  const perPage = 6;
+
+  const subcategories = selectedCategory?.sub_categories || [];
+  const totalPages = Math.ceil(subcategories.length / perPage);
+
+  const start = page * perPage;
+  const currentSubs = subcategories.slice(start, start + perPage);
 
   // Obtener categorías desde el backend
   useEffect(() => {
@@ -351,8 +360,6 @@ export default function Header({ loadFavorites }) {
     setSelectedCategory(category);
   };
 
-  const subcategories = selectedCategory?.sub_categories || [];
-
   useEffect(() => {
     categories.forEach(cat => {
       const img = new Image();
@@ -424,7 +431,7 @@ export default function Header({ loadFavorites }) {
                     boxShadow: "0 10px 30px rgba(0,0,0,0.15)",
                     borderRadius: "8px",
                     zIndex: 1300,
-                    height: "80vh",
+                    height: "fit-content",
                     width: "99vw",
                     maxHeight: "100vh",
                     maxWidth: "98.5vw",
@@ -433,6 +440,7 @@ export default function Header({ loadFavorites }) {
                     border: `2px solid ${pinkTheme.light}`,
                   }}
                 >
+                  
                   {/* Título */}
                   <Typography
                     variant="subtitle1"
@@ -440,7 +448,7 @@ export default function Header({ loadFavorites }) {
                       fontWeight: "bold",
                       color: pinkTheme.primary,
                       mb: 2,
-                      textAlign: "start",
+                      textAlign: "center",
                       fontSize: "25px",
                     }}
                   >
@@ -453,6 +461,7 @@ export default function Header({ loadFavorites }) {
                       display: "flex",
                       alignItems: "start",
                       flexDirection: "row",
+                      justifyContent: "center",
                       gap: "8px",
                       maxHeight: "300px",
                       overflowY: "auto",
@@ -477,7 +486,7 @@ export default function Header({ loadFavorites }) {
                       return (
                         <Box
                           key={category.id || category.slug || name}
-                          onClick={() => handleSelectCategory(category)}
+                          onClick={() => { handleSelectCategory(category);}}
                           sx={{
                             py: 1.5,
                             cursor: "pointer",
@@ -509,48 +518,232 @@ export default function Header({ loadFavorites }) {
                   {/* Grid imágenes */}
                   <Box
                     sx={{
-                      display: "grid",
-                      gridTemplateColumns: "repeat(5, 1fr)",
-                      gridTemplateRows: "repeat(5, 1fr)",
-                      gap: "10px",
-                      height: "100%",
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      gap: "20px",
+                      // border: `2px solid red`,
+                      height: "44vh",
                       mt: 2,
                     }}
                   >
                     {/* Imagen grande → categoría seleccionada */}
-                    <Box sx={{ gridArea: "1 / 1 / 6 / 3" }}>
+                    <Box
+                      sx={{
+                        border: `2px solid ${pinkTheme.light}`,
+                        maxHeight: "41vh",
+                        maxWidth: "400px",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        flexShrink: 0,
+                      }}
+                    >
                       <img
                         src={selectedCategory?.imagen_url || noImage}
                         alt=""
-                        style={{ width: "75%", height: "70%", objectFit: "cover" }}
+                        style={{ width: "100%", height: "40vh", objectFit: "cover" }}
                       />
                     </Box>
 
                     {/* Imágenes pequeñas → subcategorías */}
-                    {subcategories.slice(0, 6).map((sub, index) => {
-                      const gridAreas = [
-                        "1 / 3 / 3 / 4",
-                        "1 / 4 / 3 / 5",
-                        "1 / 5 / 3 / 6",
-                        "3 / 3 / 5 / 4",
-                        "3 / 4 / 5 / 5",
-                        "3 / 5 / 5 / 6",
-                      ];
-                      return (
-                        <Box key={sub.id || index} sx={{ gridArea: gridAreas[index] }}>
+                    <Box
+                      sx={{
+                        display: "flex",
+                        flexDirection: "column",
+                        justifyContent: "center",
+                        alignItems: "start",
+                        gap: "10px",
+                      }}
+                    >
+                      {/* Fila 1 */}
+                      <Box sx={{ display: "flex", justifyContent: "start", gap: "10px",   }}>
+                        {currentSubs.slice(0, 3).map((sub, index) => (
+                          <Box
+                          sx={{
+                            position: "relative",
+                            maxHeight: "170px",
+                            maxWidth: "175px",
+                            cursor: "pointer",
+                            overflow: "hidden",
+                            border: `2px solid ${pinkTheme.light}`,
+                            "&:hover img": {
+                              filter: "brightness(70%)", // oscurecer imagen
+                            },
+                            "&:hover .overlay": {
+                              opacity: 1, // mostrar nombre
+                            },
+                          }}
+                        >
+                          {/* Placeholder gris mientras carga */}
+                          {loading && (
+                            <Box
+                              sx={{
+                                width: "100px",
+                                height: "100px",
+                                bgcolor: "grey.300",
+                                position: "absolute",
+                                top: 0,
+                                left: 0,
+                              }}
+
+                            />
+                          )}
+
+                          {/* Imagen */}
                           <img
                             src={sub.imagen_url || noImage}
                             alt={sub.nombre || ""}
+                            onLoad={() => setLoading(false)}
                             style={{
-                              border: `2px solid ${pinkTheme.light}`,
-                              width: "75%",
-                              height: "70%",
+                              width: "100%",
+                              height: "16vh",
                               objectFit: "cover",
+                              display: "block",
                             }}
                           />
+
+                          {/* Overlay con el nombre */}
+                          <Box
+                            className="overlay"
+                            sx={{
+                              position: "absolute",
+                              bottom: 0,
+                              left: 0,
+                              width: "100%",
+                              height: "100%",
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "center",
+                              bgcolor: "rgba(0,0,0,0.4)",
+                              color: "white",
+                              opacity: 0,
+                              transition: "opacity 0.3s ease",
+                            }}
+                          >
+                            <Typography variant="subtitle2" sx={{ fontWeight: "bold" }}>
+                              {sub.nombre}
+                            </Typography>
+                          </Box>
                         </Box>
-                      );
-                    })}
+                        ))}
+                      </Box>
+
+                      {/* Fila 2 */}
+                      <Box sx={{ display: "flex", justifyContent: "center", gap: "10px" }}>
+                        {currentSubs.slice(3, 6).map((sub, index) => (
+                          <Box
+                          sx={{
+                            position: "relative",
+                            maxHeight: "170px",
+                            maxWidth: "175px",
+                            cursor: "pointer",
+                            overflow: "hidden",
+                            border: `2px solid ${pinkTheme.light}`,
+                            "&:hover img": {
+                              filter: "brightness(70%)", // oscurecer imagen
+                            },
+                            "&:hover .overlay": {
+                              opacity: 1, // mostrar nombre
+                            },
+                          }}
+                        >
+                          {/* Placeholder gris mientras carga */}
+                          {loading && (
+                            <Box
+                              sx={{
+                                width: "175px",
+                                height: "175px",
+                                bgcolor: "grey.300",
+                                position: "absolute",
+                                top: 0,
+                                left: 0,
+                              }}
+                            />
+                          )}
+
+                          {/* Imagen */}
+                          <img
+                            src={sub.imagen_url || noImage}
+                            alt={sub.nombre || ""}
+                            onLoad={() => setLoading(false)}
+                            style={{
+                              width: "100%",
+                              height: "16vh",
+                              objectFit: "cover",
+                              display: "block",
+                            }}
+                          />
+
+                          {/* Overlay con el nombre */}
+                          <Box
+                            className="overlay"
+                            sx={{
+                              position: "absolute",
+                              bottom: 0,
+                              left: 0,
+                              width: "100%",
+                              height: "100%",
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "center",
+                              bgcolor: "rgba(0,0,0,0.4)",
+                              color: "white",
+                              opacity: 0,
+                              transition: "opacity 0.3s ease",
+                            }}
+                          >
+                            <Typography variant="subtitle2" sx={{ fontWeight: "bold" }}>
+                              {sub.nombre}
+                            </Typography>
+                          </Box>
+                        </Box>
+                        ))}
+                      </Box>
+
+                      {/* Paginación */}
+                      {totalPages > 1 && (
+                        <Box
+                          sx={{
+                            display: "flex",
+                            justifyContent: "center",
+                            gap: "10px",
+                            mt: 1,
+                          }}
+                        >
+                          <Button
+                            sx={{
+                              border: `1px solid ${pinkTheme.primary}`,
+                              color: `${pinkTheme.primary}`,
+                              "&:hover": {
+                                backgroundColor: pinkTheme.light,
+                                border: `1px solid ${pinkTheme.primary}`,
+                                color: `${pinkTheme.primary}`,
+                              },
+                            }}
+                            variant="outlined"
+                            disabled={page === 0}
+                            onClick={() => setPage(page - 1)}
+                          >
+                            ◀
+                          </Button>
+                          <Button
+                            sx={{
+                              "&:hover": {
+                                backgroundColor: pinkTheme.light,
+                                border: `1px solid ${pinkTheme.primary}`,
+                                color: `${pinkTheme.primary}`,
+                              },
+                            }}
+                            variant="outlined"
+                            disabled={page === totalPages - 1}
+                            onClick={() => setPage(page + 1)}
+                          >
+                            ▶
+                          </Button>
+                        </Box>
+                      )}
+                    </Box>
                   </Box>
                 </Box>
               )}
