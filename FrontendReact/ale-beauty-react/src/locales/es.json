@@ -332,49 +332,150 @@
     "ctaDescription": "Descubre la belleza que hay en ti con productos que realmente funcionan",
     "exploreButton": "Explorar Productos"
   },
-  
   "terms": {
     "title": "Términos y Condiciones",
+    "toc": {
+      "title": "Tabla de Contenido",
+      "section1": "Introducción",
+      "section2": "Derechos de autor",
+      "section3": "Marcas comerciales",
+      "section4": "Información del producto",
+      "section5": "Información de color",
+      "section6": "Responsabilidad por su contenido",
+      "section7": "Su uso del contenido en los sitios y limitación de responsabilidad",
+      "section8": "Sus envíos de contenido",
+      "section9": "Calificaciones y reseñas",
+      "section10": "Contenido publicado en canales de redes sociales",
+      "section11": "Comunidad Ale Beauty Art",
+      "section12": "Contenido de terceros y sitios de terceros",
+      "section13": "Servicios móviles",
+      "section14": "Modificación de contenido",
+      "section15": "Reserva de derechos",
+      "section16": "Renuncia de garantías",
+      "section17": "Renuncia de responsabilidades",
+      "section18": "Indemnización",
+      "section19": "DMCA",
+      "section20": "Programa de protección contra el fraude",
+      "section21": "Privacidad",
+      "section22": "Renuncia",
+      "section23": "Idioma español",
+      "section24": "Resolución de disputas",
+      "section25": "Disputas legales; Renuncia de demanda colectiva; Renuncia a juicio por jurado",
+      "section26": "Elección de la ley aplicable/selección del foro",
+      "section27": "Aviso a los consumidores colombianos"
+    },
     "intro": {
       "part1": "Bienvenido/a a",
-      "part2": "Al acceder y usar nuestra tienda online de maquillaje, productos de skincare, cuidado del cabello y cosméticos, aceptas cumplir con los siguientes términos y condiciones. Te recomendamos leerlos atentamente antes de realizar una compra."
+      "part2": "Al acceder y usar nuestra tienda online de productos de belleza, cuidado capilar, maquillaje y cuidado facial, aceptas cumplir con los siguientes términos y condiciones. Te recomendamos leerlos atentamente antes de realizar una compra."
     },
     "section1": {
-      "title": "1. Uso del Sitio",
-      "text": "El sitio web está destinado únicamente a mayores de edad. El uso de la plataforma con fines fraudulentos o ilegales está estrictamente prohibido."
+      "title": "Introducción",
+      "text": "Estos Términos y Condiciones regulan el uso de los sitios web, aplicaciones móviles y servicios de Ale Beauty Art. Al acceder o utilizar nuestros servicios, usted acepta estar sujeto a estos términos en su totalidad."
     },
     "section2": {
-      "title": "2. Productos",
-      "text": "Nos especializamos en ofrecer maquillaje, productos de skincare, tratamientos capilares y cosméticos de alta calidad. Sin embargo, las imágenes de los productos son ilustrativas y pueden variar respecto al producto final. Siempre recomendamos revisar la descripción antes de realizar una compra."
+      "title": "Derechos de autor",
+      "text": "Todo el contenido presente en Ale Beauty Art, incluyendo textos, gráficos, logotipos, imágenes, videos y software, es propiedad exclusiva de Ale Beauty Art y está protegido por las leyes de derechos de autor colombianas e internacionales.",
+      "text2": "Queda prohibida la reproducción, distribución o modificación sin autorización previa por escrito."
     },
     "section3": {
-      "title": "3. Precios y Pagos",
-      "text": "Todos los precios están expresados en pesos colombianos (COP) e incluyen impuestos aplicables. Nos reservamos el derecho de modificar precios sin previo aviso. Los pagos deben realizarse a través de los métodos de pago habilitados en la tienda."
+      "title": "Marcas comerciales",
+      "text": "Las marcas 'Ale Beauty Art', logotipos y nombres comerciales relacionados son marcas registradas propiedad de Ale Beauty Art. Todas las demás marcas comerciales son propiedad de sus respectivos dueños."
     },
     "section4": {
-      "title": "4. Envíos y Entregas",
-      "text": "Los pedidos se procesan en un plazo de 1 a 3 días hábiles. Los tiempos de entrega pueden variar según la ciudad de destino. No nos hacemos responsables por retrasos ocasionados por la empresa transportadora."
+      "title": "Información del producto",
+      "text": "Ofrecemos productos de belleza, cuidado capilar, maquillaje y cuidado facial. Las imágenes son ilustrativas y pueden variar ligeramente del producto real. Recomendamos leer detenidamente las descripciones y especificaciones antes de comprar."
     },
     "section5": {
-      "title": "5. Devoluciones",
-      "text": "Por razones de higiene y seguridad, no se aceptan devoluciones de maquillaje, skincare ni cosméticos una vez abiertos o usados. Solo se aceptarán devoluciones por productos defectuosos o enviados de manera incorrecta."
+      "title": "Información de color",
+      "text": "Los colores de los productos pueden variar según la configuración de su pantalla, dispositivo o condiciones de visualización. No garantizamos una representación exacta del color en todos los dispositivos."
     },
     "section6": {
-      "title": "6. Responsabilidad del Usuario",
-      "text": "Es responsabilidad del usuario leer las instrucciones y componentes de cada producto, especialmente en caso de alergias o sensibilidad en la piel.",
-      "text2": "no se hace responsable por reacciones adversas derivadas del mal uso de los productos."
+      "title": "Responsabilidad por su contenido",
+      "text": "Usted es responsable de todo el contenido que publique en nuestras plataformas, incluyendo reseñas, comentarios y fotografías. Ale Beauty Art se reserva el derecho de eliminar contenido inapropiado, ofensivo o que viole estos términos."
     },
     "section7": {
-      "title": "7. Propiedad Intelectual",
-      "text": "Todo el contenido de este sitio web, incluyendo logotipos, imágenes y textos, es propiedad exclusiva de Ale Beauty Art. Queda prohibida su reproducción total o parcial sin autorización previa."
+      "title": "Su uso del contenido en los sitios y limitación de responsabilidad",
+      "text": "El contenido de Ale Beauty Art se proporciona 'tal cual'. No garantizamos la exactitud o integridad de la información. El uso del sitio y productos es bajo su propio riesgo."
     },
     "section8": {
-      "title": "8. Modificaciones a los Términos",
-      "text": "Nos reservamos el derecho de actualizar estos términos y condiciones en cualquier momento. Las modificaciones entrarán en vigor a partir de su publicación en el sitio web."
+      "title": "Sus envíos de contenido",
+      "text": "Al enviar contenido a nuestras plataformas, nos otorga una licencia no exclusiva para usar, modificar y mostrar dicho contenido con fines comerciales y promocionales."
     },
     "section9": {
-      "title": "9. Contacto",
-      "text": "Si tienes preguntas sobre estos términos y condiciones, puedes contactarnos a través de nuestro correo"
+      "title": "Calificaciones y reseñas",
+      "text": "Fomentamos reseñas honestas y constructivas. Nos reservamos el derecho de eliminar reseñas falsas, promocionales, ofensivas o que no cumplan con nuestras políticas de comunidad."
+    },
+    "section10": {
+      "title": "Contenido publicado en canales de redes sociales",
+      "text": "El contenido etiquetado con #AleBeautyArt o mencionándonos en redes sociales puede ser compartido en nuestras plataformas oficiales, dando crédito al creador original."
+    },
+    "section11": {
+      "title": "Comunidad Ale Beauty Art",
+      "text": "Promovemos una comunidad respetuosa. Cualquier comportamiento de acoso, discriminación o spam resultará en la suspensión inmediata de la cuenta."
+    },
+    "section12": {
+      "title": "Contenido de terceros y sitios de terceros",
+      "text": "No nos hacemos responsables por el contenido, políticas o prácticas de sitios web de terceros enlazados desde nuestra plataforma."
+    },
+    "section13": {
+      "title": "Servicios móviles",
+      "text": "Nuestra aplicación móvil está disponible para iOS y Android. El uso de datos móviles puede generar cargos según su plan. La aplicación requiere conexión a internet para funcionar correctamente."
+    },
+    "section14": {
+      "title": "Modificación de contenido",
+      "text": "Nos reservamos el derecho de modificar, actualizar o eliminar contenido en cualquier momento sin previo aviso."
+    },
+    "section15": {
+      "title": "Reserva de derechos",
+      "text": "Ale Beauty Art se reserva todos los derechos no expresamente otorgados en estos términos. Podemos modificar estos términos en cualquier momento."
+    },
+    "section16": {
+      "title": "Renuncia de garantías",
+      "text": "Los productos se venden 'tal cual'. No garantizamos resultados específicos ya que estos pueden variar según el tipo de piel, cabello o uso individual del producto."
+    },
+    "section17": {
+      "title": "Renuncia de responsabilidades",
+      "text": "Ale Beauty Art no será responsable por daños indirectos, incidentales o consecuentes resultantes del uso o imposibilidad de uso de nuestros productos o servicios."
+    },
+    "section18": {
+      "title": "Indemnización",
+      "text": "Usted acepta indemnizar y eximir de responsabilidad a Ale Beauty Art por cualquier reclamo derivado del incumplimiento de estos términos o uso inadecuado de nuestros servicios."
+    },
+    "section19": {
+      "title": "DMCA",
+      "text": "Respetamos los derechos de propiedad intelectual. Para reportar infracciones, contacte a nuestro agente designado en contacto@alebeautyart.com"
+    },
+    "section20": {
+      "title": "Programa de protección contra el fraude",
+      "text": "Implementamos medidas de seguridad para detectar y prevenir fraudes. Las transacciones sospechosas pueden ser investigadas y canceladas para proteger a nuestros clientes."
+    },
+    "section21": {
+      "title": "Privacidad",
+      "text": "Recopilamos únicamente nombre, apellido, dirección y correo electrónico. Garantizamos la seguridad de sus datos mediante protocolos de encriptación y no compartimos su información con terceros sin su consentimiento."
+    },
+    "section22": {
+      "title": "Renuncia",
+      "text": "El hecho de que Ale Beauty Art no exija el cumplimiento de alguna disposición de estos términos no constituirá una renuncia a dicho derecho en el futuro."
+    },
+    "section23": {
+      "title": "Idioma español",
+      "text": "Estos términos están redactados en español. En caso de discrepancia con versiones en otros idiomas, prevalecerá la versión en español."
+    },
+    "section24": {
+      "title": "Resolución de disputas",
+      "text": "Cualquier disputa será resuelta mediante negociación directa. Si no se alcanza solución, se someterá a los tribunales de Barranquilla, Colombia."
+    },
+    "section25": {
+      "title": "Disputas legales; Renuncia de demanda colectiva; Renuncia a juicio por jurado",
+      "text": "Usted renuncia a participar en demandas colectivas y acepta resolver disputas individualmente. En jurisdicciones permitidas, renuncia al derecho a juicio por jurado."
+    },
+    "section26": {
+      "title": "Elección de la ley aplicable/selección del foro",
+      "text": "Estos términos se rigen por las leyes de la República de Colombia. El foro exclusivo para cualquier disputa será la ciudad de Barranquilla, Colombia."
+    },
+    "section27": {
+      "title": "Aviso a los consumidores colombianos",
+      "text": "De acuerdo con el Estatuto del Consumidor colombiano, usted tiene derecho a reclamar por productos defectuosos. Solo aceptamos devoluciones de productos sellados y sin uso. Para ejercer sus derechos, contacte a"
     },
     "lastUpdate": "Última actualización:"
   }
