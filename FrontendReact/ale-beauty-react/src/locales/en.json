@@ -332,53 +332,156 @@
     "ctaDescription": "Discover the beauty within you with products that really work",
     "exploreButton": "Explore Products"
   },
+ 
   "terms": {
     "title": "Terms and Conditions",
+    "toc": {
+      "title": "Table of Contents",
+      "section1": "Introduction",
+      "section2": "Copyright",
+      "section3": "Trademarks",
+      "section4": "Product Information",
+      "section5": "Color Information",
+      "section6": "Responsibility for Your Content",
+      "section7": "Your Use of Content on Sites and Limitation of Liability",
+      "section8": "Your Content Submissions",
+      "section9": "Ratings and Reviews",
+      "section10": "Content Posted on Social Media Channels",
+      "section11": "Ale Beauty Art Community",
+      "section12": "Third-Party Content and Third-Party Sites",
+      "section13": "Mobile Services",
+      "section14": "Content Modification",
+      "section15": "Reservation of Rights",
+      "section16": "Disclaimer of Warranties",
+      "section17": "Limitation of Liability",
+      "section18": "Indemnification",
+      "section19": "DMCA",
+      "section20": "Fraud Protection Program",
+      "section21": "Privacy",
+      "section22": "Waiver",
+      "section23": "Spanish Language",
+      "section24": "Dispute Resolution",
+      "section25": "Legal Disputes; Class Action Waiver; Jury Trial Waiver",
+      "section26": "Choice of Law/Forum Selection",
+      "section27": "Notice to Colombian Consumers"
+    },
     "intro": {
       "part1": "Welcome to",
-      "part2": "By accessing and using our online store for makeup, skincare products, hair care and cosmetics, you agree to comply with the following terms and conditions. We recommend that you read them carefully before making a purchase."
+      "part2": "By accessing and using our online store for beauty products, hair care, makeup and facial care, you agree to comply with the following terms and conditions. We recommend that you read them carefully before making a purchase."
     },
     "section1": {
-      "title": "1. Use of the Site",
-      "text": "The website is intended for adults only. Use of the platform for fraudulent or illegal purposes is strictly prohibited."
+      "title": "Introduction",
+      "text": "These Terms and Conditions govern the use of Ale Beauty Art websites, mobile applications and services. By accessing or using our services, you agree to be bound by these terms in their entirety."
     },
     "section2": {
-      "title": "2. Products",
-      "text": "We specialize in offering makeup, skincare products, hair treatments and high-quality cosmetics. However, product images are illustrative and may differ from the final product. We always recommend reviewing the description before making a purchase."
+      "title": "Copyright",
+      "text": "All content on Ale Beauty Art, including texts, graphics, logos, images, videos and software, is the exclusive property of Ale Beauty Art and is protected by Colombian and international copyright laws.",
+      "text2": "Reproduction, distribution or modification without prior written authorization is prohibited."
     },
     "section3": {
-      "title": "3. Prices and Payments",
-      "text": "All prices are shown in Colombian pesos (COP) and include applicable taxes. We reserve the right to modify prices without prior notice. Payments must be made through the payment methods enabled in the store."
+      "title": "Trademarks",
+      "text": "The trademarks 'Ale Beauty Art', related logos and trade names are registered trademarks owned by Ale Beauty Art. All other trademarks are property of their respective owners."
     },
     "section4": {
-      "title": "4. Shipping and Delivery",
-      "text": "Orders are processed within 1 to 3 business days. Delivery times may vary depending on the destination city. We are not responsible for delays caused by the shipping company."
+      "title": "Product Information",
+      "text": "We offer beauty products, hair care, makeup and facial care. Images are illustrative and may vary slightly from the actual product. We recommend carefully reading descriptions and specifications before purchasing."
     },
     "section5": {
-      "title": "5. Returns",
-      "text": "For hygiene and safety reasons, returns are not accepted for makeup, skincare or cosmetics once opened or used. Returns will only be accepted for defective products or items shipped incorrectly."
+      "title": "Color Information",
+      "text": "Product colors may vary depending on your screen settings, device or viewing conditions. We do not guarantee exact color representation on all devices."
     },
     "section6": {
-      "title": "6. User Responsibility",
-      "text": "It is the user's responsibility to read the instructions and ingredients of each product, especially in case of allergies or skin sensitivity.",
-      "text2": "is not responsible for adverse reactions resulting from misuse of the products."
+      "title": "Responsibility for Your Content",
+      "text": "You are responsible for all content you post on our platforms, including reviews, comments and photographs. Ale Beauty Art reserves the right to remove inappropriate, offensive or policy-violating content."
     },
     "section7": {
-      "title": "7. Intellectual Property",
-      "text": "All content on this website, including logos, images and texts, is the exclusive property of Ale Beauty Art. Reproduction in whole or in part without prior authorization is prohibited."
+      "title": "Your Use of Content on Sites and Limitation of Liability",
+      "text": "Ale Beauty Art content is provided 'as is'. We do not guarantee the accuracy or completeness of information. Use of the site and products is at your own risk."
     },
     "section8": {
-      "title": "8. Changes to the Terms",
-      "text": "We reserve the right to update these terms and conditions at any time. Changes will take effect from the date they are published on the website."
+      "title": "Your Content Submissions",
+      "text": "By submitting content to our platforms, you grant us a non-exclusive license to use, modify and display such content for commercial and promotional purposes."
     },
     "section9": {
-      "title": "9. Contact",
-      "text": "If you have questions about these terms and conditions, you can contact us via email"
+      "title": "Ratings and Reviews",
+      "text": "We encourage honest and constructive reviews. We reserve the right to remove false, promotional, offensive or non-compliant reviews."
+    },
+    "section10": {
+      "title": "Content Posted on Social Media Channels",
+      "text": "Content tagged with #AleBeautyArt or mentioning us on social media may be shared on our official platforms, giving credit to the original creator."
+    },
+    "section11": {
+      "title": "Ale Beauty Art Community",
+      "text": "We promote a respectful community. Any harassment, discrimination or spam behavior will result in immediate account suspension."
+    },
+    "section12": {
+      "title": "Third-Party Content and Third-Party Sites",
+      "text": "We are not responsible for content, policies or practices of third-party websites linked from our platform."
+    },
+    "section13": {
+      "title": "Mobile Services",
+      "text": "Our mobile app is available for iOS and Android. Mobile data usage may incur charges according to your plan. The app requires internet connection to function properly."
+    },
+    "section14": {
+      "title": "Content Modification",
+      "text": "We reserve the right to modify, update or remove content at any time without prior notice."
+    },
+    "section15": {
+      "title": "Reservation of Rights",
+      "text": "Ale Beauty Art reserves all rights not expressly granted in these terms. We may modify these terms at any time."
+    },
+    "section16": {
+      "title": "Disclaimer of Warranties",
+      "text": "Products are sold 'as is'. We do not guarantee specific results as these may vary according to skin type, hair type or individual product use."
+    },
+    "section17": {
+      "title": "Limitation of Liability",
+      "text": "Ale Beauty Art shall not be liable for indirect, incidental or consequential damages resulting from use or inability to use our products or services."
+    },
+    "section18": {
+      "title": "Indemnification",
+      "text": "You agree to indemnify and hold harmless Ale Beauty Art from any claims arising from breach of these terms or improper use of our services."
+    },
+    "section19": {
+      "title": "DMCA",
+      "text": "We respect intellectual property rights. To report infringements, contact our designated agent at contacto@alebeautyart.com"
+    },
+    "section20": {
+      "title": "Fraud Protection Program",
+      "text": "We implement security measures to detect and prevent fraud. Suspicious transactions may be investigated and canceled to protect our customers."
+    },
+    "section21": {
+      "title": "Privacy",
+      "text": "We only collect name, surname, address and email. We guarantee data security through encryption protocols and do not share your information with third parties without your consent."
+    },
+    "section22": {
+      "title": "Waiver",
+      "text": "Ale Beauty Art's failure to enforce any provision of these terms shall not constitute a waiver of such right in the future."
+    },
+    "section23": {
+      "title": "Spanish Language",
+      "text": "These terms are written in Spanish. In case of discrepancy with versions in other languages, the Spanish version shall prevail."
+    },
+    "section24": {
+      "title": "Dispute Resolution",
+      "text": "Any dispute will be resolved through direct negotiation. If no solution is reached, it will be submitted to the courts of Barranquilla, Colombia."
+    },
+    "section25": {
+      "title": "Legal Disputes; Class Action Waiver; Jury Trial Waiver",
+      "text": "You waive participation in class actions and agree to resolve disputes individually. In permitted jurisdictions, you waive the right to jury trial."
+    },
+    "section26": {
+      "title": "Choice of Law/Forum Selection",
+      "text": "These terms are governed by the laws of the Republic of Colombia. The exclusive forum for any dispute shall be the city of Barranquilla, Colombia."
+    },
+    "section27": {
+      "title": "Notice to Colombian Consumers",
+      "text": "In accordance with the Colombian Consumer Statute, you have the right to claim for defective products. We only accept returns of sealed and unused products. To exercise your rights, contact"
     },
     "lastUpdate": "Last updated:"
   }
+}
 
-  }
 
 
 
