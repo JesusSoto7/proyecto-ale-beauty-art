@@ -23,8 +23,11 @@ class UpdateCartToken extends CartEvent {
   UpdateCartToken(this.token);
 }
 
+// ✅ Ahora la dirección es opcional
 class CreateOrder extends CartEvent {
-  final ShippingAddress selectedAddress; // ← propiedad agregada
+  final ShippingAddress? selectedAddress;
 
-  CreateOrder({required this.selectedAddress}); // ← constructor con required
+  CreateOrder({this.selectedAddress});
 }
+
+class ResetOrderId extends CartEvent {}

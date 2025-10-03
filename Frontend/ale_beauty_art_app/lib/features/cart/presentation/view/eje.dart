@@ -39,7 +39,7 @@ class CustomHttpClient {
     final client = await CustomHttpClient.client;
     final token = await FlutterSecureStorage().read(key: 'jwt_token');
     final response = await client.post(
-      Uri.parse('$baseUrl$path'),
+      Uri.parse('$baseUrl/api/v1/orders'),
       headers: {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer $token',

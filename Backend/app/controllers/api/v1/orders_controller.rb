@@ -76,7 +76,7 @@ class Api::V1::OrdersController < Api::V1::BaseController
         # Crear orden directa (buy now)
         params[:order][:products].each do |product_params|
           product = Product.find(product_params[:product_id])
-          cantidad = product_params[:quantity].to_i
+          cantidad = (product_params[:quantity] || product_params[:cantidad]).to_i
           order.order_details.create!(
             product: product,
             cantidad: cantidad,

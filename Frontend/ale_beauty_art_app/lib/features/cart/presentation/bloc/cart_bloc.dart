@@ -3,6 +3,7 @@ import 'package:ale_beauty_art_app/core/http/custom_http_client.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:http/http.dart' as http;
 
 import 'cart_event.dart';
 import 'cart_state.dart';
@@ -19,6 +20,9 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     on<AddProductToCart>(_onAddProductToCart);
     on<RemoveProductFromCart>(_onRemoveProductFromCart);
     on<CreateOrder>(_onCreateOrder);
+    on<ResetOrderId>((event, emit) {
+      emit(state.copyWith(orderId: null));
+    });
   }
 
   void _onUpdateCartToken(UpdateCartToken event, Emitter<CartState> emit) {
@@ -34,14 +38,13 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     emit(state.copyWith(isLoading: true, error: null));
 
     try {
-      final token = await secureStorage.read(key: 'jwt_token');
       final client = await CustomHttpClient.client;
 
       final response = await client.get(
         Uri.parse('$apiUrl/cart'),
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': 'Bearer $token',
+          'Authorization': 'Bearer $_jwtToken',
         },
       );
 
@@ -55,28 +58,28 @@ class CartBloc extends Bloc<CartEvent, CartState> {
 
         emit(state.copyWith(products: products, isLoading: false));
       } else {
-        emit(state.copyWith(error: 'Error al cargar carrito', isLoading: false));
+        emit(
+            state.copyWith(error: 'Error al cargar carrito', isLoading: false));
       }
-
     } catch (e) {
       emit(state.copyWith(error: e.toString(), isLoading: false));
     }
   }
 
-  Future<void> _onAddProductToCart(AddProductToCart event, Emitter<CartState> emit) async {
+  Future<void> _onAddProductToCart(
+      AddProductToCart event, Emitter<CartState> emit) async {
     if (_jwtToken == null) return;
 
     try {
-      final token = await secureStorage.read(key: 'jwt_token');
       final client = await CustomHttpClient.client;
 
       final response = await client.post(
         Uri.parse('$apiUrl/cart/add_product'),
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': 'Bearer $token',
+          'Authorization': 'Bearer $_jwtToken',
         },
-        body: jsonEncode({'product_id': event.productId}), // 'quantity' hoy se ignora en Rails
+        body: jsonEncode({'product_id': event.productId}),
       );
       if (response.statusCode == 200) {
         add(LoadCart());
@@ -88,18 +91,18 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     }
   }
 
-  Future<void> _onRemoveProductFromCart(RemoveProductFromCart event, Emitter<CartState> emit) async {
+  Future<void> _onRemoveProductFromCart(
+      RemoveProductFromCart event, Emitter<CartState> emit) async {
     if (_jwtToken == null) return;
 
     try {
-      final token = await secureStorage.read(key: 'jwt_token');
       final client = await CustomHttpClient.client;
 
       final response = await client.delete(
         Uri.parse('$apiUrl/cart/remove_product'),
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': 'Bearer $token',
+          'Authorization': 'Bearer $_jwtToken',
         },
         body: jsonEncode({'product_id': event.productId}),
       );
@@ -113,7 +116,8 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     }
   }
 
-    Future<void> _onCreateOrder(CreateOrder event, Emitter<CartState> emit) async {
+  Future<void> _onCreateOrder(
+      CreateOrder event, Emitter<CartState> emit) async {
     if (_jwtToken == null) {
       emit(state.copyWith(error: 'Token no disponible'));
       return;
@@ -122,27 +126,18 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     emit(state.copyWith(isLoading: true, error: null));
 
     try {
-      final token = await secureStorage.read(key: 'jwt_token');
-      final client = await CustomHttpClient.client;
-
-      final body = {
-        'shipping_address': {
-          'nombre': event.selectedAddress.nombre,
-          'apellido': event.selectedAddress.apellido,
-          'direccion': event.selectedAddress.direccion,
-          'telefono': event.selectedAddress.telefono,
-          'predeterminada': event.selectedAddress.predeterminada,
-        },
-        'products': state.products,
-      };
-
-      final response = await client.post(
-        Uri.parse('$apiUrl/orders'),
+      final response = await http.post(
+        Uri.parse('${dotenv.env['API_BASE_URL']}/api/v1/orders'),
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': 'Bearer $token',
+          'Authorization': 'Bearer $_jwtToken',
         },
-        body: jsonEncode(body),
+        body: jsonEncode({
+          "order": {
+            "shipping_address_id": event.selectedAddress!.id,
+            "products": state.products
+          }
+        }),
       );
 
       if (response.statusCode == 201 || response.statusCode == 200) {
@@ -160,9 +155,3 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     }
   }
 }
-
-
-
-
-
-
