@@ -17,9 +17,9 @@ class RemoveProductFromCart extends CartEvent {
   RemoveProductFromCart({required this.productId});
 }
 
+// Evento para actualizar el token
 class UpdateCartToken extends CartEvent {
   final String token;
-
   UpdateCartToken(this.token);
 }
 

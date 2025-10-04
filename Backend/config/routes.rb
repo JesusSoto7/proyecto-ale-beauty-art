@@ -65,6 +65,7 @@ Rails.application.routes.draw do
       resources :payments, only: [:create] do
         collection do
           post :create_preference   # POST /api/v1/payments/create_preference
+          post :mobile_create 
         end
       end
 

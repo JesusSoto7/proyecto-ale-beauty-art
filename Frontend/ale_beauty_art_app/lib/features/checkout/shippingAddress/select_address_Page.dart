@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:ale_beauty_art_app/core/http/custom_http_client.dart';
 import 'package:ale_beauty_art_app/features/auth/bloc/auth_bloc.dart';
 import 'package:ale_beauty_art_app/features/cart/presentation/bloc/cart_event.dart';
-import 'package:ale_beauty_art_app/features/checkout/payment/presentation/view/payment_page.dart';
 import 'package:ale_beauty_art_app/features/shipping_address/presentation/bloc/shipping_address_bloc.dart';
 import 'package:ale_beauty_art_app/features/shipping_address/presentation/bloc/shipping_address_event.dart';
 import 'package:ale_beauty_art_app/features/shipping_address/presentation/bloc/shipping_address_state.dart';
@@ -156,15 +155,11 @@ class SelectAddressPage extends StatelessWidget {
                               response.statusCode == 200) {
                             final data = jsonDecode(response.body);
                             final int orderId = data['order']['id'];
-                            // Retorna la dirección seleccionada al CartPageView
-                            Navigator.pop(context, selectedAddress);
-                            // Ahora navega al PaymentPage
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) => PaymentPage(orderId: orderId),
-                              ),
-                            );
+                            // Retorna la dirección y el orderId al CartPageView
+                            Navigator.pop(context, {
+                              'selectedAddress': selectedAddress,
+                              'orderId': orderId,
+                            });
                           } else {
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(

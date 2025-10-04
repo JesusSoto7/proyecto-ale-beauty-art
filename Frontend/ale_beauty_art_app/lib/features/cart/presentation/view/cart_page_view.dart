@@ -8,7 +8,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ale_beauty_art_app/styles/colors.dart';
 import 'package:ale_beauty_art_app/styles/text_styles.dart';
-import 'package:ale_beauty_art_app/models/ShippingAddress.dart';
 
 class CartPageView extends StatelessWidget {
   const CartPageView({super.key});
@@ -127,11 +126,22 @@ class CartPageView extends StatelessWidget {
               if (state is PaymentSuccess) {
                 final orderId = context.read<CartBloc>().state.orderId;
                 if (orderId != null) {
+                  final cartState = context.read<CartBloc>().state;
+                  final total = cartState.products.fold<double>(
+                    0,
+                    (sum, item) =>
+                        sum +
+                        (item['precio_producto'] ?? 0) *
+                            (item['cantidad'] ?? 1),
+                  );
+
                   Navigator.push(
                     context,
                     MaterialPageRoute(
                       builder: (_) => PaymentPage(
                         orderId: orderId, // ✅ pasar aquí el orderId
+                        amount: total,
+                        token: cartState.token ?? '', // ⚡ pasar el token
                       ),
                     ),
                   );
@@ -144,44 +154,39 @@ class CartPageView extends StatelessWidget {
             child: ElevatedButton.icon(
               onPressed: () async {
                 final cartBloc = context.read<CartBloc>();
-                final paymentBloc = context.read<PaymentBloc>();
                 final cartState = cartBloc.state;
 
                 if (cartState.products.isEmpty) return;
 
-                // Abrir selección de dirección
-                final ShippingAddress? selectedAddress = await Navigator.push(
+                // Abrir selección de dirección y crear orden
+                final result = await Navigator.push(
                   context,
                   MaterialPageRoute(builder: (_) => const SelectAddressPage()),
                 );
 
-                if (selectedAddress != null) {
-                  // 2️⃣ Escuchar cuando CartBloc emita un orderId y lanzar PaymentBloc
-                  final listener = BlocListener<CartBloc, CartState>(
-                    listener: (context, state) {
-                      if (state.orderId != null) {
-                        paymentBloc.add(
-                          CreatePayment(
-                            transactionAmount:
-                                100.0, // 💰 aquí calculas total del carrito
-                            cardToken: "tok_test_123",
-                            description: "Compra en Ale Beauty Art",
-                            installments: 1,
-                            paymentMethodId: "visa",
-                            payerEmail: "cliente@test.com",
-                            identificationType: "CC",
-                            identificationNumber: "123456789",
-                          ),
-                        );
-                        Navigator.of(context).pop(); // Cierra listener temporal
-                      }
-                    },
-                    child: const SizedBox.shrink(),
-                  );
-
-                  Navigator.of(context).push(
-                    MaterialPageRoute(builder: (_) => listener),
-                  );
+                if (result != null && result is Map) {
+                  final orderId = result['orderId'] as int?;
+                  if (orderId != null) {
+                    final total = cartState.products.fold<double>(
+                      0,
+                      (sum, item) =>
+                          sum +
+                          (item['precio_producto'] ?? 0) *
+                              (item['cantidad'] ?? 1),
+                    );
+                    // Obtener el token del CartBloc
+                    final token = cartState.token ?? '';
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => PaymentPage(
+                          orderId: orderId,
+                          amount: total,
+                          token: token,
+                        ),
+                      ),
+                    );
+                  }
                 }
               },
               icon: const Icon(Icons.payment, color: Colors.white),
