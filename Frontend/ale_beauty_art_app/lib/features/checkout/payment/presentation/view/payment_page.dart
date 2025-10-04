@@ -49,22 +49,18 @@ class _PaymentPageState extends State<PaymentPage> {
 
     print("Token generado MP: $token"); // confirma token
     // 2. Detectar el método de pago (Visa, Master, etc.) usando el BIN
+
     final bin = _cardNumber.text.replaceAll(' ', '').substring(0, 6);
-    final paymentMethodId = await _mpService.getPaymentMethod(bin);
+    print("👉 BIN usado: $bin");
 
-    if (paymentMethodId == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-            content: Text(
-                "Tarjeta no soportada o BIN no reconocido por Mercado Pago")),
-      );
-      return;
-    }
+    final paymentMethod = await _mpService.getPaymentMethod(bin);
+    final paymentMethodId = paymentMethod?["id"] ?? "master"; // fallback
 
-    // 3. Llamar a tu backend con el token y la orden
+    print("👉 ID final usado: $paymentMethodId");
+
     final paymentResponse = await _mpService.payWithBackend(
       token: token,
-      amount: widget.amount,
+      transaction_amount: widget.amount,
       paymentMethodId: paymentMethodId,
       email: _email.text,
       docType: _docType.text,
@@ -72,17 +68,22 @@ class _PaymentPageState extends State<PaymentPage> {
       orderId: widget.orderId,
     );
 
-    print("Respuesta backend: $paymentResponse");
+    print("👉 Respuesta backend: $paymentResponse");
 
     // 4. Mostrar resultado
-    if (paymentResponse["status"] == "approved") {
+    final status = paymentResponse["status"] ??
+        paymentResponse["payment"]?["status"] ??
+        "unknown";
+
+    if (status == "approved") {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("✅ Pago aprobado")),
       );
-      Navigator.pop(context, true); // Regresa confirmación al flujo anterior
+      Navigator.pop(context, true);
     } else {
+      final detail = paymentResponse["detail"] ?? "";
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("❌ Pago ${paymentResponse["status"]}")),
+        SnackBar(content: Text("❌ Pago $status: $detail")),
       );
     }
   }

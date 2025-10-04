@@ -54,15 +54,26 @@ class Api::V1::PaymentsController < Api::V1::BaseController
     payment_data = {
       transaction_amount: params[:transaction_amount].to_f,
       token: params[:token],
-      description: params[:description] || "Pago",
-      installments: params[:installments].to_i,
+      description: "Pago",
+      installments: params[:installments],
       payment_method_id: params[:payment_method_id],
       payer: {
-        email: params.dig(:payer, :email),
+        email: params[:payer][:email],
         identification: {
-          type: params.dig(:payer, :identification, :type),
-          number: params.dig(:payer, :identification, :number)
+          type: params[:payer][:identification][:type],
+          number: params[:payer][:identification][:number]
         }
+      },
+      additional_info: {
+        ip_address: request.remote_ip,
+        items: [
+          {
+            id: params[:order_id],
+            title: "Compra en tu tienda",
+            quantity: 1,
+            unit_price: params[:transaction_amount].to_f
+          }
+        ]
       }
     }
 
@@ -77,19 +88,25 @@ class Api::V1::PaymentsController < Api::V1::BaseController
 
     if payment["status"] == "approved"
       order.update(status: :pagada, fecha_pago: Time.current)
-      current_user.cart.cart_products.destroy_all
-      InvoiceMailer.enviar_factura(order).deliver_later
+      #current_user.cart.cart_products.destroy_all
+      #InvoiceMailer.enviar_factura(order).deliver_later
 
       render json: {
-        message: "Pago exitoso",
+        status: payment["status"],          # 👈 IMPORTANTE
+        detail: payment["status_detail"],   # 👈 opcional
+        id: payment["id"],                  # 👈 opcional
+        message: "Pago exitoso"
       }, status: :ok
     else
       order.update(status: :cancelada)
 
       render json: {
-        error: "Pago rechazado",
+        status: payment["status"],          # 👈 también aquí
+        detail: payment["status_detail"],   # 👈 opcional
+        error: "Pago rechazado"
       }, status: :unprocessable_entity
     end
+
   end
 
 end

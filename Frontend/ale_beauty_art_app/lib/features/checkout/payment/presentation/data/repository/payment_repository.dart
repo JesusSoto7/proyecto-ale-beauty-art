@@ -49,7 +49,7 @@ class MercadoPagoService {
 
   Future<Map<String, dynamic>> payWithBackend({
     required String token,
-    required double amount,
+    required double transaction_amount,
     required String paymentMethodId,
     required String email,
     required String docType,
@@ -58,7 +58,7 @@ class MercadoPagoService {
   }) async {
     print({
       "token": token,
-      "amount": amount,
+      "transaction_amount": transaction_amount,
       "paymentMethodId": paymentMethodId,
       "email": email,
       "docType": docType,
@@ -71,7 +71,7 @@ class MercadoPagoService {
       url,
       headers: {"Content-Type": "application/json"},
       body: jsonEncode({
-        "transaction_amount": amount,
+        "transaction_amount": transaction_amount.toInt(),
         "token": token,
         "installments": 1,
         "payment_method_id": paymentMethodId,
@@ -86,7 +86,7 @@ class MercadoPagoService {
       }),
     );
 
-    if (response.statusCode == 200) {
+    if (response.statusCode == 201 || response.statusCode == 200) {
       return jsonDecode(response.body);
     } else {
       return {
@@ -96,17 +96,36 @@ class MercadoPagoService {
     }
   }
 
-  Future<String?> getPaymentMethod(String bin) async {
+  Future<Map<String, dynamic>?> getPaymentMethod(String bin) async {
     final url = Uri.parse(
-        "https://api.mercadopago.com/v1/payment_methods/search?public_key=$publicKey&bin=$bin");
+        "https://api.mercadopago.com/v1/payment_methods/search?bin=$bin&public_key=$publicKey");
 
     final response = await http.get(url);
-    if (response.statusCode == 200) {
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
       final data = jsonDecode(response.body);
-      if (data["results"].isNotEmpty) {
-        return data["results"][0]["id"]; // ej: "visa", "master"
+      print("👉 Respuesta cruda MP: ${response.body}");
+
+      if (data["results"] != null && data["results"].isNotEmpty) {
+        // filtrar SOLO tarjetas de crédito
+        final creditCards = data["results"]
+            .where((m) =>
+                m["payment_type_id"] == "credit_card" &&
+                (m["id"] == "visa" ||
+                    m["id"] == "master" ||
+                    m["id"] == "amex" ||
+                    m["id"] == "diners" ||
+                    m["id"] == "elo")) // puedes ampliar según soportados
+            .toList();
+
+        if (creditCards.isNotEmpty) {
+          return creditCards.first;
+        }
       }
+    } else {
+      print("❌ Error al consultar método de pago: ${response.body}");
     }
+
     return null;
   }
 }
