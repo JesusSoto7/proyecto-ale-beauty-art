@@ -235,12 +235,37 @@ export default function Header({ loadFavorites }) {
     navigate(`/${lang}/producto/${slugOrId}`);
   }
 
-  function goToCategory(category) {
-    const slugOrId = category?.slug || category?.id;
-    if (!slugOrId) return;
+  function goToCategory(item, parentCategory = null) {
+    if (!item) return;
+
+    const isSubCategory = !item.sub_categories && !!parentCategory;
+
+    let categorySlug;
+    let subCategoryId;
+
+    if (isSubCategory) {
+      // Caso: clic en una subcategoría
+      categorySlug = parentCategory.slug || parentCategory.id;
+      subCategoryId = item.id;
+    } else {
+      // Caso: clic en una categoría general
+      const subCategory = item.sub_categories?.[0];
+      categorySlug = item.slug || item.id;
+      subCategoryId = subCategory?.id;
+    }
+
     setShowCategories(false);
-    navigate(`/${lang}/categoria/${slugOrId}`);
+
+    if (subCategoryId) {
+      // URL: /es/categoria/labiales/1/products
+      navigate(`/${lang}/categoria/${categorySlug}/${subCategoryId}/products`);
+    } else {
+      // URL: /es/categoria/labiales/products
+      navigate(`/${lang}/categoria/${categorySlug}/products`);
+    }
   }
+
+
 
   async function handleLogout() {
     localStorage.removeItem('token');
@@ -546,7 +571,7 @@ export default function Header({ loadFavorites }) {
                           : hoveredCategory.sub_categories.map((sub) => (
                               <Box
                                 key={sub.id || sub.slug}
-                                onClick={() => goToCategory(sub)}
+                                onClick={() => goToCategory(sub, hoveredCategory)}
                                 sx={{
                                   cursor: "pointer",
                                   maxWidth: "202px",
