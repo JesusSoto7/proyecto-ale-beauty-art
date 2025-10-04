@@ -156,9 +156,6 @@ class CartPageView extends StatelessWidget {
                 );
 
                 if (selectedAddress != null) {
-                  // 1️⃣ Crear la orden
-                  cartBloc.add(CreateOrder(selectedAddress: selectedAddress));
-
                   // 2️⃣ Escuchar cuando CartBloc emita un orderId y lanzar PaymentBloc
                   final listener = BlocListener<CartBloc, CartState>(
                     listener: (context, state) {

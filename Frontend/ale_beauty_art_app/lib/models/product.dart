@@ -5,8 +5,10 @@ class Product extends Equatable {
   final String nombreProducto;
   final int precioProducto;
   final String descripcion;
-  final int categoryId;
+  final int subCategoryId;
   final int stock;
+  final String nombreSubCategoria;
+  final int categoryId;
   final String nombreCategoria;
   final String? imagenUrl;
 
@@ -15,22 +17,29 @@ class Product extends Equatable {
     required this.nombreProducto,
     required this.precioProducto,
     required this.descripcion,
-    required this.categoryId,
+    required this.subCategoryId,
     required this.stock,
+    required this.nombreSubCategoria,
+    required this.categoryId,
     required this.nombreCategoria,
-    required this.imagenUrl
+    required this.imagenUrl,
   });
 
   factory Product.fromJson(Map<String, dynamic> json) {
+    final subCategory = json['sub_category'] ?? {};
+    final category = subCategory['category'] ?? {};
+
     return Product(
-      id: json['id'],
-      nombreProducto: json['nombre_producto'],
-      descripcion: json['descripcion'],
-      categoryId: json['category_id'],
-      precioProducto: json['precio_producto'],
-      stock: json['stock'],
-      nombreCategoria: json['category']['nombre_categoria'],
-      imagenUrl: json['imagen_url']
+      id: json['id'] ?? 0,
+      nombreProducto: json['nombre_producto'] ?? '',
+      descripcion: json['descripcion'] ?? '',
+      subCategoryId: subCategory['id'] ?? 0,
+      stock: json['stock'] ?? 0,
+      nombreSubCategoria: subCategory['nombre'] ?? '',
+      categoryId: category['id'] ?? 0,
+      nombreCategoria: category['nombre_categoria'] ?? '',
+      precioProducto: json['precio_producto'] ?? 0,
+      imagenUrl: json['imagen_url'],
     );
   }
 
@@ -38,9 +47,13 @@ class Product extends Equatable {
     'id': id,
     'nombre_producto': nombreProducto,
     'description': descripcion,
+    'sub_category_id': subCategoryId,
     'category_id': categoryId,
     'precio_producto': precioProducto,
     'stock': stock,
+    'sub_category': {
+      'nombre': nombreSubCategoria
+    },
     'category': {
       'nombre_categoria': nombreCategoria
     },
@@ -54,6 +67,8 @@ class Product extends Equatable {
     descripcion,
     precioProducto,
     stock,
+    nombreSubCategoria,
+    categoryId,
     nombreCategoria,
     imagenUrl
   ];
