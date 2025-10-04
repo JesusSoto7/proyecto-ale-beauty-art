@@ -1,132 +1,196 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
-import {
-  Container,
-  CircularProgress,
-  Alert,
-  Box,
-  Typography,
-  Grid,
-  Card,
-  CardContent,
-  CardMedia,
-} from "@mui/material";
+import { Link, useParams, useOutletContext } from "react-router-dom";
+import { useTranslation } from "react-i18next";
+import IconButton from "@mui/joy/IconButton";
+import FavoriteBorder from "@mui/icons-material/FavoriteBorder";
+import Favorite from "@mui/icons-material/Favorite";
+import CircularProgress from "@mui/material/CircularProgress";
+import Typography from "@mui/material/Typography";
+import "../assets/stylesheets/ProductosCliente.css";
+import { formatCOP } from "../services/currency";
+import noImage from "../assets/images/no_image.png";
 
-export default function ProductsPageSubCategory({ token, t, lang }) {
-  const { categoryId, subCategoryId } = useParams();
+export default function ProductsPageSubCategory() {
+  const { categoryId, subCategoryId, lang } = useParams();
+  const { t } = useTranslation();
+  const { favoriteIds, loadFavorites } = useOutletContext();
 
-  const [category, setCategory] = useState(null);
+  const [token, setToken] = useState(null);
   const [products, setProducts] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [cart, setCart] = useState(null);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  async function fetchCategoryProducts() {
-    try {
-      setLoading(true);
-      setError(null);
+  // Obtener token
+  useEffect(() => {
+    const savedToken = localStorage.getItem("token");
+    if (savedToken) setToken(savedToken);
+  }, []);
 
-      const categoryRes = await fetch(
-        `https://localhost:4000/api/v1/categories/${categoryId}`,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
+  // Cargar productos de la subcategoría
+  useEffect(() => {
+    if (!token) return;
 
-      if (categoryRes.ok) {
-        const categoryData = await categoryRes.json();
-        setCategory(categoryData);
+    async function fetchCategoryProducts() {
+      try {
+        setLoading(true);
+        setError(null);
+
+        const res = await fetch(
+          `https://localhost:4000/api/v1/categories/${categoryId}/sub_categories/${subCategoryId}/products`,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
+
+        if (!res.ok) throw new Error("Error al cargar los productos");
+        const data = await res.json();
+        setProducts(Array.isArray(data) ? data : data.products || []);
+      } catch (err) {
+        console.error("Error cargando productos:", err);
+        setError(err.message);
+      } finally {
+        setLoading(false);
       }
-
-      const productsRes = await fetch(
-        `https://localhost:4000/api/v1/categories/${categoryId}/sub_categories/${subCategoryId}/products`,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
-
-      if (productsRes.ok) {
-        const productsData = await productsRes.json();
-        setProducts(Array.isArray(productsData) ? productsData : []);
-        console.log(`Fetched products for category = ${categoryId}. and subcategory = ${subCategoryId}:`);
-      } else {
-        throw new Error(t?.("categoryProducts.errorLoad") || "Error loading products");
-      }
-    } catch (error) {
-      console.error("Error fetching category products:", error);
-      setError(error.message);
-    } finally {
-      setLoading(false);
     }
+
+    fetchCategoryProducts();
+  }, [token, categoryId, subCategoryId]);
+
+  // Favoritos
+  const toggleFavorite = async (productId) => {
+    try {
+      if (favoriteIds.includes(productId)) {
+        // Quitar favorito
+        const res = await fetch(
+          `https://localhost:4000/api/v1/favorites/${productId}`,
+          {
+            method: "DELETE",
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
+        if (res.ok) await loadFavorites();
+      } else {
+        // Agregar favorito
+        const res = await fetch("https://localhost:4000/api/v1/favorites", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ product_id: productId }),
+        });
+        const data = await res.json();
+        if (data.success) await loadFavorites();
+      }
+    } catch (err) {
+      console.error("Error al cambiar favorito:", err);
+    }
+  };
+
+  // Añadir al carrito
+  const addToCart = (productId) => {
+    fetch("https://localhost:4000/api/v1/cart/add_product", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ product_id: productId }),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.cart) {
+          setCart(data.cart);
+          alert(t("productDetails.addedToCart"));
+        } else if (data.errors) {
+          alert(t("productDetails.error") + data.errors.join(", "));
+        }
+      })
+      .catch((err) => {
+        console.error(t("productDetails.cartAddError"), err);
+        alert(t("productDetails.cartAddError"));
+      });
+  };
+
+  if (!token) return <p>{t("products.notAuthenticated")}</p>;
+
+  if (loading) {
+    return (
+      <div style={{ textAlign: "center", marginTop: "50px" }}>
+        <CircularProgress style={{ color: "#ff4d94" }} />
+        <p style={{ color: "#ff4d94", marginTop: "10px" }}>Cargando productos...</p>
+      </div>
+    );
   }
 
-  useEffect(() => {
-    fetchCategoryProducts();
-  }, [categoryId, subCategoryId]);
+  if (error) {
+    return (
+      <Typography color="error" sx={{ textAlign: "center", mt: 5 }}>
+        {t("categoryProducts.errorLoad") || error}
+      </Typography>
+    );
+  }
+
+  if (products.length === 0) {
+    return (
+      <Typography sx={{ textAlign: "center", mt: 5, color: "#777" }}>
+        No hay productos disponibles en esta subcategoría.
+      </Typography>
+    );
+  }
 
   return (
-    <Container sx={{ mt: 4, mb: 6 }}>
-      {loading && (
-        <Box sx={{ display: "flex", justifyContent: "center", mt: 8 }}>
-          <CircularProgress />
-        </Box>
-      )}
+    <section className="mt-5">
+      <h2 style={{ textAlign: "center", marginTop: "40px" }}>
+        {"productos"}
+      </h2>
 
-      {error && (
-        <Alert severity="error" sx={{ mt: 4 }}>
-          {error}
-        </Alert>
-      )}
+      <div className="productos-grid" style={{ marginTop: "40px" }}>
+        {products.map((prod) => (
+          <div className="product-card" key={prod.id} style={{ position: "relative" }}>
+            <IconButton
+              onClick={() => toggleFavorite(prod.id)}
+              sx={{
+                position: "absolute",
+                top: 8,
+                right: 8,
+                bgcolor: "white",
+                "&:hover": { bgcolor: "grey.200" },
+              }}
+            >
+              {favoriteIds.includes(prod.id) ? (
+                <Favorite sx={{ color: "#ffffffff" }} />
+              ) : (
+                <FavoriteBorder sx={{ color: "#ffffffff" }} />
+              )}
+            </IconButton>
 
-      {!loading && !error && (
-        <>
-          <Typography variant="h5" sx={{ mb: 3, textTransform: "capitalize" }}>
-            {category?.nombre_categoria || t?.("categoryProducts.title") || "Productos"}
-          </Typography>
+            <Link
+              to={`/${lang}/producto/${prod.slug}`}
+              style={{ textDecoration: "none", color: "inherit" }}
+            >
+              <div className="image-container">
+                <img
+                  src={prod.imagen_url || noImage}
+                  alt={prod.nombre_producto}
+                  onError={(e) => {
+                    e.currentTarget.src = noImage;
+                  }}
+                />
+              </div>
+              <h5>{prod.nombre_producto}</h5>
+              <p>{formatCOP(prod.precio_producto)}</p>
+            </Link>
 
-          {products.length === 0 ? (
-            <Typography variant="body1" color="text.secondary">
-              {t?.("categoryProducts.noProducts") || "No hay productos disponibles."}
-            </Typography>
-          ) : (
-            <Grid container spacing={2}>
-              {products.map((product) => (
-                <Grid item xs={12} sm={6} md={4} lg={3} key={product.id}>
-                  <Card
-                    sx={{
-                        width: "200px",
-                        borderRadius: 2,
-                        boxShadow: 3,
-                        "&:hover": { boxShadow: 6, transform: "scale(1.02)" },
-                        transition: "0.3s",
-                    }}
-                  >
-                        <CardMedia
-                        component="img"
-                        height="200"
-                        width="200"
-                        image={product.imagen_url || "/placeholder.png"}
-                        alt={product.nombre_producto}
-                        sx={{ objectFit: "cover", width: '200px' }}
-                        />
-                    
-                    <CardContent>
-                      <Typography variant="subtitle1" fontWeight={600}>
-                        {product.nombre_producto}
-                      </Typography>
-                      <Typography variant="body2" color="text.secondary">
-                        {product.sub_category.nombre || "Sub Categoría"}
-                      </Typography>
-                      <Typography variant="h6" color="primary" sx={{ mt: 1 }}>
-                        ${product.precio_producto?.toLocaleString() || "0"}
-                      </Typography>
-                    </CardContent>
-                  </Card>
-                </Grid>
-              ))}
-            </Grid>
-          )}
-        </>
-      )}
-    </Container>
+            <div className="actions">
+              <button onClick={() => addToCart(prod.id)}>
+                {t("products.addToCart")}
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
   );
 }
