@@ -32,6 +32,7 @@ import './assets/stylesheets/Cart.css'
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
 import "./i18n";
+import SubCateProd from './components/SubCateProd';
 
 import { useTranslation } from "react-i18next";
 import ProtectedRoute from './pages/home/ProtectedRoute';
@@ -92,6 +93,8 @@ function App() {
             <Route path="pedidos/:id" element={<DetallePedido />} />
             <Route path="about" element={<AboutUs />} />
             <Route path="terms" element={<TermsAndConditions />} />
+            <Route path="/:lang/categoria/:categoryId/:subCategoryId/products" element={<SubCateProd />} />
+
 
           </Route>
 

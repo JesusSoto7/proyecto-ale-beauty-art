@@ -10,20 +10,39 @@ import ListItemIcon, { listItemIconClasses } from '@mui/material/ListItemIcon';
 import LogoutRoundedIcon from '@mui/icons-material/LogoutRounded';
 import MoreVertRoundedIcon from '@mui/icons-material/MoreVertRounded';
 import MenuButton from './MenuButton';
+import { useParams } from 'react-router-dom'; // ✅ Importa esto
 
 const MenuItem = styled(MuiMenuItem)({
   margin: '2px 0',
 });
 
 export default function OptionsMenu() {
+  const { lang } = useParams(); // ✅ Obtiene el idioma actual de la URL
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
+
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
   const handleClose = () => {
     setAnchorEl(null);
   };
+
+  // ✅ Mueve handleLogout dentro del componente para usar lang
+  async function handleLogout() {
+    const token = localStorage.getItem('token');
+    try {
+      await fetch('https://localhost:4000/api/v1/sign_out', {
+        method: 'DELETE',
+        headers: { Authorization: `Bearer ${token}` },
+      });
+    } catch (err) {
+      console.warn('Error cerrando sesión:', err);
+    }
+    localStorage.removeItem('token');
+    window.location.href = `/${lang || 'es'}/login`; // ✅ Redirección con idioma por defecto
+  }
+
   return (
     <React.Fragment>
       <MenuButton
@@ -60,13 +79,13 @@ export default function OptionsMenu() {
         <MenuItem onClick={handleClose}>Settings</MenuItem>
         <Divider />
         <MenuItem
-          onClick={handleClose}
           sx={{
             [`& .${listItemIconClasses.root}`]: {
               ml: 'auto',
               minWidth: 0,
             },
           }}
+          onClick={handleLogout}
         >
           <ListItemText>Logout</ListItemText>
           <ListItemIcon>

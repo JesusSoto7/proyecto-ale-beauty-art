@@ -32,6 +32,7 @@ export default function CategoryProducts() {
   const [token, setToken] = useState(null);
   const [favoriteIds, setFavoriteIds] = useState([]);
   const { t, i18n } = useTranslation();
+  const [subCategories, setSubCategories] = useState([]);
 
   useEffect(() => {
     if (lang) {
@@ -64,17 +65,26 @@ export default function CategoryProducts() {
         const categoryData = await categoryRes.json();
         setCategory(categoryData);
       }
-      
-      const productsRes = await fetch(`https://localhost:4000/api/v1/categories/${categoryId}/products`, {
+
+      const subCategoryRes = await fetch(`https://localhost:4000/api/v1/categories/${categoryId}/sub_categories`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      
-      if (productsRes.ok) {
-        const productsData = await productsRes.json();
-        setProducts(Array.isArray(productsData) ? productsData : []);
-      } else {
-        throw new Error(t("categoryProducts.errorLoad"));
+
+      if (subCategoryRes.ok) {
+        const subCategoryData = await subCategoryRes.json();
+        setSubCategories(Array.isArray(subCategoryData) ? subCategoryData : []);
       }
+
+      // const productsRes = await fetch(`https://localhost:4000/api/v1/categories/${categoryId}/products`, {
+      //   headers: { Authorization: `Bearer ${token}` },
+      // });
+      
+      // if (productsRes.ok) {
+      //   const productsData = await productsRes.json();
+      //   setProducts(Array.isArray(productsData) ? productsData : []);
+      // } else {
+      //   throw new Error(t("categoryProducts.errorLoad"));
+      // }
     } catch (error) {
       console.error('Error fetching category products:', error);
       setError(error.message);
@@ -200,58 +210,18 @@ export default function CategoryProducts() {
         </Typography>
       </Box>
 
-      {products.length === 0 ? (
-        <Box sx={{ textAlign: 'center', py: 8, backgroundColor: pinkTheme.light, borderRadius: 2, minHeight: '300px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-          <Typography variant="h5" color={pinkTheme.dark} gutterBottom>
-            {t("categoryProducts.noProducts")}
+      {/* 🔹 NUEVO: Mensaje si no hay subcategorías */}
+      {subCategories.length === 0 && (
+        <Box sx={{ textAlign: 'center', py: 6, backgroundColor: pinkTheme.light, borderRadius: 2, mb: 4 }}>
+          <Typography variant="h5" color={pinkTheme.dark}>
+            No hay subcategorías disponibles
           </Typography>
-          <Typography variant="body1" color={pinkTheme.dark} sx={{ mb: 3 }}>
-            {t("categoryProducts.soon")}
+          <Typography variant="body1" color={pinkTheme.dark}>
+            Pronto añadiremos más subcategorías en esta categoría.
           </Typography>
         </Box>
-      ) : (
-        <section className="mt-5">
-          <div className="productos-grid">
-            {products.map((prod) => (
-              <div className="product-card" key={prod.id} style={{ position: "relative" }}>
-                <IconButton
-                  onClick={() => toggleFavorite(prod.id)}
-                  sx={{ position: "absolute", top: 8, right: 8, bgcolor: "white", "&:hover": { bgcolor: "grey.200" }, zIndex: 10 }}
-                >
-                  {favoriteIds.includes(prod.id) ? (
-                    <Favorite sx={{ color: pinkTheme.light }} />
-                  ) : (
-                    <FavoriteBorder />
-                  )}
-                </IconButton>
-
-                <Link to={`/${lang}/producto/${prod.slug || prod.id}`} style={{ textDecoration: "none", color: "inherit" }}>
-                  <div className="image-container">
-                    <img 
-                      src={prod.imagen_url || prod.image} 
-                      alt={prod.nombre_producto || prod.name} 
-                      onError={(e) => { e.target.src = 'https://via.placeholder.com/300x300?text=Imagen+no+disponible'; }}
-                    />
-                  </div>
-                  <h5>{prod.nombre_producto || prod.name}</h5>
-                  <p style={{ color: pinkTheme.primary, fontWeight: 'bold', fontSize: '1.1rem' }}>
-                    {formatCOP(prod.precio_producto || prod.price)}
-                  </p>
-                </Link>
-
-                <div className="actions">
-                  <button 
-                    onClick={() => addToCart(prod.id)}
-                    style={{ backgroundColor: pinkTheme.primary, color: 'white', border: 'none' }}
-                  >
-                    {t("categoryProducts.addToCart")}
-                  </button>
-                </div>
-              </div>
-            ))}
-          </div>
-        </section>
       )}
+
     </Container>
   );
 }

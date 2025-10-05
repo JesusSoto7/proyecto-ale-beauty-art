@@ -2,8 +2,7 @@ import React from "react";
 import { FaStar } from "react-icons/fa";
 import "../assets/stylesheets/RatingSummary.css";
 
-function RatingSummary({ ratings }) {
-  // Calcular promedio
+function RatingSummary({ ratings, showReviewForm, setShowReviewForm, productName }) {
   const totalVotes = Object.values(ratings).reduce((a, b) => a + b, 0);
   const average =
     totalVotes === 0
@@ -15,48 +14,69 @@ function RatingSummary({ ratings }) {
             2 * ratings[2] +
             1 * ratings[1]) /
           totalVotes
-        ).toFixed(1);
+        ).toFixed(2);
 
-  // Para iterar de 5 a 1 estrellas
   const stars = [5, 4, 3, 2, 1];
 
   return (
     <div className="rating-summary">
-      {/* Izquierda: distribución */}
-      <div className="rating-distribution">
-        {stars.map((star) => {
-          const count = ratings[star] || 0;
-          const percent = totalVotes ? (count / totalVotes) * 100 : 0;
+      {/* Izquierda: promedio y distribución */}
+      <div className="rating-left">
+        <div className="rating-header">
+          <h3>Calificación general</h3>
+        </div>
 
-          return (
-            <div className="rating-row" key={star}>
-              <span className="rating-label">{star}</span>
-              <FaStar className="rating-icon" />
-              <div className="rating-bar">
-                <div
-                  className="rating-bar-fill"
-                  style={{ width: `${percent}%` }}
-                />
+        <div className="rating-average">
+          <h2 style={{ color: "#2d2d2d" }}>{average}</h2>
+          <div className="rating-stars">
+            {[...Array(5)].map((_, i) => (
+              <FaStar
+                key={i}
+                color={i < Math.round(average) ? "#FFD700" : "#a5a5a5"}
+                size={24}
+              />
+            ))}
+          </div>
+          <p>{totalVotes.toLocaleString()} calificaciones</p>
+        </div>
+
+        <div className="rating-distribution">
+          {stars.map((star) => {
+            const count = ratings[star] || 0;
+            const percent = totalVotes ? ((count / totalVotes) * 100).toFixed(0) : 0;
+
+            return (
+              <div className="rating-row" key={star}>
+                <div className="rating-star-label">
+                  {[...Array(star)].map((_, i) => (
+                    <FaStar key={i} color="#FFD700" size={12} />
+                  ))}
+                </div>
+                <div className="rating-bar">
+                  <div
+                    className="rating-bar-fill"
+                    style={{ width: `${percent}%` }}
+                  />
+                </div>
+                <span className="rating-percent">{percent}%</span>
               </div>
-              <span className="rating-count">{count}</span>
-            </div>
-          );
-        })}
+            );
+          })}
+        </div>
       </div>
 
-      {/* Derecha: promedio */}
-      <div className="rating-average">
-        <h2>{average}</h2>
-        <div className="rating-stars">
+      {/* Derecha: área para calificar */}
+      <div className="rating-right">
+        <h4>{productName}</h4>
+        <div className="rating-user-stars">
           {[...Array(5)].map((_, i) => (
-            <FaStar
-              key={i}
-              color={i < Math.round(average) ? "#FFD700" : "#ddd"}
-              size={22}
-            />
+            <FaStar key={i} color="#444" size={24} />
           ))}
         </div>
-        <p>{totalVotes} Ratings</p>
+        <p>Haznos conocer tu opinión.</p>
+        <button className="rating-button" onClick={() => setShowReviewForm(prev => !prev)}>
+          {showReviewForm ? "Cancelar" : "Calificar"}
+        </button>
       </div>
     </div>
   );

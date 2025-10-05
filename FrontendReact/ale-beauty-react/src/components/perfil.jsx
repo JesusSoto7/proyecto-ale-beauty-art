@@ -33,7 +33,6 @@ export default function Perfil() {
           apellido: data.apellido || "",
           email: data.email || "",
           telefono: data.telefono || "",
-          direccion: data.direccion || "",
         });
       })
       .catch((err) => console.error(err));
@@ -47,7 +46,7 @@ export default function Perfil() {
     const token = localStorage.getItem("token");
 
     fetch("https://localhost:4000/api/v1/me", {
-      method: "PUT",
+      method: "PATCH",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
@@ -203,16 +202,6 @@ export default function Perfil() {
                     type="text"
                     name="telefono"
                     value={formData.telefono}
-                    onChange={handleChange}
-                    className="form-control"
-                  />
-                </div>
-                <div className="mb-2">
-                  <label className="form-label">{t("profile.address")}</label>
-                  <input
-                    type="text"
-                    name="direccion"
-                    value={formData.direccion}
                     onChange={handleChange}
                     className="form-control"
                   />

@@ -179,12 +179,12 @@ function Inicio() {
       ) : carousel.length > 0 ? (
         <Carousel interval={3000} className="mb-0">
           {carousel.map((img, idx) => (
-            <Carousel.Item key={idx}>
+            <Carousel.Item key={idx} sx={{ marginTop: "70px"}}>
               <img
                 className="d-block w-100"
                 src={img}
                 alt={`${t('home.slide')} ${idx + 1}`}
-                style={{ height: "400px", objectFit: "cover" }}
+                style={{ height: "450px", objectFit: "cover" }}
               />
             </Carousel.Item>
           ))}
