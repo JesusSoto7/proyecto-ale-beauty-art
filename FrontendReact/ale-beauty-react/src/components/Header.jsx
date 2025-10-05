@@ -351,6 +351,48 @@ export default function Header({ loadFavorites }) {
     </Menu>
   );
 
+  const perfilIcon = user ? (
+    <Box
+      onClick={(e) => setAnchorEl(e.currentTarget)}
+      sx={{
+        backgroundColor: "#f896b8",
+        borderRadius: "50%",
+        width: 26,
+        height: 26,
+        display: "flex",
+        alignItems: "center",
+        paddingTop: 0.1,
+        alignSelf: "center",
+        justifyContent: "center",
+        cursor: "pointer",
+        transition: "background-color 0.2s",
+        "&:hover": { opacity: 0.85, backgroundColor: pinkTheme.primary },
+      }}
+    >
+      <Typography
+        variant="caption"
+        sx={{
+          color: "white",
+          fontWeight: "bold",
+          fontSize: "14px",
+        }}
+      >
+        {user.nombre?.charAt(0).toUpperCase()}
+      </Typography>
+    </Box>
+  ) : (
+    <IconButton
+      onClick={(e) => setAnchorEl(e.currentTarget)}
+      sx={{
+        color: "black",
+        "&:hover": { color: pinkTheme.primary },
+      }}
+    >
+      <IoPersonCircleSharp size={30} />
+    </IconButton>
+  );
+
+
   const renderMobileMenu = (
     <Menu
       anchorEl={mobileMoreAnchorEl}
@@ -358,16 +400,16 @@ export default function Header({ loadFavorites }) {
       onClose={() => setMobileMoreAnchorEl(null)}
     >
       <MenuItem onClick={(e) => setAnchorEl(e.currentTarget)}>
-        <IoPersonCircleSharp size={25} />
-        <p style={{ marginLeft: 10 }}>{t('header.profile')}</p>
+        {perfilIcon}
+        <p style={{ marginLeft: 10, marginBottom: 0 }}>{t('header.profile')}</p>
       </MenuItem>
       <MenuItem component={Link} to={`/${lang}/carrito`}>
         <BsCart4 size={22} />
-        <p style={{ marginLeft: 10 }}>{t('header.cart')}</p>
+        <p style={{ marginLeft: 10, marginBottom: 0 }}>{t('header.cart')}</p>
       </MenuItem>
       <MenuItem onClick={() => setOpenModal(true)}>
         <BsHeart size={20} />
-        <p style={{ marginLeft: 10 }}>{t('header.favorites')}</p>
+        <p style={{ marginLeft: 10, marginBottom: 0 }}>{t('header.favorites')}</p>
       </MenuItem>
     </Menu>
   );
@@ -450,7 +492,7 @@ export default function Header({ loadFavorites }) {
                     boxShadow: "0 8px 20px rgba(0,0,0,0.3)",
                     zIndex: 1300,
                   }}
-                  // 🔑 Si sales del área completa, resetea
+                  //  Si sales del área completa, resetea
                   onMouseLeave={() => setHoveredCategory(null)}
                 >
                   {/* Dropdown principal */}
@@ -779,47 +821,7 @@ export default function Header({ loadFavorites }) {
           {/* Íconos */}
           <Box sx={{ display: { xs: 'none', md: 'flex' }, gap: 2 }}>
             
-            {user ? (
-              <Box  
-                onClick={(e) => setAnchorEl(e.currentTarget)}
-                sx={{ 
-                  backgroundColor: "#f896b8", 
-                  borderRadius: '50%', 
-                  width: 26, 
-                  height: 26, 
-                  display: 'flex', 
-                  alignItems: 'center',
-                  paddingTop: 0.1,
-                  alignSelf: 'center',
-                  justifyContent: 'center',
-                  cursor: 'pointer',
-                  transition: 'background-color 0.2s',
-                  '&:hover': { opacity: 0.85, backgroundColor: pinkTheme.primary }
-                }}
-              >
-                <Typography 
-                  variant="caption" 
-                  sx={{ 
-                    color: 'white', 
-                    fontWeight: 'bold',
-                    fontSize: '14px',
-                  }}
-                >
-                  {user.nombre?.charAt(0).toUpperCase()}
-                </Typography>
-              </Box>
-            ) : (
-              <IconButton  
-                onClick={(e) => setAnchorEl(e.currentTarget)}
-                sx={{ 
-                  color: 'black', 
-                  '&:hover': { color: pinkTheme.primary } 
-                }}
-              >
-                <IoPersonCircleSharp size={30} />
-              </IconButton>
-            )}
-
+            {perfilIcon}
 
             <IconButton 
               component={Link} 

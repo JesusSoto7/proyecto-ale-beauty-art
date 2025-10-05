@@ -2,45 +2,73 @@
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  max-width: 850px;
-  background: #fff;
-  padding: 20px;
+  background: #f7f7f7;
+  color: #e6e6e6;
+  padding: 30px;
   border-radius: 12px;
-  border: 1px solid #eee;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
-  font-family: Arial, sans-serif;
-  gap: 10px;
-  width: 80%;
+  width: 100%;
+  max-width: 1200px;
+  /* box-shadow: 0 0 10px rgba(0,0,0,0.4); */
+  gap: 40px;
+  font-family: "Segoe UI", sans-serif;
+}
+
+/* ======= IZQUIERDA ======= */
+.rating-left {
+  flex: 2;
+}
+
+.rating-header h3 {
+  font-size: 16px;
+  color: #858585;
+  margin-bottom: 16px;
+}
+
+.rating-average {
+  text-align: left;
+}
+
+.rating-average h2 {
+  font-size: 40px;
+  margin: 0;
+  color: #e6e5e5;
+}
+
+.rating-stars {
+  display: flex;
+  gap: 4px;
+  margin: 8px 0;
+}
+
+.rating-average p {
+  font-size: 13px;
+  color: #999;
+  margin: 4px 0 18px 0;
 }
 
 .rating-distribution {
-  flex: 2;
+  margin-top: 8px;
 }
 
 .rating-row {
   display: flex;
   align-items: center;
+  gap: 10px;
   margin: 6px 0;
 }
 
-.rating-label {
-  width: 30px;
-  font-size: 14px;
-  font-weight: bold;
-  color: #333;
-}
-
-.rating-icon {
-  color: #FFD700;
-  margin-right: 6px;
+.rating-star-label {
+  width: 80px;
+  display: flex;
+  gap: 2px;
+  justify-content: flex-start;
 }
 
 .rating-bar {
   flex: 1;
   height: 8px;
-  background: #f1f1f1;
+  background: #efefef;
   border-radius: 4px;
-  margin: 0 8px;
   overflow: hidden;
 }
 
@@ -49,40 +77,73 @@
   background: #FFD700;
 }
 
-.rating-count {
+.rating-percent {
   width: 40px;
   text-align: right;
   font-size: 13px;
-  color: #555;
+  color: #ccc;
 }
 
-.rating-average {
-  flex: 1;
-  text-align: center;
-  background: #fffbea;
-  padding: 16px;
-  border-radius: 10px;
+/* ======= DERECHA ======= */
+.rating-right {
+  height: -webkit-fill-available;
+    flex: 1;
+    background: #f1eef1;
+    border-radius: 10px;
+    padding: 24px;
+    text-align: center;
+    justify-content: center;
+    align-items: center;
+    display: flex;
+    flex-direction: column;
 }
 
-.rating-average h2 {
-  margin: 0;
-  font-size: 28px;
-  color: #333;
+.rating-right h4 {
+  color: #444444;
+  margin: 0 0 12px;
+  font-size: 20px;
 }
 
-.rating-stars {
-  margin: 8px 0;
+.rating-user-stars {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  margin: 10px 0;
 }
 
-.rating-average p {
+.rating-right p {
+  color: #aaa;
   font-size: 13px;
-  color: #777;
+  margin-bottom: 16px;
 }
 
+.rating-button {
+  background: #444444;
+  color: #ffffff;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 20px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background 0.3s;
+}
 
-@media (max-width: 560px) {
-  .rating-summary{
+.rating-button:hover {
+  background: #FFD700;
+}
+
+/* ======= RESPONSIVE ======= */
+@media (max-width: 700px) {
+  .rating-summary {
+    flex-direction: column-reverse;
+    gap: 30px;
+  }
+
+  .rating-right {
     width: 100%;
   }
-  
+
+  .rating-left{
+    width: 100%;
+  }
 }
