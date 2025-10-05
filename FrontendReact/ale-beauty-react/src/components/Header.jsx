@@ -261,7 +261,7 @@ export default function Header({ loadFavorites }) {
       navigate(`/${lang}/categoria/${categorySlug}/${subCategoryId}/products`);
     } else {
       // URL: /es/categoria/labiales/products
-      navigate(`/${lang}/categoria/${categorySlug}/products`);
+      navigate(`/${lang}/categoria/${categorySlug}`);
     }
   }
 
@@ -476,7 +476,7 @@ export default function Header({ loadFavorites }) {
                   "&:hover": { color: "#e60073" },
                 }}
               >
-                Categorías
+                CATEGORIAS
               </Typography>
 
               {/* Contenedor de Menú y Submenú */}
