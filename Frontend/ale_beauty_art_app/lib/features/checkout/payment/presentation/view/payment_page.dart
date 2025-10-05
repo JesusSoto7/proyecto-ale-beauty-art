@@ -1,5 +1,6 @@
 import 'package:ale_beauty_art_app/features/checkout/payment/presentation/data/repository/payment_repository.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class PaymentPage extends StatefulWidget {
   final int orderId;
@@ -26,8 +27,8 @@ class _PaymentPageState extends State<PaymentPage> {
   final _docNumber = TextEditingController();
   final _email = TextEditingController();
 
-  String _selectedDocType = "CC"; // valor por defecto
-  final List<String> _docTypes = ["CC", "NIT", "TI", "CE"]; // Ejemplo Colombia
+  String _selectedDocType = "CC";
+  final List<String> _docTypes = ["CC", "NIT", "TI", "CE"];
 
   final _mpService = MercadoPagoService();
   bool _loading = false;
@@ -41,10 +42,10 @@ class _PaymentPageState extends State<PaymentPage> {
     final token = await _mpService.createCardToken(
       cardNumber: _cardNumber.text,
       expirationMonth: int.tryParse(_expiryMonth.text) ?? 0,
-      expirationYear: year, // Usa el año corregido
+      expirationYear: year,
       securityCode: _cvv.text,
       cardholderName: _name.text,
-      identificationType: _selectedDocType, // Debe ser "CC"
+      identificationType: _selectedDocType,
       identificationNumber: _docNumber.text,
     );
 
@@ -96,8 +97,13 @@ class _PaymentPageState extends State<PaymentPage> {
   InputDecoration _inputDecoration(String label, {IconData? icon}) {
     return InputDecoration(
       labelText: label,
-      prefixIcon: icon != null ? Icon(icon) : null,
+      prefixIcon:
+          icon != null ? Icon(icon, color: const Color(0xFFD95D85)) : null,
       border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+      focusedBorder: OutlineInputBorder(
+        borderSide: const BorderSide(color: Color(0xFFD95D85), width: 1.5),
+        borderRadius: BorderRadius.circular(12),
+      ),
       contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
     );
   }
@@ -107,11 +113,43 @@ class _PaymentPageState extends State<PaymentPage> {
     final theme = Theme.of(context);
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Formulario de Pago"),
-        backgroundColor: const Color(0xFFAD476B),
-        foregroundColor: Colors.white,
-        centerTitle: true,
+      backgroundColor: const Color.fromARGB(255, 255, 255, 255),
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(56),
+        child: Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.08),
+                blurRadius: 12,
+                offset: const Offset(0, 3),
+              ),
+            ],
+          ),
+          child: AppBar(
+            backgroundColor: Colors.white,
+            elevation: 0,
+            centerTitle: true,
+            title: const Text(
+              'Formulario de Pago',
+              style: TextStyle(
+                color: Colors.black,
+                fontSize: 17,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+            leading: IconButton(
+              icon: const Icon(
+                Icons.arrow_back_ios_new_rounded,
+                size: 20,
+                color: Colors.black87,
+              ),
+              onPressed: () => Navigator.pop(context),
+            ),
+            systemOverlayStyle: SystemUiOverlayStyle.dark,
+          ),
+        ),
       ),
       body: _loading
           ? const Center(child: CircularProgressIndicator())
@@ -119,141 +157,164 @@ class _PaymentPageState extends State<PaymentPage> {
               padding: const EdgeInsets.all(20),
               child: Column(
                 children: [
-                  Card(
-                    shape: RoundedRectangleBorder(
+                  // ==== CONTENEDOR DEL FORMULARIO ====
+                  Container(
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
                       borderRadius: BorderRadius.circular(18),
+                      boxShadow: [
+                        BoxShadow(
+                          color: const Color.fromARGB(255, 90, 41, 66)
+                              .withOpacity(0.25),
+                          blurRadius: 10,
+                          offset: const Offset(0, 5),
+                        ),
+                      ],
                     ),
-                    elevation: 4,
-                    child: Padding(
-                      padding: const EdgeInsets.all(16),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            "Total a pagar: \$${widget.amount.toStringAsFixed(2)}",
-                            style: theme.textTheme.titleMedium!.copyWith(
-                              fontWeight: FontWeight.bold,
-                              color: const Color(0xFFB168C8),
-                            ),
+                    padding: const EdgeInsets.all(20),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "Total a pagar: \$${widget.amount.toStringAsFixed(2)}",
+                          style: theme.textTheme.titleMedium!.copyWith(
+                            fontWeight: FontWeight.bold,
+                            color: const Color(0xFFD95D85),
                           ),
-                          const SizedBox(height: 30),
-                          TextField(
-                            controller: _cardNumber,
-                            keyboardType: TextInputType.number,
-                            decoration: _inputDecoration(
-                              "Número de tarjeta",
-                              icon: Icons.credit_card,
-                            ),
+                        ),
+                        const SizedBox(height: 30),
+                        TextField(
+                          controller: _cardNumber,
+                          keyboardType: TextInputType.number,
+                          decoration: _inputDecoration(
+                            "Número de tarjeta",
+                            icon: Icons.credit_card,
                           ),
-                          const SizedBox(height: 30),
-                          Row(
-                            children: [
-                              Expanded(
-                                child: TextField(
-                                  controller: _expiryMonth,
-                                  keyboardType: TextInputType.number,
-                                  decoration: _inputDecoration("Mes exp. (MM)"),
-                                ),
+                        ),
+                        const SizedBox(height: 25),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: TextField(
+                                controller: _expiryMonth,
+                                keyboardType: TextInputType.number,
+                                decoration: _inputDecoration("Mes exp. (MM)"),
                               ),
-                              const SizedBox(width: 10),
-                              Expanded(
-                                child: TextField(
-                                  controller: _expiryYear,
-                                  keyboardType: TextInputType.number,
-                                  decoration: _inputDecoration("Año exp. (YY)"),
-                                ),
-                              ),
-                              const SizedBox(width: 10),
-                              Expanded(
-                                child: TextField(
-                                  controller: _cvv,
-                                  keyboardType: TextInputType.number,
-                                  decoration: _inputDecoration("CVV"),
-                                ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 30),
-                          TextField(
-                            controller: _name,
-                            decoration: _inputDecoration(
-                              "Nombre del titular",
-                              icon: Icons.person,
                             ),
-                          ),
-                          const SizedBox(height: 30),
-                          Row(
-                            children: [
-                              Expanded(
-                                flex: 1,
-                                child: DropdownButtonFormField<String>(
-                                  value: _selectedDocType,
-                                  decoration: _inputDecoration("Tipo doc."),
-                                  items: _docTypes.map((type) {
-                                    return DropdownMenuItem(
-                                      value: type,
-                                      child: Text(type),
-                                    );
-                                  }).toList(),
-                                  onChanged: (value) {
-                                    setState(() => _selectedDocType = value!);
-                                  },
-                                ),
+                            const SizedBox(width: 10),
+                            Expanded(
+                              child: TextField(
+                                controller: _expiryYear,
+                                keyboardType: TextInputType.number,
+                                decoration: _inputDecoration("Año exp. (YY)"),
                               ),
-                              const SizedBox(width: 10),
-                              Expanded(
-                                flex: 2,
-                                child: TextField(
-                                  controller: _docNumber,
-                                  keyboardType: TextInputType.number,
-                                  decoration: _inputDecoration(
-                                    "Número documento",
-                                  ),
-                                ),
+                            ),
+                            const SizedBox(width: 10),
+                            Expanded(
+                              child: TextField(
+                                controller: _cvv,
+                                keyboardType: TextInputType.number,
+                                decoration: _inputDecoration("CVV"),
                               ),
-                            ],
-                          ),
-                          const SizedBox(height: 30),
-                          Text(
-                            "Completa tu información",
-                            style: theme.textTheme.titleMedium!.copyWith(
-                              fontWeight: FontWeight.w600,
-                              color: Colors.grey[700],
                             ),
+                          ],
+                        ),
+                        const SizedBox(height: 25),
+                        TextField(
+                          controller: _name,
+                          decoration: _inputDecoration(
+                            "Nombre del titular",
+                            icon: Icons.person_outline,
                           ),
-                          const SizedBox(height: 20),
-                          TextField(
-                            controller: _email,
-                            keyboardType: TextInputType.emailAddress,
-                            decoration: _inputDecoration(
-                              "E-mail",
-                              icon: Icons.email_outlined,
+                        ),
+                        const SizedBox(height: 25),
+                        Row(
+                          children: [
+                            Expanded(
+                              flex: 1,
+                              child: DropdownButtonFormField<String>(
+                                value: _selectedDocType,
+                                decoration: _inputDecoration("Tipo doc."),
+                                items: _docTypes.map((type) {
+                                  return DropdownMenuItem(
+                                    value: type,
+                                    child: Text(type),
+                                  );
+                                }).toList(),
+                                onChanged: (value) {
+                                  setState(() => _selectedDocType = value!);
+                                },
+                              ),
                             ),
+                            const SizedBox(width: 10),
+                            Expanded(
+                              flex: 2,
+                              child: TextField(
+                                controller: _docNumber,
+                                keyboardType: TextInputType.number,
+                                decoration:
+                                    _inputDecoration("Número documento"),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 25),
+                        TextField(
+                          controller: _email,
+                          keyboardType: TextInputType.emailAddress,
+                          decoration: _inputDecoration(
+                            "Correo electrónico",
+                            icon: Icons.email_outlined,
                           ),
-                          const SizedBox(height: 30),
-                          SizedBox(
+                        ),
+                        const SizedBox(height: 35),
+
+                        // ==== BOTÓN CON GRADIENTE ====
+                        GestureDetector(
+                          onTap: _processPayment,
+                          child: Container(
                             width: double.infinity,
-                            height: 50,
-                            child: ElevatedButton.icon(
-                              onPressed: _processPayment,
-                              icon: const Icon(Icons.lock_outline,
-                                  color: Colors.white),
-                              label: const Text(
-                                "Pagar",
-                                style: TextStyle(
-                                    fontSize: 16, color: Colors.white),
+                            padding: const EdgeInsets.symmetric(vertical: 18),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(14),
+                              gradient: const LinearGradient(
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
+                                colors: [
+                                  Color.fromARGB(255, 219, 91, 131),
+                                  Color.fromARGB(255, 240, 181, 206),
+                                ],
                               ),
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor:
-                                    const Color(0xFFCC6198), // rosado-lila
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.15),
+                                  blurRadius: 8,
+                                  offset: const Offset(0, 3),
                                 ),
+                              ],
+                            ),
+                            child: const Center(
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(Icons.lock_outline,
+                                      color: Colors.white, size: 20),
+                                  SizedBox(width: 8),
+                                  Text(
+                                    "Pagar",
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 17,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
                   ),
                 ],

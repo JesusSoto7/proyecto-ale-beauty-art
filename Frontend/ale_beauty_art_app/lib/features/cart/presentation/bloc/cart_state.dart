@@ -6,14 +6,15 @@ class CartState extends Equatable {
   final String? error;
   final int? orderId;
   final String? token;
+  final int? cartId;
 
-  const CartState({
-    this.isLoading = false,
-    this.products = const [],
-    this.error,
-    this.orderId,
-    this.token,
-  });
+  const CartState(
+      {this.isLoading = false,
+      this.products = const [],
+      this.error,
+      this.orderId,
+      this.token,
+      this.cartId});
 
   CartState copyWith({
     bool? isLoading,
@@ -21,6 +22,7 @@ class CartState extends Equatable {
     String? error,
     int? orderId,
     String? token,
+    int? cartId,
   }) {
     return CartState(
       isLoading: isLoading ?? this.isLoading,
@@ -28,9 +30,11 @@ class CartState extends Equatable {
       error: error,
       orderId: orderId ?? this.orderId,
       token: token ?? this.token,
+      cartId: cartId ?? this.cartId,
     );
   }
 
   @override
-  List<Object?> get props => [isLoading, products, error, orderId, token];
+  List<Object?> get props =>
+      [isLoading, products, error, orderId, token, cartId];
 }

@@ -1,381 +1,279 @@
-/* import 'dart:convert';
-
-import 'package:ale_beauty_art_app/core/http/custom_http_client.dart';
-import 'package:ale_beauty_art_app/features/auth/bloc/auth_bloc.dart';
-import 'package:ale_beauty_art_app/features/cart/presentation/bloc/cart_event.dart';
-import 'package:ale_beauty_art_app/features/checkout/payment/presentation/view/payment_page.dart';
-import 'package:ale_beauty_art_app/features/shipping_address/presentation/bloc/shipping_address_bloc.dart';
-import 'package:ale_beauty_art_app/features/shipping_address/presentation/bloc/shipping_address_event.dart';
-import 'package:ale_beauty_art_app/features/shipping_address/presentation/bloc/shipping_address_state.dart';
-import 'package:ale_beauty_art_app/features/shipping_address/presentation/views/shipping_address_add.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:ale_beauty_art_app/styles/colors.dart';
-import 'package:ale_beauty_art_app/styles/text_styles.dart';
-import 'package:ale_beauty_art_app/models/ShippingAddress.dart';
 import 'package:ale_beauty_art_app/features/cart/presentation/bloc/cart_bloc.dart';
+import 'package:ale_beauty_art_app/features/cart/presentation/bloc/cart_event.dart';
+import 'package:ale_beauty_art_app/features/cart/presentation/bloc/cart_state.dart';
+import 'package:ale_beauty_art_app/features/checkout/payment/presentation/view/payment_page.dart';
+import 'package:ale_beauty_art_app/features/checkout/shippingAddress/select_address_Page.dart';
 
-class SelectAddressPage extends StatelessWidget {
-  const SelectAddressPage({super.key});
+class CartPageView extends StatelessWidget {
+  const CartPageView({super.key});
 
   @override
   Widget build(BuildContext context) {
-    context.read<ShippingAddressBloc>().add(LoadAddresses());
-
     return Scaffold(
-      backgroundColor: const Color.fromARGB(255, 247, 246, 246),
+      backgroundColor: const Color(0xFFF7F6F6),
       appBar: AppBar(
-        title: const Text('Seleccionar dirección'),
-        backgroundColor: AppColors.primaryPink,
-        foregroundColor: Colors.white,
+        title: const Text('Cart', style: TextStyle(color: Colors.black)),
+        backgroundColor: Colors.white,
+        foregroundColor: Colors.black,
         elevation: 0,
+        leading: BackButton(color: Colors.black),
       ),
-      body: BlocBuilder<ShippingAddressBloc, ShippingAddressState>(
+      body: BlocBuilder<CartBloc, CartState>(
         builder: (context, state) {
-          if (state is ShippingAddressLoading) {
+          if (state.isLoading) {
             return const Center(child: CircularProgressIndicator());
-          } else if (state is ShippingAddressError) {
-            return Center(
-                child: Text(state.message, style: AppTextStyles.error));
-          } else if (state is ShippingAddressLoaded) {
-            final addresses = state.addresses;
-            if (addresses.isEmpty) {
-              return Center(
-                child: Text(
-                  'No tienes direcciones guardadas.\nAgrega una para continuar.',
-                  style: AppTextStyles.subtitle,
-                  textAlign: TextAlign.center,
-                ),
-              );
-            }
-
-            ShippingAddress? selectedAddress = addresses.firstWhere(
-              (a) => a.predeterminada,
-              orElse: () => addresses[0],
-            );
-
-            return Column(
-              children: [
-                Expanded(
-                  child: ListView.builder(
-                    padding: const EdgeInsets.all(16),
-                    itemCount: addresses.length,
-                    itemBuilder: (context, index) {
-                      final addr = addresses[index];
-                      final isSelected = addr == selectedAddress;
-
-                      return GestureDetector(
-                        onTap: () {
-                          selectedAddress = addr;
-                          (context as Element).markNeedsBuild();
-                        },
-                        child: Container(
-                          margin: const EdgeInsets.only(bottom: 12),
-                          padding: const EdgeInsets.all(16),
-                          decoration: BoxDecoration(
-                            color: isSelected
-                                ? AppColors.primaryPink.withOpacity(0.1)
-                                : Colors.white,
-                            border: Border.all(
-                              color: isSelected
-                                  ? AppColors.primaryPink
-                                  : Colors.grey.shade300,
-                              width: 1.5,
-                            ),
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text('${addr.nombre} ${addr.apellido}',
-                                  style: (AppTextStyles.body ??
-                                          const TextStyle())
-                                      .copyWith(fontWeight: FontWeight.bold)),
-                              const SizedBox(height: 4),
-                              Text(addr.direccion,
-                                  style: AppTextStyles.subtitle),
-                              const SizedBox(height: 2),
-                              Text(addr.telefono,
-                                  style: AppTextStyles.subtitle),
-                              if (addr.predeterminada)
-                                Padding(
-                                  padding: const EdgeInsets.only(top: 4),
-                                  child: Text('Predeterminada',
-                                      style: AppTextStyles.price.copyWith(
-                                          color: AppColors.primaryPink)),
-                                ),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.end,
-                                children: [
-                                  IconButton(
-                                    icon: const Icon(Icons.edit,
-                                        color: AppColors.primaryPink),
-                                    onPressed: () async {
-                                      await Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (_) => ShippingAddressAdd(
-                                              editAddress: addr),
-                                        ),
-                                      );
-                                      context
-                                          .read<ShippingAddressBloc>()
-                                          .add(LoadAddresses());
-                                    },
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
-                      );
-                    },
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: ElevatedButton(
-                    onPressed: () {
-                      if (selectedAddress != null) {
-                        Navigator.pop(context, selectedAddress);
-                      } else {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                              content: Text('Debes seleccionar una dirección')),
-                        );
-                      }
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.primaryPink,
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                    ),
-                    child: const Text(
-                      'Continuar',
-                      style: TextStyle(color: Colors.white, fontSize: 16),
-                    ),
-                  ),
-                ),
-              ],
-            );
           }
-          return const SizedBox();
-        },
-      ),
-    );
-  }
-}
-
-
-import 'dart:convert';
-
-import 'package:ale_beauty_art_app/core/http/custom_http_client.dart';
-import 'package:ale_beauty_art_app/features/auth/bloc/auth_bloc.dart';
-import 'package:ale_beauty_art_app/features/cart/presentation/bloc/cart_event.dart';
-import 'package:ale_beauty_art_app/features/checkout/payment/presentation/view/payment_page.dart';
-import 'package:ale_beauty_art_app/features/shipping_address/presentation/bloc/shipping_address_bloc.dart';
-import 'package:ale_beauty_art_app/features/shipping_address/presentation/bloc/shipping_address_event.dart';
-import 'package:ale_beauty_art_app/features/shipping_address/presentation/bloc/shipping_address_state.dart';
-import 'package:ale_beauty_art_app/features/shipping_address/presentation/views/shipping_address_add.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:ale_beauty_art_app/styles/colors.dart';
-import 'package:ale_beauty_art_app/styles/text_styles.dart';
-import 'package:ale_beauty_art_app/models/ShippingAddress.dart';
-import 'package:ale_beauty_art_app/features/cart/presentation/bloc/cart_bloc.dart';
-
-class SelectAddressPage extends StatelessWidget {
-  const SelectAddressPage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    context.read<ShippingAddressBloc>().add(LoadAddresses());
-
-    return Scaffold(
-      backgroundColor: const Color.fromARGB(255, 247, 246, 246),
-      appBar: AppBar(
-        title: const Text('Seleccionar dirección'),
-        backgroundColor: AppColors.primaryPink,
-        foregroundColor: Colors.white,
-        elevation: 0,
-      ),
-      body: BlocBuilder<ShippingAddressBloc, ShippingAddressState>(
-        builder: (context, state) {
-          if (state is ShippingAddressLoading) {
-            return const Center(child: CircularProgressIndicator());
-          } else if (state is ShippingAddressError) {
+          if (state.error != null) {
             return Center(
-                child: Text(state.message, style: AppTextStyles.error));
-          } else if (state is ShippingAddressLoaded) {
-            final addresses = state.addresses;
-            if (addresses.isEmpty) {
-              return Center(
-                child: Text(
-                  'No tienes direcciones guardadas.\nAgrega una para continuar.',
-                  style: AppTextStyles.subtitle,
-                  textAlign: TextAlign.center,
-                ),
-              );
-            }
+                child: Text(state.error!, style: TextStyle(color: Colors.red)));
+          }
+          if (state.products.isEmpty) {
+            return Center(
+                child: Text('Add products to your cart',
+                    style: TextStyle(fontSize: 18)));
+          }
 
-            ShippingAddress? selectedAddress = addresses.firstWhere(
-              (a) => a.predeterminada,
-              orElse: () => addresses[0],
-            );
+          double subtotal = state.products.fold<double>(
+            0,
+            (sum, item) =>
+                sum + (item['precio_producto'] ?? 0) * (item['cantidad'] ?? 1),
+          );
+          double shipping = 10000; // Puedes ajustar esto según tu lógica
+          double total = subtotal + shipping;
 
-            return Column(
-              children: [
-                Expanded(
-                  child: ListView.builder(
-                    padding: const EdgeInsets.all(16),
-                    itemCount: addresses.length,
-                    itemBuilder: (context, index) {
-                      final addr = addresses[index];
-                      final isSelected = addr == selectedAddress;
+          return Column(
+            children: [
+              Expanded(
+                child: ListView.separated(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                  itemCount: state.products.length,
+                  separatorBuilder: (context, _) => const SizedBox(height: 8),
+                  itemBuilder: (context, index) {
+                    final product = state.products[index];
+                    final nombre =
+                        product['nombre_producto'] ?? 'Producto sin nombre';
+                    final imageUrl = product['imagen_url'] ?? '';
+                    final cantidad = product['cantidad'] ?? 1;
+                    final precio = product['precio_producto'] ?? 0;
 
-                      return GestureDetector(
-                        onTap: () {
-                          selectedAddress = addr;
-                          (context as Element).markNeedsBuild();
-                        },
-                        child: Container(
-                          margin: const EdgeInsets.only(bottom: 12),
-                          padding: const EdgeInsets.all(16),
-                          decoration: BoxDecoration(
-                            color: isSelected
-                                ? AppColors.primaryPink.withOpacity(0.1)
-                                : Colors.white,
-                            border: Border.all(
-                              color: isSelected
-                                  ? AppColors.primaryPink
-                                  : Colors.grey.shade300,
-                              width: 1.5,
-                            ),
-                            borderRadius: BorderRadius.circular(12),
+                    return Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(14),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.05),
+                            blurRadius: 6,
+                            offset: const Offset(0, 2),
                           ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text('${addr.nombre} ${addr.apellido}',
-                                  style: (AppTextStyles.body ??
-                                          const TextStyle())
-                                      .copyWith(fontWeight: FontWeight.bold)),
-                              const SizedBox(height: 4),
-                              Text(addr.direccion,
-                                  style: AppTextStyles.subtitle),
-                              const SizedBox(height: 2),
-                              Text(addr.telefono,
-                                  style: AppTextStyles.subtitle),
-                              if (addr.predeterminada)
-                                Padding(
-                                  padding: const EdgeInsets.only(top: 4),
-                                  child: Text('Predeterminada',
-                                      style: AppTextStyles.price.copyWith(
-                                          color: AppColors.primaryPink)),
-                                ),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.end,
-                                children: [
-                                  IconButton(
-                                    icon: const Icon(Icons.edit,
-                                        color: AppColors.primaryPink),
-                                    onPressed: () async {
-                                      await Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (_) => ShippingAddressAdd(
-                                              editAddress: addr),
-                                        ),
-                                      );
-                                      context
-                                          .read<ShippingAddressBloc>()
-                                          .add(LoadAddresses());
-                                    },
+                        ],
+                      ),
+                      child: ListTile(
+                        leading: ClipRRect(
+                          borderRadius: BorderRadius.circular(8),
+                          child: imageUrl.isNotEmpty
+                              ? Image.network(
+                                  imageUrl,
+                                  width: 45,
+                                  height: 45,
+                                  fit: BoxFit.cover,
+                                  errorBuilder: (_, __, ___) => Container(
+                                    width: 45,
+                                    height: 45,
+                                    color: Colors.grey.withOpacity(0.2),
+                                    child: const Icon(Icons.broken_image,
+                                        color: Colors.redAccent),
                                   ),
-                                ],
+                                )
+                              : Container(
+                                  width: 45,
+                                  height: 45,
+                                  color: Colors.grey.withOpacity(0.2),
+                                  child: const Icon(Icons.image_not_supported,
+                                      color: Colors.grey),
+                                ),
+                        ),
+                        title: Text(nombre,
+                            style:
+                                const TextStyle(fontWeight: FontWeight.w600)),
+                        subtitle: Text('\$${precio.toStringAsFixed(2)}',
+                            style: const TextStyle(fontSize: 14)),
+                        trailing: SizedBox(
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              _CartIconBtn(
+                                icon: Icons.remove,
+                                onTap: () {
+                                  if (cantidad > 1) {
+                                    context
+                                        .read<CartBloc>()
+                                        .add(RemoveProductFromCart(
+                                          productId: product['product_id'],
+                                        ));
+                                  }
+                                },
+                              ),
+                              Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 8),
+                                child: Text('$cantidad',
+                                    style: const TextStyle(
+                                        fontWeight: FontWeight.w600,
+                                        fontSize: 16)),
+                              ),
+                              _CartIconBtn(
+                                icon: Icons.add,
+                                onTap: () {
+                                  context.read<CartBloc>().add(AddProductToCart(
+                                        productId: product['product_id'],
+                                      ));
+                                },
                               ),
                             ],
                           ),
                         ),
-                      );
-                    },
-                  ),
+                      ),
+                    );
+                  },
                 ),
-                Padding(
-                  padding: const EdgeInsets.all(16),
+              ),
+              // Summary & Button
+              Container(
+                width: double.infinity,
+                margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(15),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.06),
+                      blurRadius: 8,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    _PriceRow(label: 'Subtotal', value: subtotal),
+                    const SizedBox(height: 4),
+                    _PriceRow(label: 'Shipping Cost', value: shipping),
+                    const Divider(height: 20, thickness: 1.2),
+                    _PriceRow(label: 'Total', value: total, isBold: true),
+                  ],
+                ),
+              ),
+              SafeArea(
+                minimum: const EdgeInsets.all(16),
+                child: SizedBox(
+                  width: double.infinity,
+                  height: 50,
                   child: ElevatedButton(
-                    onPressed: () async {
-                      final auth =
-                          context.read<AuthBloc>().state as AuthSuccess;
-                      context.read<CartBloc>().add(UpdateCartToken(auth.token));
+                    onPressed: state.products.isEmpty
+                        ? null
+                        : () async {
+                            final cartBloc = context.read<CartBloc>();
+                            final cartState = cartBloc.state;
 
-                      if (selectedAddress != null) {
-                        try {
-                          final response = await CustomHttpClient.postRequest(
-                            '/api/v1/orders',
-                            {
-                              "shipping_address_id": selectedAddress!.id,
-                            },
-                            headers: {
-                              'Content-Type': 'application/json',
-                            },
-                          );
-
-                          if (response.statusCode == 201 ||
-                              response.statusCode == 200) {
-                            final data = jsonDecode(response.body);
-                            final int orderId = data['order']['id'];
-                            // Retorna la dirección seleccionada al CartPageView
-                            Navigator.pop(context, selectedAddress);
-                            // Ahora navega al PaymentPage
-                            Navigator.push(
+                            final result = await Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (_) => PaymentPage(orderId: orderId),
-                              ),
+                                  builder: (_) => const SelectAddressPage()),
                             );
-                          } else {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                  content: Text(
-                                      "Error creando orden: ${response.body}")),
-                            );
-                          }
-                        } catch (e) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                                content: Text("Excepción creando orden: $e")),
-                          );
-                        }
-                      } else {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                              content: Text('Debes seleccionar una dirección')),
-                        );
-                      }
-                    },
+
+                            if (result != null && result is Map) {
+                              final orderId = result['orderId'] as int?;
+                              if (orderId != null) {
+                                final token = cartState.token ?? '';
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) => PaymentPage(
+                                      orderId: orderId,
+                                      amount: total,
+                                      token: token,
+                                    ),
+                                  ),
+                                );
+                              }
+                            }
+                          },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.primaryPink,
-                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      backgroundColor: const Color(0xFFF85B81),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
+                          borderRadius: BorderRadius.circular(30)),
+                      elevation: 0,
                     ),
                     child: const Text(
-                      'Continuar',
-                      style: TextStyle(color: Colors.white, fontSize: 16),
+                      'Check Out',
+                      style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                          letterSpacing: 0.5),
                     ),
                   ),
                 ),
-              ],
-            );
-          }
-          return const SizedBox();
+              ),
+            ],
+          );
         },
       ),
     );
   }
 }
- */
+
+// Botón rosa circular para + y -
+class _CartIconBtn extends StatelessWidget {
+  final IconData icon;
+  final VoidCallback onTap;
+  const _CartIconBtn({required this.icon, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return Ink(
+      decoration: BoxDecoration(
+        color: const Color(0xFFF85B81),
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(20),
+        child: SizedBox(
+          width: 30,
+          height: 30,
+          child: Icon(icon, color: Colors.white, size: 20),
+        ),
+      ),
+    );
+  }
+}
+
+// Fila para mostrar precio con label
+class _PriceRow extends StatelessWidget {
+  final String label;
+  final double value;
+  final bool isBold;
+  const _PriceRow(
+      {required this.label, required this.value, this.isBold = false});
+
+  @override
+  Widget build(BuildContext context) {
+    final style = isBold
+        ? const TextStyle(fontWeight: FontWeight.bold, fontSize: 17)
+        : const TextStyle(fontSize: 15);
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(label, style: style),
+        Text('\$${value.toStringAsFixed(2)}', style: style),
+      ],
+    );
+  }
+}

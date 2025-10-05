@@ -3,6 +3,7 @@ import 'package:ale_beauty_art_app/features/cart/presentation/bloc/cart_bloc.dar
 import 'package:ale_beauty_art_app/features/categories/presentation/bloc/categories_bloc.dart';
 import 'package:ale_beauty_art_app/features/checkout/payment/presentation/bloc/payment_bloc.dart';
 import 'package:ale_beauty_art_app/features/navigation/bloc/navigation_bloc.dart';
+import 'package:ale_beauty_art_app/features/orders/presentation/bloc/order_bloc.dart';
 import 'package:ale_beauty_art_app/features/profile/presentation/bloc/profile_bloc.dart';
 import 'package:ale_beauty_art_app/features/shipping_address/presentation/bloc/shipping_address_bloc.dart';
 import 'package:flutter/material.dart';

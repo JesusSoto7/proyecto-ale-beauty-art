@@ -11,7 +11,6 @@ import 'cart_state.dart';
 class CartBloc extends Bloc<CartEvent, CartState> {
   final String apiUrl = '${dotenv.env['API_BASE_URL']}/api/v1';
   final FlutterSecureStorage secureStorage = const FlutterSecureStorage();
-
   String? _jwtToken;
 
   CartBloc() : super(const CartState()) {
@@ -20,9 +19,6 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     on<AddProductToCart>(_onAddProductToCart);
     on<RemoveProductFromCart>(_onRemoveProductFromCart);
     on<CreateOrder>(_onCreateOrder);
-    on<ResetOrderId>((event, emit) {
-      emit(state.copyWith(orderId: null));
-    });
   }
 
   void _onUpdateCartToken(UpdateCartToken event, Emitter<CartState> emit) {
@@ -34,12 +30,9 @@ class CartBloc extends Bloc<CartEvent, CartState> {
       emit(state.copyWith(error: 'Token no disponible'));
       return;
     }
-
     emit(state.copyWith(isLoading: true, error: null));
-
     try {
       final client = await CustomHttpClient.client;
-
       final response = await client.get(
         Uri.parse('$apiUrl/cart'),
         headers: {
@@ -47,16 +40,14 @@ class CartBloc extends Bloc<CartEvent, CartState> {
           'Authorization': 'Bearer $_jwtToken',
         },
       );
-
       if (response.statusCode == 200) {
         final Map<String, dynamic> json = jsonDecode(response.body);
-
-        // La lista
+        final int cartId = json['id'];
         final List<Map<String, dynamic>> products = (json['products'] as List)
             .map((item) => item as Map<String, dynamic>)
             .toList();
-
-        emit(state.copyWith(products: products, isLoading: false));
+        emit(state.copyWith(
+            products: products, isLoading: false, cartId: cartId));
       } else {
         emit(
             state.copyWith(error: 'Error al cargar carrito', isLoading: false));
@@ -69,10 +60,8 @@ class CartBloc extends Bloc<CartEvent, CartState> {
   Future<void> _onAddProductToCart(
       AddProductToCart event, Emitter<CartState> emit) async {
     if (_jwtToken == null) return;
-
     try {
       final client = await CustomHttpClient.client;
-
       final response = await client.post(
         Uri.parse('$apiUrl/cart/add_product'),
         headers: {
@@ -94,10 +83,8 @@ class CartBloc extends Bloc<CartEvent, CartState> {
   Future<void> _onRemoveProductFromCart(
       RemoveProductFromCart event, Emitter<CartState> emit) async {
     if (_jwtToken == null) return;
-
     try {
       final client = await CustomHttpClient.client;
-
       final response = await client.delete(
         Uri.parse('$apiUrl/cart/remove_product'),
         headers: {
