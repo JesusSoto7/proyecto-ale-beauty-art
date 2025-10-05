@@ -92,6 +92,8 @@ export default function Header({ loadFavorites }) {
   const { lang } = useParams();
   const { t } = useTranslation();
   const [user, setUser] = useState(null);
+  const [scrolled, setScrolled] = useState(false);
+  const SCROLL_THRESHOLD = 100;
 
   const [anchorEl, setAnchorEl] = useState(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = useState(null);
@@ -111,6 +113,25 @@ export default function Header({ loadFavorites }) {
 
   const subcategories = selectedCategory?.sub_categories || [];
   
+
+  const handleScroll = () => {
+      // window.scrollY indica la posición vertical
+      if (window.scrollY > SCROLL_THRESHOLD) {
+          setScrolled(true);
+      } else {
+          setScrolled(false);
+      }
+  };
+
+  useEffect(() => {
+      // Agrega el listener cuando el componente se monta
+      window.addEventListener('scroll', handleScroll);
+
+      // Limpia el listener cuando el componente se desmonta
+      return () => {
+          window.removeEventListener('scroll', handleScroll);
+      };
+  }, []);
 
   // Obtener categorías desde el backend
   useEffect(() => {
@@ -429,7 +450,7 @@ export default function Header({ loadFavorites }) {
 
   return (
     <Box sx={{ flexGrow: 1 }}>
-      <AppBar position="static" color="inherit">
+      <AppBar className={`header ${scrolled ? 'scrolled' : ''}`} position="fixed" color="inherit" >
         <Toolbar>
           <Link to={`/${lang}/inicio`}>
             <img src={logo} alt="Logo" style={{ height: 40, borderRadius: 20 }} />
@@ -483,6 +504,7 @@ export default function Header({ loadFavorites }) {
               {showCategories && (
                 <Box
                   sx={{
+                    // marginTop: 2,
                     position: "absolute",
                     top: "40px",
                     left: 0,
@@ -496,183 +518,218 @@ export default function Header({ loadFavorites }) {
                   onMouseLeave={() => setHoveredCategory(null)}
                 >
                   {/* Dropdown principal */}
-                  <Box
-                    sx={{
-                      minWidth: "220px",
-                      py: 1,
-                      backgroundColor: "#202020",
-                      borderRadius: "5px 0 0 5px",
-                      display: "flex",
-                      flexDirection: "column",
-                    }}
-                  >
-                    {categories.map((category) => {
-                      const name = category?.nombre_categoria || category?.name || t("header.noName");
-                      const hasSub = category.sub_categories && category.sub_categories.length > 0;
-
-                      return (
-                        <Box
-                          key={category.id || category.slug}
-                          onMouseEnter={() => hasSub ? setHoveredCategory(category) : setHoveredCategory(null)}
-                          onClick={() => {
-                            if (!hasSub) goToCategory(category);
-                          }}
-                          sx={{
-                            px: 2,
-                            py: 1.2,
-                            cursor: "pointer",
-                            color: "#fff",
-                            fontWeight: 500,
-                            fontSize: "16px",
-                            display: "flex",
-                            justifyContent: "space-between",
-                            alignItems: "center",
-                            "&:hover": {
-                              backgroundColor: "#333",
-                              color: "#e60073",
-                            },
-                          }}
-                        >
-                          {name}
-                          {hasSub && <MdKeyboardArrowRight />}
-                        </Box>
-                      );
-                    })}
-                  </Box>
-
-                  {/* Submenú lateral (solo si hay subcategorías) */}
-                  {hoveredCategory?.sub_categories?.length > 0 && (
                     <Box
                       sx={{
-                        minWidth: "50vw",
-                        maxWidth: "50vw",
+                        minWidth: "220px",
+                        py: 1,
                         backgroundColor: "#fff",
-                        color: "#202020",
-                        borderRadius: "0 5px 5px 0",
-                        py: 2,
-                        px: 3,
-                        display: "grid",
-                        gridTemplateColumns: "repeat(3, 1fr)",
-                        gap: 2,
-                        overflowY: "auto",
-                        overflowX: "hidden",
-                        maxHeight: "600px",
-                        flexDirection: "column",
+                        borderRadius: "5px 0 0 5px",
                         display: "flex",
+                        flexDirection: "column",
+                        boxShadow: "0 2px 10px rgba(0,0,0,0.05)",
                       }}
                     >
-                      <Box>
+                      {categories.map((category) => {
+                        const name =
+                          category?.nombre_categoria || category?.name || t("header.noName");
+                        const hasSub =
+                          category.sub_categories && category.sub_categories.length > 0;
+
+                        return (
+                          <Box
+                            key={category.id || category.slug}
+                            onMouseEnter={() =>
+                              hasSub ? setHoveredCategory(category) : setHoveredCategory(null)
+                            }
+                            onClick={() => {
+                              if (!hasSub) goToCategory(category);
+                            }}
+                            sx={{
+                              px: 2,
+                              py: 1.2,
+                              cursor: "pointer",
+                              color: "#202020",
+                              fontWeight: 500,
+                              fontSize: "16px",
+                              display: "flex",
+                              justifyContent: "space-between",
+                              alignItems: "center",
+                              borderRadius: "4px",
+                              transition: "all 0.2s ease",
+                              "&:hover": {
+                                backgroundColor: "#f7f7f7",
+                                color: "#e60073",
+                              },
+                            }}
+                          >
+                            {name}
+                            {hasSub && <MdKeyboardArrowRight />}
+                          </Box>
+                        );
+                      })}
+                    </Box>
+
+                    {/* Submenú lateral (solo si hay subcategorías) */}
+                    {hoveredCategory?.sub_categories?.length > 0 && (
+                      <Box
+                        sx={{
+                          minWidth: "50vw",
+                          maxWidth: "50vw",
+                          backgroundColor: "#fff",
+                          color: "#202020",
+                          borderRadius: "0 5px 5px 0",
+                          py: 4,
+                          px: 5,
+                          display: "flex",
+                          flexDirection: "column",
+                          boxShadow: "0 2px 15px rgba(0,0,0,0.1)",
+                          overflowY: "auto",
+                          maxHeight: "600px",
+                        }}
+                      >
+                        {/* Título */}
                         <Typography
                           variant="h6"
-                          sx={{ gridColumn: "1 / -1", mb: 2, fontWeight: "bold", fontSize: "20px" }}
+                          sx={{
+                            mb: 2,
+                            fontWeight: "bold",
+                            fontSize: "22px",
+                            textTransform: "uppercase",
+                            letterSpacing: "0.5px",
+                            color: "#202020",
+                          }}
                         >
                           {hoveredCategory.nombre_categoria || hoveredCategory.name}
                         </Typography>
-                        <hr style={{ border: `1px solid ${pinkTheme.primary}` }} />
-                      </Box>
-                      
-                      <Box
-                        sx={{
-                          minWidth: "48vw",
-                          maxWidth: "50vw",
-                          display: "flex",
-                          flexWrap: "wrap",
-                          gap: 2,
-                          overflowY: "auto",
-                          maxHeight: "600px",
-                          alignItems: "center",
-                          justifyContent: "start",
-                          justifySelf: "center",
-                        }}
-                      >
-                        {/* Si hoveredCategory existe pero aún no tiene subcats listos → Skeleton */}
-                        {!hoveredCategory?.sub_categories
-                          ? Array.from(new Array(6)).map((_, index) => (
-                              <Box
-                                key={index}
-                                sx={{
-                                  maxWidth: "202px",
-                                  borderRadius: "6px",
-                                  overflow: "hidden",
-                                }}
-                              >
-                                <Skeleton
-                                  variant="rectangular"
-                                  width={200}
-                                  height={200}
-                                  animation="wave"
-                                />
-                                <Skeleton
-                                  variant="text"
-                                  width={120}
-                                  height={30}
-                                  sx={{ mx: "auto", mt: 1 }}
-                                />
-                              </Box>
-                            ))
-                          : hoveredCategory.sub_categories.map((sub) => (
-                              <Box
-                                key={sub.id || sub.slug}
-                                onClick={() => goToCategory(sub, hoveredCategory)}
-                                sx={{
-                                  cursor: "pointer",
-                                  maxWidth: "202px",
-                                  fontSize: "14px",
-                                  flexDirection: "column",
-                                  display: "flex",
-                                  position: "relative",
-                                  overflow: "hidden",
-                                  borderRadius: "6px",
-                                  "&:hover img": {
-                                    filter: "brightness(60%)", // oscurece la imagen
-                                    transform: "scale(1.05)", // zoom suave
-                                  },
-                                  "&:hover .overlayText": {
-                                    opacity: 1, // aparece el texto
-                                  },
-                                }}
-                              >
-                                {/* Imagen */}
-                                <img
-                                  src={sub.imagen_url}
-                                  alt={sub.nombre_categoria || sub.nombre}
-                                  width={200}
-                                  height={200}
-                                  style={{
-                                    transition: "all 0.3s ease",
-                                    objectFit: "cover",
-                                  }}
-                                />
+                        <Box
+                          sx={{
+                            width: "50px",
+                            height: "3px",
+                            backgroundColor: "#e60073",
+                            mb: 3,
+                            borderRadius: "2px",
+                          }}
+                        />
 
-                                {/* Overlay con el texto */}
+                        {/* Subcategorías */}
+                        <Box
+                          sx={{
+                            display: "grid",
+                            gridTemplateColumns: "repeat(3, 1fr)",
+                            gap: 3,
+                            justifyContent: "start",
+                          }}
+                        >
+                          {/* Skeleton mientras carga */}
+                          {!hoveredCategory?.sub_categories
+                            ? Array.from(new Array(6)).map((_, index) => (
                                 <Box
-                                  className="overlayText"
+                                  key={index}
                                   sx={{
-                                    position: "absolute",
-                                    top: 0,
-                                    left: 0,
-                                    width: "100%",
-                                    height: "100%",
-                                    display: "flex",
-                                    alignItems: "center",
-                                    justifyContent: "center",
-                                    color: "#fff",
-                                    fontWeight: "bold",
-                                    fontSize: "16px",
-                                    textAlign: "center",
-                                    opacity: 0,
-                                    transition: "opacity 0.3s ease",
-                                    pointerEvents: "none",
+                                    borderRadius: "8px",
+                                    overflow: "hidden",
+                                    maxWidth: "250px",
                                   }}
                                 >
-                                  {sub.nombre_categoria || sub.nombre}
+                                  <Skeleton
+                                    variant="rectangular"
+                                    width={250}
+                                    height={200}
+                                    animation="wave"
+                                    sx={{ borderRadius: "8px" }}
+                                  />
+                                  <Skeleton
+                                    variant="text"
+                                    width={150}
+                                    height={30}
+                                    sx={{ mx: "auto", mt: 1 }}
+                                  />
                                 </Box>
-                              </Box>
-                            ))}
-                      </Box>
+                              ))
+                            : hoveredCategory.sub_categories.map((sub) => (
+                                <Box
+                                  key={sub.id || sub.slug}
+                                  onClick={() => goToCategory(sub, hoveredCategory)}
+                                  sx={{
+                                    cursor: "pointer",
+                                    maxWidth: "250px",
+                                    display: "flex",
+                                    flexDirection: "column",
+                                    alignItems: "center",
+                                    textAlign: "center",
+                                    position: "relative",
+                                    overflow: "hidden",
+                                    borderRadius: "8px",
+                                    backgroundColor: "#fafafa",
+                                    transition: "all 0.3s ease",
+                                    "&:hover": {
+                                      transform: "translateY(-3px)",
+                                    },
+                                    "&:hover img": {
+                                      filter: "brightness(70%)",
+                                      transform: "scale(1.05)",
+                                    },
+                                    "&:hover .overlayText": {
+                                      opacity: 1,
+                                    },
+                                  }}
+                                >
+                                  {/* Imagen */}
+                                  <img
+                                    src={sub.imagen_url}
+                                    alt={sub.nombre_categoria || sub.nombre}
+                                    width="100%"
+                                    height="200px"
+                                    style={{
+                                      objectFit: "cover",
+                                      transition: "all 0.3s ease",
+                                    }}
+                                  />
 
-                    </Box>
-                  )}
+                                  {/* Overlay con texto */}
+                                  <Box
+                                    className="overlayText"
+                                    sx={{
+                                      position: "absolute",
+                                      top: 0,
+                                      left: 0,
+                                      width: "100%",
+                                      height: "100%",
+                                      display: "flex",
+                                      alignItems: "center",
+                                      justifyContent: "center",
+                                      color: "#fff",
+                                      fontWeight: "bold",
+                                      fontSize: "16px",
+                                      background:
+                                        "linear-gradient(to bottom, rgba(0,0,0,0.1), rgba(0,0,0,0.4))",
+                                      textTransform: "uppercase",
+                                      opacity: 0,
+                                      transition: "opacity 0.3s ease",
+                                      pointerEvents: "none",
+                                    }}
+                                  >
+                                    {sub.nombre_categoria || sub.nombre}
+                                  </Box>
+
+                                  {/* Nombre debajo */}
+                                  <Typography
+                                    sx={{
+                                      mt: 1.5,
+                                      fontSize: "15px",
+                                      fontWeight: 500,
+                                      color: "#202020",
+                                      textTransform: "capitalize",
+                                    }}
+                                  >
+                                    {sub.nombre_categoria || sub.nombre}
+                                  </Typography>
+                                </Box>
+                              ))}
+                        </Box>
+                      </Box>
+                    )}
+
                 </Box>
               )}
             </Box>
