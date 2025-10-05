@@ -50,13 +50,17 @@ class _PaymentPageState extends State<PaymentPage> {
     print("Token generado MP: $token"); // confirma token
     // 2. Detectar el método de pago (Visa, Master, etc.) usando el BIN
 
-    final bin = _cardNumber.text.replaceAll(' ', '').substring(0, 6);
-    print("👉 BIN usado: $bin");
+    final paymentMethod = await _mpService.getPaymentMethod(_cardNumber.text);
+    final paymentMethodId = paymentMethod?["id"];
 
-    final paymentMethod = await _mpService.getPaymentMethod(bin);
-    final paymentMethodId = paymentMethod?["id"] ?? "master"; // fallback
-
-    print("👉 ID final usado: $paymentMethodId");
+    if (paymentMethod == null ||
+        paymentMethod["payment_type_id"] != "credit_card") {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+            content: Text("No se detectó una tarjeta válida. Intenta otra.")),
+      );
+      return;
+    }
 
     final paymentResponse = await _mpService.payWithBackend(
       token: token,

@@ -96,7 +96,8 @@ class MercadoPagoService {
     }
   }
 
-  Future<Map<String, dynamic>?> getPaymentMethod(String bin) async {
+  Future<Map<String, dynamic>?> getPaymentMethod(String cardNumber) async {
+    final bin = cardNumber.replaceAll(' ', '').substring(0, 6);
     final url = Uri.parse(
         "https://api.mercadopago.com/v1/payment_methods/search?bin=$bin&public_key=$publicKey");
 
@@ -106,21 +107,33 @@ class MercadoPagoService {
       final data = jsonDecode(response.body);
       print("👉 Respuesta cruda MP: ${response.body}");
 
-      if (data["results"] != null && data["results"].isNotEmpty) {
-        // filtrar SOLO tarjetas de crédito
-        final creditCards = data["results"]
-            .where((m) =>
-                m["payment_type_id"] == "credit_card" &&
-                (m["id"] == "visa" ||
-                    m["id"] == "master" ||
-                    m["id"] == "amex" ||
-                    m["id"] == "diners" ||
-                    m["id"] == "elo")) // puedes ampliar según soportados
-            .toList();
+      final creditCards = data["results"]
+          .where((m) => m["payment_type_id"] == "credit_card")
+          .toList();
 
-        if (creditCards.isNotEmpty) {
-          return creditCards.first;
-        }
+      const acceptedBrands = ["visa", "master", "mastercard", "amex"];
+      final filteredCards =
+          creditCards.where((m) => acceptedBrands.contains(m["id"])).toList();
+
+      // Detecta el tipo de tarjeta por el número
+      String cardType = '';
+      if (bin.startsWith('4'))
+        cardType = 'visa';
+      else if (bin.startsWith('5'))
+        cardType = 'master';
+      else if (bin.startsWith('3')) cardType = 'amex';
+
+      final selectedMethod = filteredCards.firstWhere(
+        (m) => m["id"] == cardType,
+        orElse: () => null,
+      );
+
+      if (selectedMethod != null) {
+        print("Método de pago seleccionado: ${selectedMethod["id"]}");
+        return selectedMethod;
+      } else if (filteredCards.isNotEmpty) {
+        print("⚠️ No se encontró método exacto, usando el primero.");
+        return filteredCards.first;
       }
     } else {
       print("❌ Error al consultar método de pago: ${response.body}");
