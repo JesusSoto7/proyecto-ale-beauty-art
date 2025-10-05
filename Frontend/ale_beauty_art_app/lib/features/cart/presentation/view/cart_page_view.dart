@@ -19,7 +19,7 @@ class CartPageView extends StatelessWidget {
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
         title: const Text('Tu carrito'),
-        backgroundColor: AppColors.primaryPink,
+        backgroundColor: const Color(0xFFAD476B),
         foregroundColor: Colors.white,
         elevation: 0,
       ),
@@ -193,7 +193,7 @@ class CartPageView extends StatelessWidget {
               label: const Text('Proceder al Pago',
                   style: TextStyle(color: Colors.white)),
               style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.primaryPink,
+                backgroundColor: const Color(0xFFD586A9),
                 padding: const EdgeInsets.symmetric(vertical: 16),
               ),
             ),

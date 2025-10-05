@@ -6,10 +6,19 @@ class MercadoPagoService {
   final String? publicKey = dotenv.env['MERCADOPAGO_PUBLIC_KEY'];
   final String backendUrl = '${dotenv.env['API_BASE_URL']}/api/v1';
 
+  String getCardBrand(String cardNumber) {
+    final clean = cardNumber.replaceAll(' ', '');
+    if (clean.startsWith('4')) return 'visa';
+    if (clean.startsWith('5')) return 'master';
+    if (clean.startsWith('3')) return 'amex';
+    // Puedes mejorar con rangos de BIN si lo necesitas
+    return "";
+  }
+
   Future<String?> createCardToken({
     required String cardNumber,
-    required int expirationMonth, // ahora int
-    required int expirationYear, // ahora int
+    required int expirationMonth,
+    required int expirationYear,
     required String securityCode,
     required String cardholderName,
     required String identificationType,
@@ -98,6 +107,7 @@ class MercadoPagoService {
 
   Future<Map<String, dynamic>?> getPaymentMethod(String cardNumber) async {
     final bin = cardNumber.replaceAll(' ', '').substring(0, 6);
+    final brand = getCardBrand(cardNumber);
     final url = Uri.parse(
         "https://api.mercadopago.com/v1/payment_methods/search?bin=$bin&public_key=$publicKey");
 
@@ -107,34 +117,48 @@ class MercadoPagoService {
       final data = jsonDecode(response.body);
       print("👉 Respuesta cruda MP: ${response.body}");
 
-      final creditCards = data["results"]
-          .where((m) => m["payment_type_id"] == "credit_card")
+      // Marcas que acepta
+      const acceptedBrands = [
+        "visa",
+        "master",
+        "mastercard",
+        "amex",
+        "debvisa", // Visa Débito
+        "debmaster" // Mastercard Débito
+      ];
+
+      // métodos válidos para ese BIN
+      final validMethods = data["results"]
+          .where((m) => acceptedBrands.contains(m["id"]))
           .toList();
 
-      const acceptedBrands = ["visa", "master", "mastercard", "amex"];
-      final filteredCards =
-          creditCards.where((m) => acceptedBrands.contains(m["id"])).toList();
+      print(
+          "Métodos de pago válidos encontrados: ${validMethods.map((m) => "${m["id"]} (${m["payment_type_id"]})").join(', ')}");
 
-      // Detecta el tipo de tarjeta por el número
-      String cardType = '';
-      if (bin.startsWith('4'))
-        cardType = 'visa';
-      else if (bin.startsWith('5'))
-        cardType = 'master';
-      else if (bin.startsWith('3')) cardType = 'amex';
-
-      final selectedMethod = filteredCards.firstWhere(
-        (m) => m["id"] == cardType,
+      // Busca débito para la marca detectada
+      final debitMethod = validMethods.firstWhere(
+        (m) => m["payment_type_id"] == "debit_card" && m["id"].contains(brand),
         orElse: () => null,
       );
-
-      if (selectedMethod != null) {
-        print("Método de pago seleccionado: ${selectedMethod["id"]}");
-        return selectedMethod;
-      } else if (filteredCards.isNotEmpty) {
-        print("⚠️ No se encontró método exacto, usando el primero.");
-        return filteredCards.first;
+      if (debitMethod != null) {
+        print("Método de pago seleccionado (débito): ${debitMethod["id"]}");
+        return debitMethod;
       }
+
+      // Busca crédito para la marca detectada
+      final creditMethod = validMethods.firstWhere(
+        (m) => m["payment_type_id"] == "credit_card" && m["id"].contains(brand),
+        orElse: () => null,
+      );
+      if (creditMethod != null) {
+        print("Método de pago seleccionado (crédito): ${creditMethod["id"]}");
+        return creditMethod;
+      }
+
+      // Si no hay match exacto, usa el primero
+      print(
+          "⚠️ No se encontró método exacto, usando el primero de los resultados permitidos.");
+      if (validMethods.isNotEmpty) return validMethods.first;
     } else {
       print("❌ Error al consultar método de pago: ${response.body}");
     }

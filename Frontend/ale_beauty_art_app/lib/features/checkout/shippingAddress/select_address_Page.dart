@@ -25,7 +25,7 @@ class SelectAddressPage extends StatelessWidget {
       backgroundColor: const Color.fromARGB(255, 247, 246, 246),
       appBar: AppBar(
         title: const Text('Seleccionar dirección'),
-        backgroundColor: AppColors.primaryPink,
+        backgroundColor: const Color(0xFFAD476B),
         foregroundColor: Colors.white,
         elevation: 0,
       ),
@@ -181,7 +181,7 @@ class SelectAddressPage extends StatelessWidget {
                       }
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.primaryPink,
+                      backgroundColor: const Color(0xFFD586A9),
                       padding: const EdgeInsets.symmetric(vertical: 16),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
