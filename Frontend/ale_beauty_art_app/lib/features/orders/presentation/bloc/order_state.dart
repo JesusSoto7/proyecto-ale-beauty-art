@@ -1,4 +1,4 @@
-/* part of 'order_bloc.dart';
+part of 'order_bloc.dart';
 
 @immutable
 sealed class OrderState extends Equatable {
@@ -30,4 +30,3 @@ class OrderError extends OrderState {
   @override
   List<Object?> get props => [message];
 }
- */

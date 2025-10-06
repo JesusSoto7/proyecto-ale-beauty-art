@@ -83,26 +83,26 @@ class Api::V1::PaymentsController < Api::V1::BaseController
     payment_response = sdk.payment.create(payment_data)
     payment = payment_response[:response]
 
-        puts "🔹 MercadoPago Response: #{payment_response.inspect}"
+    puts "🔹 MercadoPago Response: #{payment_response.inspect}"
     order = Order.find(params[:order_id])
 
     if payment["status"] == "approved"
       order.update(status: :pagada, fecha_pago: Time.current)
-      #current_user.cart.cart_products.destroy_all
+      order.user.cart.cart_products.destroy_all if order.user&.cart
       #InvoiceMailer.enviar_factura(order).deliver_later
 
       render json: {
-        status: payment["status"],          # 👈 IMPORTANTE
-        detail: payment["status_detail"],   # 👈 opcional
-        id: payment["id"],                  # 👈 opcional
+        status: payment["status"],
+        detail: payment["status_detail"],
+        id: payment["id"],
         message: "Pago exitoso"
       }, status: :ok
     else
       order.update(status: :cancelada)
 
       render json: {
-        status: payment["status"],          # 👈 también aquí
-        detail: payment["status_detail"],   # 👈 opcional
+        status: payment["status"],
+        detail: payment["status_detail"],
         error: "Pago rechazado"
       }, status: :unprocessable_entity
     end

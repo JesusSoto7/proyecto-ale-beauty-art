@@ -1,4 +1,4 @@
-/* import 'dart:convert';
+import 'dart:convert';
 
 import 'package:ale_beauty_art_app/core/http/custom_http_client.dart';
 import 'package:bloc/bloc.dart';
@@ -28,6 +28,7 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
       );
       if (response.statusCode == 201 || response.statusCode == 200) {
         final data = jsonDecode(response.body);
+        await Future.delayed(const Duration(seconds: 2));
         emit(OrderCreated(data['order']['id']));
       } else {
         emit(OrderError("Error creando orden: ${response.body}"));
@@ -57,4 +58,3 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
     }
   }
 }
- */

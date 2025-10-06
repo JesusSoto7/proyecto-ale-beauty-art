@@ -23,11 +23,9 @@ class UpdateCartToken extends CartEvent {
   UpdateCartToken(this.token);
 }
 
-// ✅ Ahora la dirección es opcional
+//Ahora la dirección es opcional
 class CreateOrder extends CartEvent {
   final ShippingAddress? selectedAddress;
 
   CreateOrder({this.selectedAddress});
 }
-
-class ResetOrderId extends CartEvent {}

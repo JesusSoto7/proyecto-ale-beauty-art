@@ -1,25 +1,47 @@
-import 'dart:convert';
-import 'package:ale_beauty_art_app/core/http/custom_http_client.dart';
-import 'package:ale_beauty_art_app/features/auth/bloc/auth_bloc.dart';
-import 'package:ale_beauty_art_app/features/cart/presentation/bloc/cart_bloc.dart';
-import 'package:ale_beauty_art_app/features/cart/presentation/bloc/cart_event.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ale_beauty_art_app/features/shipping_address/presentation/bloc/shipping_address_bloc.dart';
 import 'package:ale_beauty_art_app/features/shipping_address/presentation/bloc/shipping_address_event.dart';
 import 'package:ale_beauty_art_app/features/shipping_address/presentation/bloc/shipping_address_state.dart';
 import 'package:ale_beauty_art_app/features/shipping_address/presentation/views/shipping_address_add.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ale_beauty_art_app/styles/text_styles.dart';
 import 'package:ale_beauty_art_app/models/ShippingAddress.dart';
 
-class SelectAddressPage extends StatelessWidget {
-  const SelectAddressPage({super.key});
+class SelectAddressPage extends StatefulWidget {
+  final void Function(int addressId) onContinue;
+  const SelectAddressPage({super.key, required this.onContinue});
+
+  @override
+  State<SelectAddressPage> createState() => _SelectAddressPageState();
+}
+
+class _SelectAddressPageState extends State<SelectAddressPage> {
+  ShippingAddress? selectedAddress;
+  bool isUpdatingDefault = false;
+
+  @override
+  void initState() {
+    super.initState();
+    context.read<ShippingAddressBloc>().add(LoadAddresses());
+  }
+
+  void _setDefaultAddress(ShippingAddress addr) async {
+    setState(() {
+      isUpdatingDefault = true;
+      selectedAddress = addr;
+    });
+    context.read<ShippingAddressBloc>().add(SetDefaultAddress(addr.id));
+    // Espera a que el backend actualice y recarga direcciones
+    await Future.delayed(const Duration(milliseconds: 400));
+    context.read<ShippingAddressBloc>().add(LoadAddresses());
+    setState(() {
+      isUpdatingDefault = false;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    context.read<ShippingAddressBloc>().add(LoadAddresses());
-
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: PreferredSize(
@@ -61,7 +83,7 @@ class SelectAddressPage extends StatelessWidget {
       ),
       body: BlocBuilder<ShippingAddressBloc, ShippingAddressState>(
         builder: (context, state) {
-          if (state is ShippingAddressLoading) {
+          if (state is ShippingAddressLoading || isUpdatingDefault) {
             return const Center(child: CircularProgressIndicator());
           } else if (state is ShippingAddressError) {
             return Center(
@@ -79,7 +101,8 @@ class SelectAddressPage extends StatelessWidget {
               );
             }
 
-            ShippingAddress? selectedAddress = addresses.firstWhere(
+            // Selecciona la predeterminada al iniciar
+            selectedAddress ??= addresses.firstWhere(
               (a) => a.predeterminada,
               orElse: () => addresses[0],
             );
@@ -95,12 +118,11 @@ class SelectAddressPage extends StatelessWidget {
                     itemCount: addresses.length,
                     itemBuilder: (context, index) {
                       final addr = addresses[index];
-                      final isSelected = addr == selectedAddress;
+                      final isSelected = addr.id == selectedAddress?.id;
 
                       return GestureDetector(
                         onTap: () {
-                          selectedAddress = addr;
-                          (context as Element).markNeedsBuild();
+                          if (!isSelected) _setDefaultAddress(addr);
                         },
                         child: AnimatedContainer(
                           duration: const Duration(milliseconds: 250),
@@ -108,11 +130,13 @@ class SelectAddressPage extends StatelessWidget {
                           decoration: BoxDecoration(
                             color: Colors.white,
                             borderRadius: BorderRadius.circular(18),
+                            border: isSelected
+                                ? Border.all(color: Color(0xFFD95D85), width: 2)
+                                : null,
                             boxShadow: [
                               BoxShadow(
                                 color: isSelected
-                                    ? const Color.fromARGB(255, 117, 71, 87)
-                                        .withOpacity(0.25)
+                                    ? Color(0xFFD95D85).withOpacity(0.22)
                                     : Colors.black.withOpacity(0.08),
                                 blurRadius: 8,
                                 offset: const Offset(0, 3),
@@ -122,7 +146,6 @@ class SelectAddressPage extends StatelessWidget {
                           child: Row(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              // === ICONO CON GRADIENTE ===
                               Container(
                                 width: 36,
                                 height: 36,
@@ -132,9 +155,9 @@ class SelectAddressPage extends StatelessWidget {
                                     begin: Alignment.topLeft,
                                     end: Alignment.bottomRight,
                                     colors: isSelected
-                                        ? const [
+                                        ? [
                                             Color(0xFFD95D85),
-                                            Color.fromARGB(255, 230, 213, 222),
+                                            Color(0xFFE58BB1),
                                           ]
                                         : [
                                             Colors.grey.shade300,
@@ -219,6 +242,12 @@ class SelectAddressPage extends StatelessWidget {
                                       .add(LoadAddresses());
                                 },
                               ),
+                              if (isSelected)
+                                const Padding(
+                                  padding: EdgeInsets.only(left: 4.0, top: 6.0),
+                                  child: Icon(Icons.check_circle,
+                                      color: Color(0xFFD95D85), size: 20),
+                                ),
                             ],
                           ),
                         ),
@@ -226,8 +255,6 @@ class SelectAddressPage extends StatelessWidget {
                     },
                   ),
                 ),
-
-                // ======= BOTÓN FINAL CON GRADIENTE =======
                 Container(
                   padding:
                       const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
@@ -242,46 +269,13 @@ class SelectAddressPage extends StatelessWidget {
                     ],
                   ),
                   child: GestureDetector(
-                    onTap: () async {
-                      final auth =
-                          context.read<AuthBloc>().state as AuthSuccess;
-                      context.read<CartBloc>().add(UpdateCartToken(auth.token));
-
+                    onTap: () {
                       if (selectedAddress != null) {
-                        try {
-                          final response = await CustomHttpClient.postRequest(
-                            '/api/v1/orders',
-                            {"shipping_address_id": selectedAddress!.id},
-                            headers: {'Content-Type': 'application/json'},
-                          );
-
-                          if (response.statusCode == 201 ||
-                              response.statusCode == 200) {
-                            final data = jsonDecode(response.body);
-                            final int orderId = data['order']['id'];
-                            Navigator.pop(context, {
-                              'selectedAddress': selectedAddress,
-                              'orderId': orderId,
-                            });
-                          } else {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text(
-                                    "Error creando orden: ${response.body}"),
-                              ),
-                            );
-                          }
-                        } catch (e) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                                content: Text("Excepción creando orden: $e")),
-                          );
-                        }
+                        Navigator.pop(context, selectedAddress!.id);
                       } else {
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
-                            content: Text('Debes seleccionar una dirección'),
-                          ),
+                              content: Text('Debes seleccionar una dirección')),
                         );
                       }
                     },

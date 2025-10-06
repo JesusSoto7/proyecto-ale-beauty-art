@@ -1,4 +1,4 @@
-/* part of 'order_bloc.dart';
+part of 'order_bloc.dart';
 
 @immutable
 sealed class OrderEvent extends Equatable {
@@ -15,4 +15,3 @@ class CreateOrder extends OrderEvent {
 }
 
 class FetchOrders extends OrderEvent {}
- */

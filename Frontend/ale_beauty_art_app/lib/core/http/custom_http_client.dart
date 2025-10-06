@@ -24,7 +24,8 @@ class CustomHttpClient {
   }
 
   // GET
-  static Future<http.Response> getRequest(String path) async {
+  static Future<http.Response> getRequest(String path,
+      {required Map<String, String> headers}) async {
     final client = await CustomHttpClient.client;
     final response = await client.get(Uri.parse('$baseUrl$path'), headers: {
       'Content-Type': 'application/json',

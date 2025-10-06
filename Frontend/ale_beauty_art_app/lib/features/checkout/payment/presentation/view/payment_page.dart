@@ -1,6 +1,9 @@
+import 'package:ale_beauty_art_app/features/cart/presentation/bloc/cart_bloc.dart';
+import 'package:ale_beauty_art_app/features/cart/presentation/bloc/cart_event.dart';
 import 'package:ale_beauty_art_app/features/checkout/payment/presentation/data/repository/payment_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class PaymentPage extends StatefulWidget {
   final int orderId;
@@ -81,6 +84,7 @@ class _PaymentPageState extends State<PaymentPage> {
 
     if (status == "approved") {
       _showMessage("✅ Pago aprobado");
+      context.read<CartBloc>().add(LoadCart()); // <--- añade esto
       Navigator.pop(context, true);
     } else {
       _showMessage("❌ Pago $status: ${response["detail"] ?? ''}");
@@ -97,8 +101,14 @@ class _PaymentPageState extends State<PaymentPage> {
   InputDecoration _inputDecoration(String label, {IconData? icon}) {
     return InputDecoration(
       labelText: label,
-      prefixIcon:
-          icon != null ? Icon(icon, color: const Color(0xFFD95D85)) : null,
+      labelStyle: const TextStyle(
+        color: Colors.black54,
+      ),
+      floatingLabelStyle: const TextStyle(
+        color: Color(0xFFD95D85),
+        fontWeight: FontWeight.w500,
+      ),
+      prefixIcon: icon != null ? Icon(icon, color: Color(0xFFD95D85)) : null,
       border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
       focusedBorder: OutlineInputBorder(
         borderSide: const BorderSide(color: Color(0xFFD95D85), width: 1.5),

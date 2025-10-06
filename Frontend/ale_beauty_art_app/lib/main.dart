@@ -34,6 +34,7 @@ class MyApp extends StatelessWidget {
         BlocProvider(create: (_) => AuthBloc()),
         BlocProvider(create: (_) => CartBloc()),
         BlocProvider(create: (_) => ShippingAddressBloc()),
+        BlocProvider(create: (_) => OrderBloc()),
         BlocProvider(
           create: (context) {
             final authState = context.read<AuthBloc>().state;

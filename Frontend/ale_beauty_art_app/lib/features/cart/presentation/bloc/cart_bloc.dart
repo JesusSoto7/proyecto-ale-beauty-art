@@ -3,7 +3,6 @@ import 'package:ale_beauty_art_app/core/http/custom_http_client.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:http/http.dart' as http;
 
 import 'cart_event.dart';
 import 'cart_state.dart';
@@ -18,7 +17,6 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     on<LoadCart>(_onLoadCart);
     on<AddProductToCart>(_onAddProductToCart);
     on<RemoveProductFromCart>(_onRemoveProductFromCart);
-    on<CreateOrder>(_onCreateOrder);
   }
 
   void _onUpdateCartToken(UpdateCartToken event, Emitter<CartState> emit) {
@@ -100,45 +98,6 @@ class CartBloc extends Bloc<CartEvent, CartState> {
       }
     } catch (e) {
       emit(state.copyWith(error: e.toString()));
-    }
-  }
-
-  Future<void> _onCreateOrder(
-      CreateOrder event, Emitter<CartState> emit) async {
-    if (_jwtToken == null) {
-      emit(state.copyWith(error: 'Token no disponible'));
-      return;
-    }
-
-    emit(state.copyWith(isLoading: true, error: null));
-
-    try {
-      final response = await http.post(
-        Uri.parse('${dotenv.env['API_BASE_URL']}/api/v1/orders'),
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer $_jwtToken',
-        },
-        body: jsonEncode({
-          "order": {
-            "shipping_address_id": event.selectedAddress!.id,
-            "products": state.products
-          }
-        }),
-      );
-
-      if (response.statusCode == 201 || response.statusCode == 200) {
-        final Map<String, dynamic> json = jsonDecode(response.body);
-        final int id = json['order']['id'];
-        emit(state.copyWith(isLoading: false, orderId: id));
-      } else {
-        emit(state.copyWith(
-          isLoading: false,
-          error: 'Error al crear orden: ${response.body}',
-        ));
-      }
-    } catch (e) {
-      emit(state.copyWith(isLoading: false, error: e.toString()));
     }
   }
 }

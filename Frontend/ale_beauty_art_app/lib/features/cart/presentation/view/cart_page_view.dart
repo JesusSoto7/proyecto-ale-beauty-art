@@ -1,8 +1,7 @@
 import 'package:ale_beauty_art_app/features/cart/presentation/bloc/cart_bloc.dart';
 import 'package:ale_beauty_art_app/features/cart/presentation/bloc/cart_event.dart';
 import 'package:ale_beauty_art_app/features/cart/presentation/bloc/cart_state.dart';
-import 'package:ale_beauty_art_app/features/checkout/payment/presentation/bloc/payment_bloc.dart';
-import 'package:ale_beauty_art_app/features/checkout/payment/presentation/view/payment_page.dart';
+import 'package:ale_beauty_art_app/features/checkout/presentation/view/checkout_page.dart';
 import 'package:ale_beauty_art_app/features/checkout/shippingAddress/select_address_Page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -24,15 +23,15 @@ class CartPageView extends StatelessWidget {
             color: Colors.white,
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.08), // sombra gris suave
+                color: Colors.black.withOpacity(0.08),
                 blurRadius: 12,
-                offset: const Offset(0, 3), // ligera hacia abajo
+                offset: const Offset(0, 3),
               ),
             ],
           ),
           child: AppBar(
             backgroundColor: Colors.white,
-            elevation: 0, // sin sombra del AppBar, usamos la del Container
+            elevation: 0,
             centerTitle: true,
             title: const Text(
               'Mi Carrito',
@@ -50,8 +49,7 @@ class CartPageView extends StatelessWidget {
               ),
               onPressed: () => Navigator.pop(context),
             ),
-            systemOverlayStyle:
-                SystemUiOverlayStyle.dark, // íconos oscuros en barra de estado
+            systemOverlayStyle: SystemUiOverlayStyle.dark,
           ),
         ),
       ),
@@ -87,6 +85,7 @@ class CartPageView extends StatelessWidget {
           );
           double shippingCost = 10000;
           final total = subtotal + shippingCost;
+          final token = state.token ?? '';
 
           return Column(
             children: [
@@ -174,8 +173,8 @@ class CartPageView extends StatelessWidget {
                                 begin: Alignment.topLeft,
                                 end: Alignment.bottomRight,
                                 colors: [
-                                  Color(0xFFD95D85), // #d95d85
-                                  Color(0xFFE58BB1), // #e58bb1
+                                  Color(0xFFD95D85),
+                                  Color(0xFFE58BB1),
                                 ],
                               ),
                               borderRadius: BorderRadius.circular(30),
@@ -248,104 +247,60 @@ class CartPageView extends StatelessWidget {
                     const Divider(),
                     _priceRow('Total', total, isBold: true),
                     const SizedBox(height: 18),
-                    BlocListener<PaymentBloc, PaymentState>(
-                      listener: (context, state) {
-                        if (state is PaymentSuccess) {
-                          final orderId =
-                              context.read<CartBloc>().state.orderId;
-                          if (orderId != null) {
-                            final cartState = context.read<CartBloc>().state;
-                            final total = cartState.products.fold<double>(
-                              0,
-                              (sum, item) =>
-                                  sum +
-                                  (item['precio_producto'] ?? 0) *
-                                      (item['cantidad'] ?? 1),
-                            );
+
+                    // 🔹 BOTÓN CON GRADIENTE
+                    Container(
+                      decoration: BoxDecoration(
+                        gradient: const LinearGradient(
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                          colors: [
+                            Color(0xFFD95D85),
+                            Color.fromARGB(255, 238, 167, 196),
+                          ],
+                        ),
+                        borderRadius: BorderRadius.circular(14),
+                      ),
+                      child: ElevatedButton(
+                        onPressed: () async {
+                          final selectedAddressId = await Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => SelectAddressPage(
+                                onContinue: (addressId) {
+                                  Navigator.pop(context, addressId);
+                                },
+                              ),
+                            ),
+                          );
+                          if (selectedAddressId != null) {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (_) => PaymentPage(
-                                  orderId: orderId,
-                                  amount: total,
-                                  token: cartState.token ?? '',
+                                builder: (_) => CheckoutPage(
+                                  cartProducts: state.products,
+                                  cartTotal: total,
+                                  token: token,
+                                  selectedAddressId: selectedAddressId,
                                 ),
                               ),
                             );
                           }
-                        } else if (state is PaymentFailure) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text(state.message)),
-                          );
-                        }
-                      },
-                      child: GestureDetector(
-                        onTap: () async {
-                          final cartBloc = context.read<CartBloc>();
-                          final cartState = cartBloc.state;
-
-                          if (cartState.products.isEmpty) return;
-
-                          final result = await Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (_) => const SelectAddressPage()),
-                          );
-
-                          if (result != null && result is Map) {
-                            final orderId = result['orderId'] as int?;
-                            if (orderId != null) {
-                              final total = cartState.products.fold<double>(
-                                0,
-                                (sum, item) =>
-                                    sum +
-                                    (item['precio_producto'] ?? 0) *
-                                        (item['cantidad'] ?? 1),
-                              );
-                              final token = cartState.token ?? '';
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (_) => PaymentPage(
-                                    orderId: orderId,
-                                    amount: total,
-                                    token: token,
-                                  ),
-                                ),
-                              );
-                            }
-                          }
                         },
-                        child: Container(
-                          width: double.infinity,
+                        style: ElevatedButton.styleFrom(
                           padding: const EdgeInsets.symmetric(vertical: 18),
-                          decoration: BoxDecoration(
+                          backgroundColor: Colors.transparent, // transparente
+                          shadowColor: Colors.transparent, // sin sombra extra
+                          shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(14),
-                            gradient: const LinearGradient(
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
-                              colors: [
-                                Color(0xFFD95D85), // #d95d85
-                                Color(0xFFE58BB1), // #e58bb1
-                              ],
-                            ),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withOpacity(0.15),
-                                blurRadius: 8,
-                                offset: const Offset(0, 3),
-                              ),
-                            ],
                           ),
-                          child: const Center(
-                            child: Text(
-                              'Completar compra',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 17,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
+                        ),
+                        child: const Text(
+                          'Completar compra',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 17,
+                            fontWeight: FontWeight.w600,
                           ),
                         ),
                       ),
@@ -375,16 +330,20 @@ class CartPageView extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(label,
-              style: TextStyle(
-                  color: Colors.black54,
-                  fontSize: 14,
-                  fontWeight: isBold ? FontWeight.w600 : FontWeight.normal)),
+          Text(
+            label,
+            style: TextStyle(
+              color: Colors.black54,
+              fontSize: 14,
+              fontWeight: isBold ? FontWeight.w600 : FontWeight.normal,
+            ),
+          ),
           Text(
             '\$${value.toStringAsFixed(2)}',
             style: TextStyle(
-                fontSize: 15,
-                fontWeight: isBold ? FontWeight.w700 : FontWeight.w500),
+              fontSize: 15,
+              fontWeight: isBold ? FontWeight.w700 : FontWeight.w500,
+            ),
           ),
         ],
       ),
