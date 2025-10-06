@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useTranslation } from 'react-i18next';
 import Rating from "@mui/material/Rating";
+import { FaStar } from "react-icons/fa";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import IconButton from "@mui/joy/IconButton";
@@ -9,6 +10,7 @@ import FavoriteBorder from "@mui/icons-material/FavoriteBorder";
 import Favorite from "@mui/icons-material/Favorite";
 import { Link } from "react-router-dom";
 import "../../assets/stylesheets/ProductDetails.css";
+import userFoto from "../../assets/images/user_default.png";
 import { formatCOP } from "../../services/currency";
 import { BsCart4 } from "react-icons/bs";
 import Skeleton from "@mui/joy/Skeleton";
@@ -44,6 +46,7 @@ function ProductDetails() {
   const [loadingReviews, setLoadingReviews] = useState(true);
   const [activeTab, setActiveTab] = useState("description");
   const [showReviewForm, setShowReviewForm] = useState(false);
+  const [user, setUser] = useState(null);
 
   // Cargar producto + carrito + favoritos
   useEffect(() => {
@@ -128,10 +131,35 @@ function ProductDetails() {
 
   }, [product, slug, token]);
 
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) return;
+
+    fetch("https://localhost:4000/api/v1/me", {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+      .then((res) => {
+        if (!res.ok) throw new Error(t("profile.loadError"));
+        return res.json();
+      })
+      .then((data) => {
+        setUser(data);
+        setFormData({
+          nombre: data.nombre || "",
+          apellido: data.apellido || "",
+          email: data.email || "",
+          telefono: data.telefono || "",
+          direccion: data.direccion || "",
+        });
+      })
+      .catch((err) => console.error(err));
+  }, [t]);
+  
+
 
   function ProductImage({ product, noImage }) {
     return (
-      <div className="product-image" style={{ position: "relative" }}>
+      <div className="product-image" style={{ position: "relative", maxWidth: "500px" }}>
         {!imgLoaded && (
           <Skeleton
             variant="rectangular"
@@ -252,6 +280,8 @@ function ProductDetails() {
       </p>
     );
   }
+
+  
 
   const handleBuyNow = (productId, quantity = 1) => {
     fetch("https://localhost:4000/api/v1/orders", {
@@ -458,13 +488,13 @@ function ProductDetails() {
       {activeTab === "reviews" && (
         <div className="reviews-section">
           <div id="areaRating" >
-            <RatingSummary ratings={ratings} />
-            <div style={{display: "flex", flexDirection: "column", gap: "10px", alignItems: "center", marginTop: 20}}>
-              <RateReviewIcon style={{ fontSize: 80, color: "#ccc" }} />
-              <button id="newReview" onClick={() => setShowReviewForm(prev => !prev)}>
-                {showReviewForm ? "Cancelar reseña" : "Escribe una reseña"}
-              </button>
-            </div>
+            <RatingSummary 
+            ratings={ratings} 
+            showReviewForm={showReviewForm} 
+            setShowReviewForm={setShowReviewForm}
+            productName={product.nombre_producto}
+            />
+            
           </div>
 
           {showReviewForm && canReview && (
@@ -516,15 +546,67 @@ function ProductDetails() {
                   reviews.slice(0, visibleReviews).map((review) => (
                     <div
                       key={review.id}
-                      style={{ borderBottom: "1px solid #eee", marginBottom: "1rem" }}
+                      style={{
+                        backgroundColor: "#fff",
+                        borderRadius: "12px",
+                        padding: "16px",
+                        boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
+                        marginBottom: "1rem",
+                      }}
                     >
-                      <Rating value={review.rating} readOnly sx={{ color: "#f896b8" }} />
-                      <p>{review.comentario}</p>
-                      <small>
-                        Por {review.user?.nombre || "Usuario"} -{" "}
-                        {new Date(review.created_at).toLocaleDateString()}
-                      </small>
+                      <div style={{ display: "flex", alignItems: "flex-start", gap: "12px" }}>
+                        {/* Imagen de usuario */}
+                        <img
+                          src={review.user?.avatar_url || userFoto}
+                          alt={review.user?.nombre || "Usuario"}
+                          style={{
+                            width: "45px",
+                            height: "45px",
+                            borderRadius: "50%",
+                            objectFit: "cover",
+                          }}
+                        />
+
+                        <div style={{ flex: 1 }}>
+                          {/* Encabezado: nombre + fecha + estrellas */}
+                          <div
+                            style={{
+                              display: "flex",
+                              justifyContent: "space-between",
+                              alignItems: "center",
+                            }}
+                          >
+                            <div>
+                              <strong style={{ color: "#222", fontSize: "15px" }}>
+                                {review.user?.nombre || "Usuario"}
+                              </strong>
+                              <p style={{ fontSize: "12px", color: "#888", marginTop: "2px" }}>
+                                {new Date(review.created_at).toLocaleDateString("es-CO", {
+                                  day: "2-digit",
+                                  month: "short",
+                                  year: "numeric",
+                                })}
+                              </p>
+                            </div>
+                            <Rating value={review.rating} readOnly sx={{ color: "#f896b8" }} size="small" />
+                          </div>
+
+                          {/* Comentario */}
+                          <p
+                            style={{
+                              color: "#444",
+                              fontSize: "14px",
+                              lineHeight: "1.5",
+                              margin: "8px 0 6px 0",
+                            }}
+                          >
+                            {review.comentario}
+                          </p>
+
+                        </div>
+                      </div>
                     </div>
+
                   ))
                 )}
               </div>

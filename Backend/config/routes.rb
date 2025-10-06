@@ -70,6 +70,7 @@ Rails.application.routes.draw do
       end
 
       get "/me", to: "users#me"
+      patch 'me', to: 'users#update' 
       get "/count", to: "users#count"
       get "/registrations_per_day", to: "users#registrations_per_day"
 

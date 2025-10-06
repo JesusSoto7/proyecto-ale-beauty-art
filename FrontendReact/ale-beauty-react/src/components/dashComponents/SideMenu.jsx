@@ -13,6 +13,7 @@ import OptionsMenu from './OptionsMenu';
 
 const drawerWidth = 240;
 
+
 const Drawer = styled(MuiDrawer)({
   width: drawerWidth,
   flexShrink: 0,
@@ -84,14 +85,11 @@ export default function SideMenu() {
       >
         <Avatar
           sizes="small"
-          alt="Riley Carter"
+          alt={`${user.nombre?.charAt(0).toUpperCase()}`}
           src="/static/images/avatar/7.jpg"
-          sx={{ width: 36, height: 36 }}
+          sx={{ width: 36, height: 36, backgroundColor: "#f896b8" }}
         />
         <Box sx={{ mr: 'auto' }}>
-          <Typography variant="body2" sx={{ fontWeight: 500, lineHeight: '16px' }}>
-            {user.nombre} {user.apellido}
-          </Typography>
           <Typography variant="caption" sx={{ color: 'text.secondary' }}>
             {user.email}
           </Typography>
