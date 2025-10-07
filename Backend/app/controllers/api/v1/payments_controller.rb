@@ -29,7 +29,12 @@ class Api::V1::PaymentsController < Api::V1::BaseController
     order = Order.find(params[:order_id])
 
     if payment["status"] == "approved"
-      order.update(status: :pagada, fecha_pago: Time.current)
+      order.update(
+        status: :pagada,
+        fecha_pago: Time.current,
+        card_type: payment.dig("payment_method_id"),
+        card_last4: payment.dig("card", "last_four_digits")
+      )
       current_user.cart.cart_products.destroy_all
       InvoiceMailer.enviar_factura(order).deliver_later
 
@@ -87,7 +92,12 @@ class Api::V1::PaymentsController < Api::V1::BaseController
     order = Order.find(params[:order_id])
 
     if payment["status"] == "approved"
-      order.update(status: :pagada, fecha_pago: Time.current)
+      order.update(
+        status: :pagada,
+        fecha_pago: Time.current,
+        card_type: payment.dig("payment_method_id"),
+        card_last4: payment.dig("card", "last_four_digits")
+      )
       order.user.cart.cart_products.destroy_all if order.user&.cart
       #InvoiceMailer.enviar_factura(order).deliver_later
 

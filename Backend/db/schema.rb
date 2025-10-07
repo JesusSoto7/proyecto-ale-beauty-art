@@ -123,6 +123,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_26_200334) do
     t.bigint "shipping_address_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "card_type"
+    t.string "card_last4"
     t.index ["numero_de_orden"], name: "index_orders_on_numero_de_orden", unique: true
     t.index ["payment_method_id"], name: "index_orders_on_payment_method_id"
     t.index ["shipping_address_id"], name: "index_orders_on_shipping_address_id"

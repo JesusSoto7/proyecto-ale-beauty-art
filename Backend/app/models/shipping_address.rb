@@ -1,4 +1,7 @@
 class ShippingAddress < ApplicationRecord
+  def full_address
+    "#{direccion}, #{neighborhood.nombre}"
+  end
   belongs_to :user, optional: true
   has_many :orders
   belongs_to :neighborhood
