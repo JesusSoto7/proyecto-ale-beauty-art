@@ -31,7 +31,7 @@ Rails.application.routes.draw do
       end
 
 
- # Quitar producto
+      # Quitar producto
        get "inicio", to: "inicio#index"
       # Categorías y productos  
       resources :products, param: :slug do
@@ -65,6 +65,7 @@ Rails.application.routes.draw do
       resources :payments, only: [:create] do
         collection do
           post :create_preference   # POST /api/v1/payments/create_preference
+          post :mobile_create 
         end
       end
 
@@ -136,7 +137,6 @@ Rails.application.routes.draw do
 
   get 'about', to: 'pages_about#about', as: :about
 
-  resources :orders, only: [:create]
   resources :payments, only: [:create, :new]
   get '/pago_realizado/:id', to: 'checkouts#success', as: :pago_realizado
   get '/pago_cancelado/:id', to: 'checkouts#rejected', as: :pago_cancelado

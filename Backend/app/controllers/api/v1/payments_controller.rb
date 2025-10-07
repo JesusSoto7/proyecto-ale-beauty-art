@@ -1,37 +1,5 @@
 class Api::V1::PaymentsController < Api::V1::BaseController
-
-  def create_preference
-    require 'mercadopago'
-    sdk = Mercadopago::SDK.new(ENV['MERCADOPAGO_PROD_ACCESS_TOKEN'])
-
-    order = current_user.orders.find(params[:order_id])
-
-    preference_data = {
-      items: [
-        {
-          title: "Orden #{order.numero_de_orden}",
-          quantity: 1,
-          currency_id: 'COP',
-          unit_price: order.pago_total.to_f
-        }
-      ],
-      back_urls: {
-        success: "#{ENV['API_BASE_URL']}/checkout/success",
-        failure: "#{ENV['API_BASE_URL']}/checkout/failure",
-        pending: "#{ENV['API_BASE_URL']}/checkout/pending"
-      },
-      auto_return: 'approved',
-      external_reference: "ORDER-#{order.id}"
-    }
-
-    preference = sdk.preference.create(preference_data)
-    render json: {
-      init_point: preference[:response]['init_point'],
-      preference_id: preference[:response]['id']
-    }
-  rescue => e
-    render json: { error: e.message }, status: :unprocessable_entity
-  end
+  skip_before_action :authorize_request, only: [:mobile_create]
 
   def create
     require 'mercadopago'
@@ -52,6 +20,8 @@ class Api::V1::PaymentsController < Api::V1::BaseController
         }
       }
     }
+
+
 
     payment_response = sdk.payment.create(payment_data)
     payment = payment_response[:response]
@@ -76,4 +46,67 @@ class Api::V1::PaymentsController < Api::V1::BaseController
       }, status: :unprocessable_entity
     end
   end
+
+  def mobile_create
+    require 'mercadopago'
+    sdk = Mercadopago::SDK.new(ENV['MERCADOPAGO_ACCESS_TOKEN'])
+
+    payment_data = {
+      transaction_amount: params[:transaction_amount].to_f,
+      token: params[:token],
+      description: "Pago",
+      installments: params[:installments],
+      payment_method_id: params[:payment_method_id],
+      payer: {
+        email: params[:payer][:email],
+        identification: {
+          type: params[:payer][:identification][:type],
+          number: params[:payer][:identification][:number]
+        }
+      },
+      additional_info: {
+        ip_address: request.remote_ip,
+        items: [
+          {
+            id: params[:order_id],
+            title: "Compra en tu tienda",
+            quantity: 1,
+            unit_price: params[:transaction_amount].to_f
+          }
+        ]
+      }
+    }
+
+  
+    puts "🔹 payment_data: #{payment_data.inspect}"
+
+    payment_response = sdk.payment.create(payment_data)
+    payment = payment_response[:response]
+
+    puts "🔹 MercadoPago Response: #{payment_response.inspect}"
+    order = Order.find(params[:order_id])
+
+    if payment["status"] == "approved"
+      order.update(status: :pagada, fecha_pago: Time.current)
+      order.user.cart.cart_products.destroy_all if order.user&.cart
+      #InvoiceMailer.enviar_factura(order).deliver_later
+
+      render json: {
+        status: payment["status"],
+        detail: payment["status_detail"],
+        id: payment["id"],
+        message: "Pago exitoso"
+      }, status: :ok
+    else
+      order.update(status: :cancelada)
+
+      render json: {
+        status: payment["status"],
+        detail: payment["status_detail"],
+        error: "Pago rechazado"
+      }, status: :unprocessable_entity
+    end
+
+  end
+
 end

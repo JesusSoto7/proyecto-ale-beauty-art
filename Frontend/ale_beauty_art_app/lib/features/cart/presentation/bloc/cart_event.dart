@@ -17,14 +17,15 @@ class RemoveProductFromCart extends CartEvent {
   RemoveProductFromCart({required this.productId});
 }
 
+// Evento para actualizar el token
 class UpdateCartToken extends CartEvent {
   final String token;
-
   UpdateCartToken(this.token);
 }
 
+//Ahora la dirección es opcional
 class CreateOrder extends CartEvent {
-  final ShippingAddress selectedAddress; // ← propiedad agregada
+  final ShippingAddress? selectedAddress;
 
-  CreateOrder({required this.selectedAddress}); // ← constructor con required
+  CreateOrder({this.selectedAddress});
 }

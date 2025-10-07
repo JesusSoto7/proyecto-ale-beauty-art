@@ -7,7 +7,8 @@ import 'package:http/http.dart' as http;
 import 'package:http/io_client.dart';
 
 class CustomHttpClient {
-  static final FlutterSecureStorage secureStorage = const FlutterSecureStorage();
+  static final FlutterSecureStorage secureStorage =
+      const FlutterSecureStorage();
   static final String baseUrl = dotenv.env['API_BASE_URL'] ?? '';
 
   // Devuelve un cliente HTTP autenticado
@@ -23,7 +24,8 @@ class CustomHttpClient {
   }
 
   // GET
-  static Future<http.Response> getRequest(String path) async {
+  static Future<http.Response> getRequest(String path,
+      {required Map<String, String> headers}) async {
     final client = await CustomHttpClient.client;
     final response = await client.get(Uri.parse('$baseUrl$path'), headers: {
       'Content-Type': 'application/json',
@@ -32,18 +34,25 @@ class CustomHttpClient {
   }
 
   // POST
-  static Future<http.Response> postRequest(String path, Map<String, dynamic> body) async {
+  static Future<http.Response> postRequest(
+      String path, Map<String, dynamic> body,
+      {required Map<String, String> headers}) async {
     final client = await CustomHttpClient.client;
+    final token = await FlutterSecureStorage().read(key: 'jwt_token');
     final response = await client.post(
       Uri.parse('$baseUrl$path'),
-      headers: {'Content-Type': 'application/json'},
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
       body: jsonEncode(body),
     );
     return response;
   }
 
   // PUT
-  static Future<http.Response> putRequest(String path, Map<String, dynamic> body) async {
+  static Future<http.Response> putRequest(
+      String path, Map<String, dynamic> body) async {
     final client = await CustomHttpClient.client;
     final response = await client.put(
       Uri.parse('$baseUrl$path'),
@@ -54,7 +63,8 @@ class CustomHttpClient {
   }
 
   // PATCH
-  static Future<http.Response> patchRequest(String path, Map<String, dynamic> body) async {
+  static Future<http.Response> patchRequest(
+      String path, Map<String, dynamic> body) async {
     final client = await CustomHttpClient.client;
     final response = await client.patch(
       Uri.parse('$baseUrl$path'),
