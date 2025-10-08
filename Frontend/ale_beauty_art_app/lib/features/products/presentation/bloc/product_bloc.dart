@@ -10,25 +10,47 @@ part 'product_state.dart';
 
 class ProductBloc extends Bloc<ProductsEvent, ProductState> {
   ProductBloc() : super(ProductInitial()) {
+    // Handler para lista de productos
     on<ProductFetched>((event, emit) async {
       emit(ProductLoadInProgress());
-
       try {
-        // CAMBIA localhost o 127.0.0.1 por la IP real de tu PC (ej: 192.168.1.100)
         final url = Uri.parse('${dotenv.env['API_BASE_URL']}/api/v1/products');
         final client = await CustomHttpClient.client;
         final response = await client.get(url);
 
         if (response.statusCode == 200) {
           final List<dynamic> jsonList = jsonDecode(response.body);
-          final List<Product> products = jsonList.map((e) => Product.fromJson(e)).toList();
-
+          final List<Product> products =
+              jsonList.map((e) => Product.fromJson(e)).toList();
           emit(ProductLoadSuccess(products));
         } else {
           emit(ProductLoadFailure());
         }
       } catch (e) {
-        print("Error al obtener productos: $e"); // te ayudará a depurar
+        print("Error al obtener productos: $e");
+        emit(ProductLoadFailure());
+      }
+    });
+
+    // Handler para detalle de producto
+    on<ProductDetailRequested>(
+        (ProductDetailRequested event, Emitter<ProductState> emit) async {
+      emit(ProductLoadInProgress());
+      try {
+        final url = Uri.parse(
+            '${dotenv.env['API_BASE_URL']}/api/v1/products/${event.productId}');
+        final client = await CustomHttpClient.client;
+        final response = await client.get(url);
+
+        if (response.statusCode == 200) {
+          final Map<String, dynamic> json = jsonDecode(response.body);
+          final product = Product.fromJson(json);
+          emit(ProductLoadSuccess([product]));
+        } else {
+          emit(ProductLoadFailure());
+        }
+      } catch (e) {
+        print("Error al obtener detalle producto: $e");
         emit(ProductLoadFailure());
       }
     });

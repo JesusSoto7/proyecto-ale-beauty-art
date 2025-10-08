@@ -1,5 +1,6 @@
 import 'package:ale_beauty_art_app/core/views/login_view.dart';
 import 'package:ale_beauty_art_app/features/auth/bloc/auth_bloc.dart';
+import 'package:ale_beauty_art_app/features/favorites/presentation/view/favorite_page.dart';
 import 'package:ale_beauty_art_app/features/shipping_address/presentation/bloc/shipping_address_bloc.dart';
 import 'package:ale_beauty_art_app/features/shipping_address/presentation/bloc/shipping_address_event.dart';
 import 'package:ale_beauty_art_app/features/shipping_address/presentation/views/shipping_address_page.dart';
@@ -28,7 +29,8 @@ class ProfileView extends StatelessWidget {
                   CircleAvatar(
                     radius: 50,
                     backgroundColor: AppColors.primaryPink,
-                    child: const Icon(Icons.person, size: 60, color: Colors.white),
+                    child:
+                        const Icon(Icons.person, size: 60, color: Colors.white),
                   ),
                   const SizedBox(height: 12),
 
@@ -75,10 +77,13 @@ class ProfileView extends StatelessWidget {
                               fontWeight: FontWeight.bold,
                             ),
                           ),
-                          backgroundColor: AppColors.primaryPink, //  Fondo personalizado
+                          backgroundColor:
+                              AppColors.primaryPink, //  Fondo personalizado
                           behavior: SnackBarBehavior.floating, // Flotante
-                          margin: const EdgeInsets.fromLTRB(20, 0, 20, 30), // de separación abajo
-                          shape: RoundedRectangleBorder( //Bordes redondeados
+                          margin: const EdgeInsets.fromLTRB(
+                              20, 0, 20, 30), // de separación abajo
+                          shape: RoundedRectangleBorder(
+                            //Bordes redondeados
                             borderRadius: BorderRadius.circular(16),
                           ),
                           elevation: 6, // Sombra
@@ -88,13 +93,14 @@ class ProfileView extends StatelessWidget {
                     },
                     icon: const Icon(Icons.logout, color: Colors.white),
                     label: const Text('Cerrar Sesión',
-                    style: TextStyle(color: Colors.white)),
+                        style: TextStyle(color: Colors.white)),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.redAccent,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
-                      padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 12),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 30, vertical: 12),
                     ),
                   );
                 } else {
@@ -107,13 +113,14 @@ class ProfileView extends StatelessWidget {
                     },
                     icon: const Icon(Icons.login, color: Colors.white),
                     label: const Text('Iniciar Sesión',
-                    style: TextStyle(color: Colors.white)),
+                        style: TextStyle(color: Colors.white)),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.primaryPink,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
-                      padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 12),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 30, vertical: 12),
                     ),
                   );
                 }
@@ -129,8 +136,25 @@ class ProfileView extends StatelessWidget {
                   _buildOptionTile(Icons.shopping_bag, 'Mis pedidos', () {
                     // TODO: Navegar a pedidos
                   }),
-                  _buildOptionTile(Icons.favorite, 'Favoritos', () {
+                  _buildOptionTile(Icons.favorite, 'Favoritos', () async {
                     // TODO: Navegar a favoritos
+                    final authState = context.read<AuthBloc>().state;
+
+                    if (authState is! AuthSuccess) {
+                      final result = await Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (_) => const LoginPage()),
+                      );
+                      if (result != true) return;
+                    }
+
+                    /* final auth = context.read<AuthBloc>().state as AuthSuccess;
+                      context.read<ShippingAddressBloc>().add(UpdateShippingToken(auth.token));
+ */
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => const FavoritePage()),
+                    );
                   }),
                   _buildOptionTile(
                     Icons.location_on,
@@ -146,12 +170,16 @@ class ProfileView extends StatelessWidget {
                         if (result != true) return;
                       }
 
-                      final auth = context.read<AuthBloc>().state as AuthSuccess;
-                      context.read<ShippingAddressBloc>().add(UpdateShippingToken(auth.token));
+                      final auth =
+                          context.read<AuthBloc>().state as AuthSuccess;
+                      context
+                          .read<ShippingAddressBloc>()
+                          .add(UpdateShippingToken(auth.token));
 
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (_) => const ShippingAddressPage()),
+                        MaterialPageRoute(
+                            builder: (_) => const ShippingAddressPage()),
                       );
                     },
                   ),
@@ -178,4 +206,3 @@ class ProfileView extends StatelessWidget {
     );
   }
 }
-
