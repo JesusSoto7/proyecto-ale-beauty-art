@@ -10,6 +10,9 @@ class Api::V1::OrdersController < Api::V1::BaseController
       status: order.status,
       pago_total: order.pago_total,
       fecha_pago: order.fecha_pago,
+      direccion_envio: order.direccion_envio,
+      tarjeta_tipo: order.tarjeta_tipo,
+      tarjeta_ultimos4: order.tarjeta_ultimos4,
       productos: order.order_details.map do |od|
         {
           id: od.id,

@@ -1,0 +1,126 @@
+.pedido-container {
+  max-width: 950px;
+  margin: 40px auto;
+  padding: 25px;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  font-family: "Segoe UI", sans-serif;
+}
+
+.pedido-header {
+  border-bottom: 2px solid #f2f2f2;
+  margin-bottom: 20px;
+}
+
+.pedido-header h2 {
+  font-size: 1.6rem;
+  color: #222;
+}
+
+.pedido-status {
+  background: #fef3f6;
+  padding: 3px 10px;
+  border-radius: 6px;
+  font-weight: bold;
+}
+
+.pedido-info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 15px;
+  margin-bottom: 25px;
+}
+
+.pedido-card {
+  background: #fafafa !important;
+  border: 1px solid #eee;
+  border-radius: 10px;
+  padding: 15px;
+  box-shadow: none !important;
+  cursor: default !important;
+  transition: none !important; 
+}
+
+.pedido-card:hover {
+  background: #fafafa !important
+}
+
+.pedido-card h3 {
+  font-size: 1.1rem;
+  margin-bottom: 8px;
+  color: #444;
+}
+
+.pedido-card-info {
+  font-size: 1rem;
+}
+
+.pedido-card-dots {
+  font-size: 1.3rem;
+  color: #666;
+}
+
+.pedido-products h3 {
+  font-size: 1.2rem;
+  margin-bottom: 10px;
+}
+
+.pedido-item {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  border-bottom: 1px solid #eee;
+  padding: 12px 0;
+  text-decoration: none;
+  color: inherit;
+  transition: background 0.2s;
+}
+
+.pedido-item:hover {
+  background: #f9f9f9;
+}
+
+.pedido-item img {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.pedido-item-info {
+  flex: 1;
+}
+
+.pedido-item-name {
+  font-weight: bold;
+  color: #333;
+  display: block;
+  margin-bottom: 5px;
+}
+
+.pedido-item-price {
+  font-weight: bold;
+  color: #f896b8;
+}
+
+.pedido-summary {
+  margin-top: 25px;
+  background: #fef3f6;
+  border-radius: 10px;
+  padding: 15px;
+}
+
+.pedido-summary-row,
+.pedido-summary-total {
+  display: flex;
+  justify-content: space-between;
+  margin: 6px 0;
+}
+
+.pedido-summary-total {
+  font-size: 1.1rem;
+  border-top: 2px solid #ffd1e3;
+  padding-top: 10px;
+}
+

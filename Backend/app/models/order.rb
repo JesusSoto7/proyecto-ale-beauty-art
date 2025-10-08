@@ -22,7 +22,24 @@ class Order < ApplicationRecord
     pago_total.to_f + costo_de_envio.to_f
   end
 
+  def direccion_envio
+    shipping_address&.full_address
+  end
+
+  def tarjeta_tipo
+    card_type
+  end
+
+  def tarjeta_ultimos4
+    card_last4
+  end
+
   def as_json(options = {})
-    super(options).merge(status: self.status)
+    super(options).merge(
+      status: self.status,
+      direccion_envio: direccion_envio,
+      tarjeta_tipo: tarjeta_tipo,
+      tarjeta_ultimos4: tarjeta_ultimos4
+    )
   end
 end
