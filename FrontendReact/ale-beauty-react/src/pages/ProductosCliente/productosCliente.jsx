@@ -189,7 +189,7 @@ function ProductosCliente() {
   };
 
   return (
-    <section className="mt-5">
+    <section style={{marginTop: "90px"}} >
       {/* Encabezado con botón de filtro y título */}
       <div style={{ display: "flex", alignItems: "center", justifyContent: "center", position: "relative", marginTop: "40px" }}>
         <div style={{ position: "absolute", left: 15, top: -20, display: "flex", gap: 8 }}>
