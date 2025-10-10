@@ -10,8 +10,7 @@ part 'payment_event.dart';
 part 'payment_state.dart';
 
 class PaymentBloc extends Bloc<PaymentEvent, PaymentState> {
-  final String apiUrl =
-      '${dotenv.env['API_BASE_URL']}/api/v1'; // 🔑 cámbialo a tu dominio
+  final String apiUrl = '${dotenv.env['API_BASE_URL']}/api/v1';
   final String token; // JWT para autorización
 
   PaymentBloc({required this.token}) : super(PaymentInitial()) {
