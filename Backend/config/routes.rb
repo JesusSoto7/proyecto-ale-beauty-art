@@ -62,6 +62,8 @@ Rails.application.routes.draw do
       get "/my_orders", to: "orders#ordenes"
       get "/my_orders/:id", to: "orders#show"
 
+      get 'orders/by_payment/:payment_id', to: 'orders#show_by_payment'
+
       resources :payments, only: [:create] do
         collection do
           post :create_preference   # POST /api/v1/payments/create_preference
@@ -110,6 +112,7 @@ Rails.application.routes.draw do
   get "/cart/count", to: "carts#count", as: 'count_cart'
 
   get '/checkout/:id', to: 'checkouts#show', as: :checkout
+  
 
 
   resources :checkouts do

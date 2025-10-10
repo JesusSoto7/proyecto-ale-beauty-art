@@ -81,10 +81,36 @@ function Cart() {
         if (!res.ok) throw new Error("Update failed");
         return res.json();
       })
-      .then((data) => data && setCart(data.cart))
-      .catch(() => {
-        setError(t("cart.updatingError"));
+      .then((data) => {
+        if (data?.cart) {
+          setCart(data.cart);
+
+          // ✅ Si es incremento, dispara el evento GA4
+          if (increment && window.gtag) {
+            const product = data.cart.products.find(
+              (p) => p.product_id === productId
+            );
+
+            if (product) {
+              window.gtag("event", "add_to_cart", {
+                currency: "COP",
+                value: product.precio_producto,
+                items: [
+                  {
+                    item_id: product.product_id,
+                    item_name: product.nombre_producto,
+                    price: product.precio_producto,
+                    quantity: product.cantidad,
+                  },
+                ],
+              });
+
+              console.log("🛒 Evento GA4 enviado: add_to_cart", product);
+            }
+          }
+        }
       })
+      .catch(() => setError(t("cart.updatingError")))
       .finally(() => setUpdating(false));
   };
 

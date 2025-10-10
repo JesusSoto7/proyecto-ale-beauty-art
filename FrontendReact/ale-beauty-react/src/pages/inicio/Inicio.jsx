@@ -129,6 +129,26 @@ function Inicio() {
         if (data.cart) {
           setCart(data.cart);
           alert(t('home.addedToCart'));
+
+          // === Evento GA4: add_to_cart ===
+          // Busca el producto agregado en el array del carrito actualizado
+          const product = data.cart.products.find(p => p.product_id === productId);
+          if (window.gtag && product) {
+            window.gtag("event", "add_to_cart", {
+              currency: "COP",
+              value: product.precio_producto,
+              items: [
+                {
+                  item_id: product.product_id,
+                  item_name: product.nombre_producto,
+                  price: product.precio_producto,
+                  quantity: product.cantidad,
+                },
+              ],
+            });
+            console.log("🛒 Evento GA4 enviado: add_to_cart", product);
+          }
+          // ===============================
         } else if (data.errors) {
           alert(t('home.error') + data.errors.join(", "));
         }

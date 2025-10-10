@@ -163,7 +163,7 @@ class Api::V1::OrdersController < Api::V1::BaseController
     render json: data
   end
   
-  def status
+    def status
       order = current_user.orders.find(params[:id])
       render json: {
         order_id: order.id,
