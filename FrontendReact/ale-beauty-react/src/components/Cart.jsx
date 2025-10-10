@@ -235,6 +235,7 @@ function Cart() {
       maxWidth: 1200, 
       mx: "auto",
       display: "flex",
+      marginTop: "80px",
       flexDirection: { xs: "column", lg: "row" },
       gap: 3
     }}>

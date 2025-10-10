@@ -133,7 +133,7 @@ function ShippingAddresses() {
   }
 
   return (
-    <div className="shipping-container">
+    <div className="shipping-container" style={{marginTop: "80px",}}>
       {showForm ? (
         <div>
           <h2>{editAddress ? t('shippingAddresses.editAddress') : t('shippingAddresses.createAddress')}</h2>

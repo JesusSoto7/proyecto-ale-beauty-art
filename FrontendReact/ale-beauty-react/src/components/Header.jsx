@@ -12,7 +12,7 @@ import Skeleton from "@mui/material/Skeleton"
 
 import { styled, alpha } from '@mui/material/styles';
 import AppBar from '@mui/material/AppBar';
-import {Box, Button} from '@mui/material';
+import {Box, Button, Badge} from '@mui/material';
 import Toolbar from '@mui/material/Toolbar';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
@@ -98,6 +98,9 @@ export default function Header({ loadFavorites }) {
   const [anchorEl, setAnchorEl] = useState(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = useState(null);
   const [openModal, setOpenModal] = useState(false);
+  const [error, setError] = useState(null);
+  const [cart, setCart] = useState([]); // en lugar de null
+
 
   const navigate = useNavigate();
   const isMenuOpen = Boolean(anchorEl);
@@ -107,11 +110,39 @@ export default function Header({ loadFavorites }) {
   const categoriesRef = useRef(null);
   const debounceRef = useRef(null);
   const DEBOUNCE_MS = 250;
+  const cartCount = Array.isArray(cart?.products)
+    ? cart.products.reduce((acc, p) => acc + (p.cantidad || 1), 0)
+    : 0;
+
 
   const [selectedCategory, setSelectedCategory] = useState(null);
 
 
   const subcategories = selectedCategory?.sub_categories || [];
+  const token = localStorage.getItem('token');
+    useEffect(() => {
+      fetchCart();
+    }, [token]);
+  
+    const fetchCart = () => {
+      setLoading(true);
+      setError(null);
+      fetch("https://localhost:4000/api/v1/cart", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+        .then((res) => {
+          if (!res.ok) throw new Error("Failed to fetch cart");
+          return res.json();
+        })
+        .then((data) => setCart(data))
+        .catch((err) => {
+          console.error("Error cargando cart: ", err);
+          setError(t("cart.loadingError"));
+        })
+        .finally(() => setLoading(false));
+    };
   
 
   const handleScroll = () => {
@@ -876,20 +907,38 @@ export default function Header({ loadFavorites }) {
           </Box>
 
           {/* Íconos */}
-          <Box sx={{ display: { xs: 'none', md: 'flex' }, gap: 2 }}>
-            
+          <Box sx={{ display: { xs: "none", md: "flex" }, gap: 2 }}>
             {perfilIcon}
 
-            <IconButton 
-              component={Link} 
+            <IconButton
+              component={Link}
               to={`/${lang}/carrito`}
-              sx={{ color: 'black', '&:hover': { color: pinkTheme.primary } }}
+              sx={{ color: "black", "&:hover": { color: pinkTheme.primary } }}
             >
-              <BsCart4 size={25} />
+              <Badge
+                badgeContent={cartCount}
+                color="error"
+                overlap="circular"
+                sx={{
+                  "& .MuiBadge-badge": {
+                    backgroundColor: pinkTheme.primary,
+                    border: "solid 1px white",
+                    fontSize: "0.7rem",
+                    height: "16px",
+                    minWidth: "16px",
+                    top: 4,
+                    right: 4,
+                  },
+                }}
+              >
+                <BsCart4 size={25} />
+              </Badge>
+
             </IconButton>
-            <IconButton 
+
+            <IconButton
               onClick={() => setOpenModal(true)}
-              sx={{ color: 'black', '&:hover': { color: pinkTheme.primary } }}
+              sx={{ color: "black", "&:hover": { color: pinkTheme.primary } }}
             >
               <BsHeart size={22} />
             </IconButton>
