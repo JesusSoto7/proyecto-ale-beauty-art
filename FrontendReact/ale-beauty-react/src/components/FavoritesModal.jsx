@@ -20,6 +20,7 @@ export default function FavoritesModal({ open, onClose }) {
   const [loading, setLoading] = useState(true);
   const [clearing, setClearing] = useState(false);
   const { t } = useTranslation();
+  const [cart, setCart] = useState(null);
 
   const token = localStorage.getItem("token");
 
@@ -41,7 +42,9 @@ export default function FavoritesModal({ open, onClose }) {
       .then((res) => res.json())
       .then((data) => {
         if (data.cart) {
+          setCart(data.cart);
           alert(t('favorites.addedToCart'));
+          window.dispatchEvent(new CustomEvent("cartUpdatedCustom", { bubbles: false }));
         } else if (data.errors) {
           alert(t('favorites.error') + data.errors.join(", "));
         }
@@ -67,15 +70,27 @@ export default function FavoritesModal({ open, onClose }) {
             Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify({ product_id: product.id }),
-        }).then((res) => res.json())
+        }).then(async (res) => {
+          const data = await res.json().catch(() => null);
+          return res.ok ? data : { errors: true };
+        })
       )
     )
       .then((results) => {
-        const errors = results.filter((r) => r.errors);
+        const errors = results.filter((r) => r?.errors);
+        const lastCart = results.reverse().find((r) => r?.cart);
+
         if (errors.length > 0) {
           alert(t('favorites.someNotAdded'));
         } else {
           alert(t('favorites.allAddedToCart'));
+        }
+
+        // 🔄 Actualiza el carrito si vino en alguna respuesta
+        if (lastCart) {
+          setCart(lastCart.cart);
+          // 🔔 Notifica a otros componentes (header, icono, etc.)
+          window.dispatchEvent(new CustomEvent("cartUpdatedCustom", { bubbles: false }));
         }
       })
       .catch((err) => {
@@ -83,6 +98,7 @@ export default function FavoritesModal({ open, onClose }) {
         alert(t('favorites.allCartError'));
       });
   };
+
 
   async function fetchFavorites() {
     setLoading(true);

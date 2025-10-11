@@ -177,7 +177,9 @@ function ProductosCliente() {
       .then((data) => {
         if (data.cart) {
           setCart(data.cart);
-          alert(t('productDetails.addedToCart'));
+
+          // Disparar evento para actualizar el Header
+          window.dispatchEvent(new CustomEvent("cartUpdatedCustom", { bubbles: false }));
         } else if (data.errors) {
           alert(t('productDetails.error') + data.errors.join(", "));
         }
@@ -189,7 +191,7 @@ function ProductosCliente() {
   };
 
   return (
-    <section className="mt-5">
+    <section style={{marginTop: "90px"}} >
       {/* Encabezado con botón de filtro y título */}
       <div style={{ display: "flex", alignItems: "center", justifyContent: "center", position: "relative", marginTop: "40px" }}>
         <div style={{ position: "absolute", left: 15, top: -20, display: "flex", gap: 8 }}>
