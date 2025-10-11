@@ -65,6 +65,7 @@ function Cart() {
 
   const updateQuantity = (productId, increment = true) => {
     setUpdating(true);
+
     const url = increment
       ? "https://localhost:4000/api/v1/cart/add_product"
       : "https://localhost:4000/api/v1/cart/remove_product";
@@ -84,7 +85,7 @@ function Cart() {
       .then((data) => {
         if (data?.cart) {
           setCart(data.cart);
-
+          window.dispatchEvent(new CustomEvent("cartUpdatedCustom", { bubbles: false }));
           // ✅ Si es incremento, dispara el evento GA4
           if (increment && window.gtag) {
             const product = data.cart.products.find(
@@ -114,10 +115,11 @@ function Cart() {
       .finally(() => setUpdating(false));
   };
 
+
   const removeAllQuantity = (productId, productName, quantity) => {
     if (window.confirm(t("cart.removeConfirm", { product: productName, quantity }))) {
-      // Crear un array de promesas para eliminar todas las unidades
       const removalPromises = [];
+
       for (let i = 0; i < quantity; i++) {
         removalPromises.push(
           fetch("https://localhost:4000/api/v1/cart/remove_product", {
@@ -127,27 +129,29 @@ function Cart() {
               Authorization: `Bearer ${token}`,
             },
             body: JSON.stringify({ product_id: productId }),
-          }).then(res => {
+          }).then((res) => {
             if (!res.ok) throw new Error("Remove failed");
             return res.json();
           })
         );
       }
-      
-      // Ejecutar todas las promesas y luego actualizar el carrito
+
       Promise.all(removalPromises)
-        .then(results => {
+        .then((results) => {
           // Tomar el último resultado para actualizar el estado
           const lastResult = results[results.length - 1];
           setCart(lastResult.cart);
+
+          // Notificar al Header para que se actualice
+          window.dispatchEvent(new CustomEvent("cartUpdatedCustom", { bubbles: false }));
         })
         .catch(() => {
           setError(t("cart.updatingError"));
-          // Recargar el carrito para reflejar el estado actual
-          fetchCart();
+          fetchCart(); // mantener sincronización
         });
     }
   };
+
 
   const handleCheckout = () => {
     fetch("https://localhost:4000/api/v1/orders", {
@@ -261,6 +265,7 @@ function Cart() {
       maxWidth: 1200, 
       mx: "auto",
       display: "flex",
+      marginTop: "80px",
       flexDirection: { xs: "column", lg: "row" },
       gap: 3
     }}>

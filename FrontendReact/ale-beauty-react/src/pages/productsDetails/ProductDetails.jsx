@@ -180,7 +180,6 @@ function ProductDetails() {
             variant="rectangular"
             width={"400px"}
             height={400}
-            sx={{ position: "absolute", top: 0, left: 100 }}
           />
         )}
 
@@ -347,7 +346,8 @@ function ProductDetails() {
       .then((data) => {
         if (data.cart) {
           setCart(data.cart);
-          alert(t('productDetails.addedToCart'));
+          // Disparar evento para actualizar el Header
+          window.dispatchEvent(new CustomEvent("cartUpdatedCustom", { bubbles: false }));
         } else if (data.errors) {
           alert(t('productDetails.error') + data.errors.join(", "));
         }
@@ -357,6 +357,7 @@ function ProductDetails() {
         alert(t('productDetails.cartAddError'));
       });
   };
+
   const handleSubmitReview = async (e) => {
     e.preventDefault();
 
@@ -423,14 +424,13 @@ function ProductDetails() {
 
 
   return (
-    <div className="product-details-page">
+    <div className="product-details-page" style={{marginTop: "60px"}}>
       <div className="product-container">
         <ProductImage product={product} noImage={noImage} />
 
         <div className="product-info">
           <div className="title-category">
-            <p className="negrita">{product.sub_category?.category?.nombre_categoria
-}</p>
+            <p className="negrita">{product.sub_category?.category?.nombre_categoria}</p>
             <div style={{ display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center"
              }}>
               <h2>{product.nombre_producto}</h2>
