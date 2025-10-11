@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_09_26_200334) do
+ActiveRecord::Schema[8.0].define(version: 2025_10_11_012106) do
   create_table "active_storage_attachments", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
@@ -125,7 +125,9 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_26_200334) do
     t.datetime "updated_at", null: false
     t.string "card_type"
     t.string "card_last4"
+    t.string "payment_id"
     t.index ["numero_de_orden"], name: "index_orders_on_numero_de_orden", unique: true
+    t.index ["payment_id"], name: "index_orders_on_payment_id", unique: true
     t.index ["payment_method_id"], name: "index_orders_on_payment_method_id"
     t.index ["shipping_address_id"], name: "index_orders_on_shipping_address_id"
     t.index ["user_id"], name: "index_orders_on_user_id"

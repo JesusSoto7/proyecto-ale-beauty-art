@@ -58,11 +58,16 @@ Rails.application.routes.draw do
         end
       end
 
-      resources :orders, only: [:create, :index]
+      resources :orders, only: [:create, :index] do
+        collection do
+          get 'by_payment/:payment_id', to: 'orders#by_payment'
+        end
+      end
       get "/my_orders", to: "orders#ordenes"
       get "/my_orders/:id", to: "orders#show"
 
-      get 'orders/by_payment/:payment_id', to: 'orders#show_by_payment'
+      get 'analytics/product_funnel_per_day', to: 'analytics#product_funnel_per_day'
+      get 'analytics/top_3_products', to: 'analytics#top_3_products'
 
       resources :payments, only: [:create] do
         collection do
