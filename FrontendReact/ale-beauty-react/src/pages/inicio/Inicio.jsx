@@ -116,26 +116,27 @@ function Inicio() {
   }, [token, t]);
 
   const addToCart = (productId) => {
-    fetch('https://localhost:4000/api/v1/cart/add_product', {
-      method: 'POST',
+    fetch("https://localhost:4000/api/v1/cart/add_product", {
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify({ product_id: productId }),
     })
-      .then(res => res.json())
-      .then(data => {
+      .then((res) => res.json())
+      .then((data) => {
         if (data.cart) {
           setCart(data.cart);
-          alert(t('home.addedToCart'));
+          // Disparar evento para actualizar el Header
+          window.dispatchEvent(new CustomEvent("cartUpdatedCustom", { bubbles: false }));
         } else if (data.errors) {
-          alert(t('home.error') + data.errors.join(", "));
+          alert(t('productDetails.error') + data.errors.join(", "));
         }
       })
-      .catch(err => {
-        console.error(t('home.cartAddError'), err);
-        alert(t('home.cartAddError'));
+      .catch((err) => {
+        console.error(t('productDetails.cartAddError'), err);
+        alert(t('productDetails.cartAddError'));
       });
   };
 

@@ -177,7 +177,9 @@ function ProductosCliente() {
       .then((data) => {
         if (data.cart) {
           setCart(data.cart);
-          alert(t('productDetails.addedToCart'));
+
+          // Disparar evento para actualizar el Header
+          window.dispatchEvent(new CustomEvent("cartUpdatedCustom", { bubbles: false }));
         } else if (data.errors) {
           alert(t('productDetails.error') + data.errors.join(", "));
         }
