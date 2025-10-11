@@ -53,7 +53,7 @@ class InitialView extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: 12),
-              
+
               // Barra de búsqueda
               const ExpandableSearchBar(),
             ],
@@ -62,108 +62,135 @@ class InitialView extends StatelessWidget {
 
         // Contenido según la pestaña seleccionada
         body: BlocBuilder<NavigationBloc, NavigationState>(
-            builder: (context, state) {
-              if (state is NavigationUpdated) {
-                switch (state.selectedIndex) {
-                  case 0:
-                    return _homeContent(context);
-                  case 1:
-                    return const ProductsPageView();
-                  case 2:
-                    return const CategoriesPageView();
-                  case 3:
-                    return const CartPageView(); // 🛒 Carrito como vista
-                  case 4:
-                    return const ProfileView();
-                  default:
-                    return _homeContent(context);
-                }
-              } else {
-                return _homeContent(context);
+          builder: (context, state) {
+            if (state is NavigationUpdated) {
+              switch (state.selectedIndex) {
+                case 0:
+                  return _homeContent(context);
+                case 1:
+                  return const ProductsPageView();
+                case 2:
+                  return const CategoriesPageView();
+                case 3:
+                  return const CartPageView(); // 🛒 Carrito como vista
+                case 4:
+                  return const ProfileView();
+                default:
+                  return _homeContent(context);
               }
-            },
-          ),
-          resizeToAvoidBottomInset: false,
-          bottomNavigationBar: BlocBuilder<NavigationBloc, NavigationState>(
-            builder: (context, state) {
-              context.read<ProductBloc>().add(ProductFetched());
-              return Container(
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  boxShadow: [
-                    BoxShadow(
-                      blurRadius: 8,
-                      color: Colors.black.withOpacity(0.1),
-                    )
-                  ],
-                ),
-                child: SafeArea(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 8),
-                    child: FittedBox( 
-                      fit: BoxFit.scaleDown,
-                      child: GNav(
-                        gap: 8,
-                        backgroundColor: Colors.white,
-                        color: Colors.grey[500],
-                        activeColor: AppColors.primaryPink,
-                        tabBackgroundColor: AppColors.primaryPink.withOpacity(0.1),
-                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                        onTabChange: (index) async {
-                          if (index == 3) {
-                            final previousIndex = context.read<NavigationBloc>().state is NavigationUpdated
-                                ? (context.read<NavigationBloc>().state as NavigationUpdated).selectedIndex
-                                : 0;
+            } else {
+              return _homeContent(context);
+            }
+          },
+        ),
+        resizeToAvoidBottomInset: false,
+        bottomNavigationBar: BlocBuilder<NavigationBloc, NavigationState>(
+          builder: (context, state) {
+            context.read<ProductBloc>().add(ProductFetched());
+            return Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                boxShadow: [
+                  BoxShadow(
+                    blurRadius: 8,
+                    color: Colors.black.withOpacity(0.1),
+                  )
+                ],
+              ),
+              child: SafeArea(
+                child: Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 15, vertical: 8),
+                  child: FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: GNav(
+                      gap: 8,
+                      backgroundColor: Colors.white,
+                      color: Colors.grey[500],
+                      activeColor: AppColors.primaryPink,
+                      tabBackgroundColor:
+                          AppColors.primaryPink.withOpacity(0.1),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 16, vertical: 10),
+                      onTabChange: (index) async {
+                        if (index == 3) {
+                          final previousIndex = context
+                                  .read<NavigationBloc>()
+                                  .state is NavigationUpdated
+                              ? (context.read<NavigationBloc>().state
+                                      as NavigationUpdated)
+                                  .selectedIndex
+                              : 0;
 
-                            final authState = context.read<AuthBloc>().state;
+                          final authState = context.read<AuthBloc>().state;
 
-                            if (authState is! AuthSuccess) {
-                              final result = await Navigator.push(
-                                context,
-                                MaterialPageRoute(builder: (_) => const LoginPage()),
-                              );
-
-                              if (result != true) {
-                                context.read<NavigationBloc>().add(NavigationTabChanged(previousIndex));
-                                return;
-                              }
-                            }
-
-                            final auth = context.read<AuthBloc>().state as AuthSuccess;
-                            context.read<CartBloc>().add(UpdateCartToken(auth.token));
-                            context.read<CartBloc>().add(LoadCart());
-                            context.read<NavigationBloc>().add(NavigationTabChanged(3));
-
-                            await Navigator.push(
+                          if (authState is! AuthSuccess) {
+                            final result = await Navigator.push(
                               context,
-                              MaterialPageRoute(builder: (_) => const CartPageView()),
+                              MaterialPageRoute(
+                                  builder: (_) => const LoginPage()),
                             );
 
-                            context.read<NavigationBloc>().add(NavigationTabChanged(previousIndex));
-
-                          } else {
-                            context.read<NavigationBloc>().add(NavigationTabChanged(index));
-                            if (index == 1) context.read<ProductBloc>().add(ProductFetched());
-                            if (index == 2) context.read<CategoriesBloc>().add(CategoriesFetched());
+                            if (result != true) {
+                              context
+                                  .read<NavigationBloc>()
+                                  .add(NavigationTabChanged(previousIndex));
+                              return;
+                            }
                           }
-                        },
-                        tabs: [
-                          GButton(icon: Icons.home_rounded, text: 'Inicio'),
-                          GButton(icon: Icons.grid_view_rounded, text: 'Productos'),
-                          GButton(icon: Icons.category_rounded, text: 'Categorías'),
-                          GButton(icon: Icons.shopping_cart_rounded, text: 'Carrito'),
-                          GButton(icon: Icons.person, text: 'Perfil'),
-                        ],
-                      ),
+
+                          final auth =
+                              context.read<AuthBloc>().state as AuthSuccess;
+                          context
+                              .read<CartBloc>()
+                              .add(UpdateCartToken(auth.token));
+                          context.read<CartBloc>().add(LoadCart());
+                          context
+                              .read<NavigationBloc>()
+                              .add(NavigationTabChanged(3));
+
+                          await Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (_) => const CartPageView()),
+                          );
+
+                          context
+                              .read<NavigationBloc>()
+                              .add(NavigationTabChanged(previousIndex));
+                        } else {
+                          context
+                              .read<NavigationBloc>()
+                              .add(NavigationTabChanged(index));
+                          if (index == 1)
+                            context.read<ProductBloc>().add(ProductFetched());
+                          if (index == 2)
+                            context
+                                .read<CategoriesBloc>()
+                                .add(CategoriesFetched());
+                        }
+                      },
+                      tabs: [
+                        GButton(icon: Icons.home_rounded, text: 'Inicio'),
+                        GButton(
+                            icon: Icons.grid_view_rounded, text: 'Productos'),
+                        GButton(
+                            icon: Icons.category_rounded, text: 'Categorías'),
+                        GButton(
+                            icon: Icons.shopping_cart_rounded, text: 'Carrito'),
+                        GButton(icon: Icons.person, text: 'Perfil'),
+                      ],
                     ),
                   ),
                 ),
-              );
-            },
-          ),
+              ),
+            );
+          },
+        ),
       ),
     );
   }
+
   // Contenido para la pestaña de Inicio
   Widget _homeContent(BuildContext context) {
     return SingleChildScrollView(
@@ -171,7 +198,6 @@ class InitialView extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-
           // Carrusel de productos
           ProductCarousel(
             imageUrls: [
@@ -200,14 +226,16 @@ class InitialView extends StatelessWidget {
           ),
           const SizedBox(height: 20),
           CategoriesRowView(),
-          const SizedBox(height: 20), // espacio entre carrusel y sección destacada
-        
+          const SizedBox(
+              height: 20), // espacio entre carrusel y sección destacada
+
           // Título sección productos destacados
           Text(
             'Productos Destacados',
             style: AppTextStyles.title.copyWith(fontSize: 20),
           ),
-          const SizedBox(height: 20), // Espacio para donde irán los productos luego
+          const SizedBox(
+              height: 20), // Espacio para donde irán los productos luego
           SizedBox(
             height: 210,
             child: ProductsCarousel(),
@@ -217,4 +245,3 @@ class InitialView extends StatelessWidget {
     );
   }
 }
-

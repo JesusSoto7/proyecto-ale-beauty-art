@@ -81,6 +81,8 @@ function ProductDetails() {
       })
       .catch((err) => console.error(err));
 
+      
+
     // cargar carrito
     fetch("https://localhost:4000/api/v1/cart", {
       headers: { Authorization: `Bearer ${token}` },
@@ -91,6 +93,19 @@ function ProductDetails() {
         console.error(t('productDetails.cartError'), err)
       );
   }, [slug, token, t]);
+
+    useEffect(() => {        // <-- ERROR: Hook dentro de hook
+      if (!product) return;
+      window.gtag && window.gtag('event', 'view_item', {
+        items: [{
+          item_id: product.id,
+          item_name: product.nombre_producto,
+          price: product.precio_producto,
+          item_category: product.sub_category?.category?.nombre_categoria,
+          item_variant: product.sku || '', // si tienes variante
+        }]
+      });
+    }, [product]);
 
   useEffect(() => {
     if (!product) return;

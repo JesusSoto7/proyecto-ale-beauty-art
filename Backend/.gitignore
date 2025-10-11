@@ -32,3 +32,4 @@
 
 # Ignore master key for decrypting credentials and more.
 /config/master.key
+config/dauntless-nova-474717-m7-cc68793b9b5f.json

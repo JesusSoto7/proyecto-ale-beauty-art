@@ -97,7 +97,15 @@ class Api::V1::ProductsController < Api::V1::BaseController
   private
 
   def set_product
-    @product = Product.with_attached_imagen.includes(sub_category: :category).find_by(slug: params[:slug])
+    # Prioridad: busca por id si params[:id] es numérico, si no busca por slug
+    id_or_slug = params[:id] || params[:slug]
+
+    @product = if id_or_slug.to_s =~ /^\d+$/
+      Product.with_attached_imagen.includes(sub_category: :category).find_by(id: id_or_slug)
+    else
+      Product.with_attached_imagen.includes(sub_category: :category).find_by(slug: id_or_slug)
+    end
+
     render json: { error: "Producto no encontrado" }, status: :not_found unless @product
   end
 

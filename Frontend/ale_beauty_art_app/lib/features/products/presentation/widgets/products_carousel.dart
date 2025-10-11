@@ -15,7 +15,8 @@ class ProductsCarousel extends StatefulWidget {
 }
 
 class _ProductsCarouselState extends State<ProductsCarousel> {
-  final PageController _pageController = PageController(viewportFraction: 0.38);// Ajusta visibilidad de productos
+  final PageController _pageController =
+      PageController(viewportFraction: 0.38); // Ajusta visibilidad de productos
   int _currentPage = 0;
   late List<dynamic> _productosDestacados;
 
@@ -68,7 +69,8 @@ class _ProductsCarouselState extends State<ProductsCarousel> {
                   controller: _pageController,
                   padEnds: false,
                   itemCount: _productosDestacados.length,
-                  onPageChanged: (index) => setState(() => _currentPage = index),
+                  onPageChanged: (index) =>
+                      setState(() => _currentPage = index),
                   itemBuilder: (context, index) {
                     final product = _productosDestacados[index];
                     return Container(
@@ -79,7 +81,8 @@ class _ProductsCarouselState extends State<ProductsCarousel> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (_) => ProductDetailView(product: product),
+                              builder: (_) =>
+                                  ProductDetailView(productId: product.id),
                             ),
                           );
                         },
@@ -102,22 +105,30 @@ class _ProductsCarouselState extends State<ProductsCarousel> {
                                       margin: const EdgeInsets.all(8),
                                       decoration: BoxDecoration(
                                         borderRadius: BorderRadius.circular(16),
-                                        color: const Color.fromARGB(255, 255, 255, 255),
+                                        color: const Color.fromARGB(
+                                            255, 255, 255, 255),
                                       ),
                                       child: ClipRRect(
-                                        
                                         borderRadius: BorderRadius.circular(16),
-                                        child: (product.imagenUrl?.isNotEmpty ?? false)
+                                        child: (product.imagenUrl?.isNotEmpty ??
+                                                false)
                                             ? Image.network(
                                                 product.imagenUrl!,
-                                                fit: BoxFit.contain, // 🔹 para que llene más el espacio
+                                                fit: BoxFit
+                                                    .contain, // 🔹 para que llene más el espacio
                                                 width: double.infinity,
-                                                errorBuilder: (_, __, ___) => const Center(
-                                                  child: Icon(Icons.image_not_supported, size: 40, color: Colors.grey),
+                                                errorBuilder: (_, __, ___) =>
+                                                    const Center(
+                                                  child: Icon(
+                                                      Icons.image_not_supported,
+                                                      size: 40,
+                                                      color: Colors.grey),
                                                 ),
                                               )
                                             : const Center(
-                                                child: Icon(Icons.image, size: 40, color: Colors.grey),
+                                                child: Icon(Icons.image,
+                                                    size: 40,
+                                                    color: Colors.grey),
                                               ),
                                       ),
                                     ),
@@ -136,7 +147,8 @@ class _ProductsCarouselState extends State<ProductsCarousel> {
                                           ),
                                           onPressed: () {
                                             // TODO: Aquí colocas tu lógica de favorito
-                                            print("Favorito: ${product.nombreProducto}");
+                                            print(
+                                                "Favorito: ${product.nombreProducto}");
                                           },
                                         ),
                                       ),
@@ -145,12 +157,14 @@ class _ProductsCarouselState extends State<ProductsCarousel> {
                                 ),
                               ),
 
-                               Expanded(
+                              Expanded(
                                 child: Padding(
-                                  padding: const EdgeInsets.symmetric(horizontal: 8),
+                                  padding:
+                                      const EdgeInsets.symmetric(horizontal: 8),
                                   child: Column(
                                     mainAxisAlignment: MainAxisAlignment.start,
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       SizedBox(
                                         width: double.infinity,
@@ -194,14 +208,18 @@ class _ProductsCarouselState extends State<ProductsCarousel> {
                 if (_currentPage > 0)
                   Positioned(
                     left: 8,
-                    child: _arrowButton(icon: Icons.arrow_back_ios, onPressed: _previousPage),
+                    child: _arrowButton(
+                        icon: Icons.arrow_back_ios, onPressed: _previousPage),
                   ),
 
                 // Botón derecho
                 if (_currentPage < _productosDestacados.length - 1)
                   Positioned(
                     right: 8,
-                    child: _arrowButton(icon: Icons.arrow_forward_ios, onPressed: () => _nextPage(_productosDestacados.length)),
+                    child: _arrowButton(
+                        icon: Icons.arrow_forward_ios,
+                        onPressed: () =>
+                            _nextPage(_productosDestacados.length)),
                   ),
               ],
             ),
@@ -215,7 +233,8 @@ class _ProductsCarouselState extends State<ProductsCarousel> {
     );
   }
 
-  Widget _arrowButton({required IconData icon, required VoidCallback onPressed}) {
+  Widget _arrowButton(
+      {required IconData icon, required VoidCallback onPressed}) {
     return Container(
       decoration: BoxDecoration(
         color: AppColors.primaryPink, //  Rosado clarito

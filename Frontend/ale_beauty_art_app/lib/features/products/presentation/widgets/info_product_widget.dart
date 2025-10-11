@@ -28,7 +28,7 @@ class InfoProduct extends StatelessWidget {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (_) => ProductDetailView(product: product),
+                builder: (_) => ProductDetailView(productId: product.id),
               ),
             );
           },
@@ -60,15 +60,17 @@ class InfoProduct extends StatelessWidget {
                                   fit: BoxFit.contain,
                                   width: double.infinity,
                                   errorBuilder: (_, __, ___) => const Center(
-                                    child: Icon(Icons.image_not_supported, size: 40, color: Colors.grey),
+                                    child: Icon(Icons.image_not_supported,
+                                        size: 40, color: Colors.grey),
                                   ),
                                 )
                               : const Center(
-                                  child: Icon(Icons.image, size: 40, color: Colors.grey),
+                                  child: Icon(Icons.image,
+                                      size: 40, color: Colors.grey),
                                 ),
                         ),
                       ),
-                      
+
                       // Botón de favoritos
                       Positioned(
                         top: 4,
@@ -94,10 +96,11 @@ class InfoProduct extends StatelessWidget {
 
                 // Nombre del producto
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                   child: Text(
                     product.nombreProducto,
-                    style:TextStyle(
+                    style: TextStyle(
                       fontWeight: FontWeight.w600,
                       fontSize: 14,
                     ),

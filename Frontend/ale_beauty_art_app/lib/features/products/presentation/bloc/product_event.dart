@@ -8,3 +8,11 @@ sealed class ProductsEvent extends Equatable {
 }
 
 class ProductFetched extends ProductsEvent {}
+
+class ProductDetailRequested extends ProductsEvent {
+  final int productId;
+  const ProductDetailRequested(this.productId);
+
+  @override
+  List<Object> get props => [productId];
+}

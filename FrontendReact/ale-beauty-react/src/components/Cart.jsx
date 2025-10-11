@@ -83,16 +83,35 @@ function Cart() {
         return res.json();
       })
       .then((data) => {
-        if (data && data.cart) {
+        if (data?.cart) {
           setCart(data.cart);
 
-          // 🔔 Notificar al Header que el carrito cambió
-          window.dispatchEvent(new CustomEvent("cartUpdatedCustom", { bubbles: false }));
+          // ✅ Si es incremento, dispara el evento GA4
+          if (increment && window.gtag) {
+            const product = data.cart.products.find(
+              (p) => p.product_id === productId
+            );
+
+            if (product) {
+              window.gtag("event", "add_to_cart", {
+                currency: "COP",
+                value: product.precio_producto,
+                items: [
+                  {
+                    item_id: product.product_id,
+                    item_name: product.nombre_producto,
+                    price: product.precio_producto,
+                    quantity: product.cantidad,
+                  },
+                ],
+              });
+
+              console.log("🛒 Evento GA4 enviado: add_to_cart", product);
+            }
+          }
         }
       })
-      .catch(() => {
-        setError(t("cart.updatingError"));
-      })
+      .catch(() => setError(t("cart.updatingError")))
       .finally(() => setUpdating(false));
   };
 
