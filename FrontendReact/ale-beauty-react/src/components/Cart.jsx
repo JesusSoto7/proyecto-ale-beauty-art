@@ -85,7 +85,7 @@ function Cart() {
       .then((data) => {
         if (data?.cart) {
           setCart(data.cart);
-
+          window.dispatchEvent(new CustomEvent("cartUpdatedCustom", { bubbles: false }));
           // ✅ Si es incremento, dispara el evento GA4
           if (increment && window.gtag) {
             const product = data.cart.products.find(
