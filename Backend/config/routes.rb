@@ -46,6 +46,8 @@ Rails.application.routes.draw do
         resources :reviews, only: [:index, :create, :update, :destroy]
       end
 
+      post '/api/ia', to: 'ai#ask'
+
 
       resources :categories
 
