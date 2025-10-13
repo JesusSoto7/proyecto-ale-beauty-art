@@ -300,7 +300,7 @@ function ProductosCliente() {
 
   return (
     <section style={{marginTop: "90px", padding: "20px"}}>
-       <div style={{ 
+      <div style={{ 
         marginBottom: "20px", 
         padding: "10px 0",
         borderBottom: "1px solid #f0f0f0"
@@ -314,6 +314,7 @@ function ProductosCliente() {
           Mostrando <strong>{filteredProducts.length}</strong> de <strong>{products.length}</strong> productos
         </p>
       </div>
+
       <div style={{ display: "flex", gap: "30px" }}>
         {/* Sidebar de filtros - Estructura como la imagen */}
         <div style={{ width: "250px", flexShrink: 0 }}>
@@ -560,22 +561,24 @@ function ProductosCliente() {
             </div>
           </div>
 
-          {/* Grid de productos - Estilo como la imagen */}
+          {/* Grid de productos con cards idénticas a las de inicio */}
           <div style={{ 
             display: "grid", 
             gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))", 
             gap: "20px" 
           }}>
-            {filteredProducts.map((prod) => (
+            {filteredProducts.map((prod, index) => (
               <div 
                 key={prod.id} 
+                className="product-card"
                 style={{ 
                   position: "relative",
                   border: "1px solid #e0e0e0",
                   borderRadius: "8px",
                   padding: "15px",
                   backgroundColor: "white",
-                  boxShadow: "0 2px 4px rgba(0,0,0,0.1)"
+                  boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
+                  animationDelay: `${index * 0.1}s`
                 }}
               >
                 <IconButton
@@ -585,13 +588,23 @@ function ProductosCliente() {
                     top: 8,
                     right: 8,
                     bgcolor: "white",
-                    "&:hover": { bgcolor: "grey.200" },
+                    "&:hover": { bgcolor: "rgba(255, 77, 148, 0.1)" },
+                    transition: "all 0.3s ease",
+                    border: "1px solid #e0e0e0"
                   }}
                 >
                   {favoriteIds.includes(prod.id) ? (
-                    <Favorite sx={{ color: "#ff4d94" }} />
+                    <Favorite sx={{ 
+                      color: "#ff4d94",
+                      fontSize: "20px",
+                      transition: "all 0.3s ease"
+                    }} />
                   ) : (
-                    <FavoriteBorder sx={{ color: "#666" }} />
+                    <FavoriteBorder sx={{ 
+                      color: "#666", 
+                      fontSize: "20px",
+                      transition: "all 0.3s ease"
+                    }} />
                   )}
                 </IconButton>
 
@@ -599,6 +612,7 @@ function ProductosCliente() {
                   to={`/${lang}/producto/${prod.slug}`}
                   style={{ textDecoration: "none", color: "inherit" }}
                 >
+                  {/* Imagen SIN animación */}
                   <div style={{ 
                     height: "150px", 
                     display: "flex", 
@@ -619,52 +633,55 @@ function ProductosCliente() {
                     />
                   </div>
                   
-                  {/* Rating */}
-                  <div style={{ display: "flex", alignItems: "center", marginBottom: "5px" }}>
-                    <Rating
-                      name={`product-rating-${prod.id}`}
-                      value={productRatings[prod.id]?.avg || 0}
-                      precision={0.5}
-                      readOnly
-                      size="small"
-                      sx={{ color: "#ffc107", marginRight: "5px" }}
-                    />
-                    <span style={{ fontSize: "14px", marginLeft: "4px" }}>
-                      {productRatings[prod.id]?.avg ? productRatings[prod.id].avg.toFixed(1) : "0.0"}
-                    </span>
-                  </div>
-                  
-                  {/* Nombre del producto */}
-                  <h5 style={{ 
-                    margin: "5px 0", 
-                    fontSize: "16px",
-                    fontWeight: "bold",
-                    overflow: "hidden",
-                    textOverflow: "ellipsis",
-                    whiteSpace: "nowrap"
-                  }}>
-                    {prod.nombre_producto}
-                  </h5>
-                  
-                  {/* Precio */}
-                  <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-                    <p style={{ 
-                      margin: 0, 
+                  {/* Contenedor de información CON animaciones */}
+                  <div className="product-info-container">
+                    {/* Rating */}
+                    <div style={{ display: "flex", alignItems: "center", marginBottom: "5px" }} className="product-rating">
+                      <Rating
+                        name={`product-rating-${prod.id}`}
+                        value={productRatings[prod.id]?.avg || 0}
+                        precision={0.5}
+                        readOnly
+                        size="small"
+                        sx={{ color: "#ffc107", marginRight: "5px" }}
+                      />
+                      <span style={{ fontSize: "14px", marginLeft: "4px" }} className="rating-value">
+                        {productRatings[prod.id]?.avg ? productRatings[prod.id].avg.toFixed(1) : "0.0"}
+                      </span>
+                    </div>
+                    
+                    {/* Nombre del producto */}
+                    <h5 style={{ 
+                      margin: "5px 0", 
+                      fontSize: "16px",
                       fontWeight: "bold",
-                      color: "#ff4d94"
-                    }}>
-                      {formatCOP(prod.precio_producto)}
-                    </p>
-                    {prod.precio_original && prod.precio_original > prod.precio_producto && (
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                      whiteSpace: "nowrap"
+                    }} className="product-name">
+                      {prod.nombre_producto}
+                    </h5>
+                    
+                    {/* Precio */}
+                    <div style={{ display: "flex", alignItems: "center", gap: "10px" }} className="product-prices">
                       <p style={{ 
                         margin: 0, 
-                        textDecoration: "line-through",
-                        color: "#999",
-                        fontSize: "14px"
-                      }}>
-                        {formatCOP(prod.precio_original)}
+                        fontWeight: "bold",
+                        color: "#ff4d94"
+                      }} className="product-price">
+                        {formatCOP(prod.precio_producto)}
                       </p>
-                    )}
+                      {prod.precio_original && prod.precio_original > prod.precio_producto && (
+                        <p style={{ 
+                          margin: 0, 
+                          textDecoration: "line-through",
+                          color: "#999",
+                          fontSize: "14px"
+                        }} className="product-original-price">
+                          {formatCOP(prod.precio_original)}
+                        </p>
+                      )}
+                    </div>
                   </div>
                 </Link>
 
@@ -679,8 +696,10 @@ function ProductosCliente() {
                       border: "none",
                       borderRadius: "4px",
                       cursor: "pointer",
-                      fontSize: "14px"
+                      fontSize: "14px",
+                      transition: "all 0.3s ease"
                     }}
+                    className="add-to-cart-btn"
                   >
                     {t('products.addToCart')}
                   </button>
@@ -690,6 +709,127 @@ function ProductosCliente() {
           </div>
         </div>
       </div>
+
+      {/* Estilos idénticos a los de inicio */}
+      <style>
+        {`
+          .carousel-container {
+            width: 100%;
+            overflow-x: auto;
+            padding-bottom: 10px;
+          }
+          .carousel-items {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+          }
+          .product-card {
+            min-width: 220px;
+            max-width: 250px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+            border: 1px solid #e0e0e0;
+            padding: 15px;
+            position: relative;
+            transition: box-shadow 0.3s, transform 0.3s, border-color 0.3s;
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
+          }
+          .product-card:hover {
+            box-shadow: 0 12px 35px rgba(0,0,0,0.15);
+            border-color: #ff4d94;
+            transform: translateY(-8px) scale(1.03);
+            z-index: 2;
+          }
+          .image-container {
+            width: 100%;
+            height: 150px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 10px;
+            overflow: hidden;
+          }
+          .image-container img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            transition: transform 0.3s;
+          }
+          .product-card:hover .image-container img {
+            transform: scale(1.07);
+          }
+          .product-info-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+          }
+          .product-card h5 {
+            font-size: 16px;
+            font-weight: bold;
+            margin: 5px 0;
+            transition: color 0.3s;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+          }
+          .product-card:hover h5 {
+            color: #ff4d94;
+          }
+          .product-card .product-price {
+            margin: 0;
+            font-weight: bold;
+            color: #ff4d94;
+            font-size: 15px;
+            transition: color 0.3s, transform 0.3s;
+          }
+          .product-card:hover .product-price {
+            color: #ff2d7a;
+            transform: scale(1.05);
+          }
+          .product-card .product-original-price {
+            margin: 0;
+            text-decoration: line-through;
+            color: #999;
+            font-size: 14px;
+            transition: color 0.3s, transform 0.3s;
+          }
+          .product-card:hover .product-original-price {
+            color: #777;
+            transform: scale(1.05);
+          }
+          .actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+            align-items: center;
+          }
+          .add-to-cart-btn {
+            width: 100%;
+            padding: 8px;
+            background-color: #ff4d94;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background 0.3s, box-shadow 0.3s, transform 0.3s;
+          }
+          .product-card:hover .add-to-cart-btn {
+            background-color: #ff2d7a !important;
+            box-shadow: 0 6px 20px rgba(255, 77, 148, 0.4);
+            transform: translateY(-3px);
+          }
+          .add-to-cart-btn:hover {
+            background-color: #ff1a6d !important;
+            transform: translateY(-3px) scale(1.05) !important;
+            box-shadow: 0 8px 25px rgba(255, 77, 148, 0.5) !important;
+          }
+        `}
+      </style>
     </section>
   );
 }
