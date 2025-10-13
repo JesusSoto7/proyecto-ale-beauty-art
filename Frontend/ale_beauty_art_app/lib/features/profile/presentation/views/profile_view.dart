@@ -1,6 +1,8 @@
 import 'package:ale_beauty_art_app/core/views/login_view.dart';
 import 'package:ale_beauty_art_app/features/auth/bloc/auth_bloc.dart';
 import 'package:ale_beauty_art_app/features/favorites/presentation/view/favorite_page.dart';
+import 'package:ale_beauty_art_app/features/orders/presentation/bloc/order_bloc.dart';
+import 'package:ale_beauty_art_app/features/orders/presentation/views/orders_page.dart';
 import 'package:ale_beauty_art_app/features/shipping_address/presentation/bloc/shipping_address_bloc.dart';
 import 'package:ale_beauty_art_app/features/shipping_address/presentation/bloc/shipping_address_event.dart';
 import 'package:ale_beauty_art_app/features/shipping_address/presentation/views/shipping_address_page.dart';
@@ -8,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ale_beauty_art_app/styles/colors.dart';
 import 'package:ale_beauty_art_app/styles/text_styles.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class ProfileView extends StatelessWidget {
   const ProfileView({super.key});
@@ -134,8 +137,28 @@ class ProfileView extends StatelessWidget {
               child: Column(
                 children: [
                   _buildOptionTile(Icons.shopping_bag, 'Mis pedidos', () {
-                    // TODO: Navegar a pedidos
+                    final authState = context.read<AuthBloc>().state;
+                    print("🔍 ESTADO AUTH ACTUAL => $authState");
+                    final token = authState is AuthSuccess ? authState.token : "";
+                    final apiUrl = "${dotenv.env['API_BASE_URL']}/api/v1";
+
+                    print("🧾 TOKEN DESDE AUTHBLOC => $token");
+                    print("🌍 API URL => $apiUrl");
+
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => BlocProvider(
+                          create: (context) => OrderBloc(apiUrl: apiUrl, jwtToken: token)
+                            ..add(FetchOrders()),
+                          child: const OrdersPage(),
+                        ),
+                      ),
+                    );
                   }),
+
+
+
                   _buildOptionTile(Icons.favorite, 'Favoritos', () async {
                     // TODO: Navegar a favoritos
                     final authState = context.read<AuthBloc>().state;

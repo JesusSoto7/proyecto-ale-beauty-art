@@ -5,6 +5,7 @@ import 'package:ale_beauty_art_app/features/checkout/payment/presentation/bloc/p
 import 'package:ale_beauty_art_app/features/favorites/presentation/bloc/favorite_bloc.dart';
 import 'package:ale_beauty_art_app/features/navigation/bloc/navigation_bloc.dart';
 import 'package:ale_beauty_art_app/features/orders/presentation/bloc/order_bloc.dart';
+import 'package:ale_beauty_art_app/features/orders/presentation/views/orders_page.dart';
 import 'package:ale_beauty_art_app/features/profile/presentation/bloc/profile_bloc.dart';
 import 'package:ale_beauty_art_app/features/shipping_address/presentation/bloc/shipping_address_bloc.dart';
 import 'package:flutter/material.dart';
@@ -35,7 +36,7 @@ class MyApp extends StatelessWidget {
         BlocProvider(create: (_) => AuthBloc()),
         BlocProvider(create: (_) => CartBloc()),
         BlocProvider(create: (_) => ShippingAddressBloc()),
-        BlocProvider(create: (_) => OrderBloc()),
+
         BlocProvider(
           create: (context) {
             final authState = context.read<AuthBloc>().state;
