@@ -4,10 +4,6 @@ import { useTranslation } from 'react-i18next';
 import IconButton from '@mui/joy/IconButton';
 import FavoriteBorder from '@mui/icons-material/FavoriteBorder';
 import Favorite from "@mui/icons-material/Favorite";
-import FilterListIcon from '@mui/icons-material/FilterList';
-import Menu from '@mui/material/Menu';
-import MenuItem from '@mui/material/MenuItem';
-import Chip from '@mui/material/Chip';
 import CircularProgress from '@mui/material/CircularProgress';
 import Divider from '@mui/material/Divider';
 import Typography from '@mui/material/Typography';
@@ -20,17 +16,15 @@ import { useOutletContext } from "react-router-dom";
 function ProductosCliente() {
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]); 
-  const [subcategories, setSubcategories] = useState([]);
   const [token, setToken] = useState(null);
   const [cart, setCart] = useState(null);
   const { favoriteIds, loadFavorites } = useOutletContext();
   const [selectedCategory, setSelectedCategory] = useState("Todos");
   const [selectedSubcategory, setSelectedSubcategory] = useState("Todos");
-  const [anchorEl, setAnchorEl] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [sortOrder, setSortOrder] = useState(null); // ⬅️ asc | desc
+  const [sortOrder, setSortOrder] = useState(null);
   const [priceRange, setPriceRange] = useState({ min: "", max: "" });
-  const [productRatings, setProductRatings] = useState({}); // { [productId]: { avg, count } }
+  const [productRatings, setProductRatings] = useState({});
   const [selectedRatings, setSelectedRatings] = useState([]);
 
   const { lang } = useParams();
@@ -44,7 +38,6 @@ function ProductosCliente() {
   useEffect(() => {
     if (!token) return;
 
-    // Cargar productos, categorías, subcategorías, carrito y favoritos
     const loadData = async () => {
       try {
         setLoading(true);
@@ -64,7 +57,6 @@ function ProductosCliente() {
           })
         ]);
 
-        // Verificar que las respuestas sean exitosas
         if (!productsResponse.ok) throw new Error('Error cargando productos');
         if (!categoriesResponse.ok) throw new Error('Error cargando categorías');
         if (!cartResponse.ok) throw new Error('Error cargando carrito');
@@ -77,32 +69,49 @@ function ProductosCliente() {
           favoritesResponse.json()
         ]);
 
+        // Procesar productos
         const prods = Array.isArray(productsData) ? productsData : productsData.products || [];
         setProducts(prods);
-        
+
+        // DEBUG: Ver estructura real de productos
+        console.log("=== ESTRUCTURA DE PRODUCTOS ===");
+        if (prods.length > 0) {
+          console.log("Primer producto completo:", prods[0]);
+          console.log("Campos del primer producto:", Object.keys(prods[0]));
+          
+          // Ver campos de subcategoría en los primeros 3 productos
+          prods.slice(0, 3).forEach((p, i) => {
+            console.log(`Producto ${i} - ${p.nombre_producto}:`, {
+              id: p.id,
+              sub_category_id: p.sub_category_id,
+              subcategoria_id: p.subcategoria_id,
+              subcategory_id: p.subcategory_id
+            });
+          });
+        }
+
+        // Procesar categorías
         const arr = Array.isArray(categoriesData) ? categoriesData : categoriesData.categories || [];
-        const normalized = arr.map(c => ({
-          id: c.id_categoria || c.id,
-          nombre: c.nombre_categoria || c.nombre,
-          sub_categories: Array.isArray(c.sub_categories) ? c.sub_categories.map(sc => ({
-            id: sc.id_subcategoria || sc.id,
-            nombre: sc.nombre_subcategoria || sc.nombre,
-            categoria_id: sc.categoria_id || c.id
-          })) : []
-        }));
-        setCategories(normalized);
-        setCart(cartData.cart);
+        setCategories(arr);
 
-        // Extraer todas las subcategorías de las categorías
-        const allSubcategories = [];
-        normalized.forEach(category => {
-          if (Array.isArray(category.sub_categories)) {
-            allSubcategories.push(...category.sub_categories);
-          }
-        });
-        setSubcategories(allSubcategories);
+        // DEBUG: Ver estructura real de categorías y subcategorías
+        console.log("=== ESTRUCTURA DE CATEGORÍAS Y SUBCATEGORÍAS ===");
+        if (arr.length > 0) {
+          arr.forEach((cat, i) => {
+            console.log(`Categoría ${i} - ${cat.nombre_categoria || cat.nombre}:`, {
+              id: cat.id,
+              id_categoria: cat.id_categoria,
+              sub_categories: cat.sub_categories ? cat.sub_categories.map(sc => ({
+                id: sc.id,
+                id_subcategoria: sc.id_subcategoria,
+                nombre: sc.nombre_subcategoria || sc.nombre,
+                categoria_id: sc.categoria_id
+              })) : 'No tiene subcategorías'
+            });
+          });
+        }
 
-        // --- Cargar ratings de cada producto ---
+        // Cargar ratings
         const ratingsObj = {};
         await Promise.all(prods.map(async (p) => {
           try {
@@ -122,6 +131,8 @@ function ProductosCliente() {
         }));
         setProductRatings(ratingsObj);
 
+        setCart(cartData.cart);
+
       } catch (err) {
         console.error("Error cargando datos", err);
       } finally {
@@ -132,54 +143,75 @@ function ProductosCliente() {
     loadData();
   }, [token]);
 
-  // Filtrar subcategorías según la categoría seleccionada
-  const filteredSubcategories = selectedCategory === "Todos" 
-    ? subcategories 
-    : subcategories.filter(sc => String(sc.categoria_id) === String(selectedCategory));
-
-  if (!token) return <p>{t('products.notAuthenticated')}</p>;
-
-  if (loading) {
-    return (
-      <div style={{ textAlign: "center", marginTop: "50px" }}>
-        <CircularProgress style={{ color: "#ff4d94" }} />
-        <p style={{ color: "#ff4d94", marginTop: "10px" }}>Cargando...</p>
-      </div>
+  // Obtener subcategorías de la categoría seleccionada
+  const getSubcategoriesForCategory = (categoryId) => {
+    if (categoryId === "Todos") return [];
+    
+    const category = categories.find(c => 
+      String(c.id_categoria || c.id) === String(categoryId)
     );
-  }
+    
+    return category?.sub_categories || [];
+  };
 
-  if (products.length === 0) {
-    return (
-      <div style={{ textAlign: "center", marginTop: "50px" }}>
-        <CircularProgress style={{ color: "pink" }} />
-        <p style={{ color: "pink", marginTop: "10px" }}>Cargando...</p>
-      </div>
-    );
-  }
+  const filteredSubcategories = getSubcategoriesForCategory(selectedCategory);
 
-  // --- FILTROS ---
+  // --- FILTROS CORREGIDOS CON LA NUEVA ESTRUCTURA ---
   let filteredProducts = products;
 
-  // Filtro por subcategoría (tiene prioridad sobre categoría)
+  console.log("=== INICIO FILTRADO ===");
+  console.log("Productos totales:", products.length);
+  console.log("Categoría seleccionada:", selectedCategory);
+  console.log("Subcategoría seleccionada:", selectedSubcategory);
+
+  // 1. Primero filtro por subcategoría (si está seleccionada)
   if (selectedSubcategory !== "Todos") {
+    console.log("🔍 FILTRANDO POR SUBCATEGORÍA:", selectedSubcategory);
+    
     filteredProducts = filteredProducts.filter(p => {
-      const subcatId = p.subcategoria_id || p.subcategory_id;
-      return String(subcatId) === String(selectedSubcategory);
+      // Buscar en el campo sub_category_id (con guion bajo)
+      const productSubcatId = p.sub_category_id;
+      const matches = String(productSubcatId) === String(selectedSubcategory);
+      
+      console.log(`Producto ${p.id} - ${p.nombre_producto}:`, {
+        sub_category_id: p.sub_category_id,
+        selectedSubcategory: selectedSubcategory,
+        matches: matches
+      });
+      
+      return matches;
     });
-  }
-  // Filtro por categoría (solo si no hay subcategoría seleccionada)
+    
+    console.log("📊 Productos después de filtrar por subcategoría:", filteredProducts.length);
+  } 
+  // 2. Si no hay subcategoría seleccionada, filtrar por categoría
   else if (selectedCategory !== "Todos") {
+    console.log("🔍 FILTRANDO POR CATEGORÍA:", selectedCategory);
+    
+    // Obtener todas las subcategorías de esta categoría
+    const categorySubcategories = getSubcategoriesForCategory(selectedCategory);
+    const subcategoryIds = categorySubcategories.map(sc => sc.id_subcategoria || sc.id);
+    
+    console.log("Subcategorías de esta categoría:", subcategoryIds);
+    
     filteredProducts = filteredProducts.filter(p => {
-      // Buscar la subcategoría del producto
-      const productSubcategory = subcategories.find(sc => 
-        String(sc.id) === String(p.subcategoria_id || p.subcategory_id)
-      );
-      // Si el producto tiene subcategoría y esta pertenece a la categoría seleccionada
-      return productSubcategory && String(productSubcategory.categoria_id) === String(selectedCategory);
+      // El producto pertenece a la categoría si su sub_category_id está en las subcategorías de esta categoría
+      const productSubcatId = p.sub_category_id;
+      const matches = subcategoryIds.includes(String(productSubcatId));
+      
+      console.log(`Producto ${p.id} - ${p.nombre_producto}:`, {
+        sub_category_id: productSubcatId,
+        subcategoryIds: subcategoryIds,
+        matches: matches
+      });
+      
+      return matches;
     });
+    
+    console.log("📊 Productos después de filtrar por categoría:", filteredProducts.length);
   }
 
-  // Filtro por rango de precio
+  // 3. Resto de filtros (precio, rating, ordenamiento)
   if (priceRange.min || priceRange.max) {
     filteredProducts = filteredProducts.filter(p => {
       const price = p.precio_producto;
@@ -190,7 +222,6 @@ function ProductosCliente() {
     });
   }
 
-  // Filtro por rating
   if (selectedRatings.length > 0) {
     filteredProducts = filteredProducts.filter(p => {
       const productRating = Math.floor(productRatings[p.id]?.avg || 0);
@@ -198,19 +229,23 @@ function ProductosCliente() {
     });
   }
 
-  // Ordenar
   if (sortOrder === "asc") {
     filteredProducts = [...filteredProducts].sort((a, b) => a.precio_producto - b.precio_producto);
   } else if (sortOrder === "desc") {
     filteredProducts = [...filteredProducts].sort((a, b) => b.precio_producto - a.precio_producto);
   }
 
+  console.log("🎯 Productos finales filtrados:", filteredProducts.length);
+  console.log("=== FIN FILTRADO ===");
+
   const handleSelectCategory = (catId) => {
+    console.log("📝 Seleccionando categoría:", catId);
     setSelectedCategory(catId);
-    setSelectedSubcategory("Todos"); // Resetear subcategoría cuando cambia la categoría
+    setSelectedSubcategory("Todos"); // Resetear subcategoría al cambiar categoría
   };
 
   const handleSelectSubcategory = (subcatId) => {
+    console.log("📝 Seleccionando subcategoría:", subcatId);
     setSelectedSubcategory(subcatId);
   };
 
@@ -241,7 +276,6 @@ function ProductosCliente() {
   const toggleFavorite = async (productId) => {
     try {
       if (favoriteIds.includes(productId)) {
-        // ❌ quitar favorito
         const res = await fetch(
           `https://localhost:4000/api/v1/favorites/${productId}`,
           {
@@ -250,10 +284,9 @@ function ProductosCliente() {
           }
         );
         if (res.ok) {
-          await loadFavorites(); // 🔄 refresca favoritos globales
+          await loadFavorites();
         }
       } else {
-        // ❤️ añadir favorito
         const res = await fetch("https://localhost:4000/api/v1/favorites", {
           method: "POST",
           headers: {
@@ -264,7 +297,7 @@ function ProductosCliente() {
         });
         const data = await res.json();
         if (data.success) {
-          await loadFavorites(); // 🔄 refresca favoritos globales
+          await loadFavorites();
         }
       }
     } catch (err) {
@@ -285,8 +318,6 @@ function ProductosCliente() {
       .then((data) => {
         if (data.cart) {
           setCart(data.cart);
-
-          // Disparar evento para actualizar el Header
           window.dispatchEvent(new CustomEvent("cartUpdatedCustom", { bubbles: false }));
         } else if (data.errors) {
           alert(t('productDetails.error') + data.errors.join(", "));
@@ -298,6 +329,26 @@ function ProductosCliente() {
       });
   };
 
+  if (!token) return <p>{t('products.notAuthenticated')}</p>;
+
+  if (loading) {
+    return (
+      <div style={{ textAlign: "center", marginTop: "50px" }}>
+        <CircularProgress style={{ color: "#ff4d94" }} />
+        <p style={{ color: "#ff4d94", marginTop: "10px" }}>Cargando...</p>
+      </div>
+    );
+  }
+
+  if (products.length === 0) {
+    return (
+      <div style={{ textAlign: "center", marginTop: "50px" }}>
+        <CircularProgress style={{ color: "pink" }} />
+        <p style={{ color: "pink", marginTop: "10px" }}>Cargando...</p>
+      </div>
+    );
+  }
+
   return (
     <section style={{marginTop: "90px"}}>
       {/* Banner gris grande */}
@@ -307,8 +358,7 @@ function ProductosCliente() {
         textAlign: "center",
         marginBottom: "30px",
         borderBottom: "1px solid #e0e0e0",
-        width: "100%",
-        height: "210px"
+        width: "100%"
       }}>
         <h1 style={{
           margin: 0,
@@ -342,17 +392,37 @@ function ProductosCliente() {
             fontFamily: "Arial, sans-serif"
           }}>
             Mostrando <strong>{filteredProducts.length}</strong> de <strong>{products.length}</strong> productos
+            {selectedCategory !== "Todos" && (
+              <span style={{marginLeft: "10px", color: "#ff4d94"}}>
+                • Categoría: {categories.find(c => String(c.id_categoria || c.id) === String(selectedCategory))?.nombre_categoria}
+              </span>
+            )}
+            {selectedSubcategory !== "Todos" && (
+              <span style={{marginLeft: "10px", color: "#ff4d94"}}>
+                • Subcategoría: {filteredSubcategories.find(sc => String(sc.id_subcategoria || sc.id) === String(selectedSubcategory))?.nombre_subcategoria}
+              </span>
+            )}
+            {(priceRange.min || priceRange.max) && (
+              <span style={{marginLeft: "10px", color: "#ff4d94"}}>
+                • Precio: {priceRange.min ? `$${priceRange.min}` : "Mín"} - {priceRange.max ? `$${priceRange.max}` : "Máx"}
+              </span>
+            )}
+            {selectedRatings.length > 0 && (
+              <span style={{marginLeft: "10px", color: "#ff4d94"}}>
+                • Rating: {selectedRatings.map(r => `${r}★`).join(", ")}
+              </span>
+            )}
           </p>
         </div>
 
         <div style={{ display: "flex", gap: "30px" }}>
-          {/* Sidebar de filtros - Estructura como la imagen */}
+          {/* Sidebar de filtros */}
           <div style={{ width: "250px", flexShrink: 0 }}>
             <Typography variant="h6" style={{ marginBottom: "15px", fontWeight: "bold" }}>
-              Filter Options
+              Filtros
             </Typography>
 
-            {/* By Categories */}
+            {/* Categorías */}
             <div style={{ marginBottom: "25px" }}>
               <Typography variant="subtitle1" style={{ fontWeight: "bold", marginBottom: "10px" }}>
                 Categorías
@@ -362,44 +432,60 @@ function ProductosCliente() {
                   <input
                     type="radio"
                     name="category"
-                    checked={selectedCategory === "Todos" && selectedSubcategory === "Todos"}
-                    onChange={handleClearAllFilters}
+                    checked={selectedCategory === "Todos"}
+                    onChange={() => handleSelectCategory("Todos")}
                     style={{ marginRight: "8px" }}
                   />
-                  Todos
+                  Todas las categorías
                 </label>
                 {categories.map(cat => (
-                  <div key={cat.id}>
-                    <label style={{ display: "flex", alignItems: "center", cursor: "pointer" }}>
-                      <input
-                        type="radio"
-                        name="category"
-                        checked={String(cat.id) === String(selectedCategory) && selectedSubcategory === "Todos"}
-                        onChange={() => handleSelectCategory(cat.id)}
-                        style={{ marginRight: "8px" }}
-                      />
-                      {cat.nombre}
-                    </label>
-                    
-                    {/* Mostrar subcategorías si esta categoría está seleccionada */}
-                    {String(cat.id) === String(selectedCategory) && cat.sub_categories && cat.sub_categories.length > 0 && (
-                      <div style={{ marginLeft: "20px", marginTop: "5px" }}>
-                        {cat.sub_categories.map(sub => (
-                          <label key={sub.id} style={{ display: "flex", alignItems: "center", cursor: "pointer", marginBottom: "3px" }}>
-                            <input
-                              type="radio"
-                              name="subcategory"
-                              checked={String(sub.id) === String(selectedSubcategory)}
-                              onChange={() => handleSelectSubcategory(sub.id)}
-                              style={{ marginRight: "8px" }}
-                            />
-                            {sub.nombre}
-                          </label>
-                        ))}
-                      </div>
-                    )}
-                  </div>
+                  <label key={cat.id_categoria || cat.id} style={{ display: "flex", alignItems: "center", cursor: "pointer" }}>
+                    <input
+                      type="radio"
+                      name="category"
+                      checked={String(cat.id_categoria || cat.id) === String(selectedCategory)}
+                      onChange={() => handleSelectCategory(cat.id_categoria || cat.id)}
+                      style={{ marginRight: "8px" }}
+                    />
+                    {cat.nombre_categoria || cat.nombre}
+                  </label>
                 ))}
+              </div>
+            </div>
+
+            {/* Subcategorías - SOLO MUESTRA LAS DE LA CATEGORÍA SELECCIONADA */}
+            <div style={{ marginBottom: "25px" }}>
+              <Typography variant="subtitle1" style={{ fontWeight: "bold", marginBottom: "10px" }}>
+                Subcategorías
+              </Typography>
+              <div style={{ display: "flex", flexDirection: "column", gap: "5px" }}>
+                <label style={{ display: "flex", alignItems: "center", cursor: "pointer" }}>
+                  <input
+                    type="radio"
+                    name="subcategory-all"
+                    checked={selectedSubcategory === "Todos"}
+                    onChange={() => handleSelectSubcategory("Todos")}
+                    style={{ marginRight: "8px" }}
+                  />
+                  Todas las subcategorías
+                </label>
+                {filteredSubcategories.map(sub => (
+                  <label key={sub.id_subcategoria || sub.id} style={{ display: "flex", alignItems: "center", cursor: "pointer" }}>
+                    <input
+                      type="radio"
+                      name="subcategory"
+                      checked={String(sub.id_subcategoria || sub.id) === String(selectedSubcategory)}
+                      onChange={() => handleSelectSubcategory(sub.id_subcategoria || sub.id)}
+                      style={{ marginRight: "8px" }}
+                    />
+                    {sub.nombre_subcategoria || sub.nombre}
+                  </label>
+                ))}
+                {filteredSubcategories.length === 0 && selectedCategory !== "Todos" && (
+                  <p style={{ fontSize: "12px", color: "#999", margin: "5px 0" }}>
+                    No hay subcategorías para esta categoría
+                  </p>
+                )}
               </div>
             </div>
 
@@ -445,7 +531,7 @@ function ProductosCliente() {
             {/* Price */}
             <div style={{ marginBottom: "25px" }}>
               <Typography variant="subtitle1" style={{ fontWeight: "bold", marginBottom: "10px" }}>
-                Price
+                Rango de precio
               </Typography>
               <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "10px" }}>
                 <input
@@ -471,7 +557,7 @@ function ProductosCliente() {
             {/* Review */}
             <div style={{ marginBottom: "25px" }}>
               <Typography variant="subtitle1" style={{ fontWeight: "bold", marginBottom: "10px" }}>
-                Review
+                Valoración
               </Typography>
               <div style={{ display: "flex", flexDirection: "column", gap: "5px" }}>
                 {[4, 3, 2, 1].map(rating => (
@@ -485,7 +571,7 @@ function ProductosCliente() {
                     <span style={{ color: "#ffc107", marginRight: "5px" }}>
                       {"★".repeat(rating)}
                     </span>
-                    {rating} Star
+                    {rating} Estrella{rating !== 1 ? 's' : ''}
                   </label>
                 ))}
               </div>
@@ -511,88 +597,10 @@ function ProductosCliente() {
               </button>
             )}
           </div>
-          
 
           {/* Contenido principal */}
           <div style={{ flex: 1 }}>
-            {/* Encabezado con resultados */}
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
-              
-              {/* Filtros activos */}
-              <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
-                {selectedCategory !== "Todos" && (
-                  <div style={{ 
-                    backgroundColor: "#f5f5f5", 
-                    padding: "5px 10px", 
-                    borderRadius: "4px", 
-                    fontSize: "12px",
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "5px"
-                  }}>
-                    Categoría: {categories.find(c => String(c.id) === String(selectedCategory))?.nombre}
-                  </div>
-                )}
-                
-                {selectedSubcategory !== "Todos" && (
-                  <div style={{ 
-                    backgroundColor: "#f5f5f5", 
-                    padding: "5px 10px", 
-                    borderRadius: "4px", 
-                    fontSize: "12px",
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "5px"
-                  }}>
-                    Subcategoría: {subcategories.find(sc => String(sc.id) === String(selectedSubcategory))?.nombre}
-                  </div>
-                )}
-                
-                {sortOrder && (
-                  <div style={{ 
-                    backgroundColor: "#f5f5f5", 
-                    padding: "5px 10px", 
-                    borderRadius: "4px", 
-                    fontSize: "12px",
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "5px"
-                  }}>
-                    Orden: {sortOrder === "asc" ? "Menor a mayor" : "Mayor a menor"}
-                  </div>
-                )}
-                
-                {(priceRange.min || priceRange.max) && (
-                  <div style={{ 
-                    backgroundColor: "#f5f5f5", 
-                    padding: "5px 10px", 
-                    borderRadius: "4px", 
-                    fontSize: "12px",
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "5px"
-                  }}>
-                    Precio: ${priceRange.min || "10.00"} - ${priceRange.max || "100.00"}
-                  </div>
-                )}
-                
-                {selectedRatings.length > 0 && (
-                  <div style={{ 
-                    backgroundColor: "#f5f5f5", 
-                    padding: "5px 10px", 
-                    borderRadius: "4px", 
-                    fontSize: "12px",
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "5px"
-                  }}>
-                    Rating: {selectedRatings.map(r => `${r}★`).join(", ")}
-                  </div>
-                )}
-              </div>
-            </div>
-
-            {/* Grid de productos con cards idénticas a las de inicio */}
+            {/* Grid de productos */}
             <div style={{ 
               display: "grid", 
               gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))", 
@@ -644,7 +652,6 @@ function ProductosCliente() {
                     to={`/${lang}/producto/${prod.slug}`}
                     style={{ textDecoration: "none", color: "inherit" }}
                   >
-                    {/* Imagen SIN animación */}
                     <div style={{ 
                       height: "150px", 
                       display: "flex", 
@@ -665,9 +672,7 @@ function ProductosCliente() {
                       />
                     </div>
                     
-                    {/* Contenedor de información CON animaciones */}
                     <div className="product-info-container">
-                      {/* Rating */}
                       <div style={{ display: "flex", alignItems: "center", marginBottom: "5px" }} className="product-rating">
                         <Rating
                           name={`product-rating-${prod.id}`}
@@ -682,7 +687,6 @@ function ProductosCliente() {
                         </span>
                       </div>
                       
-                      {/* Nombre del producto */}
                       <h5 style={{ 
                         margin: "5px 0", 
                         fontSize: "16px",
@@ -694,7 +698,6 @@ function ProductosCliente() {
                         {prod.nombre_producto}
                       </h5>
                       
-                      {/* Precio */}
                       <div style={{ display: "flex", alignItems: "center", gap: "10px" }} className="product-prices">
                         <p style={{ 
                           margin: 0, 
@@ -739,9 +742,36 @@ function ProductosCliente() {
                 </div>
               ))}
             </div>
+
+            {filteredProducts.length === 0 && (
+              <div style={{ textAlign: "center", padding: "50px", color: "#666" }}>
+                <p style={{ fontSize: "18px", marginBottom: "10px" }}>No se encontraron productos</p>
+                <p style={{ fontSize: "14px" }}>
+                  {selectedCategory !== "Todos" || selectedSubcategory !== "Todos" 
+                    ? "No hay productos para los filtros seleccionados" 
+                    : "Intenta con otros filtros o categorías"}
+                </p>
+                <button 
+                  onClick={handleClearAllFilters}
+                  style={{
+                    padding: "10px 20px",
+                    backgroundColor: "#ff4d94",
+                    color: "white",
+                    border: "none",
+                    borderRadius: "4px",
+                    cursor: "pointer",
+                    fontSize: "14px",
+                    marginTop: "10px"
+                  }}
+                >
+                  Limpiar filtros
+                </button>
+              </div>
+            )}
           </div>
         </div>
       </div>
+
       <style>
         {`
           .product-card {
@@ -763,24 +793,6 @@ function ProductosCliente() {
             border-color: #ff4d94;
             transform: translateY(-8px) scale(1.03);
             z-index: 2;
-          }
-          .image-container {
-            width: 100%;
-            height: 150px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 10px;
-            overflow: hidden;
-          }
-          .image-container img {
-            max-width: 100%;
-            max-height: 100%;
-            object-fit: contain;
-            transition: transform 0.3s;
-          }
-          .product-card:hover .image-container img {
-            transform: scale(1.07);
           }
           .product-info-container {
             flex: 1;
@@ -821,12 +833,6 @@ function ProductosCliente() {
           .product-card:hover .product-original-price {
             color: #777;
             transform: scale(1.05);
-          }
-          .actions {
-            display: flex;
-            gap: 10px;
-            margin-top: 10px;
-            align-items: center;
           }
           .add-to-cart-btn {
             width: 100%;
