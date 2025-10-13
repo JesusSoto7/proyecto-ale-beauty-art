@@ -34,6 +34,7 @@
     "react-dropzone": "^14.3.8",
     "react-i18next": "^15.7.3",
     "react-icons": "^5.5.0",
+    "react-markdown": "^10.1.0",
     "react-router-dom": "^6.30.1",
     "react-slick": "^0.31.0",
     "slick-carousel": "^1.8.1"

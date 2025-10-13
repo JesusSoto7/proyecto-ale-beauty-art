@@ -11,6 +11,7 @@ import { useOutletContext } from "react-router-dom";
 import noImage from "../../assets/images/no_image.png";
 import RotatingBanner from "./RotatingBanner";
 import { useTranslation } from 'react-i18next';
+import FloatingChat from '../../components/FloatingChat';
 
 function Inicio() {
   const [carousel, setCarousel] = useState([]);
@@ -418,6 +419,8 @@ function Inicio() {
           <p>{t('home.noProducts')}</p>
         )}
       </section>
+
+      <FloatingChat />
 
       {/* Banner rotativo */}
       <RotatingBanner />
