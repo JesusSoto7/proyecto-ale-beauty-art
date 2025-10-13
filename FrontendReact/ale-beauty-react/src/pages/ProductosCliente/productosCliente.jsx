@@ -641,7 +641,7 @@ function ProductosCliente() {
                       }} />
                     ) : (
                       <FavoriteBorder sx={{ 
-                        color: "#666", 
+                        color: "#ffffffff", 
                         fontSize: "24px",
                         transition: "all 0.3s ease"
                       }} />
