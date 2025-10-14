@@ -19,10 +19,11 @@ function Inicio() {
   const [cart, setCart] = useState(null);
   const { lang } = useParams();
   const [loading, setLoading] = useState(true);
+  const [loadingSubcats, setLoadingSubcats] = useState(true);
   const { favoriteIds, loadFavorites } = useOutletContext();
   const { t } = useTranslation();
   const [newProducts, setNewProducts] = useState([]);
-
+  const [categorySubcategories, setCategorySubcategories] = useState({});
   
   const token = localStorage.getItem('token');
   const interesRef = useRef(null);
@@ -42,6 +43,38 @@ function Inicio() {
 
     return () => clearInterval(interval);
   }, []);
+  
+  // Cargar subcategorías destacadas
+  useEffect(() => {
+    if (categories.length > 0 && token) {
+      const fetchSubCategories = async () => {
+        try {
+          const responses = await Promise.all(
+            categories.map(cat =>
+              fetch(`https://localhost:4000/api/v1/categories/${cat.id}/sub_categories`, {
+                headers: { Authorization: `Bearer ${token}` },
+              })
+            )
+          );
+
+          const dataList = await Promise.all(responses.map(res => res.json()));
+
+          const subData = {};
+          dataList.forEach((data, index) => {
+            if (data.length > 0) subData[categories[index].id] = data[0];
+          });
+
+          setCategorySubcategories(subData);
+        } catch (err) {
+          console.error("Error cargando subcategorías:", err);
+        } finally {
+          setLoadingSubcats(false);
+        }
+      };
+
+      fetchSubCategories();
+    }
+  }, [categories, token]);
 
   // Cargar productos + favoritos del usuario
   useEffect(() => {
@@ -400,6 +433,85 @@ function Inicio() {
 
       {/* Banner rotativo */}
       <RotatingBanner />
+     {/* 🔹 Subcategorías destacadas scrollable con forma ovalada */}
+      <section className="mt-5 subcat-section">
+        <h2 className="mb-4">
+          {t("Explora, combina y crea tu look")}
+        </h2>
+
+        {loadingSubcats ? (
+          <div className="carousel-container">
+            <div className="subcat-track loading">
+              {[1, 2, 3, 4].map((skeleton) => (
+                <div className="subcat-card skeleton" key={skeleton}>
+                  <div className="subcat-img-wrapper">
+                    <Skeleton variant="rounded" width={180} height={240} />
+                  </div>
+                  <Skeleton variant="text" width={100} height={25} />
+                  <Skeleton variant="text" width={80} height={20} />
+                </div>
+              ))}
+            </div>
+          </div>
+        ) : categories && categories.length > 0 ? (
+          <div className="carousel-container">
+            {/* Flecha izquierda */}
+            <button
+              className="carousel-btn prev"
+              onClick={() =>
+                document.querySelector(".subcat-carousel")?.scrollBy({
+                  left: -310,
+                  behavior: "smooth",
+                })
+              }
+            >
+              ❮
+            </button>
+
+            {/* Contenedor scrollable */}
+            <div className="subcat-track subcat-carousel">
+              {categories
+                .filter((cat) => categorySubcategories[cat.id])
+                .slice(0, 12)
+                .map((cat) => {
+                  const sub = categorySubcategories[cat.id];
+                  return (
+                    <Link
+                      key={sub.id}
+                      to={`/${lang}/categoria/${cat.slug}/${sub.id}/products`}
+                      className="subcat-card"
+                    >
+                      <div className="subcat-img-wrapper">
+                        <img
+                          src={sub.imagen_url || noImage}
+                          alt={sub.nombre_subcategoria}
+                          onError={(e) => (e.currentTarget.src = noImage)}
+                        />
+                      </div>
+                      <h5>{sub.nombre_subcategoria || sub.nombre}</h5>
+                      {/* <p>{cat.nombre_categoria}</p> */}
+                    </Link>
+                  );
+                })}
+            </div>
+
+            {/* Flecha derecha */}
+            <button
+              className="carousel-btn next"
+              onClick={() =>
+                document.querySelector(".subcat-carousel")?.scrollBy({
+                  left: 310,
+                  behavior: "smooth",
+                })
+              }
+            >
+              ❯
+            </button>
+          </div>
+        ) : (
+          <p>{t("home.noSubcategories")}</p>
+        )}
+      </section>
     </div>
   );
 }

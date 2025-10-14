@@ -300,3 +300,108 @@
   0% { transform: translateX(0); }
   100% { transform: translateX(-50%); } /* -50% porque duplicamos los items */
 }
+
+.subcat-section {
+  margin: 60px auto;
+  width: 100%;
+  max-width: 1200px;
+  text-align: center;
+  position: relative;
+}
+
+.subcat-title {
+  margin-bottom: 30px;
+  font-weight: 700;
+  font-size: 1.8rem;
+  color: #333;
+}
+
+/* 🔹 Carrusel horizontal */
+.subcat-track {
+  display: flex;
+  gap: 2.7rem;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  padding: 0 0.5rem;
+  margin: 0 auto;
+  padding-top: 25px; /* agrega espacio superior para evitar corte */
+}
+
+.subcat-track::-webkit-scrollbar {
+  display: none;
+}
+
+/* 🔹 En modo loading (mantiene horizontal) */
+.subcat-track.loading {
+  display: flex;
+  gap: 2.7rem;
+  justify-content: center;
+  overflow-x: hidden;
+  padding: 0 0.5rem;
+  padding-top: 25px; /* agrega espacio superior para evitar corte */
+}
+
+/* 🔹 Skeleton igual al tamaño de las tarjetas reales */
+.subcat-card.skeleton {
+  flex: 0 0 calc(25% - 2rem);
+  text-align: center;
+}
+
+/* 🔹 Tarjeta ovalada */
+.subcat-card {
+  flex: 0 0 calc(25% - 2rem);
+  text-align: center;
+  text-decoration: none;
+  color: inherit;
+  transition: transform 0.25s ease;
+}
+
+.subcat-card:hover {
+  transform: translateY(-8px);
+}
+
+/* 🔹 Imagen ovalada */
+.subcat-img-wrapper {
+  width: 180px;
+  height: 240px;
+  border-radius: 50% / 35%;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  margin: 0 auto 10px auto;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.subcat-img-wrapper img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.subcat-card:hover .subcat-img-wrapper {
+  transform: scale(1.05);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+}
+
+/* 🔹 Textos */
+.subcat-card h5 {
+  margin: 8px 0 2px;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.subcat-card p {
+  color: #777;
+  font-size: 0.85rem;
+  margin: 0;
+}
+
+/* 🔹 Flechas */
+.carousel-btn.prev {
+  left: 20px;
+}
+
+.carousel-btn.next {
+  right: 20px;
+}
