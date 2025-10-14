@@ -186,30 +186,17 @@ function ProductosCliente() {
   } 
   // 2. Si no hay subcategoría seleccionada, filtrar por categoría
   else if (selectedCategory !== "Todos") {
-    console.log("🔍 FILTRANDO POR CATEGORÍA:", selectedCategory);
-    
-    // Obtener todas las subcategorías de esta categoría
     const categorySubcategories = getSubcategoriesForCategory(selectedCategory);
-    const subcategoryIds = categorySubcategories.map(sc => sc.id_subcategoria || sc.id);
-    
-    console.log("Subcategorías de esta categoría:", subcategoryIds);
-    
+    const subcategoryIds = categorySubcategories.map(
+      sc => String(sc.id_subcategoria || sc.id)
+    );
     filteredProducts = filteredProducts.filter(p => {
-      // El producto pertenece a la categoría si su sub_category_id está en las subcategorías de esta categoría
-      const productSubcatId = p.sub_category_id;
-      const matches = subcategoryIds.includes(String(productSubcatId));
-      
-      console.log(`Producto ${p.id} - ${p.nombre_producto}:`, {
-        sub_category_id: productSubcatId,
-        subcategoryIds: subcategoryIds,
-        matches: matches
-      });
-      
-      return matches;
+      const productSubcatId = String(p.sub_category_id || p.id_subcategoria || p.subcategory_id);
+      const productCatId = String(p.category_id || p.categoria_id);
+      return subcategoryIds.includes(productSubcatId) || productCatId === String(selectedCategory);
     });
-    
-    console.log("📊 Productos después de filtrar por categoría:", filteredProducts.length);
   }
+
 
   // 3. Resto de filtros (precio, rating, ordenamiento)
   if (priceRange.min || priceRange.max) {
