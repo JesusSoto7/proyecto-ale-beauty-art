@@ -77,7 +77,7 @@ Rails.application.routes.draw do
           post :mobile_create 
         end
       end
-
+      resources :users, only: [:index, :update, :destroy]
       get "/me", to: "users#me"
       patch 'me', to: 'users#update' 
       get "/count", to: "users#count"
