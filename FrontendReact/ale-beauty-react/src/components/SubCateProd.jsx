@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Link, useParams, useOutletContext } from "react-router-dom";
+import { useParams, useOutletContext, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import IconButton from "@mui/joy/IconButton";
 import FavoriteBorder from "@mui/icons-material/FavoriteBorder";
@@ -15,6 +15,7 @@ export default function ProductsPageSubCategory() {
   const { categoryId, subCategoryId, lang } = useParams();
   const { t } = useTranslation();
   const { favoriteIds, loadFavorites } = useOutletContext();
+  const navigate = useNavigate();
 
   const [token, setToken] = useState(null);
   const [products, setProducts] = useState([]);
@@ -142,8 +143,7 @@ export default function ProductsPageSubCategory() {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
+            Authorization: `Bearer ${token}` },
           body: JSON.stringify({ product_id: productId }),
         });
         const data = await res.json();
@@ -154,6 +154,7 @@ export default function ProductsPageSubCategory() {
     }
   };
 
+  // NUEVO addToCart: actualiza el carrito y sube el contador, sin alert
   const addToCart = (productId) => {
     fetch("https://localhost:4000/api/v1/cart/add_product", {
       method: "POST",
@@ -167,14 +168,14 @@ export default function ProductsPageSubCategory() {
       .then((data) => {
         if (data.cart) {
           setCart(data.cart);
-          alert(t("productDetails.addedToCart"));
-        } else if (data.errors) {
-          alert(t("productDetails.error") + data.errors.join(", "));
+          // Notifica al header para subir el contador
+          window.dispatchEvent(new CustomEvent("cartUpdatedCustom", { bubbles: false }));
         }
+        // No alert
       })
       .catch((err) => {
+        // Silencia el error y NO muestra alerta
         console.error(t("productDetails.cartAddError"), err);
-        alert(t("productDetails.cartAddError"));
       });
   };
 
@@ -217,7 +218,6 @@ export default function ProductsPageSubCategory() {
           }}>
             PRODUCTOS
           </h1>
-          
         </div>
         </div>
         <div className="shop-container">
@@ -314,28 +314,40 @@ export default function ProductsPageSubCategory() {
           {/* Grid de productos */}
           <div className="products-grid">
             {filteredProducts.map((prod) => (
-              <div key={prod.id} className="product-card custom-product-card">
+              <div
+                key={prod.id}
+                className="product-card custom-product-card"
+                style={{ cursor: "pointer" }}
+                onClick={() => navigate(`/${lang}/producto/${prod.slug}`)}
+                tabIndex={0}
+                onKeyDown={e => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    navigate(`/${lang}/producto/${prod.slug}`);
+                  }
+                }}
+              >
                 <div className="custom-image-wrapper">
                   <img
                     src={prod.imagen_url || noImage}
                     alt={prod.nombre_producto}
                   />
-                <IconButton
-                  onClick={() => toggleFavorite(prod.id)}
-                  className="custom-favorite-btn"
-                  style={{ padding: 0, background: "transparent" }}
-                >
-                  {favoriteIds.includes(prod.id)
-                    ? <GradientHeart filled />
-                    : <GradientHeart filled={false} />
-                  }
-                </IconButton>
+                  <IconButton
+                    onClick={e => {
+                      e.stopPropagation();
+                      toggleFavorite(prod.id);
+                    }}
+                    className="custom-favorite-btn"
+                    style={{ padding: 0, background: "transparent" }}
+                  >
+                    {favoriteIds.includes(prod.id)
+                      ? <GradientHeart filled />
+                      : <GradientHeart filled={false} />
+                    }
+                  </IconButton>
                 </div>
                 <div className="custom-product-info">
                   <div className="custom-rating-row-v2">
-                    {/* Puedes poner aquí la categoría si quieres, por ahora la omito */}
                     <span style={{ flex: 1 }}></span>
-                    {/* Rating a la derecha */}
                     <span className="custom-star">
                       <svg width="17" height="17" viewBox="0 0 24 24" fill="#FFC107" xmlns="http://www.w3.org/2000/svg" style={{ marginRight: "2px", verticalAlign: "middle" }}>
                         <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/>
@@ -354,7 +366,10 @@ export default function ProductsPageSubCategory() {
                 </div>
                 <div className="custom-card-footer">
                   <button
-                    onClick={() => addToCart(prod.id)}
+                    onClick={e => {
+                      e.stopPropagation();
+                      addToCart(prod.id);
+                    }}
                     className="custom-add-btn"
                   >
                     {t("products.addToCart")}

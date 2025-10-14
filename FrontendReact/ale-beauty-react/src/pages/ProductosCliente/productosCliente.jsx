@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams, useNavigate } from "react-router-dom";
 import { useTranslation } from 'react-i18next';
 import IconButton from '@mui/joy/IconButton';
 import FavoriteBorder from '@mui/icons-material/FavoriteBorder';
@@ -28,6 +28,7 @@ function ProductosCliente() {
 
   const { lang } = useParams();
   const { t } = useTranslation();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const savedToken = localStorage.getItem("token");
@@ -235,8 +236,7 @@ function ProductosCliente() {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
+            Authorization: `Bearer ${token}` },
           body: JSON.stringify({ product_id: productId }),
         });
         const data = await res.json();
@@ -480,8 +480,15 @@ function ProductosCliente() {
             {filteredProducts.map((prod, index) => (
               <div 
                 key={prod.id} 
-                className="custom-product-card" // <- CLASE UNIFICADA
-                style={{ animationDelay: `${index * 0.1}s` }}
+                className="custom-product-card"
+                style={{ animationDelay: `${index * 0.1}s`, cursor: "pointer" }}
+                onClick={() => navigate(`/${lang}/producto/${prod.slug}`)}
+                tabIndex={0}
+                onKeyDown={e => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    navigate(`/${lang}/producto/${prod.slug}`);
+                  }
+                }}
               >
                 <div className="custom-image-wrapper">
                   <img
@@ -490,7 +497,10 @@ function ProductosCliente() {
                     onError={(e) => { e.currentTarget.src = noImage; }}
                   />
                   <IconButton
-                    onClick={() => toggleFavorite(prod.id)}
+                    onClick={e => {
+                      e.stopPropagation();
+                      toggleFavorite(prod.id);
+                    }}
                     className="custom-favorite-btn"
                     style={{ padding: 0, background: "transparent" }}
                   >
@@ -521,7 +531,10 @@ function ProductosCliente() {
                 </div>
                 <div className="custom-card-footer">
                   <button
-                    onClick={() => addToCart(prod.id)}
+                    onClick={e => {
+                      e.stopPropagation();
+                      addToCart(prod.id);
+                    }}
                     className="custom-add-btn"
                   >
                     {t('products.addToCart')}
