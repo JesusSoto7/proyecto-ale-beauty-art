@@ -32,6 +32,7 @@ class Api::V1::PaymentsController < Api::V1::BaseController
       order.update(
         status: :pagada,
         fecha_pago: Time.current,
+        payment_id: payment["id"],
         card_type: payment.dig("payment_method_id"),
         card_last4: payment.dig("card", "last_four_digits")
       )
@@ -95,6 +96,7 @@ class Api::V1::PaymentsController < Api::V1::BaseController
       order.update(
         status: :pagada,
         fecha_pago: Time.current,
+        payment_id: payment["id"],
         card_type: payment.dig("payment_method_id"),
         card_last4: payment.dig("card", "last_four_digits")
       )
