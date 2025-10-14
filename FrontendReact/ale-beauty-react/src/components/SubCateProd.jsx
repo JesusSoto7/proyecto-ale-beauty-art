@@ -26,6 +26,7 @@ export default function ProductsPageSubCategory() {
   const [priceRange, setPriceRange] = useState({ min: "", max: "" });
   const [selectedRatings, setSelectedRatings] = useState([]);
   const [productRatings, setProductRatings] = useState({});
+  const [subCategory, setSubCategory] = useState(null);
 
   useEffect(() => {
     const savedToken = localStorage.getItem("token");
@@ -107,6 +108,25 @@ export default function ProductsPageSubCategory() {
 
     fetchCategoryProducts();
   }, [token, categoryId, subCategoryId]);
+
+
+  useEffect(() => {
+    if (!token) return;
+    async function fetchSubCategory() {
+      try {
+        const res = await fetch(
+          `https://localhost:4000/api/v1/categories/${categoryId}/sub_categories/${subCategoryId}`,
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+        if (!res.ok) throw new Error("Error al cargar la subcategoría");
+        const data = await res.json();
+        setSubCategory(data);
+      } catch (err) {
+        setSubCategory(null); // O puedes manejar el error si quieres
+      }
+    }
+    fetchSubCategory();
+}, [token, categoryId, subCategoryId]);
 
   let filteredProducts = products;
   if (priceRange.min || priceRange.max) {
@@ -204,20 +224,29 @@ export default function ProductsPageSubCategory() {
       </Typography>
     );
 
+
+  function toTitleCase(str) {
+    return str ? str.replace(/\w\S*/g, (txt) =>
+      txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase()
+    ) : "";
+  }
+
   return (
     <section className="shop-section">
       <div className="shop-wrapper">
         <div className="shop-header">
         <div >
-          <h1 style={{
+        <h1
+        style={{
             margin: 0,
             fontSize: "2.5rem",
             fontWeight: "bold",
-            color: "#000000ff",
-            fontFamily: "Arial, sans-serif"
-          }}>
-            PRODUCTOS
-          </h1>
+            color: "#5a5a5aff",
+            fontFamily: "'Poppins', Arial, sans-serif",
+          }}
+        >
+          {subCategory ? toTitleCase(subCategory.nombre) : "PRODUCTOS"}
+        </h1>
         </div>
         </div>
         <div className="shop-container">
