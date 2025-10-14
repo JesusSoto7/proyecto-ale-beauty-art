@@ -56,7 +56,7 @@ class Api::V1::CategoriesController < Api::V1::BaseController
   private
 
   def set_category
-    @category = Category.includes(:sub_categories).find_by(id: params[:id])
+    @category = Category.includes(:sub_categories).find_by(slug: params[:slug]) || Category.includes(:sub_categories).find_by(id: params[:slug])
     unless @category
       render json: { error: "Categoría no encontrada" }, status: :not_found
     end
