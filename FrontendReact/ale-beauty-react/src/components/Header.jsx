@@ -260,26 +260,25 @@ export default function Header({ loadFavorites }) {
     if (!item) return;
 
     const isSubCategory = !item.sub_categories && !!parentCategory;
-
     let categorySlug;
-    let subCategoryId;
+    let subCategorySlug;
 
     if (isSubCategory) {
       // Caso: clic en una subcategoría
       categorySlug = parentCategory.slug || parentCategory.id;
-      subCategoryId = item.id;
+      subCategorySlug = item.slug || item.id;
     } else {
       // Caso: clic en una categoría general
       const subCategory = item.sub_categories?.[0];
       categorySlug = item.slug || item.id;
-      subCategoryId = subCategory?.id;
+      subCategorySlug = subCategory?.slug || subCategory?.id;
     }
 
     setShowCategories(false);
 
-    if (subCategoryId) {
-      // URL: /es/categoria/labiales/1/products
-      navigate(`/${lang}/categoria/${categorySlug}/${subCategoryId}/products`);
+    if (subCategorySlug) {
+      // URL: /es/categoria/labiales/lip-gloss/products
+      navigate(`/${lang}/categoria/${categorySlug}/${subCategorySlug}/products`);
     } else {
       // URL: /es/categoria/labiales/products
       navigate(`/${lang}/categoria/${categorySlug}`);

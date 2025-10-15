@@ -13,6 +13,9 @@ import AssignmentRoundedIcon from '@mui/icons-material/AssignmentRounded';
 import SettingsRoundedIcon from '@mui/icons-material/SettingsRounded';
 import InfoRoundedIcon from '@mui/icons-material/InfoRounded';
 import HelpRoundedIcon from '@mui/icons-material/HelpRounded';
+import { BsPersonFill } from "react-icons/bs";
+import { TbCategory2 } from "react-icons/tb";
+
 
 
 
@@ -24,8 +27,9 @@ export default function MenuContent() {
   const mainListItems = [
     { text: 'Home', icon: <HomeRoundedIcon />, path: `/${lang}/home` },
     { text: 'Productos', icon: <AnalyticsRoundedIcon />, path: `/${lang}/home/products` },
-    { text: 'Categorias', icon: <PeopleRoundedIcon />, path: `/${lang}/home/categories` },
+    { text: 'Categorias', icon: <TbCategory2  />, path: `/${lang}/home/categories` },
     { text: 'Carousel', icon: <AssignmentRoundedIcon />, path: `/${lang}/home/carousel` },
+    { text: 'Usuarios', icon: <PeopleRoundedIcon  />, path: `/${lang}/home/usuarios` },
   ];
 
   const secondaryListItems = [
