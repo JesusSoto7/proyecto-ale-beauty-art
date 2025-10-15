@@ -2,77 +2,101 @@ import React, { useState, useEffect, useRef } from "react";
 import { Box, Typography } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import { useTranslation } from "react-i18next";
-import { useNavigate } from "react-router-dom";
-import { formatCOP } from '../services/currency';
-import { styled, alpha } from '@mui/material/styles';
-import InputBase from '@mui/material/InputBase';
-import { Link, useParams } from 'react-router-dom';
+import { useNavigate, useParams, Link } from "react-router-dom";
+import { formatCOP } from "../services/currency";
+import { styled, alpha } from "@mui/material/styles";
+import InputBase from "@mui/material/InputBase";
 
 const DEBOUNCE_MS = 400;
 
 const pinkTheme = {
-  primary: '#e91e63',
-  secondary: '#f8bbd0',
-  dark: '#ad1457',
-  light: '#fce4ec',
-  background: '#fff5f7'
+  primary: "#e91e63",
+  secondary: "#f8bbd0",
+  dark: "#ad1457",
+  light: "#fce4ec",
+  background: "#fff5f7",
 };
 
-const SearchIconWrapper = styled('div')(({ theme }) => ({
+const SearchIconWrapper = styled("div")(({ theme }) => ({
   padding: theme.spacing(0, 2),
-  height: '100%',
-  position: 'absolute',
-  pointerEvents: 'none',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
+  height: "100%",
+  position: "absolute",
+  pointerEvents: "none",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
 }));
 
-const Search = styled('div')(({ theme }) => ({
-  position: 'relative',
+const Search = styled("div")(({ theme }) => ({
+  position: "relative",
   borderRadius: 20,
-  border: '1px solid #ccc',
+  border: "1px solid #ccc",
   backgroundColor: alpha(theme.palette.common.white, 0.15),
-  '&:hover': {
+  "&:hover": {
     backgroundColor: alpha(theme.palette.common.white, 0.25),
   },
   marginLeft: theme.spacing(2),
-  transition: 'all 0.3s ease',
-  width: '160px',
-  [theme.breakpoints.up('sm')]: {
-    width: '200px',
+  transition: "all 0.3s ease",
+  width: "160px",
+  [theme.breakpoints.up("sm")]: {
+    width: "200px",
   },
-  '&:focus-within': {
-    width: '260px',
-    [theme.breakpoints.up('sm')]: {
-      width: '320px',
+  "&:focus-within": {
+    width: "260px",
+    [theme.breakpoints.up("sm")]: {
+      width: "320px",
     },
   },
 }));
 
 const StyledInputBase = styled(InputBase)(({ theme }) => ({
-  color: 'inherit',
-  '& .MuiInputBase-input': {
+  color: "inherit",
+  "& .MuiInputBase-input": {
     padding: theme.spacing(1, 1, 1, 0),
     paddingLeft: `calc(1em + ${theme.spacing(4)})`,
-    transition: theme.transitions.create(['width', 'padding'], {
+    transition: theme.transitions.create(["width", "padding"], {
       duration: theme.transitions.duration.short,
     }),
-    width: '100%',
+    width: "100%",
   },
 }));
 
 export default function SearchBar() {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const { lang } = useParams();
+
   const [searchTerm, setSearchTerm] = useState("");
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(false);
   const debounceRef = useRef(null);
   const containerRef = useRef(null);
-  const { lang } = useParams();
 
-  // Función para filtrar productos (ajusta si ya tienes una)
+  // 🔹 Cerrar al hacer clic fuera o presionar Escape
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (containerRef.current && !containerRef.current.contains(event.target)) {
+        setResults([]);
+      }
+    };
+
+    const handleKeyDown = (event) => {
+      if (event.key === "Escape") {
+        setResults([]);
+        setSearchTerm("");
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, []);
+
+  // 🔹 Filtro local de productos
   const filterAndLimit = (arr, q) => {
     const query = q.toLowerCase();
     return arr
@@ -82,7 +106,7 @@ export default function SearchBar() {
       .slice(0, 8);
   };
 
-  // Buscar productos
+  // 🔹 Buscar productos
   async function fetchResults(q) {
     setLoading(true);
     try {
@@ -109,7 +133,7 @@ export default function SearchBar() {
     }
   }
 
-  // Controlar búsqueda con debounce
+  // 🔹 Controlar búsqueda con debounce
   useEffect(() => {
     if (debounceRef.current) clearTimeout(debounceRef.current);
 
@@ -126,18 +150,16 @@ export default function SearchBar() {
     return () => clearTimeout(debounceRef.current);
   }, [searchTerm]);
 
-  // Ir al producto
+  // 🔹 Navegar al producto
   const goToProduct = (prod) => {
     setSearchTerm("");
     setResults([]);
     navigate(`/${lang}/producto/${prod.slug || prod.id}`);
   };
 
-  const handleSearchSubmit = (e) => {
-    e.preventDefault();
-  };
+  const handleSearchSubmit = (e) => e.preventDefault();
 
-  // Render
+  // 🔹 Render
   return (
     <Box
       component="form"
@@ -161,7 +183,7 @@ export default function SearchBar() {
         />
       </Search>
 
-      {/* Dropdown resultados */}
+      {/* 🔽 Dropdown resultados */}
       {(results.length > 0 || loading) && (
         <Box
           sx={{
@@ -183,7 +205,7 @@ export default function SearchBar() {
 
           {!loading && results.length > 0 && (
             <>
-              {/* Vista escritorio */}
+              {/* 💻 Escritorio */}
               <Box
                 sx={{
                   display: { xs: "none", sm: "grid" },
@@ -259,7 +281,7 @@ export default function SearchBar() {
                 })}
               </Box>
 
-              {/* Vista móvil */}
+              {/* 📱 Móvil */}
               <Box
                 sx={{
                   display: { xs: "flex", sm: "none" },
