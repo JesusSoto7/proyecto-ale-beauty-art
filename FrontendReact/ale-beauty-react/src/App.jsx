@@ -95,8 +95,7 @@ function App() {
             <Route path="pedidos/:id" element={<DetallePedido />} />
             <Route path="about" element={<AboutUs />} />
             <Route path="terms" element={<TermsAndConditions />} />
-            <Route path="/:lang/categoria/:categoryId/:subCategoryId/products" element={<SubCateProd />} />
-
+            <Route path="/:lang/categoria/:categorySlug/:subCategorySlug/products" element={<SubCateProd />} />
 
           </Route>
 

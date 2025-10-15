@@ -12,7 +12,7 @@ import { formatCOP } from "../services/currency";
 import noImage from "../assets/images/no_image.png";
 
 export default function ProductsPageSubCategory() {
-  const { categoryId, subCategoryId, lang } = useParams();
+  const { categorySlug, subCategorySlug, lang } = useParams();
   const { t } = useTranslation();
   const { favoriteIds, loadFavorites } = useOutletContext();
   const navigate = useNavigate();
@@ -68,7 +68,7 @@ export default function ProductsPageSubCategory() {
         setError(null);
 
         const res = await fetch(
-          `https://localhost:4000/api/v1/categories/${categoryId}/sub_categories/${subCategoryId}/products`,
+          `https://localhost:4000/api/v1/categories/${categorySlug}/sub_categories/${subCategorySlug}/products`,
           {
             headers: { Authorization: `Bearer ${token}` },
           }
@@ -107,7 +107,7 @@ export default function ProductsPageSubCategory() {
     }
 
     fetchCategoryProducts();
-  }, [token, categoryId, subCategoryId]);
+  }, [token, categorySlug, subCategorySlug]);
 
 
   useEffect(() => {
@@ -115,7 +115,7 @@ export default function ProductsPageSubCategory() {
     async function fetchSubCategory() {
       try {
         const res = await fetch(
-          `https://localhost:4000/api/v1/categories/${categoryId}/sub_categories/${subCategoryId}`,
+          `https://localhost:4000/api/v1/categories/${categorySlug}/sub_categories/${subCategorySlug}`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
         if (!res.ok) throw new Error("Error al cargar la subcategoría");
@@ -126,7 +126,7 @@ export default function ProductsPageSubCategory() {
       }
     }
     fetchSubCategory();
-}, [token, categoryId, subCategoryId]);
+  }, [token, categorySlug, subCategorySlug]);
 
   let filteredProducts = products;
   if (priceRange.min || priceRange.max) {

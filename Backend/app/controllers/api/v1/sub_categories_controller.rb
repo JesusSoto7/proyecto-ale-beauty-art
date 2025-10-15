@@ -58,7 +58,8 @@ class Api::V1::SubCategoriesController < Api::V1::BaseController
 
 
   def set_sub_category
-    @sub_category = @category.sub_categories.find_by(id: params[:id])
+    @sub_category = @category.sub_categories.find_by(slug: params[:sub_category_slug]) ||
+                    @category.sub_categories.find_by(id: params[:sub_category_slug])
     unless @sub_category
       render json: { error: "SubCategoría no encontrada" }, status: :not_found
     end
