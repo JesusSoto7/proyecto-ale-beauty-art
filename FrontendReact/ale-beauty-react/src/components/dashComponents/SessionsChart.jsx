@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import * as React from 'react';
 import PropTypes from 'prop-types';
 import { useTheme } from '@mui/material/styles';
 import Card from '@mui/material/Card';
@@ -24,46 +24,36 @@ AreaGradient.propTypes = {
   id: PropTypes.string.isRequired,
 };
 
-export default function ProductsChart() {
-  const [token, setToken] = React.useState(null);
-  const theme = useTheme();
-  const [chartData, setChartData] = React.useState({
-    labels: [],
-    values: { view_item: [], add_to_cart: [], purchase: [] }
+function getDaysInMonth(month, year) {
+  const date = new Date(year, month, 0);
+  const monthName = date.toLocaleDateString('en-US', {
+    month: 'short',
   });
+  const daysInMonth = date.getDate();
+  const days = [];
+  let i = 1;
+  while (days.length < daysInMonth) {
+    days.push(`${monthName} ${i}`);
+    i += 1;
+  }
+  return days;
+}
 
-  React.useEffect(() => {
-    const savedToken = localStorage.getItem("token");
-    if (savedToken) {
-      setToken(savedToken);
-    } else {
-      alert("no esta atenticado");
-    }
-  }, []);
-
-  React.useEffect(() => {
-    if (!token) return; // Solo ejecuta si hay token
-
-    fetch('https://localhost:4000/api/v1/analytics/product_funnel_per_day', {
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
-    })
-      .then(res => res.json())
-      .then(data => setChartData(data));
-  }, [token]);
+export default function SessionsChart() {
+  const theme = useTheme();
+  const data = getDaysInMonth(4, 2024);
 
   const colorPalette = [
-    theme.palette.primary.light,     // view_item
-    theme.palette.primary.main,      // add_to_cart
-    theme.palette.primary.dark,      // purchase
+    theme.palette.primary.light,
+    theme.palette.primary.main,
+    theme.palette.primary.dark,
   ];
 
   return (
     <Card variant="outlined" sx={{ width: '100%' }}>
       <CardContent>
         <Typography component="h2" variant="subtitle2" gutterBottom>
-          Embudo de productos
+          Sessions
         </Typography>
         <Stack sx={{ justifyContent: 'space-between' }}>
           <Stack
@@ -75,15 +65,12 @@ export default function ProductsChart() {
             }}
           >
             <Typography variant="h4" component="p">
-              {(chartData.values?.view_item || []).reduce((a, b) => a + b, 0)} vistos ·{' '}
-              {(chartData.values?.add_to_cart || []).reduce((a, b) => a + b, 0)} al carrito ·{' '}
-              {(chartData.values?.purchase || []).reduce((a, b) => a + b, 0)} comprados
+              13,277
             </Typography>
-            {/* Puedes calcular el delta % si tienes datos previos, aquí solo ejemplo */}
             <Chip size="small" color="success" label="+35%" />
           </Stack>
           <Typography variant="caption" sx={{ color: 'text.secondary' }}>
-            Total eventos de producto en los últimos 30 días
+            Sessions per day for the last 30 days
           </Typography>
         </Stack>
         <LineChart
@@ -91,40 +78,53 @@ export default function ProductsChart() {
           xAxis={[
             {
               scaleType: 'point',
-              data: chartData.labels,
+              data,
+              tickInterval: (index, i) => (i + 1) % 5 === 0,
               height: 24,
             },
           ]}
           yAxis={[{ width: 50 }]}
           series={[
             {
-              id: 'view_item',
-              label: 'Productos vistos',
+              id: 'direct',
+              label: 'Direct',
               showMark: false,
               curve: 'linear',
               stack: 'total',
               area: true,
               stackOrder: 'ascending',
-              data: chartData.values.view_item,
+              data: [
+                300, 900, 600, 1200, 1500, 1800, 2400, 2100, 2700, 3000, 1800, 3300,
+                3600, 3900, 4200, 4500, 3900, 4800, 5100, 5400, 4800, 5700, 6000,
+                6300, 6600, 6900, 7200, 7500, 7800, 8100,
+              ],
             },
             {
-              id: 'add_to_cart',
-              label: 'Añadidos al carrito',
+              id: 'referral',
+              label: 'Referral',
               showMark: false,
               curve: 'linear',
               stack: 'total',
               area: true,
               stackOrder: 'ascending',
-              data: chartData.values.add_to_cart,
+              data: [
+                500, 900, 700, 1400, 1100, 1700, 2300, 2000, 2600, 2900, 2300, 3200,
+                3500, 3800, 4100, 4400, 2900, 4700, 5000, 5300, 5600, 5900, 6200,
+                6500, 5600, 6800, 7100, 7400, 7700, 8000,
+              ],
             },
             {
-              id: 'purchase',
-              label: 'Comprados',
+              id: 'organic',
+              label: 'Organic',
               showMark: false,
               curve: 'linear',
               stack: 'total',
               stackOrder: 'ascending',
-              data: chartData.values.purchase,
+              data: [
+                1000, 1500, 1200, 1700, 1300, 2000, 2400, 2200, 2600, 2800, 2500,
+                3000, 3400, 3700, 3200, 3900, 4100, 3500, 4300, 4500, 4000, 4700,
+                5000, 5200, 4800, 5400, 5600, 5900, 6100, 6300,
+              ],
               area: true,
             },
           ]}
@@ -132,21 +132,21 @@ export default function ProductsChart() {
           margin={{ left: 0, right: 20, top: 20, bottom: 0 }}
           grid={{ horizontal: true }}
           sx={{
-            '& .MuiAreaElement-series-purchase': {
-              fill: "url('#purchase')",
+            '& .MuiAreaElement-series-organic': {
+              fill: "url('#organic')",
             },
-            '& .MuiAreaElement-series-add_to_cart': {
-              fill: "url('#add_to_cart')",
+            '& .MuiAreaElement-series-referral': {
+              fill: "url('#referral')",
             },
-            '& .MuiAreaElement-series-view_item': {
-              fill: "url('#view_item')",
+            '& .MuiAreaElement-series-direct': {
+              fill: "url('#direct')",
             },
           }}
           hideLegend
         >
-          <AreaGradient color={theme.palette.primary.dark} id="purchase" />
-          <AreaGradient color={theme.palette.primary.main} id="add_to_cart" />
-          <AreaGradient color={theme.palette.primary.light} id="view_item" />
+          <AreaGradient color={theme.palette.primary.dark} id="organic" />
+          <AreaGradient color={theme.palette.primary.main} id="referral" />
+          <AreaGradient color={theme.palette.primary.light} id="direct" />
         </LineChart>
       </CardContent>
     </Card>

@@ -102,7 +102,7 @@ export default function Perfil() {
   }
 
   return (
-    <div className="d-flex justify-content-center align-items-center" style={{marginTop: "80px"}}>
+    <div className="d-flex justify-content-center align-items-center">
       <div
         className="shadow-lg rounded-4 p-4"
         style={{ maxWidth: "800px", width: "100%", backgroundColor: "#fff" }}

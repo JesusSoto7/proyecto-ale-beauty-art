@@ -8,7 +8,7 @@ import CustomizedTreeView from './CustomizedTreeView';
 import CustomizedDataGrid from './CustomizedDataGrid';
 import HighlightedCard from './HighlightedCard';
 import PageViewsBarChart from './PageViewsBarChart';
-import ProductsChart from './ProductsChart';
+import SessionsChart from './SessionsChart';
 import StatCard from './StatCard';
 import { formatCOP } from '../../services/currency';
 import ChartProductsByCategory from './ChartProductsByCategory';
@@ -199,7 +199,7 @@ export default function MainGrid() {
           <HighlightedCard />
         </Grid>
         <Grid size={{ xs: 12, md: 6 }}>
-          <ProductsChart />
+          <SessionsChart />
         </Grid>
         <Grid size={{ xs: 12, md: 6 }}>
           <PageViewsBarChart />

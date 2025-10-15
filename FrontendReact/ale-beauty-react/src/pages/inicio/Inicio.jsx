@@ -11,8 +11,6 @@ import { useOutletContext } from "react-router-dom";
 import noImage from "../../assets/images/no_image.png";
 import RotatingBanner from "./RotatingBanner";
 import { useTranslation } from 'react-i18next';
-import Rating from "@mui/material/Rating";
-import FloatingChat from '../../components/FloatingChat';
 
 function Inicio() {
   const [carousel, setCarousel] = useState([]);
@@ -26,9 +24,6 @@ function Inicio() {
   const { t } = useTranslation();
   const [newProducts, setNewProducts] = useState([]);
   const [categorySubcategories, setCategorySubcategories] = useState({});
-  const [productRatings, setProductRatings] = useState({});
-
-
   
   const token = localStorage.getItem('token');
   const interesRef = useRef(null);
@@ -81,34 +76,6 @@ function Inicio() {
     }
   }, [categories, token]);
 
-  // Cargar ratings de productos
-  const loadProductRatings = async (productList) => {
-    const ratingsObj = {};
-    
-    await Promise.all(productList.map(async (product) => {
-      try {
-        const res = await fetch(`https://localhost:4000/api/v1/products/${product.slug}/reviews`, {
-          headers: { Authorization: `Bearer ${token}` }
-        });
-        const reviews = await res.json();
-        if (Array.isArray(reviews) && reviews.length > 0) {
-          const avg = reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length;
-          ratingsObj[product.id] = { 
-            avg, 
-            count: reviews.length 
-          };
-        } else {
-          ratingsObj[product.id] = { avg: 0, count: 0 };
-        }
-      } catch (error) {
-        console.error(`Error cargando rating para producto ${product.id}:`, error);
-        ratingsObj[product.id] = { avg: 0, count: 0 };
-      }
-    }));
-    
-    setProductRatings(ratingsObj);
-  };
-
   // Cargar productos + favoritos del usuario
   useEffect(() => {
     // Productos e inicio
@@ -136,14 +103,9 @@ function Inicio() {
           }
         })
           .then(res => res.json())
-          .then(data => {
-            setNewProducts(data);
-            // Cargar ratings para productos nuevos
-            if (Array.isArray(data) && data.length > 0) {
-              loadProductRatings(data);
-            }
-          })
+          .then(data => setNewProducts(data))
           .catch(err => console.error("Error cargando novedades", err));
+
 
         imgs.forEach(src => {
           const img = new Image();
@@ -156,12 +118,6 @@ function Inicio() {
               const productosRandom = [...(data.products || [])].sort(() => 0.5 - Math.random());
               setProducts(productosRandom);
               setCategories(data.categories || []);
-              
-              // Cargar ratings para todos los productos
-              if (data.products && data.products.length > 0) {
-                loadProductRatings(data.products);
-              }
-              
               setLoading(false);
             }
           };
@@ -193,47 +149,26 @@ function Inicio() {
   }, [token, t]);
 
   const addToCart = (productId) => {
-    fetch("https://localhost:4000/api/v1/cart/add_product", {
-      method: "POST",
+    fetch('https://localhost:4000/api/v1/cart/add_product', {
+      method: 'POST',
       headers: {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify({ product_id: productId }),
     })
-      .then((res) => res.json())
-      .then((data) => {
+      .then(res => res.json())
+      .then(data => {
         if (data.cart) {
           setCart(data.cart);
-          // Disparar evento para actualizar el Header
-          window.dispatchEvent(new CustomEvent("cartUpdatedCustom", { bubbles: false }));
-
-          // === Evento GA4: add_to_cart ===
-          // Busca el producto agregado en el array del carrito actualizado
-          const product = data.cart.products.find(p => p.product_id === productId);
-          if (window.gtag && product) {
-            window.gtag("event", "add_to_cart", {
-              currency: "COP",
-              value: product.precio_producto,
-              items: [
-                {
-                  item_id: product.product_id,
-                  item_name: product.nombre_producto,
-                  price: product.precio_producto,
-                  quantity: product.cantidad,
-                },
-              ],
-            });
-            console.log("🛒 Evento GA4 enviado: add_to_cart", product);
-          }
-          // ===============================
+          alert(t('home.addedToCart'));
         } else if (data.errors) {
-          alert(t('productDetails.error') + data.errors.join(", "));
+          alert(t('home.error') + data.errors.join(", "));
         }
       })
-      .catch((err) => {
-        console.error(t('productDetails.cartAddError'), err);
-        alert(t('productDetails.cartAddError'));
+      .catch(err => {
+        console.error(t('home.cartAddError'), err);
+        alert(t('home.cartAddError'));
       });
   };
 
@@ -353,24 +288,8 @@ function Inicio() {
                         onError={(e) => { e.currentTarget.src = noImage; }}
                       />
                     </div>
-                    
-                    {/* Rating de estrellas agregado con margen izquierdo */}
-                    <div style={{ display: "flex", alignItems: "center", marginBottom: "5px", marginLeft: "10px" }}>
-                      <Rating
-                        name={`product-rating-${prod.id}`}
-                        value={productRatings[prod.id]?.avg || 0}
-                        precision={0.5}
-                        readOnly
-                        size="small"
-                        sx={{ color: "#ffc107", marginRight: "5px" }}
-                      />
-                      <span style={{ fontSize: "14px", marginLeft: "4px" }}>
-                        {productRatings[prod.id]?.avg ? productRatings[prod.id].avg.toFixed(1) : "0.0"}
-                      </span>
-                    </div>
-                    
-                    <h5 style={{ marginLeft: "10px" }}>{prod.nombre_producto}</h5>
-                    <p style={{ marginLeft: "10px" }}>{formatCOP(prod.precio_producto)}</p>
+                    <h5>{prod.nombre_producto}</h5>
+                    <p>{formatCOP(prod.precio_producto)}</p>
                   </Link>
 
                   <div className="actions">
@@ -494,24 +413,8 @@ function Inicio() {
                         onError={(e) => { e.currentTarget.src = noImage; }}
                       />
                     </div>
-                    
-                    {/* Rating de estrellas agregado con margen izquierdo */}
-                    <div style={{ display: "flex", alignItems: "center", marginBottom: "5px", marginLeft: "10px" }}>
-                      <Rating
-                        name={`product-rating-${prod.id}`}
-                        value={productRatings[prod.id]?.avg || 0}
-                        precision={0.5}
-                        readOnly
-                        size="small"
-                        sx={{ color: "#ffc107", marginRight: "5px" }}
-                      />
-                      <span style={{ fontSize: "14px", marginLeft: "4px" }}>
-                        {productRatings[prod.id]?.avg ? productRatings[prod.id].avg.toFixed(1) : "0.0"}
-                      </span>
-                    </div>
-                    
-                    <h5 style={{ marginLeft: "10px" }}>{prod.nombre_producto}</h5>
-                    <p style={{ marginLeft: "10px" }}>{formatCOP(prod.precio_producto)}</p>
+                    <h5>{prod.nombre_producto}</h5>
+                    <p>{formatCOP(prod.precio_producto)}</p>
                   </Link>
 
                   <div className="actions">
@@ -527,7 +430,6 @@ function Inicio() {
           <p>{t('home.noProducts')}</p>
         )}
       </section>
-      <FloatingChat />
 
       {/* Banner rotativo */}
       <RotatingBanner />

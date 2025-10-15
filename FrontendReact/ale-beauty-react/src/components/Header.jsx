@@ -10,14 +10,16 @@ import { AiOutlineOrderedList, AiOutlineHistory } from "react-icons/ai";
 import { MdKeyboardArrowRight } from "react-icons/md"; // ícono de flecha
 import Skeleton from "@mui/material/Skeleton"
 
+import { styled, alpha } from '@mui/material/styles';
 import AppBar from '@mui/material/AppBar';
-import {Box, Button, Badge} from '@mui/material';
+import {Box, Button} from '@mui/material';
 import Toolbar from '@mui/material/Toolbar';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
-
+import InputBase from '@mui/material/InputBase';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
+import SearchIcon from '@mui/icons-material/Search';
 import MoreIcon from '@mui/icons-material/MoreVert';
 import noImage from '../assets/images/no_image.png';
 
@@ -25,7 +27,7 @@ import Modal from '@mui/joy/Modal';
 import ModalDialog from '@mui/joy/ModalDialog';
 import ModalClose from '@mui/joy/ModalClose';
 import FavoritesModal from './FavoritesModal';
-import SearchBar from "./SearchBar";
+import { formatCOP } from '../services/currency';
 
 // Paleta de colores rosa
 const pinkTheme = {
@@ -35,6 +37,50 @@ const pinkTheme = {
   light: '#fce4ec',
   background: '#fff5f7'
 };
+
+const Search = styled('div')(({ theme }) => ({
+  position: 'relative',
+  borderRadius: 20,
+  border: '1px solid #ccc',
+  backgroundColor: alpha(theme.palette.common.white, 0.15),
+  '&:hover': {
+    backgroundColor: alpha(theme.palette.common.white, 0.25),
+  },
+  marginLeft: theme.spacing(2),
+  transition: 'all 0.3s ease',
+  width: '160px',
+  [theme.breakpoints.up('sm')]: {
+    width: '200px',
+  },
+  '&:focus-within': {
+    width: '260px',
+    [theme.breakpoints.up('sm')]: {
+      width: '320px',
+    },
+  },
+}));
+
+const SearchIconWrapper = styled('div')(({ theme }) => ({
+  padding: theme.spacing(0, 2),
+  height: '100%',
+  position: 'absolute',
+  pointerEvents: 'none',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+}));
+
+const StyledInputBase = styled(InputBase)(({ theme }) => ({
+  color: 'inherit',
+  '& .MuiInputBase-input': {
+    padding: theme.spacing(1, 1, 1, 0),
+    paddingLeft: `calc(1em + ${theme.spacing(4)})`,
+    transition: theme.transitions.create(['width', 'padding'], {
+      duration: theme.transitions.duration.short,
+    }),
+    width: '100%',
+  },
+}));
 
 export default function Header({ loadFavorites }) {
   const [searchTerm, setSearchTerm] = useState('');
@@ -52,9 +98,6 @@ export default function Header({ loadFavorites }) {
   const [anchorEl, setAnchorEl] = useState(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = useState(null);
   const [openModal, setOpenModal] = useState(false);
-  const [error, setError] = useState(null);
-  const [cart, setCart] = useState([]); // en lugar de null
-
 
   const navigate = useNavigate();
   const isMenuOpen = Boolean(anchorEl);
@@ -64,53 +107,11 @@ export default function Header({ loadFavorites }) {
   const categoriesRef = useRef(null);
   const debounceRef = useRef(null);
   const DEBOUNCE_MS = 250;
-  const cartCount = Array.isArray(cart?.products)
-    ? cart.products.reduce((acc, p) => acc + (p.cantidad || 1), 0)
-    : 0;
-
 
   const [selectedCategory, setSelectedCategory] = useState(null);
 
 
   const subcategories = selectedCategory?.sub_categories || [];
-  const token = localStorage.getItem('token');
-    useEffect(() => {
-      // Cargar el carrito al inicio
-      fetchCart();
-
-      // Escuchar eventos de actualización del carrito
-      const handleCartUpdate = () => {
-        fetchCart();
-      };
-
-      window.addEventListener("cartUpdatedCustom", handleCartUpdate);
-
-      // Limpieza
-      return () => {
-        window.removeEventListener("cartUpdatedCustom", handleCartUpdate);
-      };
-    }, [token]);
-
-  
-    const fetchCart = () => {
-      setLoading(true);
-      setError(null);
-      fetch("https://localhost:4000/api/v1/cart", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
-        .then((res) => {
-          if (!res.ok) throw new Error("Failed to fetch cart");
-          return res.json();
-        })
-        .then((data) => setCart(data))
-        .catch((err) => {
-          console.error("Error cargando cart: ", err);
-          setError(t("cart.loadingError"));
-        })
-        .finally(() => setLoading(false));
-    };
   
 
   const handleScroll = () => {
@@ -735,41 +736,160 @@ export default function Header({ loadFavorites }) {
 
 
           </Box>
-          {/* buscador */}
-          <SearchBar />
-          {/* Íconos */}
-          <Box sx={{ display: { xs: "none", md: "flex" }, gap: 2 }}>
-            {perfilIcon}
 
-            <IconButton
-              component={Link}
-              to={`/${lang}/carrito`}
-              sx={{ color: "black", "&:hover": { color: pinkTheme.primary } }}
-            >
-              <Badge
-                badgeContent={cartCount}
-                color="error"
-                overlap="circular"
+          {/* Buscador */}
+          <Box
+            component="form"
+            onSubmit={handleSearchSubmit}
+            sx={{ flexGrow: 1, display: 'flex', justifyContent: 'center', position: 'relative' }}
+            ref={containerRef}
+          >
+            <Search>
+              <SearchIconWrapper><SearchIcon /></SearchIconWrapper>
+              <StyledInputBase
+                placeholder={t('header.searchPlaceholder')}
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+            </Search>
+
+            {/* Dropdown resultados */}
+            {(results.length > 0 || loading) && (
+              <Box
                 sx={{
-                  "& .MuiBadge-badge": {
-                    backgroundColor: pinkTheme.primary,
-                    border: "solid 1px white",
-                    fontSize: "0.7rem",
-                    height: "16px",
-                    minWidth: "16px",
-                    top: 4,
-                    right: 4,
-                  },
+                  position: 'absolute',
+                  top: '100%',
+                  left: 0,
+                  right: 0,
+                  mt: 1,
+                  bgcolor: 'white',
+                  boxShadow: 3,
+                  borderRadius: 2,
+                  zIndex: 1300,
+                  width: '90%',
+                  mx: 'auto',
+                  p: 2,
                 }}
               >
-                <BsCart4 size={25} />
-              </Badge>
+                {loading && <Box sx={{ p: 1 }}>{t('header.searching')}</Box>}
 
+                {!loading && results.length > 0 && (
+                  <>
+                    <Box
+                      sx={{
+                        display: { xs: 'none', sm: 'grid' },
+                        gridTemplateColumns: {
+                          sm: 'repeat(2, 1fr)',
+                          md: 'repeat(3, 1fr)',
+                          lg: 'repeat(4, 1fr)',
+                        },
+                        gap: 2,
+                      }}
+                    >
+                      {results.map((prod) => {
+                        const name = prod?.nombre_producto || prod?.name || t('header.noName');
+                        const img = prod?.imagen_url || prod?.image || null;
+                        const price = prod?.precio_producto || prod?.price || null;
+                        return (
+                          <Box
+                            key={prod.id || prod.slug || name}
+                            onClick={() => goToProduct(prod)}
+                            sx={{
+                              p: 1,
+                              textAlign: 'center',
+                              border: '1px solid #ddd',
+                              borderRadius: 2,
+                              cursor: 'pointer',
+                              '&:hover': { 
+                                boxShadow: 4,
+                                borderColor: pinkTheme.primary
+                              },
+                            }}
+                          >
+                            {img ? (
+                              <img src={img} alt={name} style={{ width: '100%', height: 120, objectFit: 'cover', borderRadius: 8 }} />
+                            ) : (
+                              <Box sx={{ width: '100%', height: 120, bgcolor: '#eee', borderRadius: 1 }} />
+                            )}
+                            <Typography variant="body2" sx={{ mt: 1, fontWeight: 500 }}>{name}</Typography>
+                            {price && (
+                              <Typography variant="caption" sx={{ color: pinkTheme.primary, fontWeight: 'bold' }}>
+                                {formatCOP(price)}
+                              </Typography>
+                            )}
+                          </Box>
+                        );
+                      })}
+                    </Box>
+
+                    <Box
+                      sx={{
+                        display: { xs: 'flex', sm: 'none' },
+                        overflowX: 'auto',
+                        gap: 2,
+                        pb: 1,
+                        '&::-webkit-scrollbar': { display: 'none' },
+                      }}
+                    >
+                      {results.map((prod) => {
+                        const name = prod?.nombre_producto || prod?.name || t('header.noName');
+                        const img = prod?.imagen_url || prod?.image || null;
+                        const price = prod?.precio_producto || prod?.price || null;
+                        return (
+                          <Box
+                            key={prod.id || prod.slug || name}
+                            onClick={() => goToProduct(prod)}
+                            sx={{
+                              minWidth: 160,
+                              maxWidth: 200,
+                              p: 1,
+                              textAlign: 'center',
+                              border: '1px solid #ddd',
+                              borderRadius: 2,
+                              cursor: 'pointer',
+                              flexShrink: 0,
+                              '&:hover': { 
+                                boxShadow: 4,
+                                borderColor: pinkTheme.primary
+                              },
+                            }}
+                          >
+                            {img ? (
+                              <img src={img} alt={name} style={{ width: '100%', height: 120, objectFit: 'cover', borderRadius: 8 }} />
+                            ) : (
+                              <Box sx={{ width: '100%', height: 120, bgcolor: '#eee', borderRadius: 1 }} />
+                            )}
+                            <Typography variant="body2" sx={{ mt: 1, fontWeight: 500 }}>{name}</Typography>
+                            {price && (
+                              <Typography variant="caption" sx={{ color: pinkTheme.primary, fontWeight: 'bold' }}>
+                                {formatCOP(price)}
+                              </Typography>
+                            )}
+                          </Box>
+                        );
+                      })}
+                    </Box>
+                  </>
+                )}
+              </Box>
+            )}
+          </Box>
+
+          {/* Íconos */}
+          <Box sx={{ display: { xs: 'none', md: 'flex' }, gap: 2 }}>
+            
+            {perfilIcon}
+
+            <IconButton 
+              component={Link} 
+              to={`/${lang}/carrito`}
+              sx={{ color: 'black', '&:hover': { color: pinkTheme.primary } }}
+            >
+              <BsCart4 size={25} />
             </IconButton>
-
-            <IconButton
+            <IconButton 
               onClick={() => setOpenModal(true)}
-              sx={{ color: "black", "&:hover": { color: pinkTheme.primary } }}
+              sx={{ color: 'black', '&:hover': { color: pinkTheme.primary } }}
             >
               <BsHeart size={22} />
             </IconButton>

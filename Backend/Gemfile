@@ -29,8 +29,6 @@ gem "image_processing", "~> 1.2"
 
 gem 'mercadopago-sdk', '~> 2.3'
 
-gem 'google-apis-analyticsdata_v1beta'
-
 gem 'dotenv', groups: [:development, :test]
 
 gem 'rack-cors'

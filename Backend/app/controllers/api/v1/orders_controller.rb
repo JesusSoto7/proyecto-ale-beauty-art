@@ -163,7 +163,7 @@ class Api::V1::OrdersController < Api::V1::BaseController
     render json: data
   end
   
-    def status
+  def status
       order = current_user.orders.find(params[:id])
       render json: {
         order_id: order.id,
@@ -172,39 +172,6 @@ class Api::V1::OrdersController < Api::V1::BaseController
     rescue ActiveRecord::RecordNotFound
       render json: { error: "Orden no encontrada" }, status: :not_found
     end
-
-  def by_payment
-    Rails.logger.info ">>> Buscando orden con payment_id: #{params[:payment_id].inspect}"
-    order = Order.includes(order_details: :product).find_by(payment_id: params[:payment_id].to_s)
-    Rails.logger.info ">>> Orden encontrada: #{order.inspect}"
-    if order
-      render json: {
-        order: {
-          id: order.id,
-          numero_de_orden: order.numero_de_orden,
-          status: order.status,
-          pago_total: order.pago_total,
-          fecha_pago: order.fecha_pago,
-          direccion_envio: order.direccion_envio,
-          tarjeta_tipo: order.card_type,
-          tarjeta_ultimos4: order.card_last4,
-         productos: order.order_details.map do |od|
-          {
-            id: od.id,
-            nombre_producto: od.product.nombre_producto,
-            precio_producto: od.product.precio_producto,
-            cantidad: od.cantidad,
-            slug: od.product.slug,
-            imagen_url: od.product.imagen.attached? ? url_for(od.product.imagen) : nil
-          }
-        end
-        }
-      }
-    else
-      render json: { error: 'Order not found' }, status: :not_found
-    end
-  end
-
 
 
 
