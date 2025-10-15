@@ -300,6 +300,14 @@
   0% { transform: translateX(0); }
   100% { transform: translateX(-50%); } /* -50% porque duplicamos los items */
 }
+.carousel-container-subcat {
+  position: relative;
+  width: 80%;
+  overflow: hidden;
+  padding: 2rem 0;
+  max-width: 1200px;
+  margin: auto;
+}
 
 .subcat-section {
   margin: 60px auto;

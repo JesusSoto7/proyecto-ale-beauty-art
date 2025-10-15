@@ -12,6 +12,8 @@ import noImage from "../../assets/images/no_image.png";
 import RotatingBanner from "./RotatingBanner";
 import { useTranslation } from 'react-i18next';
 
+
+
 function Inicio() {
   const [carousel, setCarousel] = useState([]);
   const [products, setProducts] = useState([]);
@@ -24,6 +26,8 @@ function Inicio() {
   const { t } = useTranslation();
   const [newProducts, setNewProducts] = useState([]);
   const [categorySubcategories, setCategorySubcategories] = useState({});
+
+  
   
   const token = localStorage.getItem('token');
   const interesRef = useRef(null);
@@ -440,7 +444,7 @@ function Inicio() {
         </h2>
 
         {loadingSubcats ? (
-          <div className="carousel-container">
+          <div className="carousel-container-subcat">
             <div className="subcat-track loading">
               {[1, 2, 3, 4].map((skeleton) => (
                 <div className="subcat-card skeleton" key={skeleton}>
@@ -454,13 +458,13 @@ function Inicio() {
             </div>
           </div>
         ) : categories && categories.length > 0 ? (
-          <div className="carousel-container">
+          <div className="carousel-container-subcat">
             {/* Flecha izquierda */}
             <button
               className="carousel-btn prev"
               onClick={() =>
                 document.querySelector(".subcat-carousel")?.scrollBy({
-                  left: -310,
+                  left: -250,
                   behavior: "smooth",
                 })
               }
@@ -500,7 +504,7 @@ function Inicio() {
               className="carousel-btn next"
               onClick={() =>
                 document.querySelector(".subcat-carousel")?.scrollBy({
-                  left: 310,
+                  left: 250,
                   behavior: "smooth",
                 })
               }
