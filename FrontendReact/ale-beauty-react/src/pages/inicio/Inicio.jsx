@@ -319,23 +319,29 @@ function Inicio() {
                       />
                     </div>
                     
-                    {/* Rating de estrellas agregado con margen izquierdo */}
-                    <div style={{ display: "flex", alignItems: "center", marginBottom: "5px", marginLeft: "10px" }}>
+                    {/* Rating de estrellas CENTRADO */}
+                    <div style={{ 
+                      display: "flex", 
+                      alignItems: "center", 
+                      justifyContent: "center",
+                      marginBottom: "5px",
+                      width: "100%"
+                    }}>
                       <Rating
                         name={`product-rating-${prod.id}`}
                         value={productRatings[prod.id]?.avg || 0}
                         precision={0.5}
                         readOnly
                         size="small"
-                        sx={{ color: "#ffc107", marginRight: "5px" }}
+                        sx={{ color: "#ffc107" }}
                       />
                       <span style={{ fontSize: "14px", marginLeft: "4px" }}>
                         {productRatings[prod.id]?.avg ? productRatings[prod.id].avg.toFixed(1) : "0.0"}
                       </span>
                     </div>
                     
-                    <h5 style={{ marginLeft: "10px" }}>{prod.nombre_producto}</h5>
-                    <p style={{ marginLeft: "10px" }}>{formatCOP(prod.precio_producto)}</p>
+                    <h5 style={{ textAlign: "center", margin: "5px 0" }}>{prod.nombre_producto}</h5>
+                    <p style={{ textAlign: "center", margin: "5px 0" }}>{formatCOP(prod.precio_producto)}</p>
                   </Link>
 
                   <div className="actions">
@@ -460,23 +466,29 @@ function Inicio() {
                       />
                     </div>
                     
-                    {/* Rating de estrellas agregado con margen izquierdo */}
-                    <div style={{ display: "flex", alignItems: "center", marginBottom: "5px", marginLeft: "10px" }}>
+                    {/* Rating de estrellas CENTRADO */}
+                    <div style={{ 
+                      display: "flex", 
+                      alignItems: "center", 
+                      justifyContent: "center",
+                      marginBottom: "5px",
+                      width: "100%"
+                    }}>
                       <Rating
                         name={`product-rating-${prod.id}`}
                         value={productRatings[prod.id]?.avg || 0}
                         precision={0.5}
                         readOnly
                         size="small"
-                        sx={{ color: "#ffc107", marginRight: "5px" }}
+                        sx={{ color: "#ffc107" }}
                       />
                       <span style={{ fontSize: "14px", marginLeft: "4px" }}>
                         {productRatings[prod.id]?.avg ? productRatings[prod.id].avg.toFixed(1) : "0.0"}
                       </span>
                     </div>
                     
-                    <h5 style={{ marginLeft: "10px" }}>{prod.nombre_producto}</h5>
-                    <p style={{ marginLeft: "10px" }}>{formatCOP(prod.precio_producto)}</p>
+                    <h5 style={{ textAlign: "center", margin: "5px 0" }}>{prod.nombre_producto}</h5>
+                    <p style={{ textAlign: "center", margin: "5px 0" }}>{formatCOP(prod.precio_producto)}</p>
                   </Link>
 
                   <div className="actions">
