@@ -30,6 +30,7 @@ import './assets/stylesheets/Header.css'
 import './assets/stylesheets/Footer.css'
 import './assets/stylesheets/Cart.css'
 import 'bootstrap/dist/css/bootstrap.min.css';
+import './assets/stylesheets/GestionUsuarios.css';
 import './App.css';
 import "./i18n";
 import SubCateProd from './components/SubCateProd';
@@ -40,6 +41,7 @@ import Forbidden403 from './pages/home/Forbidden403';
 import Pedidos from './pages/inicio/Pedidos';
 import DetallePedido from './pages/inicio/DetallePedido';
 import SubCategorias from './pages/home/SubCategories';
+import GestionUsuarios from './components/dashComponents/GestionUsuarios';
 
 function Wrapper() {
   const { lang } = useParams();
@@ -93,8 +95,7 @@ function App() {
             <Route path="pedidos/:id" element={<DetallePedido />} />
             <Route path="about" element={<AboutUs />} />
             <Route path="terms" element={<TermsAndConditions />} />
-            <Route path="/:lang/categoria/:categoryId/:subCategoryId/products" element={<SubCateProd />} />
-
+            <Route path="/:lang/categoria/:categorySlug/:subCategorySlug/products" element={<SubCateProd />} />
 
           </Route>
 
@@ -118,6 +119,7 @@ function App() {
               <Route path="categories/:slug" element={<SubCategorias />} />
               <Route path="categories/:id" element={<CategoryProducts />} /> 
               <Route path="carousel" element={<Carousel />} />
+              <Route path="usuarios" element={<GestionUsuarios />} />
           </Route>
         </Route>
         <Route path="/:lang/403" element={<Forbidden403 />} />

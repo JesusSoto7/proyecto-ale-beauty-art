@@ -177,18 +177,27 @@ const ProductTable = () => {
         enableHiding: true,
         Cell: ({ cell }) => cell.getValue() || "Sin descripción",
       },
-      {
-        accessorKey: "category_id",
+{
+        accessorFn: row =>
+          row?.sub_category?.category?.nombre_categoria ||
+          row?.category?.nombre_categoria ||
+          "",
+        id: "category_name",
         header: "Categoría",
-        Cell: ({ row }) => row.original?.category?.nombre_categoria || "",
+        size: 150,
+        filterFn: "includesString",
+        Cell: ({ cell }) => (
+        <span style={{ fontWeight: 500, color: isDark ? "#eaa8f5" : "#a12c7f" }}>
+          {cell.getValue() || ""}
+        </span>
+      ),
         Edit: ({ row, column }) => {
           const [current, setCurrent] = useState(
-            row._valuesCache?.[column.id] ??
+            row._valuesCache?.["category_id"] ??
               (row.original.category_id != null
                 ? String(row.original.category_id)
                 : "")
           );
-
           return (
             <TextField
               select
@@ -197,7 +206,7 @@ const ProductTable = () => {
                 const newCategoryId = e.target.value;
                 setCurrent(newCategoryId);
                 if (!row._valuesCache) row._valuesCache = {};
-                row._valuesCache[column.id] = newCategoryId;
+                row._valuesCache["category_id"] = newCategoryId;
                 handleCategoryChange(newCategoryId, row, column);
               }}
               fullWidth
