@@ -33,9 +33,11 @@ class _ExpandableSearchBarState extends State<ExpandableSearchBar> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      behavior: HitTestBehavior.translucent, // Permite detectar toques en áreas vacías
+      behavior: HitTestBehavior
+          .translucent, // Permite detectar toques en áreas vacías
       onTap: () {
-        FocusScope.of(context).unfocus(); // Quita el foco de cualquier campo de texto
+        FocusScope.of(context)
+            .unfocus(); // Quita el foco de cualquier campo de texto
       },
       child: Row(
         mainAxisAlignment: MainAxisAlignment.end, // Alinea a la derecha
@@ -64,7 +66,8 @@ class _ExpandableSearchBarState extends State<ExpandableSearchBar> {
                   padding: EdgeInsets.zero,
                 ),
                 if (_isExpanded)
-                  Expanded( // Cambiado de Flexible a Expanded
+                  Expanded(
+                    // Cambiado de Flexible a Expanded
                     child: TextField(
                       focusNode: _focusNode,
                       controller: _controller,
@@ -72,10 +75,13 @@ class _ExpandableSearchBarState extends State<ExpandableSearchBar> {
                         hintText: 'Buscar...',
                         border: InputBorder.none,
                         isDense: true,
-                        contentPadding: EdgeInsets.symmetric(vertical: 5, horizontal: 8), // Añade padding horizontal
+                        contentPadding: EdgeInsets.symmetric(
+                            vertical: 5,
+                            horizontal: 8), // Añade padding horizontal
                       ),
                       style: TextStyle(
-                        overflow: TextOverflow.ellipsis, // Evita desbordamiento del texto ingresado
+                        overflow: TextOverflow
+                            .ellipsis, // Evita desbordamiento del texto ingresado
                       ),
                     ),
                   ),
