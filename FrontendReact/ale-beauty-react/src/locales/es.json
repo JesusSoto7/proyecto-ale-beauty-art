@@ -243,19 +243,43 @@
     "altText": "Banner {{number}}"
   },
   "products": {
-    "loadError": "Error cargando productos",
-    "cartError": "Error cargando carrito",
-    "favoritesError": "Error cargando favoritos",
-    "addedToCart": "Producto añadido al carrito",
-    "error": "Error: ",
-    "cartAddError": "Error añadiendo producto al carrito",
-    "removeFavoriteError": "Error quitando favorito",
-    "addFavoriteError": "Error añadiendo favorito",
-    "notAuthenticated": "No autenticado",
-    "noProducts": "No hay productos disponibles.",
-    "allProducts": "Todos los productos",
-    "addToCart": "Añadir al carrito"
+    "notAuthenticated": "Por favor inicia sesión para ver los productos",
+    "addToCart": "Añadir al carrito",
+    "loading": "Cargando...",
+    "noProducts": "No se encontraron productos",
+    "noProductsFilter": "No hay productos para los filtros seleccionados",
+    "tryOtherFilters": "Intenta con otros filtros o categorías",
+    "clearFilters": "Limpiar filtros",
+    "showing": "Mostrando",
+    "of": "de",
+    "products": "productos",
+    "category": "Categoría",
+    "subcategory": "Subcategoría",
+    "price": "Precio",
+    "rating": "Valoración",
+    "min": "Mín",
+    "max": "Máx",
+    "stars": "Estrellas",
+    "star": "Estrella"
   },
+  "filters": {
+    "title": "Filtros",
+    "categories": "Categorías",
+    "allCategories": "Todas las categorías",
+    "subcategories": "Subcategorías",
+    "allSubcategories": "Todas las subcategorías",
+    "noSubcategories": "No hay subcategorías para esta categoría",
+    "sortByPrice": "Ordenar por precio",
+    "unsorted": "Sin ordenar",
+    "lowToHigh": "Menor a mayor",
+    "highToLow": "Mayor a menor",
+    "priceRange": "Rango de precio"
+  },
+  "banner": {
+    "title": "PRODUCTOS",
+    "description": "Descubre nuestra amplia selección de productos"
+  },
+
   "productDetails": {
     "notAuthenticated": "No está autenticado",
     "favoritesError": "Error cargando favoritos",

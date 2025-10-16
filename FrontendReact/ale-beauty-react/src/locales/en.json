@@ -243,18 +243,41 @@
     "altText": "Banner {{number}}"
   },
   "products": {
-    "loadError": "Error loading products",
-    "cartError": "Error loading cart",
-    "favoritesError": "Error loading favorites",
-    "addedToCart": "Product added to cart",
-    "error": "Error: ",
-    "cartAddError": "Error adding product to cart",
-    "removeFavoriteError": "Error removing favorite",
-    "addFavoriteError": "Error adding favorite",
-    "notAuthenticated": "Not authenticated",
-    "noProducts": "No products available.",
-    "allProducts": "All products",
-    "addToCart": "Add to cart"
+    "notAuthenticated": "Please log in to view products",
+    "addToCart": "Add to Cart",
+    "loading": "Loading...",
+    "noProducts": "No products found",
+    "noProductsFilter": "No products for the selected filters",
+    "tryOtherFilters": "Try other filters or categories",
+    "clearFilters": "Clear filters",
+    "showing": "Showing",
+    "of": "of",
+    "products": "products",
+    "category": "Category",
+    "subcategory": "Subcategory",
+    "price": "Price",
+    "rating": "Rating",
+    "min": "Min",
+    "max": "Max",
+    "stars": "Stars",
+    "star": "Star"
+  },
+  "filters": {
+    "title": "Filters",
+    "categories": "Categories",
+    "allCategories": "All categories",
+    "subcategories": "Subcategories",
+    "allSubcategories": "All subcategories",
+    "noSubcategories": "No subcategories for this category",
+    "sortByPrice": "Sort by price",
+    "unsorted": "Unsorted",
+    "lowToHigh": "Low to high",
+    "highToLow": "High to low",
+    "priceRange": "Price range"
+  },
+  "banner": {
+    "title": "PRODUCTS",
+    "description": "Discover our wide selection of products"
   },
    "productDetails": {
     "notAuthenticated": "You are not authenticated",

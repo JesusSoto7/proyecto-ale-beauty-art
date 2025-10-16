@@ -105,8 +105,6 @@ function ProductosCliente() {
     loadData();
   }, [token]);
 
-
-  
   function GradientHeart({ filled = false, size = 36 }) {
     return (
       <svg
@@ -279,7 +277,7 @@ function ProductosCliente() {
     return (
       <div className="prodcli-loading">
         <CircularProgress style={{ color: "#ff4d94" }} />
-        <p>Cargando...</p>
+        <p>{t('products.loading')}</p>
       </div>
     );
   }
@@ -288,7 +286,7 @@ function ProductosCliente() {
     return (
       <div className="prodcli-loading">
         <CircularProgress style={{ color: "pink" }} />
-        <p>Cargando...</p>
+        <p>{t('products.loading')}</p>
       </div>
     );
   }
@@ -297,32 +295,32 @@ function ProductosCliente() {
     <section className="prodcli-section prodcli-centered">
       {/* Banner gris grande */}
       <div className="prodcli-banner">
-        <h1>PRODUCTOS</h1>
-        <p>Descubre nuestra amplia selección de productos</p>
+        <h1>{t('banner.title')}</h1>
+        <p>{t('banner.description')}</p>
       </div>
 
       <div className="prodcli-contentwrap">
         <div className="prodcli-info-bar">
           <p>
-            Mostrando <strong>{filteredProducts.length}</strong> de <strong>{products.length}</strong> productos
+            {t('products.showing')} <strong>{filteredProducts.length}</strong> {t('products.of')} <strong>{products.length}</strong> {t('products.products')}
             {selectedCategory !== "Todos" && (
               <span className="prodcli-filtros">
-                • Categoría: {categories.find(c => String(c.id_categoria || c.id) === String(selectedCategory))?.nombre_categoria}
+                • {t('products.category')}: {categories.find(c => String(c.id_categoria || c.id) === String(selectedCategory))?.nombre_categoria}
               </span>
             )}
             {selectedSubcategory !== "Todos" && (
               <span className="prodcli-filtros">
-                • Subcategoría: {filteredSubcategories.find(sc => String(sc.id_subcategoria || sc.id) === String(selectedSubcategory))?.nombre_subcategoria}
+                • {t('products.subcategory')}: {filteredSubcategories.find(sc => String(sc.id_subcategoria || sc.id) === String(selectedSubcategory))?.nombre_subcategoria}
               </span>
             )}
             {(priceRange.min || priceRange.max) && (
               <span className="prodcli-filtros">
-                • Precio: {priceRange.min ? `$${priceRange.min}` : "Mín"} - {priceRange.max ? `$${priceRange.max}` : "Máx"}
+                • {t('products.price')}: {priceRange.min ? `$${priceRange.min}` : t('products.min')} - {priceRange.max ? `$${priceRange.max}` : t('products.max')}
               </span>
             )}
             {selectedRatings.length > 0 && (
               <span className="prodcli-filtros">
-                • Rating: {selectedRatings.map(r => `${r}★`).join(", ")}
+                • {t('products.rating')}: {selectedRatings.map(r => `${r}★`).join(", ")}
               </span>
             )}
           </p>
@@ -332,13 +330,12 @@ function ProductosCliente() {
           {/* Sidebar de filtros */}
           <div className="prodcli-sidebar">
             <Typography variant="h6" className="prodcli-sidebar-title">
-              Filtros
+              {t('filters.title')}
             </Typography>
-            {/* ...sidebar code igual... */}
-            {/* ...el mismo código de filtros que ya tienes... */}
+            
             <div className="prodcli-sidebar-section">
               <Typography variant="subtitle1" className="prodcli-sidebar-subtitle">
-                Categorías
+                {t('filters.categories')}
               </Typography>
               <div className="prodcli-radio-col">
                 <label>
@@ -348,7 +345,7 @@ function ProductosCliente() {
                     checked={selectedCategory === "Todos"}
                     onChange={() => handleSelectCategory("Todos")}
                   />
-                  Todas las categorías
+                  {t('filters.allCategories')}
                 </label>
                 {categories.map(cat => (
                   <label key={cat.id_categoria || cat.id}>
@@ -363,9 +360,10 @@ function ProductosCliente() {
                 ))}
               </div>
             </div>
+
             <div className="prodcli-sidebar-section">
               <Typography variant="subtitle1" className="prodcli-sidebar-subtitle">
-                Subcategorías
+                {t('filters.subcategories')}
               </Typography>
               <div className="prodcli-radio-col">
                 <label>
@@ -375,7 +373,7 @@ function ProductosCliente() {
                     checked={selectedSubcategory === "Todos"}
                     onChange={() => handleSelectSubcategory("Todos")}
                   />
-                  Todas las subcategorías
+                  {t('filters.allSubcategories')}
                 </label>
                 {filteredSubcategories.map(sub => (
                   <label key={sub.id_subcategoria || sub.id}>
@@ -389,13 +387,14 @@ function ProductosCliente() {
                   </label>
                 ))}
                 {filteredSubcategories.length === 0 && selectedCategory !== "Todos" && (
-                  <p className="prodcli-nosc">No hay subcategorías para esta categoría</p>
+                  <p className="prodcli-nosc">{t('filters.noSubcategories')}</p>
                 )}
               </div>
             </div>
+
             <div className="prodcli-sidebar-section">
               <Typography variant="subtitle1" className="prodcli-sidebar-subtitle">
-                Ordenar por precio
+                {t('filters.sortByPrice')}
               </Typography>
               <div className="prodcli-radio-col">
                 <label>
@@ -405,7 +404,7 @@ function ProductosCliente() {
                     checked={sortOrder === null}
                     onChange={() => handleSort(null)}
                   />
-                  Sin ordenar
+                  {t('filters.unsorted')}
                 </label>
                 <label>
                   <input
@@ -414,7 +413,7 @@ function ProductosCliente() {
                     checked={sortOrder === "asc"}
                     onChange={() => handleSort("asc")}
                   />
-                  Menor a mayor
+                  {t('filters.lowToHigh')}
                 </label>
                 <label>
                   <input
@@ -423,13 +422,14 @@ function ProductosCliente() {
                     checked={sortOrder === "desc"}
                     onChange={() => handleSort("desc")}
                   />
-                  Mayor a menor
+                  {t('filters.highToLow')}
                 </label>
               </div>
             </div>
+
             <div className="prodcli-sidebar-section">
               <Typography variant="subtitle1" className="prodcli-sidebar-subtitle">
-                Rango de precio
+                {t('filters.priceRange')}
               </Typography>
               <div className="prodcli-pricerange">
                 <input
@@ -447,9 +447,10 @@ function ProductosCliente() {
                 />
               </div>
             </div>
+
             <div className="prodcli-sidebar-section">
               <Typography variant="subtitle1" className="prodcli-sidebar-subtitle">
-                Valoración
+                {t('products.rating')}
               </Typography>
               <div className="prodcli-radio-col">
                 {[4, 3, 2, 1].map(rating => (
@@ -460,105 +461,108 @@ function ProductosCliente() {
                       onChange={() => handleRatingChange(rating)}
                     />
                     <span className="prodcli-star">{'★'.repeat(rating)}</span>
-                    {rating} Estrella{rating !== 1 ? 's' : ''}
+                    {rating} {rating !== 1 ? t('products.stars') : t('products.star')}
                   </label>
                 ))}
               </div>
             </div>
+
             {(selectedCategory !== "Todos" || selectedSubcategory !== "Todos" || sortOrder || priceRange.min || priceRange.max || selectedRatings.length > 0) && (
               <button 
                 onClick={handleClearAllFilters}
                 className="prodcli-clearbtn"
               >
-                Limpiar filtros
+                {t('products.clearFilters')}
               </button>
             )}
           </div>
+
           {/* Productos */}
           <div className="prodcli-main prodcli-main-centered">
             <div className="prodcli-grid prodcli-grid-3cols">
-            {filteredProducts.map((prod, index) => (
-              <div 
-                key={prod.id} 
-                className="custom-product-card"
-                style={{ animationDelay: `${index * 0.1}s`, cursor: "pointer" }}
-                onClick={() => navigate(`/${lang}/producto/${prod.slug}`)}
-                tabIndex={0}
-                onKeyDown={e => {
-                  if (e.key === 'Enter' || e.key === ' ') {
-                    navigate(`/${lang}/producto/${prod.slug}`);
-                  }
-                }}
-              >
-                <div className="custom-image-wrapper">
-                  <img
-                    src={prod.imagen_url || noImage}
-                    alt={prod.nombre_producto}
-                    onError={(e) => { e.currentTarget.src = noImage; }}
-                  />
-                  <IconButton
-                    onClick={e => {
-                      e.stopPropagation();
-                      toggleFavorite(prod.id);
-                    }}
-                    className="custom-favorite-btn"
-                    style={{ padding: 0, background: "transparent" }}
-                  >
-                    {favoriteIds.includes(prod.id)
-                      ? <GradientHeart filled />
-                      : <GradientHeart filled={false} />
+              {filteredProducts.map((prod, index) => (
+                <div 
+                  key={prod.id} 
+                  className="custom-product-card"
+                  style={{ animationDelay: `${index * 0.1}s`, cursor: "pointer" }}
+                  onClick={() => navigate(`/${lang}/producto/${prod.slug}`)}
+                  tabIndex={0}
+                  onKeyDown={e => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      navigate(`/${lang}/producto/${prod.slug}`);
                     }
-                  </IconButton>
-                </div>
-                <div className="custom-product-info">
-                  <div className="custom-rating-row-v2">
-                    <span style={{ flex: 1 }}></span>
-                    <span className="custom-star">
-                      <svg width="17" height="17" viewBox="0 0 24 24" fill="#FFC107" xmlns="http://www.w3.org/2000/svg" style={{ marginRight: "2px", verticalAlign: "middle" }}>
-                        <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/>
-                      </svg>
-                      <span className="custom-rating-number-v2">
-                        {productRatings[prod.id]?.avg
-                          ? Number(productRatings[prod.id]?.avg).toFixed(1)
-                          : "0.0"}
+                  }}
+                >
+                  <div className="custom-image-wrapper">
+                    <img
+                      src={prod.imagen_url || noImage}
+                      alt={prod.nombre_producto}
+                      onError={(e) => { e.currentTarget.src = noImage; }}
+                    />
+                    <IconButton
+                      onClick={e => {
+                        e.stopPropagation();
+                        toggleFavorite(prod.id);
+                      }}
+                      className="custom-favorite-btn"
+                      style={{ padding: 0, background: "transparent" }}
+                    >
+                      {favoriteIds.includes(prod.id)
+                        ? <GradientHeart filled />
+                        : <GradientHeart filled={false} />
+                      }
+                    </IconButton>
+                  </div>
+                  <div className="custom-product-info">
+                    <div className="custom-rating-row-v2">
+                      <span style={{ flex: 1 }}></span>
+                      <span className="custom-star">
+                        <svg width="17" height="17" viewBox="0 0 24 24" fill="#FFC107" xmlns="http://www.w3.org/2000/svg" style={{ marginRight: "2px", verticalAlign: "middle" }}>
+                          <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/>
+                        </svg>
+                        <span className="custom-rating-number-v2">
+                          {productRatings[prod.id]?.avg
+                            ? Number(productRatings[prod.id]?.avg).toFixed(1)
+                            : "0.0"}
+                        </span>
                       </span>
-                    </span>
+                    </div>
+                    <div className="custom-product-name-v2">{prod.nombre_producto}</div>
+                    <div className="custom-price-row-v2">
+                      <span className="custom-price-v2">{formatCOP(prod.precio_producto)}</span>
+                    </div>
                   </div>
-                  <div className="custom-product-name-v2">{prod.nombre_producto}</div>
-                  <div className="custom-price-row-v2">
-                    <span className="custom-price-v2">{formatCOP(prod.precio_producto)}</span>
+                  <div className="custom-card-footer">
+                    <button
+                      onClick={e => {
+                        e.stopPropagation();
+                        addToCart(prod.id);
+                      }}
+                      className="custom-add-btn"
+                    >
+                      {t('products.addToCart')}
+                    </button>
                   </div>
                 </div>
-                <div className="custom-card-footer">
-                  <button
-                    onClick={e => {
-                      e.stopPropagation();
-                      addToCart(prod.id);
-                    }}
-                    className="custom-add-btn"
-                  >
-                    {t('products.addToCart')}
-                  </button>
-                </div>
-              </div>
-            ))}
-            {Array.from({length: Math.max(0, 3 - filteredProducts.length)}).map((_, idx) => (
-              <div className="prodcli-placeholder" key={`ph-${idx}`}></div>
-            ))}
-          </div>
+              ))}
+              {Array.from({length: Math.max(0, 3 - filteredProducts.length)}).map((_, idx) => (
+                <div className="prodcli-placeholder" key={`ph-${idx}`}></div>
+              ))}
+            </div>
+            
             {filteredProducts.length === 0 && (
               <div className="prodcli-empty">
-                <p>No se encontraron productos</p>
+                <p>{t('products.noProducts')}</p>
                 <p>
                   {selectedCategory !== "Todos" || selectedSubcategory !== "Todos" 
-                    ? "No hay productos para los filtros seleccionados" 
-                    : "Intenta con otros filtros o categorías"}
+                    ? t('products.noProductsFilter') 
+                    : t('products.tryOtherFilters')}
                 </p>
                 <button 
                   onClick={handleClearAllFilters}
                   className="prodcli-clearbtn"
                 >
-                  Limpiar filtros
+                  {t('products.clearFilters')}
                 </button>
               </div>
             )}
