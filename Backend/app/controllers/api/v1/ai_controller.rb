@@ -23,7 +23,6 @@ class Api::V1::AiController < Api::V1::BaseController
     # Detectar intención
     keyword = keywords.find { |k| prompt_down.include?(k) }
     value_prompt = value_keywords.any? { |k| prompt_down.include?(k) }
-    # Solo activa rutina si la frase/delimitador completo está presente
     routine_prompt = routine_keywords.any? { |k| prompt_down.match?(/\b#{Regexp.escape(k)}\b/) }
 
     query = Product.includes(sub_category: :category)
@@ -81,10 +80,20 @@ class Api::V1::AiController < Api::V1::BaseController
       return
     end
 
-    # Prompt para Gemini ajustado para rutina, calidad-precio, y general
+    # Prompt para Gemini ajustado con identidad Amélie
+    first_message = params[:first_message] == true || params[:first_message] == "true"
+
+    base_intro = if first_message
+      "Te llamas Amélie, eres la asistente virtual de Ale Beauty Art. Preséntate como Amélie solo en este mensaje."
+    else
+      # NO presentar, pero responder como Amélie
+      "Responde como Amélie, la experta en belleza de Ale Beauty Art, pero NO te presentes ni digas tu nombre, solo responde profesionalmente."
+    end
+
     prompt = if routine_prompt
       <<~PROMPT
-        Eres un experto en belleza para una tienda online. El usuario pide una rutina de maquillaje utilizando solo productos de la siguiente lista y debe indicar el precio de cada producto.
+        #{base_intro}
+        El usuario pide una rutina de maquillaje utilizando solo productos de la siguiente lista y debe indicar el precio de cada producto.
         Responde exclusivamente con el paso a paso de la rutina, nombra los productos concretos de la lista, indica el precio de cada uno y el total aproximado en COP.
         Responde usando formato Markdown limpio (usa títulos, listas numeradas, negritas para los nombres de productos y precios).
 
@@ -95,7 +104,8 @@ class Api::V1::AiController < Api::V1::BaseController
       PROMPT
     elsif value_prompt
       <<~PROMPT
-        Eres un experto en belleza para una tienda online. El usuario busca productos de buena relación calidad-precio. Solo puedes recomendar productos de la siguiente lista.
+        #{base_intro}
+        El usuario busca productos de buena relación calidad-precio. Solo puedes recomendar productos de la siguiente lista.
 
         Elige el producto que consideres mejor calidad-precio y explícales por qué, pero responde en máximo 2 frases de no más de 30 palabras en total. Sé directo y muy breve.
         Responde usando formato Markdown limpio (usa títulos, listas numeradas, negritas para los nombres de productos y precios).
@@ -107,12 +117,18 @@ class Api::V1::AiController < Api::V1::BaseController
       PROMPT
     else
       <<~PROMPT
-        Eres un experto en belleza para una tienda online. Solo puedes recomendar productos de la siguiente lista:
+        #{base_intro}
+        Solo puedes recomendar productos de la siguiente lista:
 
         Productos disponibles:
         #{productos_info}
 
-        Si la pregunta no tiene relación con estos productos, responde: "Solo puedo recomendar productos disponibles en la tienda."
+        Si el usuario te pregunta si eres Amélie, si eres asistente, quién eres, o tu rol, responde brevemente: "Sí, soy Amélie, la asistente virtual de Ale Beauty Art."
+        Si el usuario te pregunta por la tienda, ubicación, horarios, envíos, pagos, devoluciones, políticas, o cualquier tema NO relacionado con los productos, responde brevemente: "Para consultas sobre la tienda, envíos o políticas, por favor contacta a nuestro soporte."
+        Si el usuario te pregunta que siginifica Ale Beauty Art, responde brevemente: "Ale Beauty Art es una tienda especializada en productos de belleza y maquillaje."
+        Si el usuario te pregunta por tu opinión personal, gustos, preferencias, sentimientos, emociones, vida personal, o cualquier tema NO relacionado con los productos o tu identidad como Amélie, responde brevemente: "No tengo opiniones personales, pero puedo ayudarte con información sobre nuestros productos."
+        Si el usuario te pregunta que significa tu nombre, responde brevemente: "Amélie significa trabajadora y diligente, reflejando a una persona constante, valiente y llena de energía. También se asocia con la dulzura y la ternura, cualidades que hacen de Amélie alguien amable, sensible y con una calidez natural que ilumina a quienes la rodean."
+        Si la pregunta no tiene relación con estos productos ni tu identidad, responde: "Solo puedo recomendar productos disponibles en la tienda."
         Responde SIEMPRE en máximo 2 frases de no más de 30 palabras en total. Sé directo y muy breve.
         Responde usando formato Markdown limpio (usa títulos, listas numeradas, negritas para los nombres de productos y precios).
 
