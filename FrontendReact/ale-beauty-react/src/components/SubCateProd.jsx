@@ -68,15 +68,13 @@ export default function ProductsPageSubCategory() {
         setError(null);
 
         const res = await fetch(
-          `https://localhost:4000/api/v1/categories/${categorySlug}/sub_categories/${subCategorySlug}/products`,
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          }
+          `https://localhost:4000/api/v1/categories/${categorySlug}/sub_categories/${subCategorySlug}/products_by_sub`,
+          { headers: { Authorization: `Bearer ${token}` } }
         );
-
         if (!res.ok) throw new Error("Error al cargar los productos");
         const data = await res.json();
-        const prods = Array.isArray(data) ? data : data.products || [];
+        console.log("products response", data); // <-- verifica aquí
+        const prods = data.products || [];
         setProducts(prods);
 
         const ratingsObj = {};
@@ -120,9 +118,10 @@ export default function ProductsPageSubCategory() {
         );
         if (!res.ok) throw new Error("Error al cargar la subcategoría");
         const data = await res.json();
+        console.log("subCategory response", data); // <-- AÑADE ESTO
         setSubCategory(data);
       } catch (err) {
-        setSubCategory(null); // O puedes manejar el error si quieres
+        setSubCategory(null);
       }
     }
     fetchSubCategory();
@@ -238,10 +237,10 @@ export default function ProductsPageSubCategory() {
         <div >
         <h1
         style={{
-            margin: 0,
-            fontSize: "2.5rem",
+            margin: 48,
+            fontSize: "3.5rem",
             fontWeight: "bold",
-            color: "#5a5a5aff",
+            color: "#000000ff",
             fontFamily: "'Poppins', Arial, sans-serif",
           }}
         >
