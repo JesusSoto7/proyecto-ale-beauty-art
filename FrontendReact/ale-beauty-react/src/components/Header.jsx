@@ -436,7 +436,7 @@ export default function Header({ loadFavorites }) {
         <Box 
           ref={navCategoriesRef}
           sx={{ 
-            backgroundColor: '#ec3e9bff',
+            backgroundColor: '#df6897ff',
             color: 'white',
             py: 1,
             px: 2,
