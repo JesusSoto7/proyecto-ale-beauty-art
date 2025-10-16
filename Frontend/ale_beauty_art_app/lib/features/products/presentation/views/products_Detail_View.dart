@@ -1,3 +1,5 @@
+import 'package:ale_beauty_art_app/core/views/failure_view.dart';
+import 'package:ale_beauty_art_app/core/views/loading_view.dart';
 import 'package:ale_beauty_art_app/core/views/login_view.dart';
 import 'package:ale_beauty_art_app/features/auth/bloc/auth_bloc.dart';
 import 'package:ale_beauty_art_app/features/cart/presentation/bloc/cart_bloc.dart';
@@ -42,12 +44,12 @@ class _ProductDetailViewState extends State<ProductDetailView> {
       builder: (context, state) {
         if (state is ProductLoadInProgress) {
           return const Scaffold(
-            body: Center(child: CircularProgressIndicator()),
+            body: LoadingView(),
           );
         }
         if (state is ProductLoadFailure) {
           return const Scaffold(
-            body: Center(child: Text('Error al cargar el producto')),
+            body: FailureView(),
           );
         }
         if (state is ProductLoadSuccess) {

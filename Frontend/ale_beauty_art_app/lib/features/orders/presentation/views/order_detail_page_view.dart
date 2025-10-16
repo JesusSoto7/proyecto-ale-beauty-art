@@ -28,11 +28,14 @@ class _OrderDetailPageViewState extends State<OrderDetailPageView> {
   }
 
   DateTime? _date(dynamic v) {
-    try {
-      return v == null ? null : DateTime.parse(v.toString());
-    } catch (_) {
-      return null;
+    if (v == null) return null;
+    if (v is int) {
+      final isSeconds = v.toString().length == 10;
+      final dt = DateTime.fromMillisecondsSinceEpoch(isSeconds ? v * 1000 : v, isUtc: true);
+      return dt.toLocal();
     }
+    final dt = DateTime.tryParse(v.toString());
+    return dt?.toLocal();
   }
 
   @override
@@ -65,7 +68,8 @@ class _OrderDetailPageViewState extends State<OrderDetailPageView> {
             final total = totalRaw is num
                 ? (totalRaw).toDouble()
                 : (double.tryParse(totalRaw?.toString() ?? '') ?? 0.0);
-            final fecha = _date(o['fecha_pago'] ?? o['paid_at']);
+            final fechaRaw = o['fecha_pago'] ?? o['paid_at'] ?? o['created_at'] ?? o['updated_at'];
+            final fecha = _date(fechaRaw);
             final direccion = _text(o['direccion_envio'] ?? o['shipping_address'], fallback: 'No disponible');
             final cardType = _text(o['tarjeta_tipo'] ?? o['card_type'], fallback: '');
             final last4 = _text(o['tarjeta_ultimos4'] ?? o['card_last4'], fallback: '');

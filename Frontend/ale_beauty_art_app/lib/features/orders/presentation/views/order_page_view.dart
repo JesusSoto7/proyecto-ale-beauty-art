@@ -31,11 +31,16 @@ class _OrderPageViewState extends State<OrderPageView> {
   }
 
   DateTime? _parseDate(dynamic v) {
-    try {
-      return v == null ? null : DateTime.parse(v.toString());
-    } catch (_) {
-      return null;
+    if (v == null) return null;
+    if (v is int) {
+      // epoch en segundos (10 dígitos) o milisegundos
+      final isSeconds = v.toString().length == 10;
+      final dt = DateTime.fromMillisecondsSinceEpoch(isSeconds ? v * 1000 : v, isUtc: true);
+      return dt.toLocal();
     }
+    final s = v.toString();
+    final dt = DateTime.tryParse(s);
+    return dt?.toLocal();
   }
 
   String _text(dynamic value, {String fallback = '—'}) {
@@ -90,7 +95,8 @@ class _OrderPageViewState extends State<OrderPageView> {
 
                   final numeroOrden = o['numero_de_orden'] ?? id?.toString();
                   final status = _text(o['status'] ?? o['estado']).toUpperCase();
-                  final fechaPago = _parseDate(o['fecha_pago'] ?? o['paid_at']);
+                  final fechaRaw = o['fecha_pago'] ?? o['paid_at'] ?? o['created_at'] ?? o['updated_at'];
+                  final fechaPago = _parseDate(fechaRaw);
 
                   final totalRaw = o['pago_total'] ?? o['total'];
                   final double total = totalRaw is num
