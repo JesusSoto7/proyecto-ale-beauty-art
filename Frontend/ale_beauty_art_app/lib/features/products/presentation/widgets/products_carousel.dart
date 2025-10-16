@@ -81,8 +81,7 @@ class _ProductsCarouselState extends State<ProductsCarousel> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (_) =>
-                                  ProductDetailView(productId: product.id),
+                              builder: (_) => ProductDetailView(product: product),
                             ),
                           );
                         },

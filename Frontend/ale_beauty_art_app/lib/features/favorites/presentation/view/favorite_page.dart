@@ -1,6 +1,7 @@
 import 'package:ale_beauty_art_app/features/cart/presentation/bloc/cart_bloc.dart';
 import 'package:ale_beauty_art_app/features/cart/presentation/bloc/cart_event.dart';
 import 'package:ale_beauty_art_app/features/products/presentation/views/products_Detail_View.dart';
+import 'package:ale_beauty_art_app/models/product.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -93,10 +94,24 @@ class FavoritePage extends StatelessWidget {
                   child: InkWell(
                     borderRadius: BorderRadius.circular(16),
                     onTap: () {
+                      // Mapear FavoriteProduct -> Product mínimamente para navegar sin tocar ProductBloc
+                      final product = Product(
+                        id: fav.id,
+                        nombreProducto: fav.nombreProducto,
+                        precioProducto: fav.precioProducto.round(),
+                        descripcion: '',
+                        subCategoryId: 0,
+                        stock: fav.stock,
+                        nombreSubCategoria: '',
+                        categoryId: 0,
+                        nombreCategoria: fav.categoria ?? '',
+                        imagenUrl: fav.imagenUrl,
+                      );
+
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (_) => ProductDetailView(productId: fav.id),
+                          builder: (_) => ProductDetailView(product: product),
                         ),
                       );
                     },

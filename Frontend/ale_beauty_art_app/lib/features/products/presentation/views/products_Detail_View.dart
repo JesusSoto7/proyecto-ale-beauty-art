@@ -1,10 +1,8 @@
-import 'package:ale_beauty_art_app/core/views/failure_view.dart';
-import 'package:ale_beauty_art_app/core/views/loading_view.dart';
 import 'package:ale_beauty_art_app/core/views/login_view.dart';
 import 'package:ale_beauty_art_app/features/auth/bloc/auth_bloc.dart';
 import 'package:ale_beauty_art_app/features/cart/presentation/bloc/cart_bloc.dart';
 import 'package:ale_beauty_art_app/features/cart/presentation/bloc/cart_event.dart';
-import 'package:ale_beauty_art_app/features/products/presentation/bloc/product_bloc.dart';
+import 'package:ale_beauty_art_app/models/product.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shimmer/shimmer.dart';
@@ -12,9 +10,9 @@ import 'package:ale_beauty_art_app/styles/colors.dart';
 import 'package:ale_beauty_art_app/core/utils/formatters.dart';
 
 class ProductDetailView extends StatefulWidget {
-  final int productId;
+  final Product product;
 
-  const ProductDetailView({super.key, required this.productId});
+  const ProductDetailView({super.key, required this.product});
 
   @override
   State<ProductDetailView> createState() => _ProductDetailViewState();
@@ -34,27 +32,13 @@ class _ProductDetailViewState extends State<ProductDetailView> {
   @override
   void initState() {
     super.initState();
-    // Lanza el evento para cargar el detalle del producto
-    context.read<ProductBloc>().add(ProductDetailRequested(widget.productId));
+    // Ya no disparamos eventos al ProductBloc; usamos el producto recibido
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<ProductBloc, ProductState>(
-      builder: (context, state) {
-        if (state is ProductLoadInProgress) {
-          return const Scaffold(
-            body: LoadingView(),
-          );
-        }
-        if (state is ProductLoadFailure) {
-          return const Scaffold(
-            body: FailureView(),
-          );
-        }
-        if (state is ProductLoadSuccess) {
-          final product = state.products.first;
-          return Scaffold(
+    final product = widget.product;
+    return Scaffold(
             backgroundColor: const Color.fromARGB(255, 247, 246, 246),
             appBar: AppBar(
               backgroundColor: const Color.fromARGB(255, 255, 238, 243),
@@ -97,8 +81,7 @@ class _ProductDetailViewState extends State<ProductDetailView> {
                               : Colors.transparent,
                           borderRadius: BorderRadius.circular(16),
                         ),
-                        child: (product.imagenUrl != null &&
-                                product.imagenUrl!.isNotEmpty)
+                        child: (product.imagenUrl != null && product.imagenUrl!.isNotEmpty)
                             ? Stack(
                                 children: [
                                   // Imagen (abajo)
@@ -342,11 +325,6 @@ class _ProductDetailViewState extends State<ProductDetailView> {
                 ],
               ),
             ),
-          );
-        }
-        // Estado inicial o desconocido
-        return const Scaffold();
-      },
     );
   }
 }
