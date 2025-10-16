@@ -142,7 +142,8 @@ class _ProductsCarouselState extends State<ProductsCarousel> {
                                           icon: Icon(
                                             // product.isFavorite ? Icons.favorite : Icons.favorite_border,
                                             Icons.favorite_border,
-                                            color: Colors.grey,
+                                            color: const Color.fromARGB(
+                                                255, 158, 137, 137),
                                             // color: product.isFavorite ? Colors.red : Colors.grey,
                                           ),
                                           onPressed: () {

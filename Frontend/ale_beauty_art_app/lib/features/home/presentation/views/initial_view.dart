@@ -123,7 +123,7 @@ class InitialView extends StatelessWidget {
           // 🔍 Buscador
           Container(
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: const Color(0xFFFFEEF3),
               borderRadius: BorderRadius.circular(30),
               boxShadow: [
                 BoxShadow(
@@ -145,7 +145,7 @@ class InitialView extends StatelessWidget {
           const CategoriesRowView(),
 
           // Más separación antes de los productos populares
-          const SizedBox(height: 40),
+          const SizedBox(height: 80),
 
           // 🛍 Productos populares
           _sectionHeader("Productos populares", () {}),

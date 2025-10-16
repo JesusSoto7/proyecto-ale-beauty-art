@@ -21,7 +21,7 @@ class CategoriesPageView extends StatelessWidget {
             return const Center(child: LoadingView());
           } else if (state is CategoriesLoadSuccess) {
             final categories = state.categories;
-          
+
             return Padding(
               padding: const EdgeInsets.all(12.0), // Menos padding general
               child: GridView.builder(
@@ -38,7 +38,8 @@ class CategoriesPageView extends StatelessWidget {
 
                   return GestureDetector(
                     onTap: () {
-                      final allProductsState = context.read<ProductBloc>().state;
+                      final allProductsState =
+                          context.read<ProductBloc>().state;
 
                       if (allProductsState is ProductLoadSuccess) {
                         final filtered = allProductsState.products
@@ -68,7 +69,7 @@ class CategoriesPageView extends StatelessWidget {
                       children: [
                         // Imagen circular
                         CircleAvatar(
-                          radius: 60, // tamaño 
+                          radius: 60, // tamaño
                           backgroundColor: Colors.pink.shade50,
                           backgroundImage: category.imagen.isNotEmpty
                               ? NetworkImage(category.imagen)
@@ -104,7 +105,7 @@ class CategoriesPageView extends StatelessWidget {
                 },
               ),
             );
-          } else if(state is CategoriesLoadFailure){
+          } else if (state is CategoriesLoadFailure) {
             return FailureView();
           } else {
             return FailureView();
