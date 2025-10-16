@@ -5,6 +5,7 @@ import 'package:ale_beauty_art_app/features/orders/presentation/cubit/order_deta
 import 'package:ale_beauty_art_app/features/orders/presentation/views/order_detail_page_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter/services.dart';
 import 'package:ale_beauty_art_app/features/orders/presentation/bloc/order_bloc.dart';
 
 class OrderPageView extends StatefulWidget {
@@ -52,7 +53,44 @@ class _OrderPageViewState extends State<OrderPageView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Mis pedidos')),
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(56),
+        child: Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.20),
+                blurRadius: 12,
+                offset: const Offset(0, 3),
+              ),
+            ],
+          ),
+          child: AppBar(
+            backgroundColor: Colors.white,
+            elevation: 0,
+            centerTitle: true,
+            title: const Text(
+              'Mis pedidos',
+              style: TextStyle(
+                color: Color.fromARGB(255, 0, 0, 0),
+                fontSize: 18,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            leading: IconButton(
+              icon: const Icon(
+                Icons.arrow_back_ios_new_rounded,
+                size: 20,
+                color: Colors.black87,
+              ),
+              onPressed: () => Navigator.pop(context),
+            ),
+            systemOverlayStyle: SystemUiOverlayStyle.dark,
+          ),
+        ),
+      ),
+      backgroundColor: const Color(0xFFF8F5F7),
       body: BlocBuilder<OrderBloc, OrderState>(
         builder: (context, state) {
           if (state is OrderLoading) {
@@ -103,11 +141,20 @@ class _OrderPageViewState extends State<OrderPageView> {
                       ? (totalRaw).toDouble()
                       : (double.tryParse(totalRaw?.toString() ?? '') ?? 0.0);
 
-                  return Card(
-                    elevation: 1.5,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  return Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(16),
+                      boxShadow: [
+                        BoxShadow(
+                          color: const Color.fromARGB(82, 209, 205, 206).withOpacity(0.5),
+                          blurRadius: 10,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
+                    ),
                     child: InkWell(
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: BorderRadius.circular(16),
                       onTap: () async {
                         if (orderId <= 0) return;
 
@@ -136,44 +183,67 @@ class _OrderPageViewState extends State<OrderPageView> {
                         );
                       },
                       child: Padding(
-                        padding: const EdgeInsets.all(14),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                        padding: const EdgeInsets.all(12),
+                        child: Row(
                           children: [
-                            Row(
-                              children: [
-                                const Icon(Icons.receipt_long, size: 22),
-                                const SizedBox(width: 8),
-                                Expanded(
-                                  child: Text('Orden #$numeroOrden', style: const TextStyle(fontWeight: FontWeight.w600)),
-                                ),
-                                Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                                  decoration: BoxDecoration(
-                                    color: Colors.blueGrey.shade50,
-                                    borderRadius: BorderRadius.circular(20),
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(12),
+                              child: Container(
+                                width: 56,
+                                height: 56,
+                                color: Colors.pink.shade50,
+                                child: const Icon(Icons.receipt_long, color: Color(0xFFD95D85)),
+                              ),
+                            ),
+                            const SizedBox(width: 14),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'Orden #$numeroOrden',
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: const TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w600,
+                                      color: Color(0xFF2E1A2D),
+                                    ),
                                   ),
-                                  child: Text(status, style: const TextStyle(fontSize: 12)),
-                                ),
-                              ],
+                                  const SizedBox(height: 6),
+                                  Row(
+                                    children: [
+                                      const Icon(Icons.calendar_today_outlined, size: 16, color: Colors.black54),
+                                      const SizedBox(width: 6),
+                                      Text(
+                                        fechaPago != null
+                                            ? '${fechaPago.day.toString().padLeft(2, '0')}/${fechaPago.month.toString().padLeft(2, '0')}/${fechaPago.year}'
+                                            : '—',
+                                        style: const TextStyle(color: Colors.black54, fontSize: 13),
+                                      ),
+                                      const Spacer(),
+                                      Text(
+                                        formatPriceCOP(total),
+                                        style: const TextStyle(
+                                          color: Color.fromARGB(255, 102, 61, 82),
+                                          fontSize: 15,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
                             ),
-                            const SizedBox(height: 10),
-                            Row(
-                              children: [
-                                const Icon(Icons.calendar_today_outlined, size: 18),
-                                const SizedBox(width: 6),
-                                Text(
-                                  fechaPago != null
-                                      ? '${fechaPago.day.toString().padLeft(2, '0')}/${fechaPago.month.toString().padLeft(2, '0')}/${fechaPago.year}'
-                                      : '—',
-                                  style: const TextStyle(color: Colors.black54),
-                                ),
-                                const Spacer(),
-                                const Text('Total: '),
-                                Text(formatPriceCOP(total), style: const TextStyle(fontWeight: FontWeight.w600)),
-                              ],
+                            const SizedBox(width: 6),
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                              decoration: BoxDecoration(
+                                color: Colors.blueGrey.shade50,
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              child: Text(status, style: const TextStyle(fontSize: 12)),
                             ),
-                            const SizedBox(height: 8),
                           ],
                         ),
                       ),

@@ -6,12 +6,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ale_beauty_art_app/features/favorites/presentation/bloc/favorite_bloc.dart';
+import 'package:ale_beauty_art_app/features/auth/bloc/auth_bloc.dart';
 
 class FavoritePage extends StatelessWidget {
   const FavoritePage({super.key});
 
   @override
   Widget build(BuildContext context) {
+    // Actualiza token del FavoriteBloc si hay sesión
+    final authState = context.read<AuthBloc>().state;
+    if (authState is AuthSuccess) {
+      context.read<FavoriteBloc>().add(UpdateFavoriteToken(authState.token));
+    }
     context.read<FavoriteBloc>().add(LoadFavorites());
 
     return Scaffold(

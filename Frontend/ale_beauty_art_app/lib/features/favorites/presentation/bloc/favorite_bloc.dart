@@ -10,10 +10,14 @@ part 'favorite_state.dart';
 
 class FavoriteBloc extends Bloc<FavoriteEvent, FavoriteState> {
   final String apiUrl;
-  final String jwtToken;
+  String _jwtToken;
 
-  FavoriteBloc({required this.apiUrl, required this.jwtToken})
-      : super(FavoriteInitial()) {
+  FavoriteBloc({required this.apiUrl, required String jwtToken})
+      : _jwtToken = jwtToken,
+        super(FavoriteInitial()) {
+    on<UpdateFavoriteToken>((event, emit) {
+      _jwtToken = event.token;
+    });
     on<LoadFavorites>(_onLoadFavorites);
     on<AddFavorite>(_onAddFavorite);
     on<RemoveFavorite>(_onRemoveFavorite);
@@ -25,7 +29,7 @@ class FavoriteBloc extends Bloc<FavoriteEvent, FavoriteState> {
             Uri.parse('$apiUrl/favorites/${fav.id}'),
             headers: {
               'Content-Type': 'application/json',
-              'Authorization': 'Bearer $jwtToken',
+              'Authorization': 'Bearer $_jwtToken',
             },
           );
         }
@@ -40,7 +44,7 @@ class FavoriteBloc extends Bloc<FavoriteEvent, FavoriteState> {
             Uri.parse('$apiUrl/cart/add_product'),
             headers: {
               'Content-Type': 'application/json',
-              'Authorization': 'Bearer $jwtToken',
+              'Authorization': 'Bearer $_jwtToken',
             },
             body: jsonEncode({'product_id': fav.id}),
           );
@@ -57,7 +61,7 @@ class FavoriteBloc extends Bloc<FavoriteEvent, FavoriteState> {
         Uri.parse('$apiUrl/favorites'),
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': 'Bearer $jwtToken',
+          'Authorization': 'Bearer $_jwtToken',
         },
       );
       if (response.statusCode == 200) {
@@ -79,7 +83,7 @@ class FavoriteBloc extends Bloc<FavoriteEvent, FavoriteState> {
         Uri.parse('$apiUrl/favorites'),
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': 'Bearer $jwtToken',
+          'Authorization': 'Bearer $_jwtToken',
         },
         body: jsonEncode({'product_id': event.productId}),
       );
@@ -96,7 +100,7 @@ class FavoriteBloc extends Bloc<FavoriteEvent, FavoriteState> {
         Uri.parse('$apiUrl/favorites/${event.productId}'),
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': 'Bearer $jwtToken',
+          'Authorization': 'Bearer $_jwtToken',
         },
       );
       add(LoadFavorites());

@@ -8,6 +8,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:ale_beauty_art_app/styles/colors.dart';
 import 'package:ale_beauty_art_app/core/utils/formatters.dart';
+import 'package:ale_beauty_art_app/features/favorites/presentation/bloc/favorite_bloc.dart';
 
 class ProductDetailView extends StatefulWidget {
   final Product product;
@@ -51,12 +52,7 @@ class _ProductDetailViewState extends State<ProductDetailView> {
                 onPressed: () => Navigator.pop(context),
               ),
               actions: [
-                IconButton(
-                  icon: const Icon(Icons.favorite_border, color: Colors.grey),
-                  onPressed: () {
-                    print("Favorito: ${product.nombreProducto}");
-                  },
-                ),
+                _FavoriteButton(productId: product.id),
               ],
             ),
             body: SingleChildScrollView(
@@ -325,6 +321,69 @@ class _ProductDetailViewState extends State<ProductDetailView> {
                 ],
               ),
             ),
+    );
+  }
+}
+
+class _FavoriteButton extends StatefulWidget {
+  final int productId;
+  const _FavoriteButton({required this.productId});
+
+  @override
+  State<_FavoriteButton> createState() => _FavoriteButtonState();
+}
+
+class _FavoriteButtonState extends State<_FavoriteButton> {
+  bool _busy = false;
+  bool _isFav = false; // Simple UI toggle; optional: preload from FavoriteBloc state
+
+  Future<void> _toggle() async {
+    if (_busy) return;
+    setState(() => _busy = true);
+    try {
+      final authState = context.read<AuthBloc>().state;
+      if (authState is! AuthSuccess) {
+        final result = await Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => const LoginPage()),
+        );
+        if (result != true) {
+          setState(() => _busy = false);
+          return;
+        }
+      }
+
+      final auth = context.read<AuthBloc>().state as AuthSuccess;
+
+      // Asegurar que FavoriteBloc tenga el token actualizado
+      context.read<FavoriteBloc>().add(UpdateFavoriteToken(auth.token));
+
+      if (_isFav) {
+        context.read<FavoriteBloc>().add(RemoveFavorite(widget.productId));
+      } else {
+        context.read<FavoriteBloc>().add(AddFavorite(widget.productId));
+      }
+      setState(() => _isFav = !_isFav);
+    } finally {
+      if (mounted) setState(() => _busy = false);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return IconButton(
+      icon: _busy
+          ? const SizedBox(
+              width: 18,
+              height: 18,
+              child: CircularProgressIndicator(strokeWidth: 2),
+            )
+          : Icon(
+              _isFav ? Icons.favorite : Icons.favorite_border,
+              color: _isFav ? const Color(0xFFD95D85) : Colors.grey,
+            ),
+      onPressed: _toggle,
+      tooltip: _isFav ? 'Quitar de favoritos' : 'Agregar a favoritos',
     );
   }
 }
