@@ -36,7 +36,7 @@ class _CategoriesRowViewState extends State<CategoriesRowView> {
           final categories = state.categories;
 
           return SizedBox(
-            height: 140, // 🔼 antes 105
+            height: 110,
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
               itemCount: categories.length,
@@ -76,47 +76,30 @@ class _CategoriesRowViewState extends State<CategoriesRowView> {
                     }
                   },
                   child: Container(
-                    width: 90, // 🔼 antes 80
-                    margin: const EdgeInsets.symmetric(horizontal: 10),
+                    width: 90,
+                    margin: const EdgeInsets.symmetric(horizontal: 8),
                     child: Column(
                       children: [
-                        Container(
-                          height: 75, // 🔼 antes 60
-                          width: 75,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: isSelected
-                                ? const Color(0xFFFFD9E3)
-                                : Colors.white,
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.pink.withOpacity(0.1),
-                                blurRadius: 8, // 🔼 más suave
-                                offset: const Offset(0, 5),
-                              ),
-                            ],
-                          ),
-                          child: Padding(
-                            padding:
-                                const EdgeInsets.all(10.0), // 🔽 menos padding
-                            child: category.imagen.isNotEmpty
-                                ? Image.network(
-                                    category.imagen,
-                                    fit: BoxFit.contain,
-                                  )
-                                : const Icon(
-                                    Icons.category_rounded,
-                                    color: Color(0xFFD95D85),
-                                    size: 34, // 🔼 antes 28
-                                  ),
-                          ),
+                        CircleAvatar(
+                          radius: 32,
+                          backgroundColor: Colors.pink.shade50,
+                          backgroundImage: category.imagen.isNotEmpty
+                              ? NetworkImage(category.imagen)
+                              : null,
+                          child: category.imagen.isEmpty
+                              ? const Icon(
+                                  Icons.category_rounded,
+                                  color: Color(0xFFD95D85),
+                                  size: 32,
+                                )
+                              : null,
                         ),
-                        const SizedBox(height: 8), // 🔼 antes 6
+                        const SizedBox(height: 8),
                         Text(
                           category.nombreCategoria,
                           textAlign: TextAlign.center,
                           style: TextStyle(
-                            fontSize: 14, // 🔼 antes 12
+                            fontSize: 13,
                             color: isSelected
                                 ? const Color(0xFFD95D85)
                                 : Colors.black87,
@@ -124,6 +107,7 @@ class _CategoriesRowViewState extends State<CategoriesRowView> {
                                 isSelected ? FontWeight.bold : FontWeight.w500,
                           ),
                           overflow: TextOverflow.ellipsis,
+                          maxLines: 2,
                         ),
                       ],
                     ),

@@ -1,6 +1,7 @@
 import 'package:ale_beauty_art_app/features/auth/bloc/auth_bloc.dart';
 import 'package:ale_beauty_art_app/features/cart/presentation/bloc/cart_bloc.dart';
 import 'package:ale_beauty_art_app/features/categories/presentation/bloc/categories_bloc.dart';
+import 'package:ale_beauty_art_app/features/chat_ia/bloc/chat_ia_bloc.dart';
 import 'package:ale_beauty_art_app/features/checkout/payment/presentation/bloc/payment_bloc.dart';
 import 'package:ale_beauty_art_app/features/favorites/presentation/bloc/favorite_bloc.dart';
 import 'package:ale_beauty_art_app/features/navigation/bloc/navigation_bloc.dart';
@@ -51,6 +52,7 @@ class MyApp extends StatelessWidget {
             return FavoriteBloc(apiUrl: apiUrl, jwtToken: token);
           },
         ),
+        BlocProvider(create: (context) => ChatIaBloc()),
       ],
       child: const MaterialApp(
         debugShowCheckedModeBanner: false,

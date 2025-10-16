@@ -18,7 +18,7 @@ class _ExpandableSearchBarState extends State<ExpandableSearchBar> {
     super.initState();
     _focusNode.addListener(() {
       if (!_focusNode.hasFocus) {
-        setState(() => _isExpanded = false); // se cierra cuando pierde el foco
+        setState(() => _isExpanded = false);
       }
     });
   }
@@ -32,27 +32,42 @@ class _ExpandableSearchBarState extends State<ExpandableSearchBar> {
 
   @override
   Widget build(BuildContext context) {
+    // Colores inspirados en la imagen proporcionada
+    const Color pastelRose = Color(0xFFFFEEF3);
+
     return GestureDetector(
-      behavior: HitTestBehavior.translucent, // Permite detectar toques en áreas vacías
+      behavior: HitTestBehavior.translucent,
       onTap: () {
-        FocusScope.of(context).unfocus(); // Quita el foco de cualquier campo de texto
+        FocusScope.of(context).unfocus();
       },
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.end, // Alinea a la derecha
+        mainAxisAlignment:
+            MainAxisAlignment.start, // Alinea a la izquierda como en la imagen
         children: [
           AnimatedContainer(
-            duration: const Duration(milliseconds: 250),
-            width: _isExpanded ? 290 : 48, // ancho dinámico
+            duration: const Duration(milliseconds: 280),
+            width: _isExpanded ? 290 : 48,
             height: 36,
             decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(10),
+              color: pastelRose,
+              borderRadius: BorderRadius.circular(18),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.pink.withOpacity(0.09),
+                  blurRadius: 8,
+                  offset: const Offset(0, 1),
+                ),
+              ],
+              border: Border.all(
+                color: Colors.white.withOpacity(0.7),
+                width: 1.2,
+              ),
             ),
             child: Row(
-              textDirection: TextDirection.rtl,
               children: [
                 IconButton(
-                  icon: Icon(Icons.search, color: AppColors.primaryPink),
+                  icon: Icon(Icons.search,
+                      color: AppColors.primaryPink, size: 22),
                   onPressed: () {
                     setState(() {
                       _isExpanded = true;
@@ -62,20 +77,30 @@ class _ExpandableSearchBarState extends State<ExpandableSearchBar> {
                     });
                   },
                   padding: EdgeInsets.zero,
+                  splashRadius: 20,
                 ),
                 if (_isExpanded)
-                  Expanded( // Cambiado de Flexible a Expanded
+                  Expanded(
                     child: TextField(
                       focusNode: _focusNode,
                       controller: _controller,
                       decoration: const InputDecoration(
-                        hintText: 'Buscar...',
+                        hintText: 'Search product',
+                        hintStyle: TextStyle(
+                          color: Color(0xFFD95D85),
+                          fontSize: 15.5,
+                          fontWeight: FontWeight.w400,
+                        ),
                         border: InputBorder.none,
                         isDense: true,
-                        contentPadding: EdgeInsets.symmetric(vertical: 5, horizontal: 8), // Añade padding horizontal
+                        contentPadding:
+                            EdgeInsets.symmetric(vertical: 8, horizontal: 10),
                       ),
-                      style: TextStyle(
-                        overflow: TextOverflow.ellipsis, // Evita desbordamiento del texto ingresado
+                      style: const TextStyle(
+                        color: Color(0xFF222222),
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                        overflow: TextOverflow.ellipsis,
                       ),
                     ),
                   ),

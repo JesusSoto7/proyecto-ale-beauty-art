@@ -1,25 +1,17 @@
-import 'package:ale_beauty_art_app/core/views/login_view.dart';
-import 'package:ale_beauty_art_app/features/auth/bloc/auth_bloc.dart';
-import 'package:ale_beauty_art_app/features/cart/presentation/bloc/cart_bloc.dart';
-import 'package:ale_beauty_art_app/features/cart/presentation/bloc/cart_event.dart';
-import 'package:ale_beauty_art_app/features/cart/presentation/view/cart_page_view.dart';
-import 'package:ale_beauty_art_app/features/categories/presentation/bloc/categories_bloc.dart';
-import 'package:ale_beauty_art_app/features/categories/presentation/views/categories_page_view.dart';
-import 'package:ale_beauty_art_app/features/categories/presentation/views/categories_row.dart';
-import 'package:ale_beauty_art_app/features/navigation/bloc/navigation_bloc.dart';
+// ignore_for_file: use_key_in_widget_constructors, prefer_const_constructors
+import 'package:ale_beauty_art_app/features/chat_ia/widget/chat_ia_widget.dart';
 import 'package:ale_beauty_art_app/features/products/presentation/bloc/product_bloc.dart';
-import 'package:ale_beauty_art_app/features/products/presentation/views/products_page_view.dart';
-import 'package:ale_beauty_art_app/features/products/presentation/widgets/products_carousel.dart';
-import 'package:ale_beauty_art_app/features/profile/presentation/views/profile_view.dart';
-import 'package:google_nav_bar/google_nav_bar.dart';
-import 'package:ale_beauty_art_app/styles/colors.dart'; // Estilos
-import 'package:ale_beauty_art_app/styles/text_styles.dart'; // Tipografías
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
-import '../widgets/carousel_widget.dart';
-
+import 'package:google_nav_bar/google_nav_bar.dart';
+import 'package:ale_beauty_art_app/features/navigation/bloc/navigation_bloc.dart';
+import 'package:ale_beauty_art_app/features/cart/presentation/view/cart_page_view.dart';
+import 'package:ale_beauty_art_app/features/categories/presentation/views/categories_page_view.dart';
+import 'package:ale_beauty_art_app/features/products/presentation/views/products_page_view.dart';
+import 'package:ale_beauty_art_app/features/profile/presentation/views/profile_view.dart';
+import 'package:ale_beauty_art_app/features/categories/presentation/views/categories_row.dart';
+import 'package:ale_beauty_art_app/styles/text_styles.dart';
+import 'package:ale_beauty_art_app/features/products/presentation/widgets/products_carousel.dart';
 import '../widgets/buscador.dart';
 
 class InitialView extends StatelessWidget {
@@ -28,219 +20,273 @@ class InitialView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
-      onWillPop: () async {
-        final canPop = Navigator.of(context).canPop();
-        return !canPop; // Solo permite salir si no hay nada en la pila
-      },
-      child: Scaffold(
-        backgroundColor: const Color.fromARGB(255, 247, 246, 246),
-        // AppBar con logo y barra de búsqueda
-        appBar: AppBar(
-          backgroundColor: const Color.fromARGB(255, 255, 238, 243),
-          automaticallyImplyLeading: false,
-          elevation: 0,
-          title: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              // Logo
-              ClipRRect(
-                borderRadius: BorderRadius.circular(8),
-                child: Image.asset(
-                  'assets/images/ale_logo.png',
-                  height: 50,
-                  width: 50,
-                  fit: BoxFit.cover,
+        onWillPop: () async {
+          final navBloc = context.read<NavigationBloc>();
+          final navState = navBloc.state;
+          int currentTab = 0;
+          if (navState is NavigationUpdated) {
+            currentTab = navState.selectedIndex;
+          }
+          if (currentTab != 0) {
+            navBloc.add(NavigationTabChanged(0));
+            return false;
+          }
+          return true;
+        },
+        child: Stack(children: [
+          Scaffold(
+            // 🎨 Fondo general del color rosa degradado
+            backgroundColor: Colors.transparent,
+            body: Container(
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    Color.fromRGBO(209, 112, 143, 1),
+                    Color.fromARGB(255, 245, 215, 227),
+                  ],
                 ),
-              ),
-              const SizedBox(width: 12),
-
-              // Barra de búsqueda
-              const ExpandableSearchBar(),
-            ],
-          ),
-        ),
-
-        // Contenido según la pestaña seleccionada
-        body: BlocBuilder<NavigationBloc, NavigationState>(
-          builder: (context, state) {
-            if (state is NavigationUpdated) {
-              switch (state.selectedIndex) {
-                case 0:
-                  return _homeContent(context);
-                case 1:
-                  return const ProductsPageView();
-                case 2:
-                  return const CategoriesPageView();
-                case 3:
-                  return const CartPageView(); // 🛒 Carrito como vista
-                case 4:
-                  return const ProfileView();
-                default:
-                  return _homeContent(context);
-              }
-            } else {
-              return _homeContent(context);
-            }
-          },
-        ),
-        resizeToAvoidBottomInset: false,
-        bottomNavigationBar: BlocBuilder<NavigationBloc, NavigationState>(
-          builder: (context, state) {
-            context.read<ProductBloc>().add(ProductFetched());
-            return Container(
-              decoration: BoxDecoration(
-                color: Colors.white,
-                boxShadow: [
-                  BoxShadow(
-                    blurRadius: 8,
-                    color: Colors.black.withOpacity(0.1),
-                  )
-                ],
               ),
               child: SafeArea(
-                child: Padding(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 15, vertical: 8),
-                  child: FittedBox(
-                    fit: BoxFit.scaleDown,
-                    child: GNav(
-                      gap: 8,
-                      backgroundColor: Colors.white,
-                      color: Colors.grey[500],
-                      activeColor: AppColors.primaryPink,
-                      tabBackgroundColor:
-                          AppColors.primaryPink.withOpacity(0.1),
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 16, vertical: 10),
-                      onTabChange: (index) async {
-                        if (index == 3) {
-                          final previousIndex = context
-                                  .read<NavigationBloc>()
-                                  .state is NavigationUpdated
-                              ? (context.read<NavigationBloc>().state
-                                      as NavigationUpdated)
-                                  .selectedIndex
-                              : 0;
+                child: BlocBuilder<NavigationBloc, NavigationState>(
+                  builder: (context, state) {
+                    int index = 0;
+                    if (state is NavigationUpdated) index = state.selectedIndex;
 
-                          final authState = context.read<AuthBloc>().state;
+                    if (index == 1) return const ProductsPageView();
+                    if (index == 2) return const CategoriesPageView();
+                    if (index == 3) return const CartPageView();
+                    if (index == 4) return const ProfileView();
 
-                          if (authState is! AuthSuccess) {
-                            final result = await Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (_) => const LoginPage()),
-                            );
-
-                            if (result != true) {
-                              context
-                                  .read<NavigationBloc>()
-                                  .add(NavigationTabChanged(previousIndex));
-                              return;
-                            }
-                          }
-
-                          final auth =
-                              context.read<AuthBloc>().state as AuthSuccess;
-                          context
-                              .read<CartBloc>()
-                              .add(UpdateCartToken(auth.token));
-                          context.read<CartBloc>().add(LoadCart());
-                          context
-                              .read<NavigationBloc>()
-                              .add(NavigationTabChanged(3));
-
-                          await Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (_) => const CartPageView()),
-                          );
-
-                          context
-                              .read<NavigationBloc>()
-                              .add(NavigationTabChanged(previousIndex));
-                        } else {
-                          context
-                              .read<NavigationBloc>()
-                              .add(NavigationTabChanged(index));
-                          if (index == 1)
-                            context.read<ProductBloc>().add(ProductFetched());
-                          if (index == 2)
-                            context
-                                .read<CategoriesBloc>()
-                                .add(CategoriesFetched());
-                        }
-                      },
-                      tabs: [
-                        GButton(icon: Icons.home_rounded, text: 'Inicio'),
-                        GButton(
-                            icon: Icons.grid_view_rounded, text: 'Productos'),
-                        GButton(
-                            icon: Icons.category_rounded, text: 'Categorías'),
-                        GButton(
-                            icon: Icons.shopping_cart_rounded, text: 'Carrito'),
-                        GButton(icon: Icons.person, text: 'Perfil'),
-                      ],
-                    ),
-                  ),
+                    return _homeContent(context);
+                  },
                 ),
               ),
-            );
-          },
-        ),
+            ),
+            bottomNavigationBar: _buildBottomNav(context),
+          ),
+          Positioned(
+            bottom: 90,
+            right: 24,
+            child: FloatingActionButton(
+              backgroundColor: Color(0xFFD95D85),
+              child: Icon(Icons.chat, color: Colors.white),
+              onPressed: () {
+                showModalBottomSheet(
+                  context: context,
+                  isScrollControlled: true,
+                  shape: RoundedRectangleBorder(
+                    borderRadius:
+                        BorderRadius.vertical(top: Radius.circular(18)),
+                  ),
+                  builder: (context) => Padding(
+                    padding: const EdgeInsets.only(top: 15),
+                    child: ChatIAWidget(),
+                  ),
+                );
+              },
+            ),
+          ),
+        ]));
+  }
+
+  // 🏡 Contenido principal (Home)
+  Widget _homeContent(BuildContext context) {
+    final productBloc = context.read<ProductBloc>();
+    if (productBloc.state is ProductInitial) {
+      productBloc.add(ProductFetched());
+    }
+
+    final screenHeight = MediaQuery.of(context).size.height;
+
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          const SizedBox(height: 20),
+
+          // 🔝 Header
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Icon(Icons.menu, color: Colors.white, size: 28),
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(12),
+                  child: Image.asset(
+                    'assets/images/ale_logo.png',
+                    height: 42,
+                    width: 42,
+                    fit: BoxFit.cover,
+                  ),
+                ),
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.9),
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(
+                    Icons.notifications_none_rounded,
+                    color: Color(0xFFD95D85),
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          const SizedBox(height: 25),
+
+          // 🔍 Buscador
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: Container(
+              decoration: BoxDecoration(
+                color: const Color(0xFFFFEEF3),
+                borderRadius: BorderRadius.circular(30),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.05),
+                    blurRadius: 6,
+                    offset: const Offset(0, 3),
+                  ),
+                ],
+              ),
+              child: const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 20),
+                child: ExpandableSearchBar(),
+              ),
+            ),
+          ),
+
+          const SizedBox(height: 25),
+
+          // 🌸 Categorías (en la parte rosa)
+          const CategoriesRowView(),
+
+          const SizedBox(height: 40),
+
+          Container(
+            width: double.infinity,
+            constraints: BoxConstraints(
+              minHeight: screenHeight * 0.6, // ocupa toda la parte inferior
+            ),
+            decoration: const BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(40),
+                topRight: Radius.circular(40),
+              ),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 30),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _sectionHeader("Productos populares", () {}),
+                  const SizedBox(height: 20),
+                  const SizedBox(height: 230, child: ProductsCarousel()),
+                ],
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
 
-  // Contenido para la pestaña de Inicio
-  Widget _homeContent(BuildContext context) {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 20),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Carrusel de productos
-          ProductCarousel(
-            imageUrls: [
-              'https://www.shutterstock.com/image-vector/makeup-products-realistic-vector-illustration-260nw-2220636093.jpg',
-              'https://www.shutterstock.com/image-photo/makeup-professional-cosmetics-on-pink-600nw-1398700589.jpg',
-              'https://st2.depositphotos.com/1026029/9075/i/450/depositphotos_90754482-stock-photo-cosmetics-set-for-make-up.jpg',
-              'https://st1.uvnimg.com/dims4/default/5d6bda0/2147483647/thumbnail/1024x576/quality/75/?url=https%3A%2F%2Fuvn-brightspot.s3.amazonaws.com%2Fassets%2Fvixes%2Fp%2Fproductos-de-maquillaje-look.jpg',
-            ],
+  // ✨ Encabezado de sección
+  Widget _sectionHeader(String title, VoidCallback onTap) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(
+          title,
+          style: AppTextStyles.title.copyWith(
+            fontSize: 20,
+            color: Colors.black87,
           ),
-
-          const SizedBox(height: 20),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                'Categorias',
-                style: AppTextStyles.title.copyWith(fontSize: 20),
+        ),
+        GestureDetector(
+          onTap: onTap,
+          child: ShaderMask(
+            shaderCallback: (bounds) => const LinearGradient(
+              colors: [Color(0xFFD95D85), Color(0xFFE58BB1)],
+            ).createShader(bounds),
+            child: const Text(
+              'Ver más',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
               ),
-              GestureDetector(
-                onTap: () {
-                  context.read<NavigationBloc>().add(NavigationTabChanged(2));
-                },
-                child: Text('Ver Más', style: AppTextStyles.subtitle),
-              ),
-            ],
+            ),
           ),
-          const SizedBox(height: 20),
-          CategoriesRowView(),
-          const SizedBox(
-              height: 20), // espacio entre carrusel y sección destacada
+        ),
+      ],
+    );
+  }
 
-          // Título sección productos destacados
-          Text(
-            'Productos Destacados',
-            style: AppTextStyles.title.copyWith(fontSize: 20),
-          ),
-          const SizedBox(
-              height: 20), // Espacio para donde irán los productos luego
-          SizedBox(
-            height: 210,
-            child: ProductsCarousel(),
+  // 🌈 Barra de navegación inferior
+  Widget _buildBottomNav(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: const BorderRadius.only(
+          topLeft: Radius.circular(25),
+          topRight: Radius.circular(25),
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.08),
+            blurRadius: 8,
           ),
         ],
+      ),
+      child: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 8),
+          child: GNav(
+            gap: 8,
+            backgroundColor: Colors.transparent,
+            color: Colors.grey[500],
+            activeColor: Colors.white,
+            tabBackgroundGradient: const LinearGradient(
+              colors: [Color(0xFFD95D85), Color(0xFFE58BB1)],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+            onTabChange: (index) async {
+              if (index == 3) {
+                final previousIndex =
+                    context.read<NavigationBloc>().state is NavigationUpdated
+                        ? (context.read<NavigationBloc>().state
+                                as NavigationUpdated)
+                            .selectedIndex
+                        : 0;
+
+                await Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const CartPageView()),
+                );
+
+                context
+                    .read<NavigationBloc>()
+                    .add(NavigationTabChanged(previousIndex));
+              } else {
+                context.read<NavigationBloc>().add(NavigationTabChanged(index));
+              }
+            },
+            tabs: const [
+              GButton(icon: Icons.home_rounded, text: 'Inicio'),
+              GButton(icon: Icons.grid_view_rounded, text: 'Productos'),
+              GButton(icon: Icons.category_rounded, text: 'Categorías'),
+              GButton(icon: Icons.shopping_cart_rounded, text: 'Carrito'),
+              GButton(icon: Icons.person, text: 'Perfil'),
+            ],
+          ),
+        ),
       ),
     );
   }
