@@ -14,4 +14,11 @@ class CreateOrder extends OrderEvent {
   List<Object?> get props => [shippingAddressId, products];
 }
 
+class UpdateOrderToken extends OrderEvent {
+  final String token;
+  UpdateOrderToken(this.token);
+  @override
+  List<Object?> get props => [token];
+}
+
 class FetchOrders extends OrderEvent {}
