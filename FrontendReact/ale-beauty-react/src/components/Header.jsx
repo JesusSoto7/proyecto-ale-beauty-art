@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import logo from '../assets/images/ale_logo.jpg';
-import { BsHeart, BsCart4, BsPerson, BsBag, BsGeoAlt, BsBoxArrowRight, BsGear, BsCreditCard, BsTruck, BsArrowRepeat, BsListCheck, BsStar } from "react-icons/bs";
+import { BsHeart, BsCart4, BsPerson, BsBag, BsGeoAlt, BsBoxArrowRight, BsGear, BsCreditCard, BsTruck, BsArrowRepeat, BsListCheck, BsBell } from "react-icons/bs";
 import { IoPersonCircleSharp } from "react-icons/io5";
 import { MdAccountCircle, MdOutlinePayment, MdLocalShipping } from "react-icons/md";
 import { RiAccountPinBoxLine, RiCouponLine } from "react-icons/ri";
@@ -11,13 +11,12 @@ import { MdKeyboardArrowRight } from "react-icons/md";
 import Skeleton from "@mui/material/Skeleton"
 
 import AppBar from '@mui/material/AppBar';
-import {Box, Button, Badge} from '@mui/material';
+import {Box, Button, Badge, Select, MenuItem, FormControl} from '@mui/material';
 import Toolbar from '@mui/material/Toolbar';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 
 import Menu from '@mui/material/Menu';
-import MenuItem from '@mui/material/MenuItem';
 import MoreIcon from '@mui/icons-material/MoreVert';
 import noImage from '../assets/images/no_image.png';
 
@@ -45,7 +44,7 @@ export default function Header({ loadFavorites }) {
   const [hoveredCategory, setHoveredCategory] = useState(null);
   const [hoveredNavCategory, setHoveredNavCategory] = useState(null);
   const { lang } = useParams();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [user, setUser] = useState(null);
   const [scrolled, setScrolled] = useState(false);
   const SCROLL_THRESHOLD = 100;
@@ -74,6 +73,17 @@ export default function Header({ loadFavorites }) {
   const subcategories = selectedCategory?.sub_categories || [];
   const token = localStorage.getItem('token');
   
+  // Función para cambiar idioma
+  const handleLanguageChange = (event) => {
+    const newLang = event.target.value;
+    i18n.changeLanguage(newLang);
+    
+    // Actualizar la URL manteniendo la misma ruta
+    const currentPath = window.location.pathname;
+    const newPath = currentPath.replace(`/${lang}/`, `/${newLang}/`);
+    navigate(newPath);
+  };
+
   useEffect(() => {
     fetchCart();
 
@@ -200,7 +210,7 @@ export default function Header({ loadFavorites }) {
     window.location.href = `/${lang}/login`;
   };
 
-  // Función para navegar a categorías (agregada porque se usa en el código)
+  // Función para navegar a categorías
   function goToCategory(item, parentCategory = null) {
     if (!item) return;
 
@@ -380,12 +390,12 @@ export default function Header({ loadFavorites }) {
             </Link>
             <Typography variant="h6" noWrap component={Link} to={`/${lang}/inicio`}
               sx={{
-                display: { xs: 'none', sm: 'block', textDecoration: 'none', color: '#f93f9fff', fontWeight: 'bold', marginLeft: -200, fontSize: 30 }
+                display: { xs: 'none', sm: 'block', textDecoration: 'none', color: '#f93f9fff', fontWeight: 'bold', marginLeft: -100, fontSize: 30 }
               }}>
               Ale Beauty Art
             </Typography>
 
-            {/* Barra de búsqueda en el centro - MEJORADA */}
+            {/* Barra de búsqueda en el centro */}
             <Box sx={{ 
               flex: 1, 
               maxWidth: '700px', 
@@ -398,6 +408,29 @@ export default function Header({ loadFavorites }) {
 
             {/* Íconos a la derecha */}
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+              {/* Selector de idioma */}
+              <FormControl size="small" sx={{ minWidth: 80 }}>
+                <Select
+                  value={lang || 'es'}
+                  onChange={handleLanguageChange}
+                  sx={{
+                    fontSize: '14px',
+                    '& .MuiOutlinedInput-notchedOutline': {
+                      borderColor: 'transparent',
+                    },
+                    '&:hover .MuiOutlinedInput-notchedOutline': {
+                      borderColor: pinkTheme.primary,
+                    },
+                    '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                      borderColor: pinkTheme.primary,
+                    }
+                  }}
+                >
+                  <MenuItem value="es">🇪🇸 ES</MenuItem>
+                  <MenuItem value="en">🇺🇸 EN</MenuItem>
+                </Select>
+              </FormControl>
+
               {/* Icono de perfil */}
               {perfilIcon}
 
@@ -451,6 +484,30 @@ export default function Header({ loadFavorites }) {
               >
                 <BsHeart size={22} />
               </IconButton>
+
+              {/* Notificaciones - Icono de campana */}
+              <IconButton
+                sx={{ color: "black", "&:hover": { color: pinkTheme.primary }}}
+                >
+                  <Badge
+                    badgeContent={0} // Puedes cambiar esto por el número real de notificaciones
+                    color="error"
+                    overlap="circular"
+                    sx={{
+                      "& .MuiBadge-badge": {
+                        backgroundColor: pinkTheme.primary,
+                        border: "solid 1px white",
+                        fontSize: "0.7rem",
+                        height: "16px",
+                        minWidth: "16px",
+                        top: 4,
+                        right: 4,
+                      },
+                    }}
+                  >
+                    <BsBell size={22}/>
+                  </Badge>
+               </IconButton>
             </Box>
 
             <Box sx={{ display: { xs: 'flex', md: 'none' } }}>
@@ -496,7 +553,7 @@ export default function Header({ loadFavorites }) {
                   '&:hover': { color: pinkTheme.secondary }
                 }}
               >
-                Productos  |
+                {t('header.products')}  |
               </Typography>
 
               {/* Categorías dinámicas desde la API */}
