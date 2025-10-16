@@ -596,20 +596,33 @@ export default function Header({ loadFavorites }) {
                       )}
                     </Typography>
 
-                    {/* Dropdown de subcategorías */}
+                    {/* Dropdown de subcategorías - CENTRADO */}
                     {hoveredNavCategory?.id === category.id && hasSubcategories && (
                       <Box
                         className="nav-category-dropdown"
                         sx={{
                           position: 'absolute',
                           top: '100%',
-                          left: 0,
+                          left: '50%',
+                          transform: 'translateX(-50%)',
                           display: 'flex',
                           borderRadius: '5px',
                           zIndex: 1300,
                           minWidth: '70vw',
                           maxWidth: '90vw',
                           mt: 1,
+                          '&::before': {
+                            content: '""',
+                            position: 'absolute',
+                            top: '-8px',
+                            left: '50%',
+                            transform: 'translateX(-50%)',
+                            width: 0,
+                            height: 0,
+                            borderLeft: '8px solid transparent',
+                            borderRight: '8px solid transparent',
+                            borderBottom: '8px solid #fff',
+                          }
                         }}
                         onMouseEnter={() => setHoveredNavCategory(category)}
                         onMouseLeave={() => setHoveredNavCategory(null)}
@@ -622,7 +635,7 @@ export default function Header({ loadFavorites }) {
                               maxWidth: '50vw',
                               backgroundColor: '#fff',
                               color: '#202020',
-                              borderRadius: '0 5px 5px 0',
+                              borderRadius: '5px',
                               py: 4,
                               px: 5,
                               display: 'flex',
