@@ -1,6 +1,7 @@
 import 'package:ale_beauty_art_app/core/views/login_view.dart';
 import 'package:ale_beauty_art_app/features/auth/bloc/auth_bloc.dart';
 import 'package:ale_beauty_art_app/features/favorites/presentation/view/favorite_page.dart';
+import 'package:ale_beauty_art_app/features/orders/presentation/views/order_page_view.dart';
 import 'package:ale_beauty_art_app/features/shipping_address/presentation/bloc/shipping_address_bloc.dart';
 import 'package:ale_beauty_art_app/features/shipping_address/presentation/bloc/shipping_address_event.dart';
 import 'package:ale_beauty_art_app/features/shipping_address/presentation/views/shipping_address_page.dart';
@@ -134,7 +135,10 @@ class ProfileView extends StatelessWidget {
               child: Column(
                 children: [
                   _buildOptionTile(Icons.shopping_bag, 'Mis pedidos', () {
-                    // TODO: Navegar a pedidos
+                      Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => const OrderPageView()),
+                    );
                   }),
                   _buildOptionTile(Icons.favorite, 'Favoritos', () async {
                     // TODO: Navegar a favoritos
