@@ -25,8 +25,8 @@ Rails.application.routes.draw do
       resources :favorites, only: [:create, :destroy, :index]
 
       resources :categories, param: :slug do
-        resources :sub_categories, param: :sub_category_slug do
-          resources :products, only: [:index]
+        resources :sub_categories, param: :slug do
+          get :products_by_sub, on: :member
         end
       end
 
