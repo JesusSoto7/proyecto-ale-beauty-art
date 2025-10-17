@@ -9,6 +9,7 @@ import { RiAccountPinBoxLine, RiCouponLine } from "react-icons/ri";
 import { AiOutlineOrderedList, AiOutlineHistory } from "react-icons/ai";
 import { MdKeyboardArrowRight } from "react-icons/md";
 import Skeleton from "@mui/material/Skeleton"
+import CircularProgress from "@mui/material/CircularProgress";
 
 import AppBar from '@mui/material/AppBar';
 import {Box, Button, Badge, Select, MenuItem, FormControl} from '@mui/material';
@@ -48,6 +49,11 @@ export default function Header({ loadFavorites }) {
   const [user, setUser] = useState(null);
   const [scrolled, setScrolled] = useState(false);
   const SCROLL_THRESHOLD = 100;
+  const [notificationsAnchorEl, setNotificationsAnchorEl] = useState(null);
+  const isNotificationsMenuOpen = Boolean(notificationsAnchorEl);
+  const [notificaciones, setNotificaciones] = useState([]);
+  const [notificacionesLoading, setNotificacionesLoading] = useState(false);
+  const [noLeidas, setNoLeidas] = useState(0);
 
   const [anchorEl, setAnchorEl] = useState(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = useState(null);
@@ -104,6 +110,19 @@ export default function Header({ loadFavorites }) {
       window.removeEventListener('resize', checkScrollNeeded);
     };
   }, [categories]);
+
+      const marcarTodasComoLeidas = async (notificaciones) => {
+      // Filtra solo las no leídas
+        const noLeidasIds = notificaciones.filter(n => !n.read).map(n => n.id);
+        await Promise.all(noLeidasIds.map(id =>
+          fetch(`https://localhost:4000/api/v1/notifications/${id}`, {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+            body: JSON.stringify({ read: true })
+          })
+        ));
+      };
+
 
   const scrollCategories = (direction) => {
     if (categoriesContainerRef.current) {
@@ -241,6 +260,45 @@ export default function Header({ loadFavorites }) {
       })
       .catch((err) => console.error(err));
   }, [t]);
+
+    useEffect(() => {
+    if (!token) return;
+    fetch("https://localhost:4000/api/v1/notifications", {
+      headers: { Authorization: `Bearer ${token}` }
+    })
+      .then(res => res.json())
+      .then(data => setNoLeidas(data.filter(n => !n.read).length));
+  }, [token]);
+
+    const handleOpenNotificationsMenu = async (event) => {
+      setNotificationsAnchorEl(event.currentTarget);
+      setNotificacionesLoading(true);
+
+      // 1. Carga primero las notificaciones actuales
+      const res = await fetch("https://localhost:4000/api/v1/notifications", {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      const data = await res.json();
+
+      // 2. Marca todas como leídas si hay alguna no leída
+      if (data.some(n => !n.read)) {
+        await marcarTodasComoLeidas(data);
+      }
+
+      // 3. Vuelve a cargar la lista ya marcadas como leídas
+      const res2 = await fetch("https://localhost:4000/api/v1/notifications", {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      const data2 = await res2.json();
+      setNotificaciones(data2);
+      setNoLeidas(data2.filter(n => !n.read).length);
+      setNotificacionesLoading(false);
+    };
+
+    const handleCloseNotificationsMenu = () => {
+      setNotificationsAnchorEl(null);
+    };
+
 
   const handleLogout = async () => {
     localStorage.removeItem('token');
@@ -531,26 +589,67 @@ export default function Header({ loadFavorites }) {
               {/* Notificaciones - Icono de campana */}
               <IconButton
                 sx={{ color: "black", "&:hover": { color: pinkTheme.primary }}}
+                onClick={handleOpenNotificationsMenu}
+              >
+                <Badge
+                  badgeContent={noLeidas}
+                  color="error"
+                  overlap="circular"
+                  sx={{
+                    "& .MuiBadge-badge": {
+                      backgroundColor: pinkTheme.primary,
+                      border: "solid 1px white",
+                      fontSize: "0.7rem",
+                      height: "16px",
+                      minWidth: "16px",
+                      top: 4,
+                      right: 4,
+                    },
+                  }}
                 >
-                  <Badge
-                    badgeContent={0} // Puedes cambiar esto por el número real de notificaciones
-                    color="error"
-                    overlap="circular"
-                    sx={{
-                      "& .MuiBadge-badge": {
-                        backgroundColor: pinkTheme.primary,
-                        border: "solid 1px white",
-                        fontSize: "0.7rem",
-                        height: "16px",
-                        minWidth: "16px",
-                        top: 4,
-                        right: 4,
-                      },
-                    }}
-                  >
-                    <BsBell size={22}/>
-                  </Badge>
-               </IconButton>
+                  <BsBell size={22}/>
+                </Badge>
+              </IconButton>
+              <Menu
+                  anchorEl={notificationsAnchorEl}
+                  open={isNotificationsMenuOpen}
+                  onClose={handleCloseNotificationsMenu}
+                  PaperProps={{
+                    style: {
+                      width: 340, padding: 0, borderRadius: 12, boxShadow: '0 10px 30px rgba(0,0,0,0.13)'
+                    }
+                  }}
+                  anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+                  transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+                >
+                <Box sx={{ px: 2, py: 2 }}>
+                  <Typography variant="h6" sx={{ mb: 1, color: pinkTheme.primary, fontWeight: 'bold' }}>
+                    Notificaciones
+                  </Typography>
+                  {notificacionesLoading ? (
+                    <div className="text-center py-10">
+                      <CircularProgress style={{ color: "#ca5679ff" }} />
+                      
+                    </div>
+                  ) : (
+                  <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
+                    {notificaciones.length === 0 && <li>No tienes notificaciones.</li>}
+                    {notificaciones.map(n => (
+                      <li key={n.id} style={{
+                        background: "#eee",
+                        margin: "8px 0",
+                        padding: "12px",
+                        borderRadius: "8px"
+                      }}>
+                        <strong>{n.notification_message.title}</strong>
+                        <p>{n.notification_message.message}</p>
+                        <small>{new Date(n.notification_message.created_at).toLocaleString()}</small>
+                      </li>
+                    ))}
+                  </ul>
+                  )}
+                </Box>
+              </Menu>
             </Box>
 
             <Box sx={{ display: { xs: 'flex', md: 'none' } }}>
