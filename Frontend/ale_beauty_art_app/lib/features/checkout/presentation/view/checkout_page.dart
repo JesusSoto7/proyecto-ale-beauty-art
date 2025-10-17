@@ -28,6 +28,8 @@ class _CheckoutPageState extends State<CheckoutPage> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     if (!orderCreatedDispatched) {
+      // Asegura que OrderBloc tenga el token antes de crear la orden
+      context.read<OrderBloc>().add(UpdateOrderToken(widget.token));
       context.read<OrderBloc>().add(
             CreateOrder(
               shippingAddressId: widget.selectedAddressId,
