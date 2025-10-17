@@ -13,6 +13,7 @@ import RotatingBanner from "./RotatingBanner";
 import { useTranslation } from 'react-i18next';
 import Rating from "@mui/material/Rating";
 import FloatingChat from '../../components/FloatingChat';
+import BannerProducts from '../../components/bannerProducts';
 
 function Inicio() {
   const [carousel, setCarousel] = useState([]);
@@ -25,6 +26,13 @@ function Inicio() {
   const { t } = useTranslation();
   const [newProducts, setNewProducts] = useState([]);
   const [productRatings, setProductRatings] = useState({});
+
+  const produPrueba = [
+    { id: 1, name: "Shampoo", rating: 4.7, imagen_url: "https://cloudinary.images-iherb.com/image/upload/f_auto,q_auto:eco/images/hds/hds94959/y/24.jpg" },
+    { id: 2, name: "Crema", rating: 3.9, imagen_url: "https://belcorpcolombia.vtexassets.com/arquivos/ids/1044470-800-800?v=638923497127430000&width=800&height=800&aspect=true" },
+    { id: 3, name: "Jabón", rating: 4.9, imagen_url: "https://surticosmeticosb2c.vtexassets.com/arquivos/ids/170779-800-auto?v=638500824438100000&width=800&height=auto&aspect=true" },
+    { id: 4, name: "dior addict", rating: 5.0, imagen_url: "https://localhost:4000/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6MTEsInB1ciI6ImJsb2JfaWQifX0=--5cf0593b049e4566b81df8fd0598624caf865c96/dior%20addict.png"}
+  ];
 
   
   const token = localStorage.getItem('token');
@@ -508,6 +516,8 @@ function Inicio() {
 
       {/* Banner rotativo */}
       <RotatingBanner />
+
+      <BannerProducts product={produPrueba[3]}/>
     </div>
   );
 }
