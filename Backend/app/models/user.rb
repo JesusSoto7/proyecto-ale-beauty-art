@@ -6,7 +6,8 @@ class User < ApplicationRecord
   has_many :favorites
   has_many :favorite_products, through: :favorites, source: :product
   has_many :reviews, dependent: :destroy
-  has_many :notifications, dependent: :destroy
+  has_many :user_notifications, dependent: :destroy
+  has_many :notification_messages, through: :user_notifications
 
   rolify
   # Include default devise modules. Others available are:

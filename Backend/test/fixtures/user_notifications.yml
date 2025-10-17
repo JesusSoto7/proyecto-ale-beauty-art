@@ -2,12 +2,10 @@
 
 one:
   user: one
-  title: MyString
-  message: MyText
+  notification_messages: one
   read: false
 
 two:
   user: two
-  title: MyString
-  message: MyText
+  notification_messages: two
   read: false

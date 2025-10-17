@@ -42,6 +42,7 @@ import Pedidos from './pages/inicio/Pedidos';
 import DetallePedido from './pages/inicio/DetallePedido';
 import SubCategorias from './pages/home/SubCategories';
 import GestionUsuarios from './components/dashComponents/GestionUsuarios';
+import Notificationes from './pages/home/Notifications';
 
 function Wrapper() {
   const { lang } = useParams();
@@ -120,6 +121,7 @@ function App() {
               <Route path="categories/:id" element={<CategoryProducts />} /> 
               <Route path="carousel" element={<Carousel />} />
               <Route path="usuarios" element={<GestionUsuarios />} />
+              <Route path="notificaciones" element={<Notificationes />} />
           </Route>
         </Route>
         <Route path="/:lang/403" element={<Forbidden403 />} />

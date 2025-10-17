@@ -48,6 +48,7 @@ Rails.application.routes.draw do
 
       post '/api/ia', to: 'ai#ask'
 
+      resources :notifications, only: [:index, :create, :update]
 
       resources :categories
 
