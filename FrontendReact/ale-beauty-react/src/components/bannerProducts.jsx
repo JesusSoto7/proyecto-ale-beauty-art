@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Rating from "@mui/material/Rating";
 import { Link, useParams } from "react-router-dom";
+import "../assets/stylesheets/BannerProducts.css";
 
 function BannerProduct({ products, productRatings }) {
   const { lang } = useParams();
@@ -37,7 +38,7 @@ function BannerProduct({ products, productRatings }) {
     return (
       <div
         style={{
-          width: "100%",
+          width: "90%",
           height: "500px",
           display: "flex",
           alignItems: "center",
@@ -57,69 +58,28 @@ function BannerProduct({ products, productRatings }) {
   const ratingValue = productRatings?.[product.id]?.avg || 0;
 
   return (
-    <div
-      style={{
-        backgroundColor: "#df6897",
-        width: "90%",
-        height: "500px",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "space-around",
-        borderRadius: "10px",
-        overflow: "hidden",
-        margin: "auto",
-        position: "relative",
-        border: "solid 1px #ffd8e4ff",
-        transition: "all 1s ease-in-out",
-      }}
-    >
+    <div className="bannerProducts">
       {/* Imagen */}
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          justifyContent: "center",
-          backgroundColor: "#ffffff",
-          width: "35%",
-          height: "120%",
-          borderRadius: "60%",
-          boxShadow: "0px 1px 65px 0px rgba(173, 58, 129, 0.88)",
-          transition: "all 1s ease-in-out",
-        }}
-      >
+      <div className="bannerProduct-image-container">
         <img
           src={product.imagen_url}
           alt={product.nombre_producto || product.name || "Producto"}
-          style={{
-            width: "70%",
-            height: "400px",
-            objectFit: "contain",
-            borderRadius: 100,
-            transition: "opacity 1s ease-in-out",
-          }}
+          className="banner-product-image"
         />
       </div>
 
       {/* Información */}
-      <div
-        style={{
-          width: "50%",
-          height: "100%",
-          display: "flex",
-          flexDirection: "column",
-          padding: "20px",
-          justifyContent: "space-around",
-          transition: "all 1s ease-in-out",
-        }}
-      >
+      <div className="banner-info">
+        
         <h1 style={{ color: "#fff", fontSize: 60 }}>
           {product.nombre_producto || product.name}
         </h1>
 
-        <p style={{ color: "#fff" }}>{product.descripcion}</p>
+        <hr style={{ color: "#fff" }} />
 
-        <section style={{display: "flex", gap: 10, justifyContent: "end"}}>
+        <p className="banner-description">{product.descripcion}</p>
+
+        <section className="section-DataBanner">
           <div style={{display: "flex", gap: 10, alignItems: "center"}}>
             <Rating
               name={`product-rating-${product.id}`}

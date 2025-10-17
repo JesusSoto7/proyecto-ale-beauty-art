@@ -13,7 +13,7 @@ import RotatingBanner from "./RotatingBanner";
 import { useTranslation } from 'react-i18next';
 import Rating from "@mui/material/Rating";
 import FloatingChat from '../../components/FloatingChat';
-import BannerProduct from '../../components/bannerProducts';
+import BannerProduct from '../../components/bannerProducts'; 
 
 function Inicio() {
   const [carousel, setCarousel] = useState([]);
