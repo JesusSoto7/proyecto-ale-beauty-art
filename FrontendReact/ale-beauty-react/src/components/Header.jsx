@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import logo from '../assets/images/ale_logo.jpg';
-import { BsHeart, BsCart4, BsPerson, BsBag, BsGeoAlt, BsBoxArrowRight, BsGear, BsCreditCard, BsTruck, BsArrowRepeat, BsListCheck, BsBell } from "react-icons/bs";
+import { BsHeart, BsCart4, BsPerson, BsBag, BsGeoAlt, BsBoxArrowRight, BsGear, BsCreditCard, BsTruck, BsArrowRepeat, BsListCheck, BsBell, BsChevronLeft, BsChevronRight } from "react-icons/bs";
 import { IoPersonCircleSharp } from "react-icons/io5";
 import { MdAccountCircle, MdOutlinePayment, MdLocalShipping } from "react-icons/md";
 import { RiAccountPinBoxLine, RiCouponLine } from "react-icons/ri";
@@ -54,6 +54,8 @@ export default function Header({ loadFavorites }) {
   const [openModal, setOpenModal] = useState(false);
   const [error, setError] = useState(null);
   const [cart, setCart] = useState([]);
+  const [scrollPosition, setScrollPosition] = useState(0);
+  const [showScrollButtons, setShowScrollButtons] = useState(false);
 
   const navigate = useNavigate();
   const isMenuOpen = Boolean(anchorEl);
@@ -62,6 +64,7 @@ export default function Header({ loadFavorites }) {
   const containerRef = useRef(null);
   const categoriesRef = useRef(null);
   const navCategoriesRef = useRef(null);
+  const categoriesContainerRef = useRef(null);
   const debounceRef = useRef(null);
   const DEBOUNCE_MS = 250;
   const cartCount = Array.isArray(cart?.products)
@@ -82,6 +85,46 @@ export default function Header({ loadFavorites }) {
     const currentPath = window.location.pathname;
     const newPath = currentPath.replace(`/${lang}/`, `/${newLang}/`);
     navigate(newPath);
+  };
+
+  // Verificar si se necesitan botones de desplazamiento
+  useEffect(() => {
+    const checkScrollNeeded = () => {
+      if (categoriesContainerRef.current) {
+        const container = categoriesContainerRef.current;
+        const needsScroll = container.scrollWidth > container.clientWidth;
+        setShowScrollButtons(needsScroll);
+      }
+    };
+
+    checkScrollNeeded();
+    window.addEventListener('resize', checkScrollNeeded);
+    
+    return () => {
+      window.removeEventListener('resize', checkScrollNeeded);
+    };
+  }, [categories]);
+
+  const scrollCategories = (direction) => {
+    if (categoriesContainerRef.current) {
+      const container = categoriesContainerRef.current;
+      const scrollAmount = 200;
+      const newPosition = direction === 'left' 
+        ? Math.max(0, scrollPosition - scrollAmount)
+        : Math.min(container.scrollWidth - container.clientWidth, scrollPosition + scrollAmount);
+      
+      container.scrollTo({
+        left: newPosition,
+        behavior: 'smooth'
+      });
+      setScrollPosition(newPosition);
+    }
+  };
+
+  const handleCategoriesScroll = () => {
+    if (categoriesContainerRef.current) {
+      setScrollPosition(categoriesContainerRef.current.scrollLeft);
+    }
   };
 
   useEffect(() => {
@@ -517,25 +560,56 @@ export default function Header({ loadFavorites }) {
             </Box>
           </Toolbar>
 
-          {/* Barra negra con categorías dinámicas */}
+          {/* Barra rosa con categorías dinámicas */}
           <Box 
             ref={navCategoriesRef}
             sx={{ 
               backgroundColor: '#df6897ff',
               color: 'white',
               py: 1,
-              px: 2,
-              position: 'relative'
+              position: 'relative',
             }}
           >
+            {/* Botón de desplazamiento izquierdo */}
+            {showScrollButtons && (
+              <IconButton
+                onClick={() => scrollCategories('left')}
+                sx={{
+                  position: 'absolute',
+                  left: 8,
+                  top: '50%',
+                  transform: 'translateY(-50%)',
+                  zIndex: 10,
+                  backgroundColor: 'rgba(255,255,255,0.2)',
+                  color: 'white',
+                  '&:hover': {
+                    backgroundColor: 'rgba(255,255,255,0.3)',
+                  },
+                  width: 32,
+                  height: 32
+                }}
+                disabled={scrollPosition === 0}
+              >
+                <BsChevronLeft size={16} />
+              </IconButton>
+            )}
+
+            {/* Contenedor desplazable de categorías */}
             <Box 
+              ref={categoriesContainerRef}
+              onScroll={handleCategoriesScroll}
               sx={{ 
-                display: 'flex', 
-                justifyContent: 'center',
+                display: 'flex',
                 alignItems: 'center',
                 gap: 4,
-                flexWrap: 'wrap',
-                position: 'relative'
+                overflowX: 'auto',
+                scrollbarWidth: 'none',
+                msOverflowStyle: 'none',
+                px: 2,
+                '&::-webkit-scrollbar': {
+                  display: 'none'
+                },
+                scrollBehavior: 'smooth'
               }}
             >
               {/* ENLACE A PRODUCTOS */}
@@ -550,6 +624,8 @@ export default function Header({ loadFavorites }) {
                   transition: 'color 0.2s',
                   textDecoration: 'none',
                   color: 'white',
+                  whiteSpace: 'nowrap',
+                  flexShrink: 0,
                   '&:hover': { color: pinkTheme.secondary }
                 }}
               >
@@ -566,7 +642,9 @@ export default function Header({ loadFavorites }) {
                     key={category.id || category.slug}
                     sx={{ 
                       position: 'relative',
-                      cursor: 'pointer'
+                      cursor: 'pointer',
+                      flexShrink: 0,
+                      whiteSpace: 'nowrap'
                     }}
                     onMouseEnter={() => setHoveredNavCategory(hasSubcategories ? category : null)}
                     onMouseLeave={() => {
@@ -595,205 +673,228 @@ export default function Header({ loadFavorites }) {
                         <MdKeyboardArrowRight size={16} />
                       )}
                     </Typography>
-
-                    {/* Dropdown de subcategorías - CENTRADO */}
-                    {hoveredNavCategory?.id === category.id && hasSubcategories && (
-                      <Box
-                        className="nav-category-dropdown"
-                        sx={{
-                          position: 'absolute',
-                          top: '100%',
-                          left: '50%',
-                          transform: 'translateX(-50%)',
-                          display: 'flex',
-                          borderRadius: '5px',
-                          zIndex: 1300,
-                          minWidth: '70vw',
-                          maxWidth: '90vw',
-                          mt: 1,
-                          '&::before': {
-                            content: '""',
-                            position: 'absolute',
-                            top: '-8px',
-                            left: '50%',
-                            transform: 'translateX(-50%)',
-                            width: 0,
-                            height: 0,
-                            borderLeft: '8px solid transparent',
-                            borderRight: '8px solid transparent',
-                            borderBottom: '8px solid #fff',
-                          }
-                        }}
-                        onMouseEnter={() => setHoveredNavCategory(category)}
-                        onMouseLeave={() => setHoveredNavCategory(null)}
-                      >
-                        {/* Submenú lateral con imágenes */}
-                        {hoveredNavCategory?.sub_categories?.length > 0 && (
-                          <Box
-                            sx={{
-                              minWidth: '50vw',
-                              maxWidth: '50vw',
-                              backgroundColor: '#fff',
-                              color: '#202020',
-                              borderRadius: '5px',
-                              py: 4,
-                              px: 5,
-                              display: 'flex',
-                              flexDirection: 'column',
-                              boxShadow: '0 2px 15px rgba(0, 0, 0, 0.06)',
-                              overflowY: 'auto',
-                              maxHeight: '600px',
-                            }}
-                          >
-                            {/* Título */}
-                            <Typography
-                              variant="h6"
-                              sx={{
-                                mb: 2,
-                                fontWeight: 'bold',
-                                fontSize: '22px',
-                                textTransform: 'uppercase',
-                                letterSpacing: '0.5px',
-                                color: '#202020',
-                              }}
-                            >
-                              {hoveredNavCategory.nombre_categoria || hoveredNavCategory.name}
-                            </Typography>
-                            <Box
-                              sx={{
-                                width: '50px',
-                                height: '3px',
-                                backgroundColor: '#e60073',
-                                mb: 3,
-                                borderRadius: '2px',
-                              }}
-                            />
-
-                            {/* Subcategorías con imágenes */}
-                            <Box
-                              sx={{
-                                display: 'grid',
-                                gridTemplateColumns: 'repeat(3, 1fr)',
-                                gap: 3,
-                                justifyContent: 'start',
-                              }}
-                            >
-                              {!hoveredNavCategory?.sub_categories
-                                ? Array.from(new Array(6)).map((_, index) => (
-                                    <Box
-                                      key={index}
-                                      sx={{
-                                        borderRadius: '8px',
-                                        overflow: 'hidden',
-                                        maxWidth: '250px',
-                                      }}
-                                    >
-                                      <Skeleton
-                                        variant="rectangular"
-                                        width={250}
-                                        height={200}
-                                        animation="wave"
-                                        sx={{ borderRadius: '8px' }}
-                                      />
-                                      <Skeleton
-                                        variant="text"
-                                        width={150}
-                                        height={30}
-                                        sx={{ mx: 'auto', mt: 1 }}
-                                      />
-                                    </Box>
-                                  ))
-                                : hoveredNavCategory.sub_categories.map((sub) => (
-                                    <Box
-                                      key={sub.id || sub.slug}
-                                      onClick={() => goToCategory(sub, hoveredNavCategory)}
-                                      sx={{
-                                        cursor: 'pointer',
-                                        maxWidth: '250px',
-                                        display: 'flex',
-                                        flexDirection: 'column',
-                                        alignItems: 'center',
-                                        textAlign: 'center',
-                                        position: 'relative',
-                                        overflow: 'hidden',
-                                        borderRadius: '8px',
-                                        backgroundColor: '#fafafa',
-                                        transition: 'all 0.3s ease',
-                                        '&:hover': {
-                                          transform: 'translateY(-3px)',
-                                        },
-                                        '&:hover img': {
-                                          filter: 'brightness(70%)',
-                                          transform: 'scale(1.05)',
-                                        },
-                                        '&:hover .overlayText': {
-                                          opacity: 1,
-                                        },
-                                      }}
-                                    >
-                                      {/* Imagen */}
-                                      <img
-                                        src={sub.imagen_url || noImage}
-                                        alt={sub.nombre_categoria || sub.nombre}
-                                        width="100%"
-                                        height="200px"
-                                        style={{
-                                          objectFit: 'cover',
-                                          transition: 'all 0.3s ease',
-                                        }}
-                                      />
-
-                                      {/* Overlay con texto */}
-                                      <Box
-                                        className="overlayText"
-                                        sx={{
-                                          position: 'absolute',
-                                          top: 0,
-                                          left: 0,
-                                          width: '100%',
-                                          height: '100%',
-                                          display: 'flex',
-                                          alignItems: 'center',
-                                          justifyContent: 'center',
-                                          color: '#fff',
-                                          fontWeight: 'bold',
-                                          fontSize: '16px',
-                                          background:
-                                            'linear-gradient(to bottom, rgba(0,0,0,0.1), rgba(0,0,0,0.4))',
-                                          textTransform: 'uppercase',
-                                          opacity: 0,
-                                          transition: 'opacity 0.3s ease',
-                                          pointerEvents: 'none',
-                                        }}
-                                      >
-                                        {sub.nombre_categoria || sub.nombre}
-                                      </Box>
-
-                                      {/* Nombre debajo */}
-                                      <Typography
-                                        sx={{
-                                          mt: 1.5,
-                                          fontSize: '15px',
-                                          fontWeight: 500,
-                                          color: '#202020',
-                                          textTransform: 'capitalize',
-                                        }}
-                                      >
-                                        {sub.nombre_categoria || sub.nombre}
-                                      </Typography>
-                                    </Box>
-                                  ))}
-                            </Box>
-                          </Box>
-                        )}
-                      </Box>
-                    )}
                   </Box>
                 );
               })}
             </Box>
+
+            {/* Botón de desplazamiento derecho */}
+            {showScrollButtons && categoriesContainerRef.current && (
+              <IconButton
+                onClick={() => scrollCategories('right')}
+                sx={{
+                  position: 'absolute',
+                  right: 8,
+                  top: '50%',
+                  transform: 'translateY(-50%)',
+                  zIndex: 10,
+                  backgroundColor: 'rgba(255,255,255,0.2)',
+                  color: 'white',
+                  '&:hover': {
+                    backgroundColor: 'rgba(255,255,255,0.3)',
+                  },
+                  width: 32,
+                  height: 32
+                }}
+                disabled={scrollPosition >= (categoriesContainerRef.current.scrollWidth - categoriesContainerRef.current.clientWidth - 10)}
+              >
+                <BsChevronRight size={16} />
+              </IconButton>
+            )}
           </Box>
         </AppBar>
+
+        {/* Dropdown de subcategorías - FUERA DEL APP BAR PARA EVITAR CORTES */}
+        {hoveredNavCategory && (
+          <Box
+            className="nav-category-dropdown"
+            sx={{
+              position: 'fixed',
+              top: '107px', // Ajusta según la altura de tu header
+              left: '50%',
+              transform: 'translateX(-50%)',
+              display: 'flex',
+              borderRadius: '5px',
+              zIndex: 1300,
+              minWidth: '70vw',
+              maxWidth: '90vw',
+              mt: 1,
+              '&::before': {
+                content: '""',
+                position: 'absolute',
+                top: '-8px',
+                left: '50%',
+                transform: 'translateX(-50%)',
+                width: 0,
+                height: 0,
+                borderLeft: '8px solid transparent',
+                borderRight: '8px solid transparent',
+                borderBottom: '8px solid #fff',
+              }
+            }}
+            onMouseEnter={() => setHoveredNavCategory(hoveredNavCategory)}
+            onMouseLeave={() => setHoveredNavCategory(null)}
+          >
+            {/* Submenú con imágenes */}
+            {hoveredNavCategory?.sub_categories?.length > 0 && (
+              <Box
+                sx={{
+                  width: '100%',
+                  backgroundColor: '#fff',
+                  color: '#202020',
+                  borderRadius: '5px',
+                  py: 4,
+                  px: 5,
+                  display: 'flex',
+                  flexDirection: 'column',
+                  boxShadow: '0 2px 15px rgba(0, 0, 0, 0.06)',
+                  overflowY: 'auto',
+                  maxHeight: '600px',
+                }}
+              >
+                {/* Título */}
+                <Typography
+                  variant="h6"
+                  sx={{
+                    mb: 2,
+                    fontWeight: 'bold',
+                    fontSize: '22px',
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.5px',
+                    color: '#202020',
+                  }}
+                >
+                  {hoveredNavCategory.nombre_categoria || hoveredNavCategory.name}
+                </Typography>
+                <Box
+                  sx={{
+                    width: '50px',
+                    height: '3px',
+                    backgroundColor: '#e60073',
+                    mb: 3,
+                    borderRadius: '2px',
+                  }}
+                />
+
+                {/* Subcategorías con imágenes */}
+                <Box
+                  sx={{
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(3, 1fr)',
+                    gap: 3,
+                    justifyContent: 'start',
+                  }}
+                >
+                  {!hoveredNavCategory?.sub_categories
+                    ? Array.from(new Array(6)).map((_, index) => (
+                        <Box
+                          key={index}
+                          sx={{
+                            borderRadius: '8px',
+                            overflow: 'hidden',
+                            maxWidth: '250px',
+                          }}
+                        >
+                          <Skeleton
+                            variant="rectangular"
+                            width={250}
+                            height={200}
+                            animation="wave"
+                            sx={{ borderRadius: '8px' }}
+                          />
+                          <Skeleton
+                            variant="text"
+                            width={150}
+                            height={30}
+                            sx={{ mx: 'auto', mt: 1 }}
+                          />
+                        </Box>
+                      ))
+                    : hoveredNavCategory.sub_categories.map((sub) => (
+                        <Box
+                          key={sub.id || sub.slug}
+                          onClick={() => goToCategory(sub, hoveredNavCategory)}
+                          sx={{
+                            cursor: 'pointer',
+                            maxWidth: '250px',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            alignItems: 'center',
+                            textAlign: 'center',
+                            position: 'relative',
+                            overflow: 'hidden',
+                            borderRadius: '8px',
+                            backgroundColor: '#fafafa',
+                            transition: 'all 0.3s ease',
+                            '&:hover': {
+                              transform: 'translateY(-3px)',
+                            },
+                            '&:hover img': {
+                              filter: 'brightness(70%)',
+                              transform: 'scale(1.05)',
+                            },
+                            '&:hover .overlayText': {
+                              opacity: 1,
+                            },
+                          }}
+                        >
+                          {/* Imagen */}
+                          <img
+                            src={sub.imagen_url || noImage}
+                            alt={sub.nombre_categoria || sub.nombre}
+                            width="100%"
+                            height="200px"
+                            style={{
+                              objectFit: 'cover',
+                              transition: 'all 0.3s ease',
+                            }}
+                          />
+
+                          {/* Overlay con texto */}
+                          <Box
+                            className="overlayText"
+                            sx={{
+                              position: 'absolute',
+                              top: 0,
+                              left: 0,
+                              width: '100%',
+                              height: '100%',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              color: '#fff',
+                              fontWeight: 'bold',
+                              fontSize: '16px',
+                              background:
+                                'linear-gradient(to bottom, rgba(0,0,0,0.1), rgba(0,0,0,0.4))',
+                              textTransform: 'uppercase',
+                              opacity: 0,
+                              transition: 'opacity 0.3s ease',
+                              pointerEvents: 'none',
+                            }}
+                          >
+                            {sub.nombre_categoria || sub.nombre}
+                          </Box>
+
+                          {/* Nombre debajo */}
+                          <Typography
+                            sx={{
+                              mt: 1.5,
+                              fontSize: '15px',
+                              fontWeight: 500,
+                              color: '#202020',
+                              textTransform: 'capitalize',
+                            }}
+                          >
+                            {sub.nombre_categoria || sub.nombre}
+                          </Typography>
+                        </Box>
+                      ))}
+                </Box>
+              </Box>
+            )}
+          </Box>
+        )}
 
         {renderMobileMenu}
         {renderMenu}
