@@ -595,23 +595,24 @@ export default function Header({ loadFavorites }) {
             )}
 
             {/* Contenedor desplazable de categorías */}
-            <Box 
-              ref={categoriesContainerRef}
-              onScroll={handleCategoriesScroll}
-              sx={{ 
-                display: 'flex',
-                alignItems: 'center',
-                gap: 4,
-                overflowX: 'auto',
-                scrollbarWidth: 'none',
-                msOverflowStyle: 'none',
-                px: 2,
-                '&::-webkit-scrollbar': {
-                  display: 'none'
-                },
-                scrollBehavior: 'smooth'
-              }}
-            >
+              <Box 
+                ref={categoriesContainerRef}
+                onScroll={handleCategoriesScroll}
+                sx={{ 
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: 4,
+                  overflowX: 'auto',
+                  scrollbarWidth: 'none',
+                  msOverflowStyle: 'none',
+                  px: 2,
+                  '&::-webkit-scrollbar': {
+                    display: 'none'
+                  },
+                  scrollBehavior: 'smooth'
+                }}
+              >
               {/* ENLACE A PRODUCTOS */}
               <Typography 
                 component={Link} 
@@ -777,14 +778,18 @@ export default function Header({ loadFavorites }) {
                 />
 
                 {/* Subcategorías con imágenes */}
-                <Box
-                  sx={{
-                    display: 'grid',
-                    gridTemplateColumns: 'repeat(3, 1fr)',
-                    gap: 3,
-                    justifyContent: 'start',
-                  }}
-                >
+                  <Box
+                    sx={{
+                        display: 'grid',
+                        gridTemplateColumns: 'repeat(4, 1fr)',
+                        gap: 2,
+                        maxWidth: '1000px',
+                        mx: 'auto',
+                        width: '100%',
+                        justifyContent: 'center',
+                        alignItems: 'start',
+                    }}
+                  >
                   {!hoveredNavCategory?.sub_categories
                     ? Array.from(new Array(6)).map((_, index) => (
                         <Box
@@ -900,7 +905,16 @@ export default function Header({ loadFavorites }) {
         {renderMenu}
 
         <Modal open={openModal} onClose={() => setOpenModal(false)}>
-          <ModalDialog size="lg">
+          <ModalDialog
+              size="md"
+              sx={{
+                maxWidth: 450,
+                width: '90vw',
+                minWidth: 280,
+                px: 2,
+                py: 2,
+              }}
+            >
             <ModalClose />
             <FavoritesModal 
               open={openModal} 
