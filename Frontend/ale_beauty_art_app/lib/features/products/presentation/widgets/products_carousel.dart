@@ -2,6 +2,7 @@ import 'package:ale_beauty_art_app/core/utils/formatters.dart';
 import 'package:ale_beauty_art_app/core/views/loading_view.dart';
 import 'package:ale_beauty_art_app/features/products/presentation/bloc/product_bloc.dart';
 import 'package:ale_beauty_art_app/features/products/presentation/views/products_Detail_View.dart';
+import 'package:ale_beauty_art_app/features/products/presentation/widgets/favorite_toggle_button.dart';
 import 'package:ale_beauty_art_app/styles/colors.dart';
 import 'package:ale_beauty_art_app/styles/text_styles.dart';
 import 'package:flutter/material.dart';
@@ -134,23 +135,11 @@ class _ProductsCarouselState extends State<ProductsCarousel> {
 
                                     // Botón de favoritos
                                     Positioned(
-                                      top: 4,
-                                      right: 4,
-                                      child: Container(
-                                        child: IconButton(
-                                          icon: Icon(
-                                            // product.isFavorite ? Icons.favorite : Icons.favorite_border,
-                                            Icons.favorite_border,
-                                            color: const Color.fromARGB(
-                                                255, 158, 137, 137),
-                                            // color: product.isFavorite ? Colors.red : Colors.grey,
-                                          ),
-                                          onPressed: () {
-                                            // TODO: Aquí colocas tu lógica de favorito
-                                            print(
-                                                "Favorito: ${product.nombreProducto}");
-                                          },
-                                        ),
+                                      top: 0,
+                                      right: 0,
+                                      child: FavoriteToggleButton(
+                                        productId: product.id,
+                                        inactiveColor: const Color.fromARGB(255, 158, 137, 137),
                                       ),
                                     ),
                                   ],
