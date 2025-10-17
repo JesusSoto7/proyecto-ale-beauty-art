@@ -72,7 +72,7 @@ function BannerProduct({ products, productRatings }) {
       {/* Información */}
       <div className="banner-info">
         
-        <h1 style={{ color: "#fff", fontSize: 60 }}>
+        <h1 style={{ color: "#fff", fontSize: 50 }}>
           {product.nombre_producto || product.name}
         </h1>
 

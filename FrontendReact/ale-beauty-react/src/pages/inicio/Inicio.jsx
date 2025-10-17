@@ -267,22 +267,25 @@ function Inicio() {
 
   return (
     <div>
-      {/* {loading ? (
+      {loading ? (
         <Skeleton sx={{ bgcolor: 'grey.800' }} variant="rectangular" width={"100%"} height={350} />
       ) : carousel.length > 0 ? (
-        <Carousel interval={3000} className="mb-0">
-          {carousel.map((img, idx) => (
-            <Carousel.Item key={idx} sx={{ marginTop: "70px"}}>
-              <img
-                className="d-block w-100"
-                src={img}
-                alt={`${t('home.slide')} ${idx + 1}`}
-                style={{ height: "450px", objectFit: "cover" }}
-              />
-            </Carousel.Item>
-          ))}
-        </Carousel>
-      ) : null} */}
+        // <Carousel interval={3000} className="mb-0">
+        //   {carousel.map((img, idx) => (
+        //     <Carousel.Item key={idx} sx={{ marginTop: "70px"}}>
+        //       <img
+        //         className="d-block w-100"
+        //         src={img}
+        //         alt={`${t('home.slide')} ${idx + 1}`}
+        //         style={{ height: "450px", objectFit: "cover" }}
+        //       />
+        //     </Carousel.Item>
+        //   ))}
+        // </Carousel>
+        <img>
+
+        </img>
+      ) : null}
 
 
 
@@ -549,7 +552,7 @@ function Inicio() {
       {/* Banner rotativo */}
       <RotatingBanner />
       <h2 className="mb-4">productos mejor valorados</h2>
-      <RankingPro products={products} productRatings={productRatings} />
+      <RankingPro products={products} productRatings={productRatings} loading={loading} />
 
       
     </div>
