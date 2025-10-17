@@ -20,12 +20,15 @@ class CartBloc extends Bloc<CartEvent, CartState> {
   }
 
   void _onUpdateCartToken(UpdateCartToken event, Emitter<CartState> emit) {
-    _jwtToken = event.token;
+    // Permitir limpiar el token pasando cadena vacía
+    _jwtToken = (event.token.isEmpty) ? null : event.token;
+    emit(state.copyWith(token: _jwtToken));
   }
 
   Future<void> _onLoadCart(LoadCart event, Emitter<CartState> emit) async {
-    if (_jwtToken == null) {
-      emit(state.copyWith(error: 'Token no disponible'));
+    // Si no hay token, mostramos carrito vacío en lugar de error
+    if (_jwtToken == null || _jwtToken!.isEmpty) {
+      emit(state.copyWith(isLoading: false, error: null, products: const []));
       return;
     }
     emit(state.copyWith(isLoading: true, error: null));

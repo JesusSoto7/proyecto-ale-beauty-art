@@ -1,15 +1,38 @@
+import 'package:ale_beauty_art_app/core/views/loading_view.dart';
 import 'package:ale_beauty_art_app/features/cart/presentation/bloc/cart_bloc.dart';
 import 'package:ale_beauty_art_app/features/cart/presentation/bloc/cart_event.dart';
 import 'package:ale_beauty_art_app/features/cart/presentation/bloc/cart_state.dart';
 import 'package:ale_beauty_art_app/features/checkout/presentation/view/checkout_page.dart';
 import 'package:ale_beauty_art_app/features/checkout/shippingAddress/select_address_Page.dart';
+import 'package:ale_beauty_art_app/features/auth/bloc/auth_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:ale_beauty_art_app/styles/text_styles.dart';
 
-class CartPageView extends StatelessWidget {
+class CartPageView extends StatefulWidget {
   const CartPageView({super.key});
+
+  @override
+  State<CartPageView> createState() => _CartPageViewState();
+}
+
+class _CartPageViewState extends State<CartPageView> {
+  @override
+  void initState() {
+    super.initState();
+    // Sincronizar token del usuario (si existe) y cargar el carrito de inmediato
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final authState = context.read<AuthBloc>().state;
+      final cartBloc = context.read<CartBloc>();
+      if (authState is AuthSuccess) {
+        cartBloc.add(UpdateCartToken(authState.token));
+      } else {
+        // Limpiar token para mostrar carrito vacío sin error
+        cartBloc.add(UpdateCartToken(''));
+      }
+      cartBloc.add(LoadCart());
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -56,15 +79,24 @@ class CartPageView extends StatelessWidget {
       body: BlocBuilder<CartBloc, CartState>(
         builder: (context, state) {
           if (state.isLoading) {
-            return const Center(child: CircularProgressIndicator());
+            return LoadingView();
           }
 
-          if (state.error != null) {
-            return Center(
+          // Si no hay token o hay error, mostramos carrito vacío de forma amigable
+          if ((state.token == null || state.token!.isEmpty) && state.products.isEmpty) {
+            return const Center(
               child: Text(
-                state.error!,
-                style: AppTextStyles.error,
-                textAlign: TextAlign.center,
+                'Agrega productos a tu carrito',
+                style: TextStyle(fontSize: 16, color: Colors.black54),
+              ),
+            );
+          }
+
+          if (state.error != null && state.products.isEmpty) {
+            return const Center(
+              child: Text(
+                'Agrega productos a tu carrito',
+                style: TextStyle(fontSize: 16, color: Colors.black54),
               ),
             );
           }

@@ -1,3 +1,4 @@
+import 'package:ale_beauty_art_app/core/views/loading_view.dart';
 import 'package:ale_beauty_art_app/features/cart/presentation/bloc/cart_bloc.dart';
 import 'package:ale_beauty_art_app/features/cart/presentation/bloc/cart_event.dart';
 import 'package:ale_beauty_art_app/features/products/presentation/views/products_Detail_View.dart';
@@ -62,7 +63,7 @@ class FavoritePage extends StatelessWidget {
       body: BlocBuilder<FavoriteBloc, FavoriteState>(
         builder: (context, state) {
           if (state is FavoriteLoading) {
-            return const Center(child: CircularProgressIndicator());
+            return LoadingView();
           }
           if (state is FavoriteError) {
             return Center(child: Text(state.message));
