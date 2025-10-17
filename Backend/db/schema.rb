@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_10_11_012106) do
+ActiveRecord::Schema[8.0].define(version: 2025_10_17_001036) do
   create_table "active_storage_attachments", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
@@ -97,6 +97,16 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_11_012106) do
     t.datetime "updated_at", null: false
     t.index ["municipality_id"], name: "index_neighborhoods_on_municipality_id"
     t.index ["nombre", "municipality_id"], name: "index_neighborhoods_on_nombre_and_municipality_id", unique: true
+  end
+
+  create_table "notifications", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.string "title", null: false
+    t.string "message", null: false
+    t.boolean "read", default: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_notifications_on_user_id"
   end
 
   create_table "order_details", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
@@ -234,6 +244,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_11_012106) do
   add_foreign_key "favorites", "users"
   add_foreign_key "municipalities", "departments"
   add_foreign_key "neighborhoods", "municipalities"
+  add_foreign_key "notifications", "users"
   add_foreign_key "order_details", "orders"
   add_foreign_key "order_details", "products"
   add_foreign_key "orders", "payment_methods"
