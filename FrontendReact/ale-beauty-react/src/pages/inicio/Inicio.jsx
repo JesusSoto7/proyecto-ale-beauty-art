@@ -16,7 +16,7 @@ import FloatingChat from '../../components/FloatingChat';
 import BannerProduct from '../../components/bannerProducts';
 import "../../assets/stylesheets/ProductosCliente.css";
 import "../../assets/stylesheets/RankingPro.css";
-import RankingPro from '../../components/rankingPro';
+import RankingPro from '../../components/rankingPro.jsx';
 
 function Inicio() {
   const [carousel, setCarousel] = useState([]);
@@ -267,7 +267,7 @@ function Inicio() {
 
   return (
     <div>
-      {loading ? (
+      {/* {loading ? (
         <Skeleton sx={{ bgcolor: 'grey.800' }} variant="rectangular" width={"100%"} height={350} />
       ) : carousel.length > 0 ? (
         <Carousel interval={3000} className="mb-0">
@@ -282,7 +282,9 @@ function Inicio() {
             </Carousel.Item>
           ))}
         </Carousel>
-      ) : null}
+      ) : null} */}
+
+
 
       {/* Sección Novedades Maquillaje */}
       <section className="mt-5">
@@ -351,22 +353,22 @@ function Inicio() {
                     
                     {/* Rating de estrellas CENTRADO */}
                     <div className="custom-product-info">
-                      <div className="custom-rating-row-v2">
-                        <span style={{ flex: 1 }}></span>
-                        <span className="custom-star">
-                          <svg width="17" height="17" viewBox="0 0 24 24" fill="#FFC107" xmlns="http://www.w3.org/2000/svg" style={{ marginRight: "2px", verticalAlign: "middle" }}>
-                            <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/>
-                          </svg>
-                          <span className="custom-rating-number-v2">
-                            {productRatings[prod.id]?.avg
-                              ? Number(productRatings[prod.id]?.avg).toFixed(1)
-                              : "0.0"}
-                          </span>
-                        </span>
-                      </div>
                       <div className="custom-product-name-v2">{prod.nombre_producto}</div>
-                      <div className="custom-price-row-v2">
-                        <span className="custom-price-v2">{formatCOP(prod.precio_producto)}</span>
+                        <div className="custom-price-row-v2" style={{display: "flex", felxDirecction: "row", gap: "30px"}}>
+                          <span className="custom-price-v2">{formatCOP(prod.precio_producto)}</span>
+                          <div className="custom-rating-row-v2">
+                            <span style={{ flex: 1 }}></span>
+                            <span className="custom-star">
+                              <svg width="17" height="17" viewBox="0 0 24 24" fill="#FFC107" xmlns="http://www.w3.org/2000/svg" style={{ marginRight: "2px", verticalAlign: "middle" }}>
+                                <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/>
+                              </svg>
+                              <span className="custom-rating-number-v2">
+                                {productRatings[prod.id]?.avg
+                                  ? Number(productRatings[prod.id]?.avg).toFixed(1)
+                                  : "0.0"}
+                              </span>
+                            </span>
+                          </div>
                       </div>
                     </div>
                   </Link>
@@ -501,22 +503,22 @@ function Inicio() {
                     </div>
                     
                     <div className="custom-product-info">
-                      <div className="custom-rating-row-v2">
-                        <span style={{ flex: 1 }}></span>
-                        <span className="custom-star">
-                          <svg width="17" height="17" viewBox="0 0 24 24" fill="#FFC107" xmlns="http://www.w3.org/2000/svg" style={{ marginRight: "2px", verticalAlign: "middle" }}>
-                            <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/>
-                          </svg>
-                          <span className="custom-rating-number-v2">
-                            {productRatings[prod.id]?.avg
-                              ? Number(productRatings[prod.id]?.avg).toFixed(1)
-                              : "0.0"}
-                          </span>
-                        </span>
-                      </div>
                       <div className="custom-product-name-v2">{prod.nombre_producto}</div>
-                      <div className="custom-price-row-v2">
+                      <div className="custom-price-row-v2" style={{display: "flex", felxDirecction: "row", gap: "30px" }}>
                         <span className="custom-price-v2">{formatCOP(prod.precio_producto)}</span>
+                        <div className="custom-rating-row-v2">
+                          <span style={{ flex: 1 }}></span>
+                          <span className="custom-star">
+                            <svg width="17" height="17" viewBox="0 0 24 24" fill="#FFC107" xmlns="http://www.w3.org/2000/svg" style={{ marginRight: "2px", verticalAlign: "middle" }}>
+                              <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/>
+                            </svg>
+                            <span className="custom-rating-number-v2">
+                              {productRatings[prod.id]?.avg
+                                ? Number(productRatings[prod.id]?.avg).toFixed(1)
+                                : "0.0"}
+                            </span>
+                          </span>
+                        </div>
                       </div>
                     </div>
                   </Link>
@@ -546,7 +548,9 @@ function Inicio() {
 
       {/* Banner rotativo */}
       <RotatingBanner />
-      <RankingPro/>
+      <h2 className="mb-4">productos mejor valorados</h2>
+      <RankingPro products={products} productRatings={productRatings} />
+
       
     </div>
   );

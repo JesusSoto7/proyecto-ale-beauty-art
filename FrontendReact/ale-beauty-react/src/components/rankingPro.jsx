@@ -1,28 +1,60 @@
 import React from "react";
+import Rating from "@mui/material/Rating";
 import "../assets/stylesheets/RankingPro.css";
 
-function RankingPro() {
-    const imgPru = "https://localhost:4000/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsiZGF0YSI6MTAsInB1ciI6ImJsb2JfaWQifX0=--173ca73ad1d6a4ac78e98dece201d0635ac77d6c/Brillo%20labial%20melu.png"
+function RankingPro({ products, productRatings }) {
+  if (!products || products.length === 0 || !productRatings) return null;
+  const ratedProducts = products
+    .filter((p) => productRatings[p.id])
+    .map((p) => ({
+      ...p,
+      rating: productRatings[p.id].avg,
+      count: productRatings[p.id].count,
+    }))
+    .sort((a, b) => b.rating - a.rating)
+    .slice(0, 3);
+
+  
+
   return (
-    <section className="topSection">
-      <div className="Cardtop" >
-        <div className="circle">
-            <img src={imgPru} alt="" />
+    <section className="ranking-container">
+      {ratedProducts.map((product, index) => (
+        
+        <div key={product.id} className="ranking-card">
+          <div className="ranking-image">
+            <img src={product.imagen_url} alt={product.nombre} />
+          </div>
+          <hr style={{color: "#ccc"}} />
+          
+
+          <div className="ranking-info">
+            <h2 className="ranking-title">{product.nombre_producto}</h2>
+
+            <div className="ranking-labels">
+              <span className="label in-stock">en stock</span>
+              <div className="ranking-rating">
+                <Rating
+                  value={product.rating}
+                  precision={0.5}
+                  readOnly
+                  size="small"
+                />
+                <span className="rating-count">
+                  ({product.count})
+                </span>
+              </div>
+            </div>
+
+            <p className="ranking-comments">
+              {product.count > 0
+                ? `${product.count} comentarios`
+                : "Sin comentarios"}
+            </p>
+          </div>
+
+          <div className="ranking-top-badge">Top {index + 1}</div>
         </div>
-        <h1>Top 1</h1>
-      </div>
-      <div className="Cardtop" style={{ height: "325px" }}>
-        <div className="circle" style={{ height: "240px" }}>
-            <img src={imgPru} alt="" />
-        </div>
-        <h1>Top 2</h1>
-      </div>
-      <div className="Cardtop" style={{ height: "300px" }}>
-        <div className="circle" style={{ height: "240px" }}>
-            <img src={imgPru} alt="" />
-        </div>
-        <h1>Top 3</h1>
-      </div>
+      ))}
     </section>
   );
 }

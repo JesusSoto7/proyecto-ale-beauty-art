@@ -43,6 +43,7 @@ function BannerProduct({ products, productRatings }) {
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
+          justifySelf: "center",
           backgroundColor: "#df6897",
           borderRadius: "10px",
           color: "white",
