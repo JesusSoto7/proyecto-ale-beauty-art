@@ -44,12 +44,6 @@ class _OrderPageViewState extends State<OrderPageView> {
     return dt?.toLocal();
   }
 
-  String _text(dynamic value, {String fallback = '—'}) {
-    if (value == null) return fallback;
-    final s = value.toString().trim();
-    return s.isEmpty ? fallback : s;
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -132,7 +126,6 @@ class _OrderPageViewState extends State<OrderPageView> {
                   final orderId = (id is int) ? id : int.tryParse(id?.toString() ?? '0') ?? 0;
 
                   final numeroOrden = o['numero_de_orden'] ?? id?.toString();
-                  final status = _text(o['status'] ?? o['estado']).toUpperCase();
                   final fechaRaw = o['fecha_pago'] ?? o['paid_at'] ?? o['created_at'] ?? o['updated_at'];
                   final fechaPago = _parseDate(fechaRaw);
 
@@ -234,15 +227,6 @@ class _OrderPageViewState extends State<OrderPageView> {
                                   ),
                                 ],
                               ),
-                            ),
-                            const SizedBox(width: 6),
-                            Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                              decoration: BoxDecoration(
-                                color: Colors.blueGrey.shade50,
-                                borderRadius: BorderRadius.circular(20),
-                              ),
-                              child: Text(status, style: const TextStyle(fontSize: 12)),
                             ),
                           ],
                         ),
