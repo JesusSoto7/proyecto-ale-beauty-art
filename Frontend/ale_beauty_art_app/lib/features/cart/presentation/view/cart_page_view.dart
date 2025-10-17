@@ -134,126 +134,158 @@ class _CartPageViewState extends State<CartPageView> {
                     final cantidad = product['cantidad'] ?? 1;
                     final precio = product['precio_producto'] ?? 0;
 
-                    return Container(
-                      margin: const EdgeInsets.only(bottom: 18),
-                      padding: const EdgeInsets.all(14),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(18),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.08),
-                            blurRadius: 10,
-                            offset: const Offset(0, 4),
+                    return Stack(
+                      clipBehavior: Clip.none,
+                      children: [
+                        Container(
+                          margin: const EdgeInsets.only(bottom: 18),
+                          padding: const EdgeInsets.all(14),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(18),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.08),
+                                blurRadius: 10,
+                                offset: const Offset(0, 4),
+                              ),
+                            ],
                           ),
-                        ],
-                      ),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          ClipRRect(
-                            borderRadius: BorderRadius.circular(12),
-                            child: imageUrl.isNotEmpty
-                                ? Image.network(
-                                    imageUrl,
-                                    width: 80,
-                                    height: 80,
-                                    fit: BoxFit.cover,
-                                    errorBuilder:
-                                        (context, error, stackTrace) =>
-                                            Container(
-                                      width: 80,
-                                      height: 80,
-                                      color: Colors.grey.shade200,
-                                      child: const Icon(Icons.broken_image,
-                                          color: Colors.grey),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              ClipRRect(
+                                borderRadius: BorderRadius.circular(12),
+                                child: imageUrl.isNotEmpty
+                                    ? Image.network(
+                                        imageUrl,
+                                        width: 80,
+                                        height: 80,
+                                        fit: BoxFit.cover,
+                                        errorBuilder: (context, error, stackTrace) => Container(
+                                          width: 80,
+                                          height: 80,
+                                          color: Colors.grey.shade200,
+                                          child: const Icon(Icons.broken_image, color: Colors.grey),
+                                        ),
+                                      )
+                                    : Container(
+                                        width: 80,
+                                        height: 80,
+                                        color: Colors.grey.shade200,
+                                        child: const Icon(Icons.image_outlined, color: Colors.grey),
+                                      ),
+                              ),
+                              const SizedBox(width: 16),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      nombre,
+                                      style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w600),
                                     ),
-                                  )
-                                : Container(
-                                    width: 80,
-                                    height: 80,
-                                    color: Colors.grey.shade200,
-                                    child: const Icon(Icons.image_outlined,
-                                        color: Colors.grey),
+                                    const SizedBox(height: 6),
+                                    Text(
+                                      '\$${precio.toStringAsFixed(2)}',
+                                      style: const TextStyle(fontSize: 15, color: Colors.black54),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              const SizedBox(width: 12),
+                              Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 6),
+                                decoration: BoxDecoration(
+                                  gradient: const LinearGradient(
+                                    begin: Alignment.topLeft,
+                                    end: Alignment.bottomRight,
+                                    colors: [Color(0xFFD95D85), Color(0xFFE58BB1)],
                                   ),
-                          ),
-                          const SizedBox(width: 16),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  nombre,
-                                  style: const TextStyle(
-                                      fontSize: 17,
-                                      fontWeight: FontWeight.w600),
+                                  borderRadius: BorderRadius.circular(30),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black.withOpacity(0.15),
+                                      blurRadius: 6,
+                                      offset: const Offset(0, 2),
+                                    ),
+                                  ],
                                 ),
-                                const SizedBox(height: 6),
-                                Text(
-                                  '\$${precio.toStringAsFixed(2)}',
-                                  style: const TextStyle(
-                                      fontSize: 15, color: Colors.black54),
+                                child: Row(
+                                  children: [
+                                    _iconButton(Icons.remove, () {
+                                      if (cantidad > 1) {
+                                        context.read<CartBloc>().add(
+                                              RemoveProductFromCart(productId: product['product_id']),
+                                            );
+                                      }
+                                    }),
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(horizontal: 10),
+                                      child: Text(
+                                        cantidad.toString(),
+                                        style: const TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.white,
+                                          fontSize: 13,
+                                        ),
+                                      ),
+                                    ),
+                                    _iconButton(Icons.add, () {
+                                      context.read<CartBloc>().add(
+                                            AddProductToCart(
+                                              productId: product['product_id'],
+                                              quantity: cantidad + 1,
+                                            ),
+                                          );
+                                    }),
+                                  ],
                                 ),
-                              ],
-                            ),
+                              ),
+                            ],
                           ),
-                          const SizedBox(width: 12),
-                          Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 6),
-                            decoration: BoxDecoration(
-                              gradient: const LinearGradient(
-                                begin: Alignment.topLeft,
-                                end: Alignment.bottomRight,
-                                colors: [
-                                  Color(0xFFD95D85),
-                                  Color(0xFFE58BB1),
+                        ),
+                        Positioned(
+                          top: -6,
+                          right: -6,
+                          child: GestureDetector(
+                            onTap: () async {
+                              final confirm = await _confirmDelete(context, nombre);
+                              if (confirm == true) {
+                                context.read<CartBloc>().add(
+                                      RemoveProductCompletely(
+                                        productId: product['product_id'],
+                                        quantity: cantidad,
+                                      ),
+                                    );
+                              }
+                            },
+                            child: Container(
+                              width: 28,
+                              height: 28,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                gradient: const LinearGradient(
+                                  colors: [Color(0xFFD95D85), Color(0xFFE58BB1)],
+                                  begin: Alignment.topLeft,
+                                  end: Alignment.bottomRight,
+                                ),
+                                border: Border.all(color: Colors.white, width: 2),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.15),
+                                    blurRadius: 6,
+                                    offset: const Offset(0, 2),
+                                  )
                                 ],
                               ),
-                              borderRadius: BorderRadius.circular(30),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black.withOpacity(0.15),
-                                  blurRadius: 6,
-                                  offset: const Offset(0, 2),
-                                ),
-                              ],
-                            ),
-                            child: Row(
-                              children: [
-                                _iconButton(Icons.remove, () {
-                                  if (cantidad > 1) {
-                                    context.read<CartBloc>().add(
-                                          RemoveProductFromCart(
-                                            productId: product['product_id'],
-                                          ),
-                                        );
-                                  }
-                                }),
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 10),
-                                  child: Text(
-                                    cantidad.toString(),
-                                    style: const TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.white,
-                                      fontSize: 13,
-                                    ),
-                                  ),
-                                ),
-                                _iconButton(Icons.add, () {
-                                  context.read<CartBloc>().add(
-                                        AddProductToCart(
-                                          productId: product['product_id'],
-                                          quantity: cantidad + 1,
-                                        ),
-                                      );
-                                }),
-                              ],
+                              child: const Center(
+                                child: Icon(Icons.close_rounded, size: 16, color: Colors.white),
+                              ),
                             ),
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
                     );
                   },
                 ),
@@ -375,6 +407,52 @@ class _CartPageViewState extends State<CartPageView> {
             style: TextStyle(
               fontSize: 15,
               fontWeight: isBold ? FontWeight.w700 : FontWeight.w500,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<bool?> _confirmDelete(BuildContext context, String nombre) {
+    return showDialog<bool>(
+      context: context,
+      builder: (_) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        titlePadding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
+        contentPadding: const EdgeInsets.fromLTRB(20, 12, 20, 0),
+        actionsPadding: const EdgeInsets.fromLTRB(12, 8, 12, 12),
+        title: Row(
+          children: const [
+            Icon(Icons.delete_forever_rounded, color: Color(0xFFD95D85)),
+            SizedBox(width: 8),
+            Text('Eliminar producto'),
+          ],
+        ),
+        content: Text(
+          '¿Deseas eliminar "$nombre" del carrito?',
+          style: const TextStyle(color: Colors.black87),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            style: TextButton.styleFrom(
+              foregroundColor: Colors.black87,
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+            ),
+            child: const Text('Cancelar'),
+          ),
+          ElevatedButton(
+            onPressed: () => Navigator.pop(context, true),
+            style: ElevatedButton.styleFrom(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+              backgroundColor: const Color(0xFFD95D85),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+              elevation: 0,
+            ),
+            child: const Text(
+              'Eliminar',
+              style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
             ),
           ),
         ],
