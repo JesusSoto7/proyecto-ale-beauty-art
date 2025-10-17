@@ -136,6 +136,7 @@
   .banner-description{
     max-height: 180px;
     overflow-y: auto;
+    scrollbar-color: #fff #df6897;
   }
   .banner-info{
     width: 90%;
@@ -166,7 +167,6 @@
   .banner-description{
     max-height: 200px;
     overflow-y: auto;
-    scrollbar-color: red orange;
   }
   .banner-info{
     width: 90%;

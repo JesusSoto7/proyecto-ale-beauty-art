@@ -123,14 +123,6 @@
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-.ranking-image {
-  height: 140px;
-  background: linear-gradient(135deg, #5b6ee1, #8540c6);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
 .ranking-info {
   padding: 1rem;
 }

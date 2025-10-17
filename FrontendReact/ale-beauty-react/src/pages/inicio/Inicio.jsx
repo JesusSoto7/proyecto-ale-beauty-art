@@ -17,6 +17,7 @@ import BannerProduct from '../../components/bannerProducts';
 import "../../assets/stylesheets/ProductosCliente.css";
 import "../../assets/stylesheets/RankingPro.css";
 import RankingPro from '../../components/rankingPro.jsx';
+import PositiveReviews from "../../components/positiveReviews.jsx";
 
 function Inicio() {
   const [carousel, setCarousel] = useState([]);
@@ -29,6 +30,10 @@ function Inicio() {
   const { t } = useTranslation();
   const [newProducts, setNewProducts] = useState([]);
   const [productRatings, setProductRatings] = useState({});
+  const { slug } = useParams();
+  const [reviews, setReviews] = useState([]);
+  const [loadingReviews, setLoadingReviews] = useState(true);
+  const [ratings, setRatings] = useState({ 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 });
 
   
   const token = localStorage.getItem('token');
@@ -103,6 +108,48 @@ function Inicio() {
     
     setProductRatings(ratingsObj);
   };
+
+  useEffect(() => {
+    if (!products || products.length === 0) return;
+    setLoadingReviews(true);
+
+    // Generar promesas para cada producto
+    const reviewPromises = products.map((product) =>
+      fetch(`https://localhost:4000/api/v1/products/${product.slug}/reviews`, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+        .then((res) => res.json())
+        .then((reviews) => ({
+          productSlug: product.slug,
+          reviews,
+        }))
+    );
+
+    Promise.all(reviewPromises)
+      .then((allData) => {
+        // Combinar todas las reviews en un solo array
+        const allReviews = allData.flatMap((item) =>
+          item.reviews.map((r) => ({
+            ...r,
+            productSlug: item.productSlug, // Para saber de qué producto viene
+          }))
+        );
+
+        setReviews(allReviews);
+
+        // Calcular conteo total de estrellas
+        const ratingCount = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
+        allReviews.forEach((review) => {
+          ratingCount[review.rating] += 1;
+        });
+        setRatings(ratingCount);
+      })
+      .catch((err) => console.error("Error cargando reseñas:", err))
+      .finally(() => setLoadingReviews(false));
+  }, [products, token]);
+
+
+
 
   // Cargar productos + favoritos del usuario
   useEffect(() => {
@@ -270,21 +317,18 @@ function Inicio() {
       {loading ? (
         <Skeleton sx={{ bgcolor: 'grey.800' }} variant="rectangular" width={"100%"} height={350} />
       ) : carousel.length > 0 ? (
-        // <Carousel interval={3000} className="mb-0">
-        //   {carousel.map((img, idx) => (
-        //     <Carousel.Item key={idx} sx={{ marginTop: "70px"}}>
-        //       <img
-        //         className="d-block w-100"
-        //         src={img}
-        //         alt={`${t('home.slide')} ${idx + 1}`}
-        //         style={{ height: "450px", objectFit: "cover" }}
-        //       />
-        //     </Carousel.Item>
-        //   ))}
-        // </Carousel>
-        <img>
-
-        </img>
+        <Carousel interval={3000} className="mb-0">
+          {carousel.map((img, idx) => (
+            <Carousel.Item key={idx} sx={{ marginTop: "70px"}}>
+              <img
+                className="d-block w-100"
+                src={img}
+                alt={`${t('home.slide')} ${idx + 1}`}
+                style={{ height: "450px", objectFit: "cover" }}
+              />
+            </Carousel.Item>
+          ))}
+        </Carousel>
       ) : null}
 
 
@@ -553,6 +597,9 @@ function Inicio() {
       <RotatingBanner />
       <h2 className="mb-4">productos mejor valorados</h2>
       <RankingPro products={products} productRatings={productRatings} loading={loading} />
+      
+      <h2 className="mb-4">comentarios destacados</h2>
+      <PositiveReviews reviews={reviews} loading={loadingReviews} />
 
       
     </div>
