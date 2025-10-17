@@ -15,6 +15,8 @@ import Rating from "@mui/material/Rating";
 import FloatingChat from '../../components/FloatingChat';
 import BannerProduct from '../../components/bannerProducts';
 import "../../assets/stylesheets/ProductosCliente.css";
+import "../../assets/stylesheets/RankingPro.css";
+import RankingPro from '../../components/rankingPro';
 
 function Inicio() {
   const [carousel, setCarousel] = useState([]);
@@ -540,11 +542,12 @@ function Inicio() {
         )}
       </section>
       <FloatingChat />
+      <BannerProduct products={products} productRatings={productRatings}/>
 
       {/* Banner rotativo */}
       <RotatingBanner />
-
-      <BannerProduct products={products} productRatings={productRatings}/>
+      <RankingPro/>
+      
     </div>
   );
 }

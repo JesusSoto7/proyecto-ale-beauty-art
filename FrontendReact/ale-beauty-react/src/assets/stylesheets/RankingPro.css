@@ -1,0 +1,46 @@
+.topSection{
+    margin-top: 90px;
+    display: flex;
+    gap: 20px;
+    justify-self: center;
+    align-items: end;
+}
+
+.Cardtop{
+    display: flex;
+    justify-content: center;
+    width: 300px;
+    height: 350px;
+    border-radius: 5px;
+    /* overflow: hidden; */
+    position: relative;
+    background-color: #df6897;
+    border: solid 1px #df6897 ;
+}
+
+.Cardtop h1 {
+    display: flex;
+    align-self: flex-end;
+    margin-bottom: 50px;
+    color: #fff;
+}
+
+.circle{
+    position: absolute; 
+    top: -39px;
+    /* left: 37px; */
+    overflow: hidden;
+    display: flex;
+    justify-self: center;
+    justify-content: center;
+    padding: 5px;
+    width: 80%;
+    height: 70%;
+    border-radius: 100%;
+    background-color: #fff;
+    border: solid 5px hsl(265, 55%, 30%) ;
+}
+
+.circle img {
+
+}
