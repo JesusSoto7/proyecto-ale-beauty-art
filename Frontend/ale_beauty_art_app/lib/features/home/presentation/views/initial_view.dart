@@ -227,7 +227,7 @@ class InitialView extends StatelessWidget {
     );
   }
 
-  // 🌈 Barra de navegación inferior
+  // Barra de navegación inferior
   Widget _buildBottomNav(BuildContext context) {
     return Container(
       decoration: BoxDecoration(

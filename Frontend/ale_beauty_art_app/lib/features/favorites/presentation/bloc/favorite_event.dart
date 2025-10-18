@@ -25,3 +25,10 @@ class RemoveFavorite extends FavoriteEvent {
 class ClearFavorites extends FavoriteEvent {}
 
 class AddAllFavoritesToCart extends FavoriteEvent {}
+
+class UpdateFavoriteToken extends FavoriteEvent {
+  final String token;
+  UpdateFavoriteToken(this.token);
+  @override
+  List<Object?> get props => [token];
+}

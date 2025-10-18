@@ -16,6 +16,13 @@ class RemoveProductFromCart extends CartEvent {
 
   RemoveProductFromCart({required this.productId});
 }
+// Eliminar completamente un producto (todas sus unidades)
+class RemoveProductCompletely extends CartEvent {
+  final int productId;
+  final int quantity; // cantidad actual para eliminar todo
+
+  RemoveProductCompletely({required this.productId, required this.quantity});
+}
 
 // Evento para actualizar el token
 class UpdateCartToken extends CartEvent {

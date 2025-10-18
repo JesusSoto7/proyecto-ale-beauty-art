@@ -17,155 +17,185 @@ class ProfileView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      backgroundColor: const Color.fromARGB(255, 247, 246, 246),
+      backgroundColor: const Color.fromARGB(255, 255, 255, 255),
       body: SingleChildScrollView(
         child: Column(
           children: [
+            // Encabezado con gradiente
             Container(
-              padding: const EdgeInsets.symmetric(vertical: 30),
+              height: 220,
+              width: double.infinity,
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    Color.fromRGBO(209, 112, 143, 1),
+                    Color.fromARGB(255, 235, 173, 198),
+                  ],
+                ),
+                borderRadius: BorderRadius.only(
+                  bottomLeft: Radius.circular(24),
+                  bottomRight: Radius.circular(24),
+                ),
+              ),
               child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const SizedBox(height: 40),
-                  // 🌸 Avatar
-                  CircleAvatar(
-                    radius: 50,
-                    backgroundColor: AppColors.primaryPink,
-                    child:
-                        const Icon(Icons.person, size: 60, color: Colors.white),
+                  // Avatar con borde blanco
+                  Container(
+                    padding: const EdgeInsets.all(4),
+                    decoration: const BoxDecoration(
+                      color: Colors.white,
+                      shape: BoxShape.circle,
+                    ),
+                    child: CircleAvatar(
+                      radius: 50,
+                      backgroundColor: AppColors.primaryPink,
+                      child: const Icon(Icons.person, size: 56, color: Colors.white),
+                    ),
                   ),
                   const SizedBox(height: 12),
-
-                  // 🌸 Nombre o invitado
+                  // Nombre o invitado
                   BlocBuilder<AuthBloc, AuthState>(
                     builder: (context, state) {
                       if (state is AuthSuccess) {
                         return Text(
                           '${state.user['nombre'] ?? 'Usuario'} ${state.user['apellido'] ?? ''}',
                           style: AppTextStyles.title.copyWith(
-                            color: AppColors.textPrimary,
+                            color: Colors.white,
                             fontSize: 22,
                           ),
                         );
-                      } else {
-                        return const Text(
-                          'Invitado',
-                          style: TextStyle(
-                            color: AppColors.textPrimary,
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        );
                       }
-                    },
-                  ),
-                  const SizedBox(height: 6),
-                ],
-              ),
-            ),
-            // 🌸 Botón de acción (Login / Logout)
-            BlocBuilder<AuthBloc, AuthState>(
-              builder: (context, state) {
-                if (state is AuthSuccess) {
-                  return ElevatedButton.icon(
-                    onPressed: () {
-                      context.read<AuthBloc>().add(LogoutRequested());
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: const Text(
-                            'Sesión cerrada',
-                            style: TextStyle(
-                              color: Colors.white, // Texto blanco
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          backgroundColor:
-                              AppColors.primaryPink, //  Fondo personalizado
-                          behavior: SnackBarBehavior.floating, // Flotante
-                          margin: const EdgeInsets.fromLTRB(
-                              20, 0, 20, 30), // de separación abajo
-                          shape: RoundedRectangleBorder(
-                            //Bordes redondeados
-                            borderRadius: BorderRadius.circular(16),
-                          ),
-                          elevation: 6, // Sombra
-                          duration: const Duration(seconds: 3),
+                      return const Text(
+                        'Invitado',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
                         ),
                       );
                     },
-                    icon: const Icon(Icons.logout, color: Colors.white),
-                    label: const Text('Cerrar Sesión',
-                        style: TextStyle(color: Colors.white)),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.redAccent,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 30, vertical: 12),
-                    ),
-                  );
-                } else {
-                  return ElevatedButton.icon(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (_) => const LoginPage()),
-                      );
-                    },
-                    icon: const Icon(Icons.login, color: Colors.white),
-                    label: const Text('Iniciar Sesión',
-                        style: TextStyle(color: Colors.white)),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.primaryPink,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 30, vertical: 12),
-                    ),
-                  );
-                }
-              },
+                  ),
+                ],
+              ),
             ),
-            const SizedBox(height: 20),
+
+            const SizedBox(height: 16),
+
+            // Botón de acción (Login / Logout)
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: BlocBuilder<AuthBloc, AuthState>(
+                builder: (context, state) {
+                  if (state is AuthSuccess) {
+                    return SizedBox(
+                      width: double.infinity,
+                      height: 48,
+                      child: ElevatedButton.icon(
+                        onPressed: () {
+                          context.read<AuthBloc>().add(LogoutRequested());
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: const Text(
+                                'Sesión cerrada',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              backgroundColor: AppColors.primaryPink,
+                              behavior: SnackBarBehavior.floating,
+                              margin: const EdgeInsets.fromLTRB(20, 0, 20, 30),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(16),
+                              ),
+                              elevation: 6,
+                              duration: const Duration(seconds: 3),
+                            ),
+                          );
+                        },
+                        icon: const Icon(Icons.logout, color: Colors.white),
+                        label: const Text('Cerrar Sesión', style: TextStyle(color: Colors.white)),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color.fromARGB(255, 235, 98, 98),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(14),
+                          ),
+                        ),
+                      ),
+                    );
+                  }
+
+                  // Botón login con gradiente
+                  return SizedBox(
+                    width: double.infinity,
+                    height: 48,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (_) => const LoginPage()),
+                        );
+                      },
+                      style: ElevatedButton.styleFrom(
+                        padding: EdgeInsets.zero,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(14),
+                        ),
+                      ).copyWith(
+                        backgroundColor: MaterialStateProperty.all(Colors.transparent),
+                      ),
+                      child: Ink(
+                        decoration: BoxDecoration(
+                          gradient: const LinearGradient(
+                            colors: [AppColors.primaryPink, AppColors.accentPink],
+                            begin: Alignment.centerLeft,
+                            end: Alignment.centerRight,
+                          ),
+                          borderRadius: BorderRadius.circular(14),
+                        ),
+                        child: const Center(
+                          child: Text(
+                            'Iniciar Sesión',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+
+            const SizedBox(height: 16),
 
             // Opciones de perfil
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
+              padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Column(
                 children: [
-                  _buildOptionTile(Icons.shopping_bag, 'Mis pedidos', () {
-                      Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (_) => const OrderPageView()),
-                    );
-                  }),
-                  _buildOptionTile(Icons.favorite, 'Favoritos', () async {
-                    // TODO: Navegar a favoritos
-                    final authState = context.read<AuthBloc>().state;
-
-                    if (authState is! AuthSuccess) {
-                      final result = await Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (_) => const LoginPage()),
-                      );
-                      if (result != true) return;
-                    }
-
-                    /* final auth = context.read<AuthBloc>().state as AuthSuccess;
-                      context.read<ShippingAddressBloc>().add(UpdateShippingToken(auth.token));
- */
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (_) => const FavoritePage()),
-                    );
-                  }),
                   _buildOptionTile(
-                    Icons.location_on,
-                    'Mis direcciones',
-                    () async {
+                    context,
+                    icon: Icons.shopping_bag,
+                    title: 'Mis pedidos',
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (_) => const OrderPageView()),
+                      );
+                    },
+                  ),
+                  _buildOptionTile(
+                    context,
+                    icon: Icons.favorite,
+                    title: 'Favoritos',
+                    onTap: () async {
                       final authState = context.read<AuthBloc>().state;
-
                       if (authState is! AuthSuccess) {
                         final result = await Navigator.push(
                           context,
@@ -173,23 +203,37 @@ class ProfileView extends StatelessWidget {
                         );
                         if (result != true) return;
                       }
-
-                      final auth =
-                          context.read<AuthBloc>().state as AuthSuccess;
-                      context
-                          .read<ShippingAddressBloc>()
-                          .add(UpdateShippingToken(auth.token));
-
                       Navigator.push(
                         context,
-                        MaterialPageRoute(
-                            builder: (_) => const ShippingAddressPage()),
+                        MaterialPageRoute(builder: (_) => const FavoritePage()),
+                      );
+                    },
+                  ),
+                  _buildOptionTile(
+                    context,
+                    icon: Icons.location_on,
+                    title: 'Mis direcciones',
+                    onTap: () async {
+                      final authState = context.read<AuthBloc>().state;
+                      if (authState is! AuthSuccess) {
+                        final result = await Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (_) => const LoginPage()),
+                        );
+                        if (result != true) return;
+                      }
+                      final auth = context.read<AuthBloc>().state as AuthSuccess;
+                      context.read<ShippingAddressBloc>().add(UpdateShippingToken(auth.token));
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (_) => const ShippingAddressPage()),
                       );
                     },
                   ),
                 ],
               ),
             ),
+            const SizedBox(height: 24),
           ],
         ),
       ),
@@ -197,14 +241,38 @@ class ProfileView extends StatelessWidget {
   }
 
   // Widget reutilizable para las opciones
-  Widget _buildOptionTile(IconData icon, String title, VoidCallback onTap) {
-    return Card(
-      elevation: 2,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+  Widget _buildOptionTile(BuildContext context, {required IconData icon, required String title, required VoidCallback onTap}) {
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 6),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(14),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.accentPink.withOpacity(0.35),
+            blurRadius: 12,
+            offset: const Offset(0, 6),
+          ),
+        ],
+      ),
       child: ListTile(
-        leading: Icon(icon, color: AppColors.primaryPink),
-        title: Text(title, style: const TextStyle(fontWeight: FontWeight.w500)),
-        trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+        leading: Container(
+          width: 40,
+          height: 40,
+          decoration: BoxDecoration(
+            color: AppColors.accentPink.withOpacity(0.5),
+            shape: BoxShape.circle,
+          ),
+          child: Icon(icon, color: AppColors.textSecondary),
+        ),
+        title: Text(
+          title,
+          style: const TextStyle(
+            fontWeight: FontWeight.w600,
+            color: AppColors.textPrimary,
+          ),
+        ),
+        trailing: const Icon(Icons.arrow_forward_ios, size: 16, color: AppColors.textSecondary),
         onTap: onTap,
       ),
     );

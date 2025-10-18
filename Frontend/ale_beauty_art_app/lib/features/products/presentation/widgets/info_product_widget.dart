@@ -2,6 +2,7 @@ import 'package:ale_beauty_art_app/core/utils/formatters.dart';
 import 'package:flutter/material.dart';
 import 'package:ale_beauty_art_app/models/product.dart';
 import 'package:ale_beauty_art_app/styles/text_styles.dart';
+import 'package:ale_beauty_art_app/features/products/presentation/widgets/favorite_toggle_button.dart';
 import 'package:ale_beauty_art_app/features/products/presentation/views/products_Detail_View.dart';
 
 class InfoProduct extends StatelessWidget {
@@ -28,7 +29,7 @@ class InfoProduct extends StatelessWidget {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (_) => ProductDetailView(productId: product.id),
+                builder: (_) => ProductDetailView(product: product),
               ),
             );
           },
@@ -73,22 +74,9 @@ class InfoProduct extends StatelessWidget {
 
                       // Botón de favoritos
                       Positioned(
-                        top: 4,
-                        right: 4,
-                        child: Container(
-                          child: IconButton(
-                            icon: Icon(
-                              // product.isFavorite ? Icons.favorite : Icons.favorite_border,
-                              Icons.favorite_border,
-                              color: Colors.grey,
-                              // color: product.isFavorite ? Colors.red : Colors.grey,
-                            ),
-                            onPressed: () {
-                              // TODO: Aquí colocas tu lógica de favorito
-                              print("Favorito: ${product.nombreProducto}");
-                            },
-                          ),
-                        ),
+                        top: 0,
+                        right: 0,
+                        child: FavoriteToggleButton(productId: product.id),
                       ),
                     ],
                   ),

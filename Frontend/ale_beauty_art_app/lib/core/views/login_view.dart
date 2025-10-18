@@ -34,7 +34,7 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
-      resizeToAvoidBottomInset: true, // Permite que el contenido se ajuste con el teclado
+      resizeToAvoidBottomInset: true,
       body: BlocConsumer<AuthBloc, AuthState>(
         listener: (context, state) {
           if (state is AuthSuccess) {
@@ -46,17 +46,30 @@ class _LoginPageState extends State<LoginPage> {
           }
         },
         builder: (context, state) {
+          final size = MediaQuery.of(context).size;
+          final bottomInset = MediaQuery.of(context).viewInsets.bottom;
           return Stack(
             children: [
-              // Fondo degradado con imagen
+              // Fondo degradado con formas suaves
               Container(
-                height: MediaQuery.of(context).size.height * 0.5,
                 decoration: const BoxDecoration(
-                  image: DecorationImage(
-                    image: AssetImage(
-                      'assets/images/background_login.jpg',
-                    ),
-                    fit: BoxFit.fill,
+                  gradient: LinearGradient(
+                    colors: [AppColors.background, AppColors.accentPink],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                ),
+              ),
+              // Blob decorativo
+              Positioned(
+                top: -60,
+                right: -40,
+                child: Container(
+                  width: 220,
+                  height: 220,
+                  decoration: BoxDecoration(
+                    color: AppColors.primaryPink.withOpacity(0.25),
+                    shape: BoxShape.circle,
                   ),
                 ),
               ),
@@ -64,181 +77,187 @@ class _LoginPageState extends State<LoginPage> {
               SafeArea(
                 child: Padding(
                   padding: const EdgeInsets.all(16.0),
-                  child: IconButton(
-                    icon: const Icon(Icons.arrow_back, color: Colors.black87),
-                    onPressed: () => Navigator.pop(context),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(12),
+                    child: BackButton(color: AppColors.textPrimary),
                   ),
                 ),
               ),
-              // Formulario anclado abajo
+              // Tarjeta del formulario
               Align(
                 alignment: Alignment.bottomCenter,
-                child: LayoutBuilder(
-                  builder: (context, constraints) {
-                    final bottomInset = MediaQuery.of(context).viewInsets.bottom;
-                    return AnimatedContainer(
-                      duration: const Duration(milliseconds: 200),
-                      curve: Curves.easeOut,
-                      width: double.infinity,
-                      padding: const EdgeInsets.all(24),
-                      height: 40 + MediaQuery.of(context).size.height * 0.55,
-                      margin: EdgeInsets.only(bottom: bottomInset),
-                      decoration: const BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(24),
-                          topRight: Radius.circular(24),
-                        ),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black12,
-                            blurRadius: 10,
-                            offset: Offset(0, -4),
-                          )
-                        ],
+                child: AnimatedContainer(
+                  duration: const Duration(milliseconds: 180),
+                  curve: Curves.easeOut,
+                  margin: EdgeInsets.only(bottom: bottomInset > 0 ? bottomInset - 10 : 24, left: 16, right: 16),
+                  padding: const EdgeInsets.fromLTRB(20, 22, 20, 16),
+                  width: size.width,
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.95),
+                    borderRadius: BorderRadius.circular(20),
+                    boxShadow: [
+                      BoxShadow(
+                        color: AppColors.accentPink.withOpacity(0.4),
+                        blurRadius: 16,
+                        offset: const Offset(0, 8),
                       ),
-                      child: SingleChildScrollView(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Center(
-                              child: Text(
-                                "Iniciar Sesión",
+                    ],
+                  ),
+                  child: SingleChildScrollView(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Center(
+                          child: Column(
+                            children: const [
+                              Text(
+                                "¡Hola de nuevo!",
                                 style: TextStyle(
-                                  fontSize: 30,
-                                  fontWeight: FontWeight.bold,
-                                  color: Color.fromARGB(255, 227, 184, 255),
-                                  letterSpacing: 1.2,
+                                  fontSize: 26,
+                                  fontWeight: FontWeight.w800,
+                                  color: AppColors.textPrimary,
+                                  letterSpacing: 0.3,
                                 ),
                               ),
-                            ),
-                            
-                            const SizedBox(height: 24),
-                            // Email
-                            TextField(
-                              controller: _emailController,
-                              decoration: InputDecoration(
-                                hintText: "Ingresa tu email",
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(12),
+                              SizedBox(height: 6),
+                              Text(
+                                "Inicia sesión para continuar",
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: AppColors.textSecondary,
                                 ),
                               ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(height: 18),
+                        // Email
+                        TextField(
+                          controller: _emailController,
+                          keyboardType: TextInputType.emailAddress,
+                          decoration: InputDecoration(
+                            prefixIcon: const Icon(Icons.alternate_email, color: AppColors.textSecondary),
+                            hintText: "Correo electrónico",
+                            filled: true,
+                            fillColor: Colors.grey.shade100,
+                            contentPadding: const EdgeInsets.symmetric(vertical: 14, horizontal: 12),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(14),
+                              borderSide: BorderSide.none,
                             ),
-                            const SizedBox(height: 16),
-                            // Password
-                            TextField(
-                              controller: _passwordController,
-                              obscureText: obscurePassword,
-                              decoration: InputDecoration(
-                                hintText: "Contraseña",
-                                suffixIcon: IconButton(
-                                  icon: Icon(
-                                    obscurePassword ? Icons.visibility_off : Icons.visibility,
-                                    color: Colors.grey,
-                                  ),
-                                  onPressed: () {
-                                    setState(() {
-                                      obscurePassword = !obscurePassword;
-                                    });
-                                  },
-                                ),
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
+                          ),
+                        ),
+                        const SizedBox(height: 14),
+                        // Password
+                        TextField(
+                          controller: _passwordController,
+                          obscureText: obscurePassword,
+                          decoration: InputDecoration(
+                            prefixIcon: const Icon(Icons.lock_outline_rounded, color: AppColors.textSecondary),
+                            hintText: "Contraseña",
+                            suffixIcon: IconButton(
+                              icon: Icon(
+                                obscurePassword ? Icons.visibility_off : Icons.visibility,
+                                color: Colors.grey,
                               ),
+                              onPressed: () => setState(() => obscurePassword = !obscurePassword),
                             ),
-                            const SizedBox(height: 12),
+                            filled: true,
+                            fillColor: Colors.grey.shade100,
+                            contentPadding: const EdgeInsets.symmetric(vertical: 14, horizontal: 12),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(14),
+                              borderSide: BorderSide.none,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
                             Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Row(
-                                  children: [
-                                    Checkbox(
-                                      value: rememberMe,
-                                      onChanged: (value) {
-                                        setState(() {
-                                          rememberMe = value ?? false;
-                                        });
-                                      },
-                                    ),
-                                    const Text("Recordarme"),
-                                  ],
+                                Checkbox(
+                                  value: rememberMe,
+                                  onChanged: (value) => setState(() => rememberMe = value ?? false),
                                 ),
-                                TextButton(
-                                  onPressed: () {},
-                                  child: const Text("¿Olvidaste tu contraseña?"),
-                                ),
+                                const Text("Recordarme"),
                               ],
                             ),
-                            const SizedBox(height: 16),
-                            // Botón login gradiente
-                            SizedBox(
-                              width: double.infinity,
-                              height: 50,
-                              child: ElevatedButton(
-                                onPressed: state is AuthInProgress ? null : _onLoginPressed,
-                                style: ElevatedButton.styleFrom(
-                                  padding: EdgeInsets.zero,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(30),
-                                  ),
-                                ).copyWith(
-                                  backgroundColor: MaterialStateProperty.all(Colors.transparent),
-                                ),
-                                child: Ink(
-                                  decoration: BoxDecoration(
-                                    gradient: const LinearGradient(
-                                      colors: [Color(0xFFe0c3fc), Color(0xFF8ec5fc)],
-                                      begin: Alignment.centerLeft,
-                                      end: Alignment.centerRight,
-                                    ),
-                                    borderRadius: BorderRadius.circular(30),
-                                  ),
-                                  child: Center(
-                                    child: state is AuthInProgress
-                                        ? const CircularProgressIndicator(color: Colors.white)
-                                        : const Text(
-                                            "Iniciar Sesión",
-                                            style: TextStyle(
-                                              fontSize: 18,
-                                              fontWeight: FontWeight.bold,
-                                              color: Colors.white,
-                                            ),
-                                          ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                            const SizedBox(height: 20),
-                            
-                            const SizedBox(height: 20),
-                            // Link registro
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                const Text("¿no tienes una cuenta? "),
-                                GestureDetector(
-                                  onTap: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(builder: (_) => const RegisterPage()),
-                                    );
-                                  },
-                                  child: const Text(
-                                    "Registrate",
-                                    style: TextStyle(
-                                      color: Color.fromARGB(255, 255, 167, 251),
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ),
-                              ],
+                            TextButton(
+                              onPressed: () {},
+                              child: const Text("¿Olvidaste tu contraseña?"),
                             ),
                           ],
                         ),
-                      ),
-                    );
-                  },
+                        const SizedBox(height: 14),
+                        // Botón login gradiente
+                        SizedBox(
+                          width: double.infinity,
+                          height: 52,
+                          child: ElevatedButton(
+                            onPressed: state is AuthInProgress ? null : _onLoginPressed,
+                            style: ElevatedButton.styleFrom(
+                              padding: EdgeInsets.zero,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(14),
+                              ),
+                            ).copyWith(
+                              backgroundColor: MaterialStateProperty.all(Colors.transparent),
+                            ),
+                            child: Ink(
+                              decoration: BoxDecoration(
+                                gradient: const LinearGradient(
+                                  colors: [Color(0xFFF48FB1), Color(0xFFF8BBD0)],
+                                  begin: Alignment.centerLeft,
+                                  end: Alignment.centerRight,
+                                ),
+                                borderRadius: BorderRadius.circular(14),
+                              ),
+                              child: Center(
+                                child: state is AuthInProgress
+                                    ? const SizedBox(
+                                        width: 22,
+                                        height: 22,
+                                        child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                                      )
+                                    : const Text(
+                                        "Iniciar Sesión",
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+                        Center(
+                          child: Wrap(
+                            crossAxisAlignment: WrapCrossAlignment.center,
+                            children: [
+                              const Text("¿No tienes una cuenta? "),
+                              GestureDetector(
+                                onTap: () => Navigator.push(
+                                  context,
+                                  MaterialPageRoute(builder: (_) => const RegisterPage()),
+                                ),
+                                child: const Text(
+                                  "Regístrate",
+                                  style: TextStyle(
+                                    color: AppColors.textSecondary,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
               ),
             ],

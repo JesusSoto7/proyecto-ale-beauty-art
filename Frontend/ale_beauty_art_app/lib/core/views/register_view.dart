@@ -45,18 +45,24 @@ class _RegisterPageState extends State<RegisterPage> {
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
-        backgroundColor: AppColors.primaryPink,
-
-        automaticallyImplyLeading: false, // Elimina la flecha por defecto
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white), // Color blanco
-          tooltip: '', // Quita el tooltip “Back”
-          onPressed: () {
-            Navigator.pop(context); // Vuelve atrás
-          },
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [AppColors.primaryPink, AppColors.accentPink],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+          ),
         ),
-        title: const Text('Crear cuenta',
-            style: TextStyle(color: Colors.white)),
+        automaticallyImplyLeading: false,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          tooltip: '',
+          onPressed: () => Navigator.pop(context),
+        ),
+        title: const Text('Crear cuenta', style: TextStyle(color: Colors.white)),
         centerTitle: true,
       ),
       body: BlocConsumer<AuthBloc, AuthState>(
@@ -92,147 +98,185 @@ class _RegisterPageState extends State<RegisterPage> {
           if (state is AuthInProgress) {
             return const Center(child: CircularProgressIndicator());
           }
-
           return SingleChildScrollView(
             child: Padding(
-              padding: const EdgeInsets.all(24.0),
-              child: Form(
-                key: _formKey,
-                child: Column(
-                  children: [
-                    const SizedBox(height: 16),
-                    Text(
-                      '¡Únete a Ale Beauty Art!',
-                      style: AppTextStyles.title.copyWith(
-                        color: AppColors.textPrimary,
-                        fontSize: 24,
-                      ),
-                    ),
-                    const SizedBox(height: 24),
-
-                    // Nombre
-                    TextFormField(
-                      controller: _nameController,
-                      decoration: InputDecoration(
-                        labelText: 'Nombre',
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Por favor ingresa tu nombre';
-                        }
-                        return null;
-                      },
-                    ),
-                    const SizedBox(height: 16),
-
-                    // Apellido (obligatorio)
-                    TextFormField(
-                      controller: _lastNameController,
-                      decoration: InputDecoration(
-                        labelText: 'Apellido',
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Por favor ingresa tu apellido';
-                        }
-                        return null;
-                      },
-                    ),
-                    const SizedBox(height: 16),
-
-                    // Correo
-                    TextFormField(
-                      controller: _emailController,
-                      decoration: InputDecoration(
-                        labelText: 'Correo electrónico',
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Por favor ingresa un correo';
-                        } else if (!value.contains('@')) {
-                          return 'Ingresa un correo válido';
-                        }
-                        return null;
-                      },
-                    ),
-                    const SizedBox(height: 16),
-
-                    // Teléfono (opcional)
-                    TextFormField(
-                      controller: _phoneController,
-                      decoration: InputDecoration(
-                        labelText: 'Teléfono (opcional)',
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),
-                      keyboardType: TextInputType.phone,
-                    ),
-                    const SizedBox(height: 16),
-
-                    // Contraseña
-                    TextFormField(
-                      controller: _passwordController,
-                      decoration: InputDecoration(
-                        labelText: 'Contraseña',
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),
-                      obscureText: true,
-                      validator: (value) {
-                        if (value == null || value.length < 6) {
-                          return 'La contraseña debe tener al menos 6 caracteres';
-                        }
-                        return null;
-                      },
-                    ),
-                    const SizedBox(height: 16),
-
-                    // Confirmar Contraseña
-                    TextFormField(
-                      controller: _confirmPasswordController,
-                      decoration: InputDecoration(
-                        labelText: 'Confirmar contraseña',
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),
-                      obscureText: true,
-                      validator: (value) {
-                        if (value != _passwordController.text) {
-                          return 'Las contraseñas no coinciden';
-                        }
-                        return null;
-                      },
-                    ),
-                    const SizedBox(height: 24),
-
-                    ElevatedButton(
-                      onPressed: _onRegisterPressed,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.primaryPink,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 50, vertical: 15),
-                      ),
-                      child: const Text(
-                        'Registrarse',
-                        style: TextStyle(fontSize: 16, color: Colors.white),
-                      ),
-                    ),
+              padding: const EdgeInsets.all(16.0),
+              child: Container(
+                padding: const EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(16),
+                  boxShadow: [
+                    BoxShadow(
+                      color: AppColors.accentPink.withOpacity(0.35),
+                      blurRadius: 14,
+                      offset: const Offset(0, 6),
+                    )
                   ],
+                ),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const SizedBox(height: 8),
+                      Text(
+                        '¡Únete a Ale Beauty Art!',
+                        style: AppTextStyles.title.copyWith(
+                          color: AppColors.textPrimary,
+                          fontSize: 24,
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+                      // Nombre
+                      TextFormField(
+                        controller: _nameController,
+                        decoration: InputDecoration(
+                          prefixIcon: const Icon(Icons.person_outline),
+                          hintText: 'Nombre',
+                          filled: true,
+                          fillColor: Colors.grey.shade100,
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: BorderSide.none,
+                          ),
+                        ),
+                        validator: (value) => (value == null || value.isEmpty)
+                            ? 'Por favor ingresa tu nombre'
+                            : null,
+                      ),
+                      const SizedBox(height: 12),
+                      // Apellido
+                      TextFormField(
+                        controller: _lastNameController,
+                        decoration: InputDecoration(
+                          prefixIcon: const Icon(Icons.person),
+                          hintText: 'Apellido',
+                          filled: true,
+                          fillColor: Colors.grey.shade100,
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: BorderSide.none,
+                          ),
+                        ),
+                        validator: (value) => (value == null || value.isEmpty)
+                            ? 'Por favor ingresa tu apellido'
+                            : null,
+                      ),
+                      const SizedBox(height: 12),
+                      // Correo
+                      TextFormField(
+                        controller: _emailController,
+                        keyboardType: TextInputType.emailAddress,
+                        decoration: InputDecoration(
+                          prefixIcon: const Icon(Icons.alternate_email),
+                          hintText: 'Correo electrónico',
+                          filled: true,
+                          fillColor: Colors.grey.shade100,
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: BorderSide.none,
+                          ),
+                        ),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Por favor ingresa un correo';
+                          } else if (!value.contains('@')) {
+                            return 'Ingresa un correo válido';
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 12),
+                      // Teléfono (opcional)
+                      TextFormField(
+                        controller: _phoneController,
+                        keyboardType: TextInputType.phone,
+                        decoration: InputDecoration(
+                          prefixIcon: const Icon(Icons.phone_iphone),
+                          hintText: 'Teléfono (opcional)',
+                          filled: true,
+                          fillColor: Colors.grey.shade100,
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: BorderSide.none,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      // Contraseña
+                      TextFormField(
+                        controller: _passwordController,
+                        obscureText: true,
+                        decoration: InputDecoration(
+                          prefixIcon: const Icon(Icons.lock_outline_rounded),
+                          hintText: 'Contraseña',
+                          filled: true,
+                          fillColor: Colors.grey.shade100,
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: BorderSide.none,
+                          ),
+                        ),
+                        validator: (value) => (value == null || value.length < 6)
+                            ? 'La contraseña debe tener al menos 6 caracteres'
+                            : null,
+                      ),
+                      const SizedBox(height: 12),
+                      // Confirmar Contraseña
+                      TextFormField(
+                        controller: _confirmPasswordController,
+                        obscureText: true,
+                        decoration: InputDecoration(
+                          prefixIcon: const Icon(Icons.lock),
+                          hintText: 'Confirmar contraseña',
+                          filled: true,
+                          fillColor: Colors.grey.shade100,
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: BorderSide.none,
+                          ),
+                        ),
+                        validator: (value) =>
+                            (value != _passwordController.text)
+                                ? 'Las contraseñas no coinciden'
+                                : null,
+                      ),
+                      const SizedBox(height: 18),
+                      // Botón gradiente
+                      SizedBox(
+                        width: double.infinity,
+                        height: 48,
+                        child: ElevatedButton(
+                          onPressed: _onRegisterPressed,
+                          style: ElevatedButton.styleFrom(
+                            padding: EdgeInsets.zero,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(14),
+                            ),
+                          ).copyWith(
+                            backgroundColor: MaterialStateProperty.all(Colors.transparent),
+                          ),
+                          child: Ink(
+                            decoration: BoxDecoration(
+                              gradient: const LinearGradient(
+                                colors: [AppColors.primaryPink, AppColors.accentPink],
+                                begin: Alignment.centerLeft,
+                                end: Alignment.centerRight,
+                              ),
+                              borderRadius: BorderRadius.circular(14),
+                            ),
+                            child: const Center(
+                              child: Text(
+                                'Registrarse',
+                                style: TextStyle(fontSize: 16, color: Colors.white, fontWeight: FontWeight.bold),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),

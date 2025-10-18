@@ -12,28 +12,6 @@ class ProductsPageView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // appBar: AppBar(
-        // automaticallyImplyLeading: false,
-        // leading: GestureDetector(
-        //   onTap: () {
-        //     Navigator.pop(context); // Regresa a la vista anterior (Inicio)
-        //   },
-        //   child: Padding(
-        //     padding: const EdgeInsets.all(8.0),
-        //     child: Image.asset(
-        //       'assets/images/ale_logo.jpg', // Ruta a tu logo
-        //       fit: BoxFit.contain,
-        //     ),
-        //   ),
-        // ),
-      //   title: const Text(
-      //   'Productos',
-      //   style: AppTextStyles.appBarTitle,
-      //   ),
-      //   centerTitle: true, 
-      //   backgroundColor: AppColors.primaryPink,
-      //   elevation: 4,
-      // ),
 
         body: BlocBuilder<ProductBloc, ProductState>(
         builder: (context, state) {

@@ -2,17 +2,18 @@ import 'package:ale_beauty_art_app/core/views/login_view.dart';
 import 'package:ale_beauty_art_app/features/auth/bloc/auth_bloc.dart';
 import 'package:ale_beauty_art_app/features/cart/presentation/bloc/cart_bloc.dart';
 import 'package:ale_beauty_art_app/features/cart/presentation/bloc/cart_event.dart';
-import 'package:ale_beauty_art_app/features/products/presentation/bloc/product_bloc.dart';
+import 'package:ale_beauty_art_app/models/product.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:ale_beauty_art_app/styles/colors.dart';
 import 'package:ale_beauty_art_app/core/utils/formatters.dart';
+import 'package:ale_beauty_art_app/features/favorites/presentation/bloc/favorite_bloc.dart';
 
 class ProductDetailView extends StatefulWidget {
-  final int productId;
+  final Product product;
 
-  const ProductDetailView({super.key, required this.productId});
+  const ProductDetailView({super.key, required this.product});
 
   @override
   State<ProductDetailView> createState() => _ProductDetailViewState();
@@ -32,27 +33,13 @@ class _ProductDetailViewState extends State<ProductDetailView> {
   @override
   void initState() {
     super.initState();
-    // Lanza el evento para cargar el detalle del producto
-    context.read<ProductBloc>().add(ProductDetailRequested(widget.productId));
+    // Ya no disparamos eventos al ProductBloc; usamos el producto recibido
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<ProductBloc, ProductState>(
-      builder: (context, state) {
-        if (state is ProductLoadInProgress) {
-          return const Scaffold(
-            body: Center(child: CircularProgressIndicator()),
-          );
-        }
-        if (state is ProductLoadFailure) {
-          return const Scaffold(
-            body: Center(child: Text('Error al cargar el producto')),
-          );
-        }
-        if (state is ProductLoadSuccess) {
-          final product = state.products.first;
-          return Scaffold(
+    final product = widget.product;
+    return Scaffold(
             backgroundColor: const Color.fromARGB(255, 247, 246, 246),
             appBar: AppBar(
               backgroundColor: const Color.fromARGB(255, 255, 238, 243),
@@ -65,12 +52,7 @@ class _ProductDetailViewState extends State<ProductDetailView> {
                 onPressed: () => Navigator.pop(context),
               ),
               actions: [
-                IconButton(
-                  icon: const Icon(Icons.favorite_border, color: Colors.grey),
-                  onPressed: () {
-                    print("Favorito: ${product.nombreProducto}");
-                  },
-                ),
+                _FavoriteButton(productId: product.id),
               ],
             ),
             body: SingleChildScrollView(
@@ -95,8 +77,7 @@ class _ProductDetailViewState extends State<ProductDetailView> {
                               : Colors.transparent,
                           borderRadius: BorderRadius.circular(16),
                         ),
-                        child: (product.imagenUrl != null &&
-                                product.imagenUrl!.isNotEmpty)
+                        child: (product.imagenUrl != null && product.imagenUrl!.isNotEmpty)
                             ? Stack(
                                 children: [
                                   // Imagen (abajo)
@@ -340,11 +321,69 @@ class _ProductDetailViewState extends State<ProductDetailView> {
                 ],
               ),
             ),
-          );
+    );
+  }
+}
+
+class _FavoriteButton extends StatefulWidget {
+  final int productId;
+  const _FavoriteButton({required this.productId});
+
+  @override
+  State<_FavoriteButton> createState() => _FavoriteButtonState();
+}
+
+class _FavoriteButtonState extends State<_FavoriteButton> {
+  bool _busy = false;
+  bool _isFav = false; // Simple UI toggle; optional: preload from FavoriteBloc state
+
+  Future<void> _toggle() async {
+    if (_busy) return;
+    setState(() => _busy = true);
+    try {
+      final authState = context.read<AuthBloc>().state;
+      if (authState is! AuthSuccess) {
+        final result = await Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => const LoginPage()),
+        );
+        if (result != true) {
+          setState(() => _busy = false);
+          return;
         }
-        // Estado inicial o desconocido
-        return const Scaffold();
-      },
+      }
+
+      final auth = context.read<AuthBloc>().state as AuthSuccess;
+
+      // Asegurar que FavoriteBloc tenga el token actualizado
+      context.read<FavoriteBloc>().add(UpdateFavoriteToken(auth.token));
+
+      if (_isFav) {
+        context.read<FavoriteBloc>().add(RemoveFavorite(widget.productId));
+      } else {
+        context.read<FavoriteBloc>().add(AddFavorite(widget.productId));
+      }
+      setState(() => _isFav = !_isFav);
+    } finally {
+      if (mounted) setState(() => _busy = false);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return IconButton(
+      icon: _busy
+          ? const SizedBox(
+              width: 18,
+              height: 18,
+              child: CircularProgressIndicator(strokeWidth: 2),
+            )
+          : Icon(
+              _isFav ? Icons.favorite : Icons.favorite_border,
+              color: _isFav ? const Color(0xFFD95D85) : Colors.grey,
+            ),
+      onPressed: _toggle,
+      tooltip: _isFav ? 'Quitar de favoritos' : 'Agregar a favoritos',
     );
   }
 }

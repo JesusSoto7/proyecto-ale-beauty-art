@@ -17,15 +17,19 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     on<LoadCart>(_onLoadCart);
     on<AddProductToCart>(_onAddProductToCart);
     on<RemoveProductFromCart>(_onRemoveProductFromCart);
+    on<RemoveProductCompletely>(_onRemoveProductCompletely);
   }
 
   void _onUpdateCartToken(UpdateCartToken event, Emitter<CartState> emit) {
-    _jwtToken = event.token;
+    // Permitir limpiar el token pasando cadena vacía
+    _jwtToken = (event.token.isEmpty) ? null : event.token;
+    emit(state.copyWith(token: _jwtToken));
   }
 
   Future<void> _onLoadCart(LoadCart event, Emitter<CartState> emit) async {
-    if (_jwtToken == null) {
-      emit(state.copyWith(error: 'Token no disponible'));
+    // Si no hay token, mostramos carrito vacío en lugar de error
+    if (_jwtToken == null || _jwtToken!.isEmpty) {
+      emit(state.copyWith(isLoading: false, error: null, products: const []));
       return;
     }
     emit(state.copyWith(isLoading: true, error: null));
@@ -96,6 +100,32 @@ class CartBloc extends Bloc<CartEvent, CartState> {
       } else {
         emit(state.copyWith(error: 'No se pudo eliminar el producto'));
       }
+    } catch (e) {
+      emit(state.copyWith(error: e.toString()));
+    }
+  }
+
+  Future<void> _onRemoveProductCompletely(
+      RemoveProductCompletely event, Emitter<CartState> emit) async {
+    if (_jwtToken == null) return;
+    try {
+      final client = await CustomHttpClient.client;
+      // Si el backend no expone endpoint específico, repetimos la operación según cantidad
+      for (int i = 0; i < (event.quantity <= 0 ? 1 : event.quantity); i++) {
+        final response = await client.delete(
+          Uri.parse('$apiUrl/cart/remove_product'),
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer $_jwtToken',
+          },
+          body: jsonEncode({'product_id': event.productId}),
+        );
+        if (response.statusCode != 200) {
+          emit(state.copyWith(error: 'No se pudo eliminar el producto'));
+          break;
+        }
+      }
+      add(LoadCart());
     } catch (e) {
       emit(state.copyWith(error: e.toString()));
     }

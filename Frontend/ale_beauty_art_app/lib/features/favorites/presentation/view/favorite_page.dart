@@ -1,16 +1,24 @@
+import 'package:ale_beauty_art_app/core/views/loading_view.dart';
 import 'package:ale_beauty_art_app/features/cart/presentation/bloc/cart_bloc.dart';
 import 'package:ale_beauty_art_app/features/cart/presentation/bloc/cart_event.dart';
 import 'package:ale_beauty_art_app/features/products/presentation/views/products_Detail_View.dart';
+import 'package:ale_beauty_art_app/models/product.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ale_beauty_art_app/features/favorites/presentation/bloc/favorite_bloc.dart';
+import 'package:ale_beauty_art_app/features/auth/bloc/auth_bloc.dart';
 
 class FavoritePage extends StatelessWidget {
   const FavoritePage({super.key});
 
   @override
   Widget build(BuildContext context) {
+    // Actualiza token del FavoriteBloc si hay sesión
+    final authState = context.read<AuthBloc>().state;
+    if (authState is AuthSuccess) {
+      context.read<FavoriteBloc>().add(UpdateFavoriteToken(authState.token));
+    }
     context.read<FavoriteBloc>().add(LoadFavorites());
 
     return Scaffold(
@@ -55,7 +63,7 @@ class FavoritePage extends StatelessWidget {
       body: BlocBuilder<FavoriteBloc, FavoriteState>(
         builder: (context, state) {
           if (state is FavoriteLoading) {
-            return const Center(child: CircularProgressIndicator());
+            return LoadingView();
           }
           if (state is FavoriteError) {
             return Center(child: Text(state.message));
@@ -93,10 +101,24 @@ class FavoritePage extends StatelessWidget {
                   child: InkWell(
                     borderRadius: BorderRadius.circular(16),
                     onTap: () {
+                      // Mapear FavoriteProduct -> Product mínimamente para navegar sin tocar ProductBloc
+                      final product = Product(
+                        id: fav.id,
+                        nombreProducto: fav.nombreProducto,
+                        precioProducto: fav.precioProducto.round(),
+                        descripcion: '',
+                        subCategoryId: 0,
+                        stock: fav.stock,
+                        nombreSubCategoria: '',
+                        categoryId: 0,
+                        nombreCategoria: fav.categoria ?? '',
+                        imagenUrl: fav.imagenUrl,
+                      );
+
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (_) => ProductDetailView(productId: fav.id),
+                          builder: (_) => ProductDetailView(product: product),
                         ),
                       );
                     },
