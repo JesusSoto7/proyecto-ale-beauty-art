@@ -13,6 +13,11 @@ import RotatingBanner from "./RotatingBanner";
 import { useTranslation } from 'react-i18next';
 import Rating from "@mui/material/Rating";
 import FloatingChat from '../../components/FloatingChat';
+import BannerProduct from '../../components/bannerProducts';
+import "../../assets/stylesheets/ProductosCliente.css";
+import "../../assets/stylesheets/RankingPro.css";
+import RankingPro from '../../components/rankingPro.jsx';
+import PositiveReviews from "../../components/positiveReviews.jsx";
 
 function Inicio() {
   const [carousel, setCarousel] = useState([]);
@@ -25,6 +30,10 @@ function Inicio() {
   const { t } = useTranslation();
   const [newProducts, setNewProducts] = useState([]);
   const [productRatings, setProductRatings] = useState({});
+  const { slug } = useParams();
+  const [reviews, setReviews] = useState([]);
+  const [loadingReviews, setLoadingReviews] = useState(true);
+  const [ratings, setRatings] = useState({ 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 });
 
   
   const token = localStorage.getItem('token');
@@ -45,6 +54,32 @@ function Inicio() {
 
     return () => clearInterval(interval);
   }, []);
+
+  function GradientHeart({ filled = false, size = 36 }) {
+    return (
+      <svg
+        width={size}
+        height={size}
+        viewBox="0 0 24 24"
+        style={{ display: "block" }}
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <defs>
+          <linearGradient id="heart-gradient" x1="0" y1="0" x2="24" y2="24" gradientUnits="userSpaceOnUse">
+            <stop stopColor="#cf0d5bff"/>
+            <stop offset="1" stopColor="#f7c1dcff"/>
+          </linearGradient>
+        </defs>
+        <path
+          d="M12.1 18.55l-.1.1-.1-.1C7.14 14.24 4 11.39 4 8.5 4 6.5 5.5 5 7.5 5c1.54 0 3.04.99 3.57 2.36h1.87C13.46 5.99 14.96 5 16.5 5c2 0 3.5 1.5 3.5 3.5 0 2.89-3.14 5.74-7.9 10.05z"
+          fill={filled ? "url(#heart-gradient)" : "none"}
+          stroke="url(#heart-gradient)"
+          strokeWidth="2"
+        />
+      </svg>
+    );
+  }
 
   // Cargar ratings de productos
   const loadProductRatings = async (productList) => {
@@ -73,6 +108,48 @@ function Inicio() {
     
     setProductRatings(ratingsObj);
   };
+
+  useEffect(() => {
+    if (!products || products.length === 0) return;
+    setLoadingReviews(true);
+
+    // Generar promesas para cada producto
+    const reviewPromises = products.map((product) =>
+      fetch(`https://localhost:4000/api/v1/products/${product.slug}/reviews`, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+        .then((res) => res.json())
+        .then((reviews) => ({
+          productSlug: product.slug,
+          reviews,
+        }))
+    );
+
+    Promise.all(reviewPromises)
+      .then((allData) => {
+        // Combinar todas las reviews en un solo array
+        const allReviews = allData.flatMap((item) =>
+          item.reviews.map((r) => ({
+            ...r,
+            productSlug: item.productSlug, // Para saber de qué producto viene
+          }))
+        );
+
+        setReviews(allReviews);
+
+        // Calcular conteo total de estrellas
+        const ratingCount = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
+        allReviews.forEach((review) => {
+          ratingCount[review.rating] += 1;
+        });
+        setRatings(ratingCount);
+      })
+      .catch((err) => console.error("Error cargando reseñas:", err))
+      .finally(() => setLoadingReviews(false));
+  }, [products, token]);
+
+
+
 
   // Cargar productos + favoritos del usuario
   useEffect(() => {
@@ -254,6 +331,8 @@ function Inicio() {
         </Carousel>
       ) : null}
 
+
+
       {/* Sección Novedades Maquillaje */}
       <section className="mt-5">
         <h2 className="mb-4">{t('home.newMakeup')}</h2>
@@ -289,7 +368,7 @@ function Inicio() {
 
             <div className="carousel-items">
               {newProducts.map((prod) => (
-                <div className="product-card" key={prod.id} style={{ position: "relative" }}>
+                <div className="custom-product-card" key={prod.id} style={{ position: "relative" }}>
                   <IconButton
                     onClick={() => toggleFavorite(prod.id)}
                     sx={{
@@ -299,19 +378,19 @@ function Inicio() {
                       bgcolor: "white",
                       "&:hover": { bgcolor: "grey.200" },
                     }}
+                    className='custom-favorite-btn'
                   >
-                    {favoriteIds.includes(prod.id) ? (
-                      <Favorite sx={{ color: "white" }} />
-                    ) : (
-                      <FavoriteBorder />
-                    )}
+                    {favoriteIds.includes(prod.id)
+                      ? <GradientHeart filled />
+                      : <GradientHeart filled={false} />
+                    }
                   </IconButton>
 
                   <Link
                     to={`/${lang}/producto/${prod.slug}`}
                     style={{ textDecoration: "none", color: "inherit" }}
                   >
-                    <div className="image-container">
+                    <div className="custom-image-wrapper">
                       <img
                         src={prod.imagen_url || noImage}
                         alt={prod.nombre_producto}
@@ -320,32 +399,35 @@ function Inicio() {
                     </div>
                     
                     {/* Rating de estrellas CENTRADO */}
-                    <div style={{ 
-                      display: "flex", 
-                      alignItems: "center", 
-                      justifyContent: "center",
-                      marginBottom: "5px",
-                      width: "100%"
-                    }}>
-                      <Rating
-                        name={`product-rating-${prod.id}`}
-                        value={productRatings[prod.id]?.avg || 0}
-                        precision={0.5}
-                        readOnly
-                        size="small"
-                        sx={{ color: "#ffc107" }}
-                      />
-                      <span style={{ fontSize: "14px", marginLeft: "4px" }}>
-                        {productRatings[prod.id]?.avg ? productRatings[prod.id].avg.toFixed(1) : "0.0"}
-                      </span>
+                    <div className="custom-product-info">
+                      <div className="custom-product-name-v2">{prod.nombre_producto}</div>
+                        <div className="custom-price-row-v2" style={{display: "flex", felxDirecction: "row", gap: "30px"}}>
+                          <span className="custom-price-v2">{formatCOP(prod.precio_producto)}</span>
+                          <div className="custom-rating-row-v2">
+                            <span style={{ flex: 1 }}></span>
+                            <span className="custom-star">
+                              <svg width="17" height="17" viewBox="0 0 24 24" fill="#FFC107" xmlns="http://www.w3.org/2000/svg" style={{ marginRight: "2px", verticalAlign: "middle" }}>
+                                <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/>
+                              </svg>
+                              <span className="custom-rating-number-v2">
+                                {productRatings[prod.id]?.avg
+                                  ? Number(productRatings[prod.id]?.avg).toFixed(1)
+                                  : "0.0"}
+                              </span>
+                            </span>
+                          </div>
+                      </div>
                     </div>
-                    
-                    <h5 style={{ textAlign: "center", margin: "5px 0" }}>{prod.nombre_producto}</h5>
-                    <p style={{ textAlign: "center", margin: "5px 0" }}>{formatCOP(prod.precio_producto)}</p>
                   </Link>
 
-                  <div className="actions">
-                    <button onClick={() => addToCart(prod.id)}>
+                  <div className="custom-card-footer">
+                    <button
+                      onClick={e => {
+                        e.stopPropagation();
+                        addToCart(prod.id);
+                      }}
+                      className="custom-add-btn"
+                    >
                       {t('home.addToCart')}
                     </button>
                   </div>
@@ -434,9 +516,10 @@ function Inicio() {
           </div>
         ) : products.length > 0 ? (
           <div className="carousel-container">
+
             <div className="carousel-items" ref={interesRef}>
               {products.slice(0, 9).map((prod) => (
-                <div className="product-card" key={prod.id} style={{ position: "relative" }}>
+                <div className="custom-product-card" key={prod.id} style={{ position: "relative" }}>
                   <IconButton
                     onClick={() => toggleFavorite(prod.id)}
                     sx={{
@@ -446,19 +529,19 @@ function Inicio() {
                       bgcolor: "white",
                       "&:hover": { bgcolor: "grey.200" },
                     }}
+                    className='custom-favorite-btn'
                   >
-                    {favoriteIds.includes(prod.id) ? (
-                      <Favorite sx={{ color: "white" }} />
-                    ) : (
-                      <FavoriteBorder />
-                    )}
+                    {favoriteIds.includes(prod.id)
+                        ? <GradientHeart filled />
+                        : <GradientHeart filled={false} />
+                      }
                   </IconButton>
 
                   <Link
                     to={`/${lang}/producto/${prod.slug}`}
                     style={{ textDecoration: "none", color: "inherit" }}
                   >
-                    <div className="image-container">
+                    <div className="custom-image-wrapper">
                       <img
                         src={prod.imagen_url || noImage}
                         alt={prod.nombre_producto}
@@ -466,48 +549,59 @@ function Inicio() {
                       />
                     </div>
                     
-                    {/* Rating de estrellas CENTRADO */}
-                    <div style={{ 
-                      display: "flex", 
-                      alignItems: "center", 
-                      justifyContent: "center",
-                      marginBottom: "5px",
-                      width: "100%"
-                    }}>
-                      <Rating
-                        name={`product-rating-${prod.id}`}
-                        value={productRatings[prod.id]?.avg || 0}
-                        precision={0.5}
-                        readOnly
-                        size="small"
-                        sx={{ color: "#ffc107" }}
-                      />
-                      <span style={{ fontSize: "14px", marginLeft: "4px" }}>
-                        {productRatings[prod.id]?.avg ? productRatings[prod.id].avg.toFixed(1) : "0.0"}
-                      </span>
+                    <div className="custom-product-info">
+                      <div className="custom-product-name-v2">{prod.nombre_producto}</div>
+                      <div className="custom-price-row-v2" style={{display: "flex", felxDirecction: "row", gap: "30px" }}>
+                        <span className="custom-price-v2">{formatCOP(prod.precio_producto)}</span>
+                        <div className="custom-rating-row-v2">
+                          <span style={{ flex: 1 }}></span>
+                          <span className="custom-star">
+                            <svg width="17" height="17" viewBox="0 0 24 24" fill="#FFC107" xmlns="http://www.w3.org/2000/svg" style={{ marginRight: "2px", verticalAlign: "middle" }}>
+                              <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/>
+                            </svg>
+                            <span className="custom-rating-number-v2">
+                              {productRatings[prod.id]?.avg
+                                ? Number(productRatings[prod.id]?.avg).toFixed(1)
+                                : "0.0"}
+                            </span>
+                          </span>
+                        </div>
+                      </div>
                     </div>
-                    
-                    <h5 style={{ textAlign: "center", margin: "5px 0" }}>{prod.nombre_producto}</h5>
-                    <p style={{ textAlign: "center", margin: "5px 0" }}>{formatCOP(prod.precio_producto)}</p>
                   </Link>
 
-                  <div className="actions">
-                    <button onClick={() => addToCart(prod.id)}>
+                  <div className="custom-card-footer">
+                    <button
+                      onClick={e => {
+                        e.stopPropagation();
+                        addToCart(prod.id);
+                      }}
+                      className="custom-add-btn"
+                    >
                       {t('home.addToCart')}
                     </button>
                   </div>
                 </div>
               ))}
             </div>
+
           </div>
         ) : (
           <p>{t('home.noProducts')}</p>
         )}
       </section>
       <FloatingChat />
+      <BannerProduct products={products} productRatings={productRatings}/>
 
       {/* Banner rotativo */}
       <RotatingBanner />
+      <h2 className="mb-4">productos mejor valorados</h2>
+      <RankingPro products={products} productRatings={productRatings} loading={loading} />
+      
+      <h2 className="mb-4">comentarios destacados</h2>
+      <PositiveReviews reviews={reviews} loading={loadingReviews} />
+
+      
     </div>
   );
 }

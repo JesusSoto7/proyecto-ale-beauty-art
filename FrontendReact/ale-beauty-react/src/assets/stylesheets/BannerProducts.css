@@ -1,0 +1,199 @@
+.banner-loading {
+  width: 100%;
+  height: 500px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #df6897;
+  border-radius: 10px;
+  color: white;
+  font-size: 1.5rem;
+}
+
+/* Contenedor principal */
+.bannerProducts {
+  background-color: #df6897;
+  width: 90%;
+  height: 500px;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  border-radius: 10px;
+  overflow: hidden;
+  margin: auto;
+  position: relative;
+  border: solid 1px #ffd8e4ff;
+  transition: all 1s ease-in-out;
+}
+
+/* Contenedor de imagen */
+.bannerProduct-image-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: #ffffff;
+  width: 39%;
+  height: 115%;
+  border-radius: 60%;
+  box-shadow: 0px 1px 65px 0px rgba(173, 58, 129, 0.88);
+  transition: all 1s ease-in-out;
+}
+
+.banner-product-image {
+  width: 70%;
+  height: 400px;
+  object-fit: contain;
+  border-radius: 100px;
+  transition: opacity 1s ease-in-out;
+}
+
+/* Información del producto */
+.banner-info {
+  width: 50%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  justify-content: space-around;
+  transition: all 1s ease-in-out;
+}
+
+.banner-title {
+  color: #fff;
+  font-size: 60px;
+  margin: 0;
+}
+
+.banner-divider {
+  color: #fff;
+  border: 1px solid #fff;
+}
+
+.banner-description {
+  color: #fff;
+  font-size: 1rem;
+  
+}
+
+/* Footer con rating y botón */
+.section-DataBanner {
+  display: flex;
+  gap: 10px;
+  justify-content: end;
+  align-items: center;
+}
+
+.banner-rating {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.banner-rating-value {
+  margin-bottom: 2px;
+  color: #fff;
+}
+
+/* Botón y link */
+.banner-link {
+  text-decoration: none;
+  color: inherit;
+}
+
+.banner-button {
+  width: 100%;
+  padding: 10px;
+  border-radius: 8px;
+  border: none;
+  background-color: #fff;
+  color: #df6897;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.banner-button:hover {
+  background-color: #ffe6f0;
+  transform: scale(1.03);
+}
+
+/* vista portatil */
+@media (max-width: 1370px) {
+  .bannerProducts {
+    flex-direction: row;
+    height: fit-content;
+  }
+
+  .bannerProduct-image-container {
+    width: 100%;
+    border-radius: 0;
+  }
+
+  .section-DataBanner{
+    justify-content: end;
+  }
+  .banner-description{
+    max-height: 180px;
+    overflow-y: auto;
+    scrollbar-color: #fff #df6897;
+  }
+  .banner-info{
+    width: 90%;
+  }
+}
+
+
+/* vista portatil */
+@media (max-width: 1200px) {
+  .bannerProducts {
+    flex-direction: column;
+    height: fit-content;
+  }
+
+  .bannerProduct-image-container {
+    height: 100%;
+    width: 100%;
+    border-radius: 0;
+  }
+
+  .banner-title {
+    font-size: 50px;
+  }
+
+  .section-DataBanner{
+    justify-content: end;
+  }
+  .banner-description{
+    max-height: 200px;
+    overflow-y: auto;
+  }
+  .banner-info{
+    width: 90%;
+  }
+}
+
+
+/* vista movil */
+@media (max-width: 700px) {
+  .bannerProducts {
+    flex-direction: column;
+    height: fit-content;
+  }
+
+  .bannerProduct-image-container {
+    width: 100%;
+    border-radius: 0;
+  }
+
+  .section-DataBanner{
+    justify-content: center;
+  }
+  .banner-description{
+    max-height: 200px;
+    overflow-y: auto;
+  }
+  .banner-info{
+    width: 90%;
+  }
+}
