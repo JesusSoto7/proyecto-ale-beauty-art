@@ -9,6 +9,8 @@ class Api::V1::FavoritesController < Api::V1::BaseController
         slug: f.product.slug,
         nombre_producto: f.product.nombre_producto,
         precio_producto: f.product.precio_producto,
+        precio_con_mejor_descuento: f.product.precio_con_mejor_descuento,
+        mejor_descuento_para_precio: f.product.mejor_descuento_para_precio,
         stock: f.product.stock,
         imagen_url: f.product.imagen.attached? ? url_for(f.product.imagen) : nil,
         categoria: f.product.category&.nombre_categoria,

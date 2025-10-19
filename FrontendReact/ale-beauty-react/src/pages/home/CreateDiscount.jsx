@@ -82,11 +82,12 @@ export default function CreateDiscount() {
   
   function esDescuentoActivo(desc) {
     if (!desc) return false;
-    const hoy = new Date().toISOString().slice(0,10); // "YYYY-MM-DD"
+    const hoy = new Date().toISOString().slice(0,10);
     return desc.activo &&
       desc.fecha_inicio <= hoy &&
       (!desc.fecha_fin || desc.fecha_fin >= hoy);
   }
+
   const handleEdit = (desc) => {
     setForm({
       nombre: desc.nombre || "",
@@ -118,7 +119,6 @@ export default function CreateDiscount() {
     setLoading(false);
   };
 
-  // Estilos tipo dashboard
   const cardStyle = {
     background: "#fff",
     borderRadius: "12px",
@@ -223,6 +223,8 @@ export default function CreateDiscount() {
             <label style={labelStyle}>Valor</label>
             <input name="valor" type="number" style={inputStyle} value={form.valor} onChange={handleChange} required />
           </div>
+          
+          {/* ✅ DOS CAMPOS DE FECHA SEPARADOS */}
           <div style={{display:"flex", gap:"1em"}}>
             <div style={{flex:1}}>
               <label style={labelStyle}>Fecha inicio</label>
@@ -233,6 +235,7 @@ export default function CreateDiscount() {
               <input name="fecha_fin" type="date" style={inputStyle} value={form.fecha_fin} onChange={handleChange} />
             </div>
           </div>
+
           <div style={{margin:"1em 0"}}>
             <label style={{...labelStyle, display: "inline-flex", alignItems:"center", gap: "0.5em"}}>
               <input name="activo" type="checkbox" checked={form.activo} onChange={handleChange} style={{width:"1em", height:"1em"}} />
@@ -280,7 +283,8 @@ export default function CreateDiscount() {
               <th style={thTdStyle}>Nombre</th>
               <th style={thTdStyle}>Tipo</th>
               <th style={thTdStyle}>Valor</th>
-              <th style={thTdStyle}>Fechas</th>
+              <th style={thTdStyle}>Fecha inicio</th>
+              <th style={thTdStyle}>Fecha fin</th>
               <th style={thTdStyle}>Activo</th>
               <th style={thTdStyle}>Acciones</th>
             </tr>
@@ -288,14 +292,14 @@ export default function CreateDiscount() {
           <tbody>
             {loadingTable ? (
               <tr>
-                <td colSpan={6} style={{textAlign:"center", padding:"2em"}}>
+                <td colSpan={7} style={{textAlign:"center", padding:"2em"}}>
                   <CircularProgress color="primary" />
                   <div style={{color:"#2563eb", fontWeight:600, marginTop:"0.7em"}}>Cargando descuentos...</div>
                 </td>
               </tr>
             ) : discounts.length === 0 ? (
               <tr>
-                <td colSpan={6} style={{textAlign:"center", color:"#6b7280", fontWeight:500, padding:"2em"}}>
+                <td colSpan={7} style={{textAlign:"center", color:"#6b7280", fontWeight:500, padding:"2em"}}>
                   No hay descuentos todavía.
                 </td>
               </tr>
@@ -308,8 +312,10 @@ export default function CreateDiscount() {
                     {desc.tipo === "porcentaje" ? `${desc.valor}%` : `$${desc.valor}`}
                   </td>
                   <td style={thTdStyle}>
-                    {desc.fecha_inicio?.substring(0,10)}
-                    {desc.fecha_fin ? ` - ${desc.fecha_fin.substring(0,10)}` : ""}
+                    {desc.fecha_inicio?.substring(0,10) || "-"}
+                  </td>
+                  <td style={thTdStyle}>
+                    {desc.fecha_fin?.substring(0,10) || "Sin límite"}
                   </td>
                   <td style={thTdStyle}>
                     {desc ? (

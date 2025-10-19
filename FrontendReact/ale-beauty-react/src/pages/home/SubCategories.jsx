@@ -7,15 +7,14 @@ import {
   DialogActions,
   TextField,
   Stack,
-  List,
-  ListItem,
-  ListItemText,
   IconButton,
+  Skeleton,
 } from "@mui/material";
 import "../../assets/stylesheets/SubCategories.css";
 import AddIcon from "@mui/icons-material/Add";
 import EditIcon from "@mui/icons-material/Edit";
-import { useParams, useNavigate } from "react-router-dom";
+import DeleteIcon from "@mui/icons-material/Delete";
+import { useParams } from "react-router-dom";
 
 const SubCategorias = () => {
   const { slug } = useParams();
@@ -24,18 +23,20 @@ const SubCategorias = () => {
   const [nombre, setNombre] = useState("");
   const [imagen, setImagen] = useState(null);
   const [subCategoriaEdit, setSubCategoriaEdit] = useState(null);
+  const [loading, setLoading] = useState(true);
   const token = localStorage.getItem("token");
-  const navigate = useNavigate();
 
-  // Cargar categorías al inicio
+  // Cargar subcategorías al inicio
   useEffect(() => {
     if (!token) return;
+    setLoading(true);
     fetch(`https://localhost:4000/api/v1/categories/${slug}/sub_categories`, {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then((res) => res.json())
       .then((data) => setSubCategorias(Array.isArray(data) ? data : []))
-      .catch((err) => console.error("Error cargando subcategorías", err));
+      .catch((err) => console.error("Error cargando subcategorías", err))
+      .finally(() => setLoading(false));
   }, [token, slug]);
 
   const openDialog = (sub_category = null) => {
@@ -83,9 +84,12 @@ const SubCategorias = () => {
 
       const subCategoriaActualizada = await res.json();
 
+      // ✅ Actualizar estado inmediatamente
       if (subCategoriaEdit) {
         setSubCategorias((prev) =>
-          prev.map((cat) => (cat.id === subCategoriaActualizada.id ? subCategoriaActualizada : cat))
+          prev.map((cat) =>
+            cat.id === subCategoriaActualizada.id ? subCategoriaActualizada : cat
+          )
         );
       } else {
         setSubCategorias((prev) => [...prev, subCategoriaActualizada]);
@@ -97,12 +101,40 @@ const SubCategorias = () => {
       setOpen(false);
     } catch (err) {
       console.error("Error:", err);
-      alert("Ocurrió un error procesando la categoría");
+      alert("Ocurrió un error procesando la subcategoría");
+    }
+  };
+
+  // ✅ Función para eliminar subcategoría
+  const handleDelete = async (id) => {
+    if (!window.confirm("¿Estás seguro de que deseas eliminar esta subcategoría?")) return;
+
+    try {
+      const res = await fetch(
+        `https://localhost:4000/api/v1/categories/${slug}/sub_categories/${id}`,
+        {
+          method: "DELETE",
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+
+      if (!res.ok) {
+        const errorData = await res.json();
+        alert(`Error: ${errorData.error || res.statusText}`);
+        return;
+      }
+
+      // ✅ Actualizar estado inmediatamente
+      setSubCategorias((prev) => prev.filter((sc) => sc.id !== id));
+      alert("Subcategoría eliminada correctamente");
+    } catch (err) {
+      console.error("Error:", err);
+      alert("Ocurrió un error eliminando la subcategoría");
     }
   };
 
   return (
-    <div style={{ marginTop: "2rem", width: "80%", }}>
+    <div style={{ marginTop: "2rem", width: "80%" }}>
       <div style={{ display: "flex", justifyContent: "space-between" }}>
         <h3>SubCategorías</h3>
         <Button
@@ -111,11 +143,13 @@ const SubCategorias = () => {
           startIcon={<AddIcon />}
           onClick={() => openDialog()}
         >
-          Agregar SubCategoria
+          Agregar SubCategoría
         </Button>
 
         <Dialog open={open} onClose={() => setOpen(false)}>
-          <DialogTitle>{subCategoriaEdit ? "Editar subCategoria" : "Crear nueva SubCategoria"}</DialogTitle>
+          <DialogTitle>
+            {subCategoriaEdit ? "Editar subcategoría" : "Crear nueva SubCategoría"}
+          </DialogTitle>
           <DialogContent>
             <Stack spacing={2} sx={{ marginTop: 1 }}>
               <TextField
@@ -141,7 +175,8 @@ const SubCategorias = () => {
         </Dialog>
       </div>
 
-      <div className="categories-container"
+      <div
+        className="categories-container"
         style={{
           display: "flex",
           gap: "20px",
@@ -149,46 +184,88 @@ const SubCategorias = () => {
           padding: "10px 0",
         }}
       >
-        {subCategorias.map((sc) => (
-          <div
-            key={sc.id}
-            className="subcategory-card"
-            style={{ minWidth: "250px", maxWidth: "250px" }}
-          >
-            <div className="subcategory-image-wrapper">
-              <img
-                src={
-                  sc.imagen_url || "https://via.placeholder.com/300x200?text=Sin+imagen"
-                }
-                alt={sc.nombre_subcategoria}
-                className="subcategory-image"
-              />
-            </div>
-
-            <div className="subcategory-info" style={{ padding: "16px" }}>
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                }}
-              >
-                <h4 style={{ margin: 0 }}>{sc.nombre}</h4>
-                <IconButton
-                  size="small"
-                  onClick={(event) => {
-                    event.stopPropagation();
-                    openDialog(sc);
-                  }}
-                  style={{ border: "1px solid #242424" }}
-                >
-                  <EditIcon fontSize="small" />
-                </IconButton>
+        {loading ? (
+          // ✅ SKELETONS MIENTRAS CARGA
+          [1, 2, 3, 4].map((skeleton) => (
+            <div
+              key={skeleton}
+              style={{
+                minWidth: "250px",
+                maxWidth: "250px",
+                borderRadius: "12px",
+                overflow: "hidden",
+                boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
+              }}
+            >
+              <Skeleton variant="rectangular" width={250} height={200} />
+              <div style={{ padding: "16px" }}>
+                <Skeleton variant="text" width="80%" height={30} />
+                <Skeleton variant="text" width="40%" height={20} />
               </div>
-              <span style={{ fontSize: "12px", color: "#888" }}>2 hours ago</span>
             </div>
-          </div>
-        ))}
+          ))
+        ) : subCategorias.length === 0 ? (
+          <p style={{ color: "#888", fontWeight: 500 }}>
+            No hay subcategorías todavía.
+          </p>
+        ) : (
+          subCategorias.map((sc) => (
+            <div
+              key={sc.id}
+              className="subcategory-card"
+              style={{ minWidth: "250px", maxWidth: "250px" }}
+            >
+              <div className="subcategory-image-wrapper">
+                <img
+                  src={
+                    sc.imagen_url ||
+                    "https://via.placeholder.com/300x200?text=Sin+imagen"
+                  }
+                  alt={sc.nombre}
+                  className="subcategory-image"
+                />
+              </div>
+
+              <div className="subcategory-info" style={{ padding: "16px" }}>
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                  }}
+                >
+                  <h4 style={{ margin: 0 }}>{sc.nombre}</h4>
+                  <div>
+                    <IconButton
+                      size="small"
+                      onClick={(event) => {
+                        event.stopPropagation();
+                        openDialog(sc);
+                      }}
+                      style={{ border: "1px solid #242424", marginRight: "8px" }}
+                    >
+                      <EditIcon fontSize="small" />
+                    </IconButton>
+                    {/* ✅ BOTÓN DE ELIMINAR */}
+                    <IconButton
+                      size="small"
+                      onClick={(event) => {
+                        event.stopPropagation();
+                        handleDelete(sc.id);
+                      }}
+                      style={{ border: "1px solid #dc2626", color: "#dc2626" }}
+                    >
+                      <DeleteIcon fontSize="small" />
+                    </IconButton>
+                  </div>
+                </div>
+                <span style={{ fontSize: "12px", color: "#888" }}>
+                  {sc.category?.nombre_categoria || "Sin categoría"}
+                </span>
+              </div>
+            </div>
+          ))
+        )}
       </div>
     </div>
   );

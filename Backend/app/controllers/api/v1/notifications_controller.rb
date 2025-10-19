@@ -5,6 +5,17 @@ class Api::V1::NotificationsController < Api::V1::BaseController
     render json: @notifications.as_json(include: { notification_message: { only: [:title, :message, :created_at] } })
   end
 
+  def stats
+    total_usuarios = User.with_role(:cliente).count
+    total_notificaciones = NotificationMessage.count # Total de mensajes enviados
+    
+    render json: {
+      total_usuarios: total_usuarios,
+      total_notificaciones: total_notificaciones,
+      tasa_entrega: 100
+    }
+  end
+
   def create
     # 1. Crea el mensaje (solo una vez)
     notif_message = NotificationMessage.create!(

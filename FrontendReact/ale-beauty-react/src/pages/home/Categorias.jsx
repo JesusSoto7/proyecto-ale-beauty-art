@@ -7,13 +7,12 @@ import {
   DialogActions,
   TextField,
   Stack,
-  List,
-  ListItem,
-  ListItemText,
   IconButton,
+  Skeleton,
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
 import { useParams, useNavigate } from "react-router-dom";
 
 const Categorias = () => {
@@ -23,18 +22,21 @@ const Categorias = () => {
   const [nombre, setNombre] = useState("");
   const [imagen, setImagen] = useState(null);
   const [categoriaEdit, setCategoriaEdit] = useState(null);
+  const [loading, setLoading] = useState(true);
   const token = localStorage.getItem("token");
   const navigate = useNavigate();
 
   // Cargar categorías al inicio
   useEffect(() => {
     if (!token) return;
+    setLoading(true);
     fetch("https://localhost:4000/api/v1/categories", {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then((res) => res.json())
       .then((data) => setCategorias(Array.isArray(data) ? data : []))
-      .catch((err) => console.error("Error cargando categorías", err));
+      .catch((err) => console.error("Error cargando categorías", err))
+      .finally(() => setLoading(false));
   }, [token]);
 
   const openDialog = (categoria = null) => {
@@ -82,9 +84,12 @@ const Categorias = () => {
 
       const categoriaActualizada = await res.json();
 
+      // ✅ Actualizar estado inmediatamente
       if (categoriaEdit) {
         setCategorias((prev) =>
-          prev.map((cat) => (cat.id === categoriaActualizada.id ? categoriaActualizada : cat))
+          prev.map((cat) =>
+            cat.id === categoriaActualizada.id ? categoriaActualizada : cat
+          )
         );
       } else {
         setCategorias((prev) => [...prev, categoriaActualizada]);
@@ -100,8 +105,33 @@ const Categorias = () => {
     }
   };
 
+  // ✅ Función para eliminar categoría
+  const handleDelete = async (id) => {
+    if (!window.confirm("¿Estás seguro de que deseas eliminar esta categoría?")) return;
+
+    try {
+      const res = await fetch(`https://localhost:4000/api/v1/categories/${id}`, {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      if (!res.ok) {
+        const errorData = await res.json();
+        alert(`Error: ${errorData.error || res.statusText}`);
+        return;
+      }
+
+      // ✅ Actualizar estado inmediatamente
+      setCategorias((prev) => prev.filter((cat) => cat.id !== id));
+      alert("Categoría eliminada correctamente");
+    } catch (err) {
+      console.error("Error:", err);
+      alert("Ocurrió un error eliminando la categoría");
+    }
+  };
+
   return (
-    <div style={{ marginTop: "2rem", width: "80%", }}>
+    <div style={{ marginTop: "2rem", width: "80%" }}>
       <div style={{ display: "flex", justifyContent: "space-between" }}>
         <h3>Categorías</h3>
         <Button
@@ -114,7 +144,9 @@ const Categorias = () => {
         </Button>
 
         <Dialog open={open} onClose={() => setOpen(false)}>
-          <DialogTitle>{categoriaEdit ? "Editar categoría" : "Crear nueva categoría"}</DialogTitle>
+          <DialogTitle>
+            {categoriaEdit ? "Editar categoría" : "Crear nueva categoría"}
+          </DialogTitle>
           <DialogContent>
             <Stack spacing={2} sx={{ marginTop: 1 }}>
               <TextField
@@ -140,7 +172,8 @@ const Categorias = () => {
         </Dialog>
       </div>
 
-      <div className="categories-container"
+      <div
+        className="categories-container"
         style={{
           display: "flex",
           gap: "20px",
@@ -148,38 +181,89 @@ const Categorias = () => {
           padding: "10px 0",
         }}
       >
-        {categorias.map((cat) => (
-          <div className="category-card" style={{minWidth: "250px", maxWidth: "250px"}} onClick={() => navigate(`/es/home/categories/${cat.slug}`)}>
-            {/* Imagen con curvas */}
-            <div className="category-image-wrapper">
-              <img
-                src={cat.imagen_url || "https://via.placeholder.com/300x200?text=Sin+imagen"}
-                alt={cat.nombre_categoria}
-                className="category-image"
-              />
-            </div>
-
-            {/* Info */}
-            <div className="category-info" style={{ padding: "16px" }}>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                <h4 style={{ margin: 0 }}>{cat.nombre_categoria}</h4>
-                <IconButton
-                  size="small"
-                  onClick={(event) => {
-                    event.stopPropagation();
-                    openDialog(cat);
-                  }}
-                  style={{border: "1px solid #242424" }}
-                >
-                  <EditIcon fontSize="small" />
-                </IconButton>
+        {loading ? (
+          // ✅ SKELETONS MIENTRAS CARGA
+          [1, 2, 3, 4].map((skeleton) => (
+            <div
+              key={skeleton}
+              style={{
+                minWidth: "250px",
+                maxWidth: "250px",
+                borderRadius: "12px",
+                overflow: "hidden",
+                boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
+              }}
+            >
+              <Skeleton variant="rectangular" width={250} height={200} />
+              <div style={{ padding: "16px" }}>
+                <Skeleton variant="text" width="80%" height={30} />
+                <Skeleton variant="text" width="40%" height={20} />
               </div>
-              <span style={{ fontSize: "12px", color: "#888" }}>2 hours ago</span>
             </div>
+          ))
+        ) : categorias.length === 0 ? (
+          <p style={{ color: "#888", fontWeight: 500 }}>
+            No hay categorías todavía.
+          </p>
+        ) : (
+          categorias.map((cat) => (
+            <div
+              key={cat.id}
+              className="category-card"
+              style={{ minWidth: "250px", maxWidth: "250px" }}
+              onClick={() => navigate(`/es/home/categories/${cat.slug}`)}
+            >
+              <div className="category-image-wrapper">
+                <img
+                  src={
+                    cat.imagen_url ||
+                    "https://via.placeholder.com/300x200?text=Sin+imagen"
+                  }
+                  alt={cat.nombre_categoria}
+                  className="category-image"
+                />
+              </div>
 
-          </div>
-
-        ))}
+              <div className="category-info" style={{ padding: "16px" }}>
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                  }}
+                >
+                  <h4 style={{ margin: 0 }}>{cat.nombre_categoria}</h4>
+                  <div>
+                    <IconButton
+                      size="small"
+                      onClick={(event) => {
+                        event.stopPropagation();
+                        openDialog(cat);
+                      }}
+                      style={{ border: "1px solid #242424", marginRight: "8px" }}
+                    >
+                      <EditIcon fontSize="small" />
+                    </IconButton>
+                    {/* ✅ BOTÓN DE ELIMINAR */}
+                    <IconButton
+                      size="small"
+                      onClick={(event) => {
+                        event.stopPropagation();
+                        handleDelete(cat.id);
+                      }}
+                      style={{ border: "1px solid #dc2626", color: "#dc2626" }}
+                    >
+                      <DeleteIcon fontSize="small" />
+                    </IconButton>
+                  </div>
+                </div>
+                <span style={{ fontSize: "12px", color: "#888" }}>
+                  {cat.sub_categories?.length || 0} subcategorías
+                </span>
+              </div>
+            </div>
+          ))
+        )}
       </div>
     </div>
   );

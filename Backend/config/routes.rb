@@ -49,7 +49,11 @@ Rails.application.routes.draw do
 
       post '/api/ia', to: 'ai#ask'
 
-      resources :notifications, only: [:index, :create, :update]
+      resources :notifications, only: [:index, :create, :update] do
+        collection do
+          get :stats
+        end
+      end
 
       resources :discounts
 

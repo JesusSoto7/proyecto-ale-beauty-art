@@ -732,20 +732,7 @@
   transition: transform 0.19s;
   background: transparent;
 }
-.custom-favorite-btn {
-  position: absolute !important;
-  top: 14px !important;
-  right: 14px !important;
-  background: #fff !important;
-  border-radius: 50% !important;
-  width: 36px !important;
-  height: 36px !important;
-  display: flex !important;
-  align-items: center;
-  justify-content: center;
-  z-index: 2;
-  border: 1.5px solid #fce4ec !important;
-}
+
 .custom-product-info {
   padding: 14px 12px 0 12px;
   display: flex;

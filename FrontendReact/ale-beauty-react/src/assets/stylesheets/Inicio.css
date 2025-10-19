@@ -354,7 +354,7 @@
   align-items: center;
   justify-content: center;
   z-index: 2;
-  border: 1.5px solid #fce4ec !important;
+  border: 1.5px solid #ffffff;
 }
 
 /* Info producto */
@@ -373,7 +373,6 @@
   margin-bottom: 2px;
   text-align: left;
   display: -webkit-box;
-  -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
