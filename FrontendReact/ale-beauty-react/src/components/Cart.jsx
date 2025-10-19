@@ -252,7 +252,7 @@ function Cart() {
   }
 
   const total = cart.products.reduce(
-    (sum, p) => sum + p.precio_producto * p.cantidad,
+    (sum, p) => sum + (p.precio_con_mejor_descuento && p.precio_con_mejor_descuento < p.precio_producto ? p.precio_con_mejor_descuento : p.precio_producto) * p.cantidad,
     0
   );
 
@@ -305,9 +305,42 @@ function Cart() {
                 <Typography level="body2" sx={{ mb: 1 }}>
                   {t("cart.set")}: {product.color || "N/A"}
                 </Typography>
-                <Typography level="body1" fontWeight="bold">
-                  {formatCOP(product.precio_producto)}
-                </Typography>
+                {/* PRECIO CON DESCUENTO Y NOMBRE DEL DESCUENTO */}
+                {product.precio_con_mejor_descuento && product.precio_con_mejor_descuento < product.precio_producto ? (
+                  <Box>
+                    <Typography level="body1" fontWeight="bold" color="primary" component="span">
+                      {formatCOP(product.precio_con_mejor_descuento)}
+                    </Typography>
+                    <Typography
+                      level="body2"
+                      component="span"
+                      sx={{ textDecoration: "line-through", color: "#8A8A8A", ml: 1 }}
+                    >
+                      {formatCOP(product.precio_producto)}
+                    </Typography>
+                    {product.mejor_descuento_para_precio && (
+                      <Typography
+                        level="body2"
+                        sx={{
+                          color: "#2563eb",
+                          fontWeight: 500,
+                          fontSize: "0.97em",
+                          marginTop: "0.2em",
+                          display: "block"
+                        }}
+                      >
+                        {product.mejor_descuento_para_precio.nombre}
+                        {product.mejor_descuento_para_precio.tipo === "porcentaje"
+                          ? ` (${product.mejor_descuento_para_precio.valor}%)`
+                          : ` (-${formatCOP(product.mejor_descuento_para_precio.valor)})`}
+                      </Typography>
+                    )}
+                  </Box>
+                ) : (
+                  <Typography level="body1" fontWeight="bold">
+                    {formatCOP(product.precio_producto)}
+                  </Typography>
+                )}
               </Box>
               
               <Box sx={{ 
@@ -339,7 +372,12 @@ function Cart() {
               </Box>
               
               <Typography level="body1" fontWeight="bold" sx={{ minWidth: 100, textAlign: "right" }}>
-                {formatCOP(product.precio_producto * product.cantidad)}
+                {formatCOP(
+                  (product.precio_con_mejor_descuento && product.precio_con_mejor_descuento < product.precio_producto
+                    ? product.precio_con_mejor_descuento
+                    : product.precio_producto
+                  ) * product.cantidad
+                )}
               </Typography>
               
               <IconButton 

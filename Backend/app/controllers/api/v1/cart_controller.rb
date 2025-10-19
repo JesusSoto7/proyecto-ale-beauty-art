@@ -49,7 +49,9 @@ module Api
               nombre_producto: cp.product.nombre_producto,
               cantidad: cp.cantidad,
               precio_producto: cp.product.precio_producto,
-              imagen_url: cp.product.imagen.attached? ? url_for(cp.product.imagen) : nil
+              imagen_url: cp.product.imagen.attached? ? url_for(cp.product.imagen) : nil,
+              precio_con_mejor_descuento: cp.product.precio_con_mejor_descuento,
+              mejor_descuento_para_precio: cp.product.mejor_descuento_para_precio
             }
           end
         }

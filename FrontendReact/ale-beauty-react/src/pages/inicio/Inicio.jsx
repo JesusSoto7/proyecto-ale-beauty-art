@@ -368,58 +368,65 @@ function Inicio() {
 
             <div className="carousel-items">
               {newProducts.map((prod) => (
-                <div className="custom-product-card" key={prod.id} style={{ position: "relative" }}>
-                  <IconButton
-                    onClick={() => toggleFavorite(prod.id)}
-                    sx={{
-                      position: "absolute",
-                      top: 8,
-                      right: 8,
-                      bgcolor: "white",
-                      "&:hover": { bgcolor: "grey.200" },
-                    }}
-                    className='custom-favorite-btn'
-                  >
-                    {favoriteIds.includes(prod.id)
-                      ? <GradientHeart filled />
-                      : <GradientHeart filled={false} />
-                    }
-                  </IconButton>
-
-                  <Link
-                    to={`/${lang}/producto/${prod.slug}`}
-                    style={{ textDecoration: "none", color: "inherit" }}
-                  >
-                    <div className="custom-image-wrapper">
-                      <img
-                        src={prod.imagen_url || noImage}
-                        alt={prod.nombre_producto}
-                        onError={(e) => { e.currentTarget.src = noImage; }}
-                      />
-                    </div>
-                    
-                    {/* Rating de estrellas CENTRADO */}
+                <div className="custom-product-card" key={prod.id}>
+                  <div className="custom-image-wrapper">
+                    <img
+                      src={prod.imagen_url || noImage}
+                      alt={prod.nombre_producto}
+                      onError={(e) => { e.currentTarget.src = noImage; }}
+                    />
+                    <IconButton
+                      onClick={() => toggleFavorite(prod.id)}
+                      className="custom-favorite-btn"
+                      sx={{
+                        position: "absolute",
+                        top: 14,
+                        right: 14,
+                        bgcolor: "white",
+                        boxShadow: 2,
+                        borderRadius: "50%",
+                        zIndex: 2
+                      }}
+                    >
+                      {favoriteIds.includes(prod.id)
+                        ? <GradientHeart filled />
+                        : <GradientHeart filled={false} />
+                      }
+                    </IconButton>
+                  </div>
+                  <Link to={`/${lang}/producto/${prod.slug}`} style={{ textDecoration: "none", color: "inherit" }}>
                     <div className="custom-product-info">
                       <div className="custom-product-name-v2">{prod.nombre_producto}</div>
-                        <div className="custom-price-row-v2" style={{display: "flex", felxDirecction: "row", gap: "30px"}}>
-                          <span className="custom-price-v2">{formatCOP(prod.precio_producto)}</span>
-                          <div className="custom-rating-row-v2">
-                            <span style={{ flex: 1 }}></span>
-                            <span className="custom-star">
-                              <svg width="17" height="17" viewBox="0 0 24 24" fill="#FFC107" xmlns="http://www.w3.org/2000/svg" style={{ marginRight: "2px", verticalAlign: "middle" }}>
-                                <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/>
-                              </svg>
-                              <span className="custom-rating-number-v2">
-                                {productRatings[prod.id]?.avg
-                                  ? Number(productRatings[prod.id]?.avg).toFixed(1)
-                                  : "0.0"}
-                              </span>
-                            </span>
-                          </div>
+                      <div className="custom-price-v2">
+                        {prod.precio_con_mejor_descuento && prod.precio_con_mejor_descuento < prod.precio_producto ? (
+                          <>
+                            <span>{formatCOP(prod.precio_con_mejor_descuento)}</span>
+                            <span className="line-through">{formatCOP(prod.precio_producto)}</span>
+                          </>
+                        ) : (
+                          <span>{formatCOP(prod.precio_producto)}</span>
+                        )}
                       </div>
+                      <div className="custom-rating-row-v2">
+                        <svg width="17" height="17" viewBox="0 0 24 24" fill="#FFC107" style={{ marginRight: "2px", verticalAlign: "middle" }}>
+                          <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/>
+                        </svg>
+                        <span className="custom-rating-number-v2">
+                          {productRatings[prod.id]?.avg
+                            ? Number(productRatings[prod.id]?.avg).toFixed(1)
+                            : "0.0"}
+                        </span>
+                      </div>
+                      {prod.mejor_descuento_para_precio && (
+                        <div className="custom-descuento-nombre">
+                          {prod.mejor_descuento_para_precio.nombre}
+                          {prod.mejor_descuento_para_precio.tipo === "porcentaje"
+                            ? ` (${prod.mejor_descuento_para_precio.valor}%)`
+                            : ` (-${formatCOP(prod.mejor_descuento_para_precio.valor)})`}
+                        </div>
+                      )}
                     </div>
                   </Link>
-
                   <div className="custom-card-footer">
                     <button
                       onClick={e => {
@@ -519,69 +526,77 @@ function Inicio() {
 
             <div className="carousel-items" ref={interesRef}>
               {products.slice(0, 9).map((prod) => (
-                <div className="custom-product-card" key={prod.id} style={{ position: "relative" }}>
-                  <IconButton
-                    onClick={() => toggleFavorite(prod.id)}
-                    sx={{
-                      position: "absolute",
-                      top: 8,
-                      right: 8,
-                      bgcolor: "white",
-                      "&:hover": { bgcolor: "grey.200" },
-                    }}
-                    className='custom-favorite-btn'
-                  >
-                    {favoriteIds.includes(prod.id)
-                        ? <GradientHeart filled />
-                        : <GradientHeart filled={false} />
-                      }
-                  </IconButton>
-
-                  <Link
-                    to={`/${lang}/producto/${prod.slug}`}
-                    style={{ textDecoration: "none", color: "inherit" }}
-                  >
+                  <div className="custom-product-card" key={prod.id}>
                     <div className="custom-image-wrapper">
                       <img
                         src={prod.imagen_url || noImage}
                         alt={prod.nombre_producto}
                         onError={(e) => { e.currentTarget.src = noImage; }}
                       />
+                      <IconButton
+                        onClick={() => toggleFavorite(prod.id)}
+                        className="custom-favorite-btn"
+                        sx={{
+                          position: "absolute",
+                          top: 14,
+                          right: 14,
+                          bgcolor: "white",
+                          boxShadow: 2,
+                          borderRadius: "50%",
+                          zIndex: 2
+                        }}
+                      >
+                        {favoriteIds.includes(prod.id)
+                          ? <GradientHeart filled />
+                          : <GradientHeart filled={false} />
+                        }
+                      </IconButton>
                     </div>
-                    
-                    <div className="custom-product-info">
-                      <div className="custom-product-name-v2">{prod.nombre_producto}</div>
-                      <div className="custom-price-row-v2" style={{display: "flex", felxDirecction: "row", gap: "30px" }}>
-                        <span className="custom-price-v2">{formatCOP(prod.precio_producto)}</span>
+                    <Link to={`/${lang}/producto/${prod.slug}`} style={{ textDecoration: "none", color: "inherit" }}>
+                      <div className="custom-product-info">
+                        <div className="custom-product-name-v2">{prod.nombre_producto}</div>
+                        <div className="custom-price-v2">
+                          {prod.precio_con_mejor_descuento && prod.precio_con_mejor_descuento < prod.precio_producto ? (
+                            <>
+                              <span>{formatCOP(prod.precio_con_mejor_descuento)}</span>
+                              <span className="line-through">{formatCOP(prod.precio_producto)}</span>
+                            </>
+                          ) : (
+                            <span>{formatCOP(prod.precio_producto)}</span>
+                          )}
+                        </div>
                         <div className="custom-rating-row-v2">
-                          <span style={{ flex: 1 }}></span>
-                          <span className="custom-star">
-                            <svg width="17" height="17" viewBox="0 0 24 24" fill="#FFC107" xmlns="http://www.w3.org/2000/svg" style={{ marginRight: "2px", verticalAlign: "middle" }}>
-                              <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/>
-                            </svg>
-                            <span className="custom-rating-number-v2">
-                              {productRatings[prod.id]?.avg
-                                ? Number(productRatings[prod.id]?.avg).toFixed(1)
-                                : "0.0"}
-                            </span>
+                          <svg width="17" height="17" viewBox="0 0 24 24" fill="#FFC107" style={{ marginRight: "2px", verticalAlign: "middle" }}>
+                            <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/>
+                          </svg>
+                          <span className="custom-rating-number-v2">
+                            {productRatings[prod.id]?.avg
+                              ? Number(productRatings[prod.id]?.avg).toFixed(1)
+                              : "0.0"}
                           </span>
                         </div>
+                        {prod.mejor_descuento_para_precio && (
+                          <div className="custom-descuento-nombre">
+                            {prod.mejor_descuento_para_precio.nombre}
+                            {prod.mejor_descuento_para_precio.tipo === "porcentaje"
+                              ? ` (${prod.mejor_descuento_para_precio.valor}%)`
+                              : ` (-${formatCOP(prod.mejor_descuento_para_precio.valor)})`}
+                          </div>
+                        )}
                       </div>
+                    </Link>
+                    <div className="custom-card-footer">
+                      <button
+                        onClick={e => {
+                          e.stopPropagation();
+                          addToCart(prod.id);
+                        }}
+                        className="custom-add-btn"
+                      >
+                        {t('home.addToCart')}
+                      </button>
                     </div>
-                  </Link>
-
-                  <div className="custom-card-footer">
-                    <button
-                      onClick={e => {
-                        e.stopPropagation();
-                        addToCart(prod.id);
-                      }}
-                      className="custom-add-btn"
-                    >
-                      {t('home.addToCart')}
-                    </button>
                   </div>
-                </div>
               ))}
             </div>
 

@@ -300,3 +300,194 @@
   0% { transform: translateX(0); }
   100% { transform: translateX(-50%); } /* -50% porque duplicamos los items */
 }
+.custom-product-card {
+  flex: 0 0 auto;
+  width: 100%;
+  max-width: 260px;
+  min-width: 230px;
+  background: #fff;
+  border-radius: 18px;
+  box-shadow: 0 8px 22px rgba(0,0,0,0.09);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  position: relative;
+  margin: 0 0.5rem;
+  transition: box-shadow 0.2s, transform 0.2s;
+  height: 370px; /* Asegura altura suficiente */
+}
+
+.custom-product-card:hover {
+  box-shadow: 0 14px 38px rgba(220,38,38,0.16);
+  transform: translateY(-6px) scale(1.02);
+}
+
+/* Imagen y corazón */
+.custom-image-wrapper {
+  position: relative;
+  width: 100%;
+  height: 150px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f7f8fa;
+  border-radius: 18px 18px 0 0;
+  overflow: hidden;
+}
+.custom-image-wrapper img {
+  max-height: 120px;
+  width: auto;
+  object-fit: contain;
+  margin: 0 auto;
+  display: block;
+}
+.custom-favorite-btn {
+  position: absolute !important;
+  top: 14px !important;
+  right: 14px !important;
+  background: #fff !important;
+  box-shadow: 0 2px 8px rgba(220,38,38,0.09) !important;
+  border-radius: 50% !important;
+  width: 36px !important;
+  height: 36px !important;
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+  border: 1.5px solid #ffffff;
+}
+
+/* Info producto */
+.custom-product-info {
+  padding: 14px 12px 0 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-height: 80px;
+}
+
+.custom-product-name-v2 {
+  font-size: 1.07rem;
+  font-weight: 700;
+  color: #232323;
+  margin-bottom: 2px;
+  text-align: left;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Precio */
+.custom-price-v2 {
+  font-size: 1.09rem;
+  font-weight: 700;
+  color: #dc2626;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+.custom-price-v2 .line-through {
+  font-size: 0.97rem;
+  color: #64748b;
+  text-decoration: line-through;
+  margin-left: 7px;
+}
+
+/* Rating abajo y centrado */
+.custom-rating-row-v2 {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 4px;
+  font-size: 1rem;
+  color: #ffc107;
+  margin-top: 2px;
+}
+.custom-rating-number-v2 {
+  font-size: 1.02rem;
+  color: #232323;
+  font-weight: 600;
+  margin-left: 2px;
+}
+
+/* Descuento */
+.custom-descuento-nombre {
+  color: #2563eb;
+  font-weight: 500;
+  font-size: 0.97em;
+  margin-top: 0.18em;
+  letter-spacing: 0.1px;
+}
+
+/* Footer con botón */
+.custom-card-footer {
+  width: 100%;
+  padding: 0 12px 12px 12px;
+  margin-top: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.custom-add-btn {
+  width: 100%;
+  background: linear-gradient(90deg, #d95d85 0%, #e58bb1 100%);
+  color: #fff;
+  font-weight: bold;
+  padding: 0.7em 0;
+  border: none;
+  border-radius: 30px;
+  box-shadow: 0 3px 12px rgba(220,38,38,0.09);
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.18s, transform 0.18s;
+}
+.custom-add-btn:hover {
+  background: linear-gradient(90deg, #e58bb1 0%, #d95d85 100%);
+  transform: scale(1.04);
+}
+
+/* Carrusel */
+.carousel-items {
+  display: flex;
+  gap: 1.5rem;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  scrollbar-width: none;
+  padding: 1rem 0;
+}
+.carousel-items::-webkit-scrollbar {
+  display: none;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .custom-product-card {
+    min-width: calc(50% - 1.5rem);
+    max-width: calc(50% - 1.5rem);
+    height: 340px;
+  }
+}
+@media (max-width: 600px) {
+  .custom-product-card {
+    min-width: 100%;
+    max-width: 100%;
+    height: 320px;
+  }
+  .custom-image-wrapper {
+    height: 100px;
+  }
+  .custom-product-info {
+    min-height: 55px;
+    padding: 8px 6px 0 6px;
+  }
+  .custom-card-footer {
+    padding: 0 6px 6px 6px;
+  }
+  .custom-favorite-btn {
+    width: 30px !important;
+    height: 30px !important;
+    top: 8px !important;
+    right: 8px !important;
+  }
+}

@@ -43,6 +43,8 @@ import DetallePedido from './pages/inicio/DetallePedido';
 import SubCategorias from './pages/home/SubCategories';
 import GestionUsuarios from './components/dashComponents/GestionUsuarios';
 import Notificationes from './pages/home/Notifications';
+import ApplyDiscount from './pages/home/ApplyDiscount';
+import CreateDiscount from './pages/home/CreateDiscount';
 
 function Wrapper() {
   const { lang } = useParams();
@@ -122,6 +124,8 @@ function App() {
               <Route path="carousel" element={<Carousel />} />
               <Route path="usuarios" element={<GestionUsuarios />} />
               <Route path="notificaciones" element={<Notificationes />} />
+              <Route path="crear_descuento" element={<CreateDiscount />} />
+              <Route path="aplicar_descuento" element={<ApplyDiscount />} />
           </Route>
         </Route>
         <Route path="/:lang/403" element={<Forbidden403 />} />

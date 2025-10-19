@@ -86,10 +86,8 @@ export default function FavoritesModal({ open, onClose }) {
           alert(t('favorites.allAddedToCart'));
         }
 
-        // 🔄 Actualiza el carrito si vino en alguna respuesta
         if (lastCart) {
           setCart(lastCart.cart);
-          // 🔔 Notifica a otros componentes (header, icono, etc.)
           window.dispatchEvent(new CustomEvent("cartUpdatedCustom", { bubbles: false }));
         }
       })
@@ -232,112 +230,125 @@ export default function FavoritesModal({ open, onClose }) {
             </Box>
           ) : (
             <Box sx={{ display: "grid", gap: 2 }}>
-              {favorites.map((product) => (
-                <Box
-                  key={product.id}
-                  className={product.isRemoving ? "slide-out-right" : ""}
-                  sx={{
-                    display: "flex",
-                    alignItems: "center",
-                    borderRadius: "12px",
-                    bgcolor: "background.body",
-                    border: "1px solid",
-                    borderColor: "neutral.outlinedBorder",
-                    overflow: "hidden",
-                    transition: "all 0.3s ease-in-out",
-                  }}
-                >
-                  <div
-                    className="borrarFav"
-                    onClick={() => removeFavorite(product.id)}
-                    title={t('favorites.remove')}
-                  >
-                    <DeleteIcon />
-                  </div>
+              {favorites.map((product) => {
+                const priceOriginal = product.precio_producto;
+                const priceDiscount = product.precio_con_mejor_descuento;
 
-                  <Link
-                    to={`/es/producto/${product.slug}`}
-                    style={{ textDecoration: "none", color: "inherit", flex: 1 }}
-                    onClick={onClose}
+                return (
+                  <Box
+                    key={product.id}
+                    className={product.isRemoving ? "slide-out-right" : ""}
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      borderRadius: "12px",
+                      bgcolor: "background.body",
+                      border: "1px solid",
+                      borderColor: "neutral.outlinedBorder",
+                      overflow: "hidden",
+                      transition: "all 0.3s ease-in-out",
+                    }}
                   >
-                    <Box
-                      key={product.id}
-                      className={product.isRemoving ? "slide-out-right" : ""}
-                      sx={{
-                        display: "flex",
-                        alignItems: "center",
-                        borderRadius: "12px",
-                        bgcolor: "background.body",
-                        borderColor: "neutral.outlinedBorder",
-                        overflow: "hidden",
-                        transition: "all 0.3s ease-in-out",
-                        p: 2,
-                        gap: 2,
-                      }}
+                    <div
+                      className="borrarFav"
+                      onClick={() => removeFavorite(product.id)}
+                      title={t('favorites.remove')}
                     >
+                      <DeleteIcon />
+                    </div>
 
-                      <img
-                        src={product.imagen_url || noImage}
-                        alt={product.nombre_producto}
-                        onError={(e) => { e.currentTarget.src = noImage; }}
-                        style={{
-                          width: 60,
-                          height: 60,
-                          objectFit: "scale-down",
-                          borderRadius: 12,
+                    <Link
+                      to={`/es/producto/${product.slug}`}
+                      style={{ textDecoration: "none", color: "inherit", flex: 1 }}
+                      onClick={onClose}
+                    >
+                      <Box
+                        sx={{
+                          display: "flex",
+                          alignItems: "center",
+                          borderRadius: "12px",
+                          bgcolor: "background.body",
+                          borderColor: "neutral.outlinedBorder",
+                          overflow: "hidden",
+                          transition: "all 0.3s ease-in-out",
+                          p: 2,
+                          gap: 2,
                         }}
-                      />
+                      >
+                        <img
+                          src={product.imagen_url || noImage}
+                          alt={product.nombre_producto}
+                          onError={(e) => { e.currentTarget.src = noImage; }}
+                          style={{
+                            width: 60,
+                            height: 60,
+                            objectFit: "scale-down",
+                            borderRadius: 12,
+                          }}
+                        />
 
-                      <Box sx={{ flex: 2 }}>
-                        <Typography level="body1" sx={{ fontWeight: "bold" }}>
-                          {product.nombre_producto}
-                        </Typography>
-                        <Typography level="body2" color="neutral">
-                          {product.categoria}
-                        </Typography>
+                        <Box sx={{ flex: 2 }}>
+                          <Typography level="body1" sx={{ fontWeight: "bold" }}>
+                            {product.nombre_producto}
+                          </Typography>
+                          <Typography level="body2" color="neutral">
+                            {product.categoria}
+                          </Typography>
+                        </Box>
+
+                        {/* ✅ Precio con descuento */}
+                        <Box sx={{ flex: 1 }}>
+                          {priceDiscount && priceDiscount < priceOriginal ? (
+                            <>
+                              <Typography level="body2" sx={{ fontWeight: "bold", color: "#dc2626" }}>
+                                {formatCOP(priceDiscount)}
+                              </Typography>
+                              <Typography level="body2" sx={{ textDecoration: "line-through", color: "#64748b", fontSize: "0.85em" }}>
+                                {formatCOP(priceOriginal)}
+                              </Typography>
+                            </>
+                          ) : (
+                            <Typography level="body2" sx={{ fontWeight: "bold" }}>
+                              {formatCOP(priceOriginal)}
+                            </Typography>
+                          )}
+                        </Box>
+
+                        <Box sx={{ flex: 1 }}>
+                          {product.stock > 9 ? (
+                            <Typography sx={{ fontWeight: "bold", color: "green" }}>
+                              {t('favorites.inStock')}
+                            </Typography>
+                          ) : product.stock > 5 ? (
+                            <Typography sx={{ fontWeight: "bold", color: "orange" }}>
+                              {t('favorites.fewLeft')}
+                            </Typography>
+                          ) : product.stock > 0 ? (
+                            <Typography sx={{ fontWeight: "bold", color: "#ff5405ff" }}>
+                              {t('favorites.lastUnits')}
+                            </Typography>
+                          ) : (
+                            <Typography sx={{ fontWeight: "bold", color: "red" }}>
+                              {t('favorites.soldOut')}
+                            </Typography>
+                          )}
+                        </Box>
                       </Box>
+                    </Link>
 
-                      <Box sx={{ flex: 1 }}>
-                        <Typography level="body2" sx={{ fontWeight: "bold" }}>
-                          {formatCOP(product.precio_producto)}
-                        </Typography>
-                      </Box>
-
-                      <Box sx={{ flex: 1 }}>
-                        {product.stock > 9 ? (
-                          <Typography sx={{ fontWeight: "bold", color: "green" }}>
-                            {t('favorites.inStock')}
-                          </Typography>
-                        ) : product.stock > 5 ? (
-                          <Typography sx={{ fontWeight: "bold", color: "orange" }}>
-                            {t('favorites.fewLeft')}
-                          </Typography>
-                        ) : product.stock > 0 ? (
-                          <Typography sx={{ fontWeight: "bold", color: "#ff5405ff" }}>
-                            {t('favorites.lastUnits')}
-                          </Typography>
-                        ) : (
-                          <Typography sx={{ fontWeight: "bold", color: "red" }}>
-                            {t('favorites.soldOut')}
-                          </Typography>
-                        )}
-                      </Box>
-
-                    </Box>
-                  </Link>
-
-                  <Button
-                    className="colorButon"
-                    size="sm"
-                    variant="solid"
-                    color="primary"
-                    onClick={() => addToCart(product.id)}
-                    sx={{ marginRight: 4 }}
-                  >
-                    {t('favorites.addToCart')}
-                  </Button>
-                </Box>
-              ))}
+                    <Button
+                      className="colorButon"
+                      size="sm"
+                      variant="solid"
+                      color="primary"
+                      onClick={() => addToCart(product.id)}
+                      sx={{ marginRight: 4 }}
+                    >
+                      {t('favorites.addToCart')}
+                    </Button>
+                  </Box>
+                );
+              })}
             </Box>
           )}
         </Box>

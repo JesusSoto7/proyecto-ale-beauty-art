@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_10_17_020520) do
+ActiveRecord::Schema[8.0].define(version: 2025_10_19_032737) do
   create_table "active_storage_attachments", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
@@ -69,6 +69,18 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_17_020520) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["nombre"], name: "index_departments_on_nombre", unique: true
+  end
+
+  create_table "discounts", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.string "nombre", null: false
+    t.text "descripcion"
+    t.string "tipo", default: "porcentaje", null: false
+    t.decimal "valor", precision: 10, scale: 2, default: "0.0", null: false
+    t.datetime "fecha_inicio", null: false
+    t.datetime "fecha_fin"
+    t.boolean "activo", default: true, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "favorites", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
@@ -157,6 +169,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_17_020520) do
     t.datetime "updated_at", null: false
     t.string "slug"
     t.bigint "sub_category_id", null: false
+    t.bigint "discount_id"
+    t.index ["discount_id"], name: "index_products_on_discount_id"
     t.index ["slug"], name: "index_products_on_slug", unique: true
     t.index ["sub_category_id"], name: "index_products_on_sub_category_id"
   end
@@ -209,6 +223,16 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_17_020520) do
     t.index ["slug"], name: "index_sub_categories_on_slug", unique: true
   end
 
+  create_table "subcategory_discounts", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.bigint "sub_category_id", null: false
+    t.bigint "discount_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["discount_id"], name: "index_subcategory_discounts_on_discount_id"
+    t.index ["sub_category_id", "discount_id"], name: "index_subcategory_discounts_on_subcategory_and_discount", unique: true
+    t.index ["sub_category_id"], name: "index_subcategory_discounts_on_sub_category_id"
+  end
+
   create_table "user_notifications", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.bigint "user_id", null: false
     t.bigint "notification_message_id", null: false
@@ -257,12 +281,15 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_17_020520) do
   add_foreign_key "orders", "payment_methods"
   add_foreign_key "orders", "shipping_addresses"
   add_foreign_key "orders", "users"
+  add_foreign_key "products", "discounts"
   add_foreign_key "products", "sub_categories"
   add_foreign_key "reviews", "products"
   add_foreign_key "reviews", "users"
   add_foreign_key "shipping_addresses", "neighborhoods"
   add_foreign_key "shipping_addresses", "users"
   add_foreign_key "sub_categories", "categories"
+  add_foreign_key "subcategory_discounts", "discounts"
+  add_foreign_key "subcategory_discounts", "sub_categories"
   add_foreign_key "user_notifications", "notification_messages"
   add_foreign_key "user_notifications", "users"
 end

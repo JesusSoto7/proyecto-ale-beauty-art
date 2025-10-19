@@ -30,7 +30,8 @@ Rails.application.routes.draw do
         end
       end
 
-
+      get 'sub_categories', to: 'sub_categories#all'
+      
       # Quitar producto
        get "inicio", to: "inicio#index"
       # Categorías y productos  
@@ -48,7 +49,15 @@ Rails.application.routes.draw do
 
       post '/api/ia', to: 'ai#ask'
 
-      resources :notifications, only: [:index, :create, :update]
+      resources :notifications, only: [:index, :create, :update] do
+        collection do
+          get :stats
+        end
+      end
+
+      resources :discounts
+
+      resources :subcategory_discounts, only: [:index, :show, :create, :destroy]
 
       resources :categories
 

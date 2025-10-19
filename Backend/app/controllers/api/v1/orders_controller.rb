@@ -1,7 +1,7 @@
 class Api::V1::OrdersController < Api::V1::BaseController
   include Rails.application.routes.url_helpers
 
-   def show
+  def show
     order = current_user.orders.includes(order_details: :product).find(params[:id])
 
     render json: {
@@ -14,15 +14,17 @@ class Api::V1::OrdersController < Api::V1::BaseController
       tarjeta_tipo: order.tarjeta_tipo,
       tarjeta_ultimos4: order.tarjeta_ultimos4,
       productos: order.order_details.map do |od|
-        {
-          id: od.id,
-          nombre_producto: od.product.nombre_producto,
-          slug: od.product.slug, 
-          cantidad: od.cantidad,
-          precio_producto: od.precio_unitario,
-          imagen_url: od.product.imagen.attached? ? url_for(od.product.imagen) : nil
-        }
-      end
+      {
+        id: od.id,
+        nombre_producto: od.product.nombre_producto,
+        slug: od.product.slug, 
+        cantidad: od.cantidad,
+        precio_producto: od.product.precio_producto, # original
+        precio_descuento: od.precio_unitario, # con descuento
+        imagen_url: od.product.imagen.attached? ? url_for(od.product.imagen) : nil,
+        descuento: od.product.mejor_descuento_para_precio
+      }
+  end
     }
   rescue ActiveRecord::RecordNotFound
     render json: { error: "Orden no encontrada" }, status: :not_found
@@ -76,28 +78,25 @@ class Api::V1::OrdersController < Api::V1::BaseController
 
     if order.save
       if params[:order] && params[:order][:products]
-        # Crear orden directa (buy now)
         params[:order][:products].each do |product_params|
           product = Product.find(product_params[:product_id])
           cantidad = (product_params[:quantity] || product_params[:cantidad]).to_i
           order.order_details.create!(
             product: product,
             cantidad: cantidad,
-            precio_unitario: product.precio_producto
+            precio_unitario: product.precio_con_mejor_descuento # <--- aquí!
           )
         end
       else
-        # Flujo normal: copiar carrito
         current_cart.cart_products.includes(:product).each do |item|
           order.order_details.create!(
             product: item.product,
             cantidad: item.cantidad,
-            precio_unitario: item.product.precio_producto
+            precio_unitario: item.product.precio_con_mejor_descuento # <--- aquí!
           )
         end
       end
 
-      # Recalcular total (productos + envío fijo de 10k)
       total = order.order_details.sum("cantidad * precio_unitario")
       order.update!(pago_total: total + 10_000)
 

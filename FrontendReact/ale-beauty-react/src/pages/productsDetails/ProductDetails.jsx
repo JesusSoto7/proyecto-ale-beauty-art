@@ -100,7 +100,6 @@ function ProductDetails() {
         })
           .then((res) => res.json())
           .then((allProducts) => {
-            // console.log("Todos los productos:", allProducts);
             const filtered = allProducts
               .filter((p) => p.sub_category?.category?.id === data.sub_category?.category?.id && p.id !== data.id)
               .slice(0, 5);
@@ -125,7 +124,7 @@ function ProductDetails() {
       );
   }, [slug, token, t]);
 
-    useEffect(() => {        // <-- ERROR: Hook dentro de hook
+    useEffect(() => {
       if (!product) return;
       window.gtag && window.gtag('event', 'view_item', {
         items: [{
@@ -133,7 +132,7 @@ function ProductDetails() {
           item_name: product.nombre_producto,
           price: product.precio_producto,
           item_category: product.sub_category?.category?.nombre_categoria,
-          item_variant: product.sku || '', // si tienes variante
+          item_variant: product.sku || '',
         }]
       });
     }, [product]);
@@ -166,7 +165,6 @@ function ProductDetails() {
       .then((data) => {
         setReviews(data);
 
-        // Construir conteo por estrellas
         const ratingCount = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
         data.forEach((review) => {
           ratingCount[review.rating] += 1;
@@ -190,13 +188,6 @@ function ProductDetails() {
       })
       .then((data) => {
         setUser(data);
-        setFormData({
-          nombre: data.nombre || "",
-          apellido: data.apellido || "",
-          email: data.email || "",
-          telefono: data.telefono || "",
-          direccion: data.direccion || "",
-        });
       })
       .catch((err) => console.error(err));
   }, [t]);
@@ -274,7 +265,7 @@ function ProductDetails() {
           precision={0.5}
           readOnly
           sx={{
-            color: "#f896b8", // color rosa
+            color: "#f896b8",
           }}
         />
         <Typography variant="body2" sx={{ ml: 1 }}>
@@ -285,9 +276,9 @@ function ProductDetails() {
   }
 
   function ProductDescription({ description }) {
-    const limit = 150; // número de caracteres a mostrar
+    const limit = 150;
 
-    if (!description) return null; // evita error si es null o undefined
+    if (!description) return null;
 
     const shortText =
       description.length > limit
@@ -363,7 +354,6 @@ function ProductDetails() {
   };
 
 
-  // --- funciones de acciones ---
   const addToCart = (productId) => {
     fetch("https://localhost:4000/api/v1/cart/add_product", {
       method: "POST",
@@ -377,7 +367,6 @@ function ProductDetails() {
       .then((data) => {
         if (data.cart) {
           setCart(data.cart);
-          // Disparar evento para actualizar el Header
           window.dispatchEvent(new CustomEvent("cartUpdatedCustom", { bubbles: false }));
         } else if (data.errors) {
           alert(t('productDetails.error') + data.errors.join(", "));
@@ -405,9 +394,8 @@ function ProductDetails() {
       const data = await res.json();
 
       if (res.ok) {
-        // ✅ refrescamos las reseñas después de guardar
         setReviews((prev) => [...prev, data]);
-        setNewReview({ rating: 0, comentario: "" }); // limpiamos formulario
+        setNewReview({ rating: 0, comentario: "" });
       } else {
         alert("Error al enviar reseña: " + (data.errors || "desconocido"));
       }
@@ -418,11 +406,9 @@ function ProductDetails() {
   };
 
 
-  // toggle favoritos
   const toggleFavorite = async (productId) => {
     try {
       if (favoriteIds.includes(productId)) {
-        // quitar favorito
         const res = await fetch(
           `https://localhost:4000/api/v1/favorites/${productId}`,
           {
@@ -431,10 +417,9 @@ function ProductDetails() {
           }
         );
         if (res.ok) {
-          await loadFavorites(); // refresca favoritos globales
+          await loadFavorites();
         }
       } else {
-        // añadir favorito
         const res = await fetch("https://localhost:4000/api/v1/favorites", {
           method: "POST",
           headers: {
@@ -445,7 +430,7 @@ function ProductDetails() {
         });
         const data = await res.json();
         if (data.success) {
-          await loadFavorites(); // refresca favoritos globales
+          await loadFavorites();
         }
       }
     } catch (err) {
@@ -453,6 +438,10 @@ function ProductDetails() {
     }
   };
 
+  // Calcular precios con descuento
+  const priceOriginal = product.precio_producto;
+  const priceDiscount = product.precio_con_mejor_descuento;
+  const discount = product.mejor_descuento_para_precio;
 
   return (
     <div className="product-details-page" style={{marginTop: "60px"}}>
@@ -476,15 +465,31 @@ function ProductDetails() {
             </div>
             
           </div>
-          {/* componente de rating */}
-           <ProductRating value={averageRating} count={reviews.length} />
-
-          {/* <ProductRating value={product.promedio_rating} count={product.total_reviews} /> */}
+          <ProductRating value={averageRating} count={reviews.length} />
 
           <br></br>
-          <p className="price"> {formatCOP(product.precio_producto)}</p>
+          
+          {/* Precio con descuento */}
+          <div>
+            {priceDiscount && priceDiscount < priceOriginal ? (
+              <>
+                <p className="price" style={{ color: "#dc2626", fontWeight: "bold", marginBottom: "0.5rem" }}>
+                  {formatCOP(priceDiscount)}
+                  <span style={{ textDecoration: "line-through", color: "#64748b", marginLeft: "1em", fontSize: "0.9em" }}>
+                    {formatCOP(priceOriginal)}
+                  </span>
+                </p>
+                {discount && discount.tipo === "porcentaje" && (
+                  <p style={{ color: "#2563eb", fontWeight: 500, fontSize: "0.95rem", marginTop: "0" }}>
+                    {discount.valor}% de descuento
+                  </p>
+                )}
+              </>
+            ) : (
+              <p className="price">{formatCOP(priceOriginal)}</p>
+            )}
+          </div>
 
-          {/* botones de acción */}
           <div className="actions">
             <button onClick={() => handleBuyNow(product.id)}>
               {t("productDetails.buy")}
@@ -498,7 +503,6 @@ function ProductDetails() {
       </div>
 
     <section id="detalles-producto" className="details-reviews-container">
-      {/* Descripción */}
       <div style={{ 
         display: 'flex', 
         flexDirection: 'row', 
@@ -522,7 +526,6 @@ function ProductDetails() {
         </button>
       </div>
 
-      {/* Contenido dinámico */}
       {activeTab === "description" && (
         <div className="description-section">
           <p style={{ color: '#3d3d3dff', overflowWrap: "anywhere" }}>
@@ -601,7 +604,6 @@ function ProductDetails() {
                       }}
                     >
                       <div style={{ display: "flex", alignItems: "flex-start", gap: "12px" }}>
-                        {/* Imagen de usuario */}
                         <img
                           src={review.user?.avatar_url || userFoto}
                           alt={review.user?.nombre || "Usuario"}
@@ -614,7 +616,6 @@ function ProductDetails() {
                         />
 
                         <div style={{ flex: 1 }}>
-                          {/* Encabezado: nombre + fecha + estrellas */}
                           <div
                             style={{
                               display: "flex",
@@ -637,7 +638,6 @@ function ProductDetails() {
                             <Rating value={review.rating} readOnly sx={{ color: "#f896b8" }} size="small" />
                           </div>
 
-                          {/* Comentario */}
                           <p
                             style={{
                               color: "#444",
@@ -699,103 +699,121 @@ function ProductDetails() {
           <div className="carousel-container">
             <div className="carousel-items">
               {relatedProducts
-                // 👉 Filtrar por subcategoría igual a la del producto actual
                 .filter((rp) => rp.subcategoria_id === product.subcategoria_id)
-                // 👉 Tomar solo los primeros 4
                 .slice(0, 4)
-                .map((rp) => (
-                  <div
-                    className="custom-product-card"
-                    key={rp.id}
-                    style={{ position: "relative" }}
-                  >
-                    {/* Botón de favorito */}
-                    <IconButton
-                      onClick={() => toggleFavorite(rp.id)}
-                      sx={{
-                        position: "absolute",
-                        top: 8,
-                        right: 8,
-                        bgcolor: "white",
-                        "&:hover": { bgcolor: "grey.200" },
-                      }}
-                      className="custom-favorite-btn"
+                .map((rp) => {
+                  const rpPriceOriginal = rp.precio_producto;
+                  const rpPriceDiscount = rp.precio_con_mejor_descuento;
+                  const rpDiscount = rp.mejor_descuento_para_precio;
+
+                  return (
+                    <div
+                      className="custom-product-card"
+                      key={rp.id}
+                      style={{ position: "relative" }}
                     >
-                      {favoriteIds.includes(rp.id) ? (
-                        <GradientHeart filled />
-                      ) : (
-                        <GradientHeart filled={false} />
-                      )}
-                    </IconButton>
-
-                    {/* Enlace al producto */}
-                    <Link
-                      to={`/${lang}/producto/${rp.slug}`}
-                      style={{ textDecoration: "none", color: "inherit" }}
-                    >
-                      <div className="custom-image-wrapper">
-                        <img
-                          src={rp.imagen_url || noImage}
-                          alt={rp.nombre_producto}
-                          onError={(e) => {
-                            e.currentTarget.src = noImage;
-                          }}
-                        />
-                      </div>
-
-                      <div className="custom-product-info">
-                        <div className="custom-product-name-v2">
-                          {rp.nombre_producto}
-                        </div>
-                        <div
-                          className="custom-price-row-v2"
-                          style={{
-                            display: "flex",
-                            flexDirection: "row",
-                            gap: "30px",
-                          }}
-                        >
-                          <span className="custom-price-v2">
-                            {formatCOP(rp.precio_producto)}
-                          </span>
-                          <div className="custom-rating-row-v2">
-                            <span style={{ flex: 1 }}></span>
-                            <span className="custom-star">
-                              <svg
-                                width="17"
-                                height="17"
-                                viewBox="0 0 24 24"
-                                fill="#FFC107"
-                                xmlns="http://www.w3.org/2000/svg"
-                                style={{
-                                  marginRight: "2px",
-                                  verticalAlign: "middle",
-                                }}
-                              >
-                                <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
-                              </svg>
-                              <span className="custom-rating-number-v2">
-                                {productRatings[rp.id]?.avg
-                                  ? Number(productRatings[rp.id]?.avg).toFixed(1)
-                                  : "0.0"}
-                              </span>
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                    </Link>
-
-                    {/* Botón de agregar al carrito */}
-                    <div className="custom-card-footer">
-                      <button
-                        className="custom-add-btn"
-                        onClick={() => addToCart(rp.id)}
+                      <IconButton
+                        onClick={() => toggleFavorite(rp.id)}
+                        sx={{
+                          position: "absolute",
+                          top: 8,
+                          right: 8,
+                          bgcolor: "white",
+                          "&:hover": { bgcolor: "grey.200" },
+                        }}
+                        className="custom-favorite-btn"
                       >
-                        {t("home.addToCart")}
-                      </button>
+                        {favoriteIds.includes(rp.id) ? (
+                          <GradientHeart filled />
+                        ) : (
+                          <GradientHeart filled={false} />
+                        )}
+                      </IconButton>
+
+                      <Link
+                        to={`/${lang}/producto/${rp.slug}`}
+                        style={{ textDecoration: "none", color: "inherit" }}
+                      >
+                        <div className="custom-image-wrapper">
+                          <img
+                            src={rp.imagen_url || noImage}
+                            alt={rp.nombre_producto}
+                            onError={(e) => {
+                              e.currentTarget.src = noImage;
+                            }}
+                          />
+                        </div>
+
+                        <div className="custom-product-info">
+                          <div className="custom-product-name-v2">
+                            {rp.nombre_producto}
+                          </div>
+                          <div
+                            className="custom-price-row-v2"
+                            style={{
+                              display: "flex",
+                              flexDirection: "row",
+                              gap: "30px",
+                            }}
+                          >
+                            <span className="custom-price-v2">
+                              {rpPriceDiscount && rpPriceDiscount < rpPriceOriginal ? (
+                                <>
+                                  <span style={{ color: "#dc2626", fontWeight: 700 }}>
+                                    {formatCOP(rpPriceDiscount)}
+                                  </span>
+                                  <span style={{ textDecoration: "line-through", color: "#64748b", marginLeft: "0.7em", fontWeight: "normal" }}>
+                                    {formatCOP(rpPriceOriginal)}
+                                  </span>
+                                </>
+                              ) : (
+                                formatCOP(rpPriceOriginal)
+                              )}
+                            </span>
+                            <div className="custom-rating-row-v2">
+                              <span style={{ flex: 1 }}></span>
+                              <span className="custom-star">
+                                <svg
+                                  width="17"
+                                  height="17"
+                                  viewBox="0 0 24 24"
+                                  fill="#FFC107"
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  style={{
+                                    marginRight: "2px",
+                                    verticalAlign: "middle",
+                                  }}
+                                >
+                                  <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
+                                </svg>
+                                <span className="custom-rating-number-v2">
+                                  {productRatings[rp.id]?.avg
+                                    ? Number(productRatings[rp.id]?.avg).toFixed(1)
+                                    : "0.0"}
+                                </span>
+                              </span>
+                            </div>
+                          </div>
+                          {/* Mostrar porcentaje si aplica */}
+                          {rpDiscount && rpDiscount.tipo === "porcentaje" && rpPriceDiscount < rpPriceOriginal && (
+                            <div style={{ color: "#2563eb", fontWeight: 500, fontSize: "0.9rem", marginTop: "0.3rem", textAlign: "center" }}>
+                              {rpDiscount.valor}% OFF
+                            </div>
+                          )}
+                        </div>
+                      </Link>
+
+                      <div className="custom-card-footer">
+                        <button
+                          className="custom-add-btn"
+                          onClick={() => addToCart(rp.id)}
+                        >
+                          {t("home.addToCart")}
+                        </button>
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
             </div>
           </div>
         </section>
@@ -813,7 +831,6 @@ function ProductDetails() {
             }}
           ></hr>
 
-          {/* Skeletons mientras carga */}
           <div className="carousel-container">
             <div className="carousel-items">
               {[1, 2, 3, 4].map((skeleton) => (
