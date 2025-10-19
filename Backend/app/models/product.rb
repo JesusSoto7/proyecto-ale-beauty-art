@@ -38,7 +38,8 @@ class Product < ApplicationRecord
   end 
 
 
-  def mejor_descuento_para_precio(precio_base)
+  def mejor_descuento_para_precio(precio_base = nil)
+    precio_base ||= self.precio_producto
     ahora = Time.current
     candidatos = []
 
@@ -59,7 +60,8 @@ class Product < ApplicationRecord
   end
 
   # Precio final aplicando el mejor descuento
-  def precio_con_mejor_descuento(precio_base)
+  def precio_con_mejor_descuento(precio_base = nil)
+    precio_base ||= self.precio_producto
     mejor = mejor_descuento_para_precio(precio_base)
     return precio_base.to_d unless mejor
 

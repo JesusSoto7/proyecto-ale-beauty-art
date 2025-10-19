@@ -11,7 +11,7 @@ class Discount < ApplicationRecord
 
   scope :activos, -> {
     where(activo: true)
-      .where("fecha_inicio <= ? AND (fecha_fin IS NULL OR fecha_fin >= ?)", Time.current, Time.current)
+      .where("fecha_inicio <= ? AND (fecha_fin IS NULL OR fecha_fin >= ?)", Date.current, Date.current)
   }
 
   def validar_fechas
