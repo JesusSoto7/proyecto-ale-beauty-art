@@ -514,22 +514,40 @@ function ProductosCliente() {
                     </IconButton>
                   </div>
                   <div className="custom-product-info">
-                    <div className="custom-rating-row-v2">
-                      <span style={{ flex: 1 }}></span>
-                      <span className="custom-star">
-                        <svg width="17" height="17" viewBox="0 0 24 24" fill="#FFC107" xmlns="http://www.w3.org/2000/svg" style={{ marginRight: "2px", verticalAlign: "middle" }}>
-                          <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/>
-                        </svg>
-                        <span className="custom-rating-number-v2">
-                          {productRatings[prod.id]?.avg
-                            ? Number(productRatings[prod.id]?.avg).toFixed(1)
-                            : "0.0"}
-                        </span>
-                      </span>
-                    </div>
                     <div className="custom-product-name-v2">{prod.nombre_producto}</div>
-                    <div className="custom-price-row-v2">
-                      <span className="custom-price-v2">{formatCOP(prod.precio_producto)}</span>
+                    
+                    {/* PRECIO con descuento y tachado */}
+                    <div className="custom-price-v2">
+                      {prod.precio_con_mejor_descuento && prod.precio_con_mejor_descuento < prod.precio_producto ? (
+                        <>
+                          <span>{formatCOP(prod.precio_con_mejor_descuento)}</span>
+                          <span className="line-through">{formatCOP(prod.precio_producto)}</span>
+                        </>
+                      ) : (
+                        <span>{formatCOP(prod.precio_producto)}</span>
+                      )}
+                    </div>
+
+                    {/* Nombre del descuento si existe */}
+                    {prod.mejor_descuento_para_precio && (
+                      <div className="custom-descuento-nombre">
+                        {prod.mejor_descuento_para_precio.nombre}
+                        {prod.mejor_descuento_para_precio.tipo === "porcentaje"
+                          ? ` (${prod.mejor_descuento_para_precio.valor}%)`
+                          : ` (-${formatCOP(prod.mejor_descuento_para_precio.valor)})`}
+                      </div>
+                    )}
+
+                    {/* Rating ABAJO del precio */}
+                    <div className="custom-rating-row-v2">
+                      <svg width="17" height="17" viewBox="0 0 24 24" fill="#FFC107" style={{ marginRight: "2px", verticalAlign: "middle" }}>
+                        <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/>
+                      </svg>
+                      <span className="custom-rating-number-v2">
+                        {productRatings[prod.id]?.avg
+                          ? Number(productRatings[prod.id]?.avg).toFixed(1)
+                          : "0.0"}
+                      </span>
                     </div>
                   </div>
                   <div className="custom-card-footer">

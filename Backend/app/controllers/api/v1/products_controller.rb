@@ -95,7 +95,7 @@ class Api::V1::ProductsController < Api::V1::BaseController
 
   def novedades
     @products = Product.novedades
-    render json: @products.as_json(methods: [:imagen_url])
+    render json: @products.as_json(methods: [:imagen_url, :mejor_descuento_para_precio, :precio_con_mejor_descuento])
   end
 
   private

@@ -121,4 +121,12 @@ class Api::V1::PaymentsController < Api::V1::BaseController
 
   end
 
+  
+  def calculate_cart_total_with_discounts(cart)
+    cart.cart_products.includes(:product).sum do |cp|
+      price = cp.product.precio_con_mejor_descuento || cp.product.precio_producto
+      price * cp.cantidad
+    end
+  end
+
 end

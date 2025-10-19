@@ -25,7 +25,7 @@ class Api::V1::SubCategoriesController < Api::V1::BaseController
       ),
       products: products.as_json(
         only: [:id, :nombre_producto, :descripcion, :precio_producto, :slug, :stock, :sub_category_id],
-        methods: [:imagen_url],
+        methods: [:imagen_url, :precio_con_mejor_descuento, :mejor_descuento_para_precio], # <-- AQUI!
         include: {
           sub_category: { only: [:id, :nombre, :slug] }
         }

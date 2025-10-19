@@ -73,7 +73,7 @@ export default function ProductsPageSubCategory() {
         );
         if (!res.ok) throw new Error("Error al cargar los productos");
         const data = await res.json();
-        console.log("products response", data); // <-- verifica aquí
+        console.log("products response", data);
         const prods = data.products || [];
         setProducts(prods);
 
@@ -107,7 +107,6 @@ export default function ProductsPageSubCategory() {
     fetchCategoryProducts();
   }, [token, categorySlug, subCategorySlug]);
 
-
   useEffect(() => {
     if (!token) return;
     async function fetchSubCategory() {
@@ -118,7 +117,6 @@ export default function ProductsPageSubCategory() {
         );
         if (!res.ok) throw new Error("Error al cargar la subcategoría");
         const data = await res.json();
-        console.log("subCategory response", data); // <-- AÑADE ESTO
         setSubCategory(data);
       } catch (err) {
         setSubCategory(null);
@@ -173,7 +171,6 @@ export default function ProductsPageSubCategory() {
     }
   };
 
-  // NUEVO addToCart: actualiza el carrito y sube el contador, sin alert
   const addToCart = (productId) => {
     fetch("https://localhost:4000/api/v1/cart/add_product", {
       method: "POST",
@@ -187,13 +184,10 @@ export default function ProductsPageSubCategory() {
       .then((data) => {
         if (data.cart) {
           setCart(data.cart);
-          // Notifica al header para subir el contador
           window.dispatchEvent(new CustomEvent("cartUpdatedCustom", { bubbles: false }));
         }
-        // No alert
       })
       .catch((err) => {
-        // Silencia el error y NO muestra alerta
         console.error(t("productDetails.cartAddError"), err);
       });
   };
@@ -223,7 +217,6 @@ export default function ProductsPageSubCategory() {
       </Typography>
     );
 
-
   function toTitleCase(str) {
     return str ? str.replace(/\w\S*/g, (txt) =>
       txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase()
@@ -249,7 +242,6 @@ export default function ProductsPageSubCategory() {
         </div>
         </div>
         <div className="shop-container">
-          {/* Sidebar de filtros */}
           <aside className="filter-sidebar">
             <h3>Filtros</h3>
             <div className="filter-group">
@@ -339,31 +331,14 @@ export default function ProductsPageSubCategory() {
               </button>
             )}
           </aside>
-          {/* Grid de productos */}
           <div className="products-grid">
             {filteredProducts.map((prod) => (
-              <div
-                key={prod.id}
-                className="product-card custom-product-card"
-                style={{ cursor: "pointer" }}
-                onClick={() => navigate(`/${lang}/producto/${prod.slug}`)}
-                tabIndex={0}
-                onKeyDown={e => {
-                  if (e.key === 'Enter' || e.key === ' ') {
-                    navigate(`/${lang}/producto/${prod.slug}`);
-                  }
-                }}
-              >
+              <div className="custom-product-card product-card" key={prod.id} style={{ cursor: "pointer" }} onClick={() => navigate(`/${lang}/producto/${prod.slug}`)} tabIndex={0}
+                onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { navigate(`/${lang}/producto/${prod.slug}`); } }}>
                 <div className="custom-image-wrapper">
-                  <img
-                    src={prod.imagen_url || noImage}
-                    alt={prod.nombre_producto}
-                  />
+                  <img src={prod.imagen_url || noImage} alt={prod.nombre_producto} />
                   <IconButton
-                    onClick={e => {
-                      e.stopPropagation();
-                      toggleFavorite(prod.id);
-                    }}
+                    onClick={e => { e.stopPropagation(); toggleFavorite(prod.id); }}
                     className="custom-favorite-btn"
                     style={{ padding: 0, background: "transparent" }}
                   >
@@ -375,31 +350,35 @@ export default function ProductsPageSubCategory() {
                 </div>
                 <div className="custom-product-info">
                   <div className="custom-rating-row-v2">
-                    <span style={{ flex: 1 }}></span>
-                    <span className="custom-star">
-                      <svg width="17" height="17" viewBox="0 0 24 24" fill="#FFC107" xmlns="http://www.w3.org/2000/svg" style={{ marginRight: "2px", verticalAlign: "middle" }}>
-                        <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/>
-                      </svg>
-                      <span className="custom-rating-number-v2">
-                        {productRatings[prod.id]?.avg
-                          ? Number(productRatings[prod.id]?.avg).toFixed(1)
-                          : "0.0"}
-                      </span>
-                    </span>
+                    <svg width="17" height="17" viewBox="0 0 24 24" fill="#FFC107" style={{ marginRight: "2px", verticalAlign: "middle" }}>
+                      <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/>
+                    </svg>
+                    <span className="custom-rating-number-v2">{productRatings[prod.id]?.avg ? Number(productRatings[prod.id]?.avg).toFixed(1) : "0.0"}</span>
                   </div>
                   <div className="custom-product-name-v2">{prod.nombre_producto}</div>
                   <div className="custom-price-row-v2">
-                    <span className="custom-price-v2">{formatCOP(prod.precio_producto)}</span>
+                    {/* DESCUENTO */}
+                    {prod.precio_con_mejor_descuento && prod.precio_con_mejor_descuento < prod.precio_producto ? (
+                      <>
+                        <span className="custom-price-v2">{formatCOP(prod.precio_con_mejor_descuento)}</span>
+                        <span className="custom-price-v2 line-through">{formatCOP(prod.precio_producto)}</span>
+                      </>
+                    ) : (
+                      <span className="custom-price-v2">{formatCOP(prod.precio_producto)}</span>
+                    )}
                   </div>
+                  {/* Nombre del descuento SOLO si existe y hay descuento */}
+                  {prod.mejor_descuento_para_precio && prod.precio_con_mejor_descuento < prod.precio_producto && (
+                    <div className="custom-descuento-nombre">
+                      {prod.mejor_descuento_para_precio.nombre}
+                      {prod.mejor_descuento_para_precio.tipo === "porcentaje"
+                        ? ` (${prod.mejor_descuento_para_precio.valor}%)`
+                        : ` (-${formatCOP(prod.mejor_descuento_para_precio.valor)})`}
+                    </div>
+                  )}
                 </div>
                 <div className="custom-card-footer">
-                  <button
-                    onClick={e => {
-                      e.stopPropagation();
-                      addToCart(prod.id);
-                    }}
-                    className="custom-add-btn"
-                  >
+                  <button onClick={e => { e.stopPropagation(); addToCart(prod.id); }} className="custom-add-btn">
                     {t("products.addToCart")}
                   </button>
                 </div>
