@@ -1,4 +1,3 @@
-# app/controllers/api/v1/favorites_controller.rb
 class Api::V1::FavoritesController < Api::V1::BaseController
   before_action :set_product, only: [:create]
   

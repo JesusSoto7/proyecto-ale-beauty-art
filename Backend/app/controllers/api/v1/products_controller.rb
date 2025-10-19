@@ -11,9 +11,10 @@ class Api::V1::ProductsController < Api::V1::BaseController
         sub_category: {
           only: [:id, :nombre],
           include: { category: { only: [:id, :nombre_categoria] } }
-        }
+        },
+        discount: { only: [:id, :nombre, :descripcion, :tipo, :valor, :fecha_inicio, :fecha_fin, :activo] }
       },
-      methods: [:slug, :imagen_url]
+      methods: [:slug, :imagen_url, :mejor_descuento_para_precio, :precio_con_mejor_descuento]
     ), status: :ok
   end
 
@@ -23,9 +24,10 @@ class Api::V1::ProductsController < Api::V1::BaseController
         sub_category: {
           only: [:id, :nombre],
           include: { category: { only: [:id, :nombre_categoria] } }
-        }
+        },
+        discount: { only: [:id, :nombre, :descripcion, :tipo, :valor, :fecha_inicio, :fecha_fin, :activo] }
       },
-      methods: [:imagen_url]
+      methods: [:imagen_url, :mejor_descuento_para_precio, :precio_con_mejor_descuento]
     ), status: :ok
   end
 
@@ -39,9 +41,10 @@ class Api::V1::ProductsController < Api::V1::BaseController
           sub_category: {
             only: [:id, :nombre],
             include: { category: { only: [:id, :nombre_categoria] } }
-          }
+          },
+          discount: { only: [:id, :nombre, :descripcion, :tipo, :valor, :fecha_inicio, :fecha_fin, :activo] }
         },
-        methods: [:imagen_url]
+        methods: [:imagen_url, :mejor_descuento_para_precio, :precio_con_mejor_descuento]
       ), status: :created
     else
       render json: { errors: @product.errors.full_messages }, status: :unprocessable_entity
@@ -58,9 +61,10 @@ class Api::V1::ProductsController < Api::V1::BaseController
           sub_category: {
             only: [:id, :nombre],
             include: { category: { only: [:id, :nombre_categoria] } }
-          }
+          },
+          discount: { only: [:id, :nombre, :descripcion, :tipo, :valor, :fecha_inicio, :fecha_fin, :activo] }
         },
-        methods: [:imagen_url]
+        methods: [:imagen_url, :mejor_descuento_para_precio, :precio_con_mejor_descuento]
       ), status: :ok
     else
       render json: { errors: @product.errors.full_messages }, status: :unprocessable_entity
@@ -116,6 +120,7 @@ class Api::V1::ProductsController < Api::V1::BaseController
       :precio_producto,
       :stock,
       :sub_category_id,
+      :discount_id,
       :imagen 
     )
   end

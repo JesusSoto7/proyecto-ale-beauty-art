@@ -1,0 +1,19 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  nombre: MyString
+  descripcion: MyText
+  tipo: MyString
+  valor: 9.99
+  fecha_inicio: 2025-10-18 23:02:09
+  fecha_fin: 2025-10-18 23:02:09
+  activo: false
+
+two:
+  nombre: MyString
+  descripcion: MyText
+  tipo: MyString
+  valor: 9.99
+  fecha_inicio: 2025-10-18 23:02:09
+  fecha_fin: 2025-10-18 23:02:09
+  activo: false

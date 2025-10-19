@@ -1,9 +1,9 @@
 class Api::V1::SubCategoriesController < Api::V1::BaseController
   include Rails.application.routes.url_helpers
 
-  before_action :set_category
+  before_action :set_category, except: [:all]
   before_action :set_sub_category, only: [:show, :update, :destroy, :products_by_sub]
-  skip_before_action :authorize_request, only: [:index, :show]
+  skip_before_action :authorize_request, only: [:index, :show, :all]
 
   # GET /api/v1/categories/:category_slug/sub_categories
   def index
@@ -67,6 +67,14 @@ class Api::V1::SubCategoriesController < Api::V1::BaseController
     render json: { message: "SubCategoría eliminada" }, status: :ok
   end
 
+  def all
+    subcategories = SubCategory.includes(:category).with_attached_imagen
+    render json: subcategories.as_json(
+      only: [:id, :nombre, :category_id],
+      include: { category: { only: [:id, :nombre_categoria, :slug] } },
+      methods: [:slug, :imagen_url]
+    ), status: :ok
+  end
 
   def products
     products = @sub_category.products.with_attached_imagen
