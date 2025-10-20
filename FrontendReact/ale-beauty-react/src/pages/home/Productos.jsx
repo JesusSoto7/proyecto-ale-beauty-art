@@ -120,7 +120,6 @@ const ProductTable = () => {
         label="Nombre del Producto"
         error={!!validationErrors?.nombre_producto}
         helperText={validationErrors?.nombre_producto}
-        placeholder="Ej: Laptop HP, Camiseta Nike..."
         autoComplete="off"
         InputLabelProps={{ shrink: true }}
       />
@@ -146,7 +145,6 @@ const ProductTable = () => {
         multiline
         rows={5}
         label="Descripción del Producto"
-        placeholder="Describe las características, especificaciones y detalles del producto..."
         InputLabelProps={{ shrink: true }}
         sx={{
           "& .MuiOutlinedInput-root": {

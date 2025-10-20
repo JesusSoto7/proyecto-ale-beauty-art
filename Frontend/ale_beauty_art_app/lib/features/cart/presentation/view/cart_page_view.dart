@@ -117,7 +117,7 @@ class _CartPageViewState extends State<CartPageView> {
             final cantidad = product['cantidad'] ?? 1;
             final precioOriginal = _parsePrice(product['precio_producto']);
             final precioConDescuento =
-                _parsePrice(product['precio_con_descuento']) ?? precioOriginal;
+                _parsePrice(product['precio_con_descuento']);
 
             subtotal += precioOriginal * cantidad;
             totalDescuentos += (precioOriginal - precioConDescuento) * cantidad;
@@ -146,8 +146,7 @@ class _CartPageViewState extends State<CartPageView> {
                     final precioOriginal =
                         _parsePrice(product['precio_producto']);
                     final precioConDescuento =
-                        _parsePrice(product['precio_con_descuento']) ??
-                            precioOriginal;
+                        _parsePrice(product['precio_con_descuento']);
                     final tieneDescuento = product['tiene_descuento'] == true ||
                         precioConDescuento < precioOriginal;
 
