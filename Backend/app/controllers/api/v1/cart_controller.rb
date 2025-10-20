@@ -1,6 +1,6 @@
 module Api
   module V1
-    class CartController <  Api::V1::BaseController
+    class CartController < Api::V1::BaseController
       def show
         cart = current_user.cart || current_user.create_cart
         render json: cart_json(cart)
@@ -43,15 +43,30 @@ module Api
       def cart_json(cart)
         {
           id: cart.id,
-          products: cart.cart_products.includes(:product).map do |cp|
+          products: cart.cart_products.includes(product: [:discount]).map do |cp|
+            product = cp.product
+            mejor_descuento = product.mejor_descuento_para_precio(product.precio_producto)
+            precio_con_descuento = product.precio_con_mejor_descuento(product.precio_producto)
+            
             {
-              product_id: cp.product.id,
-              nombre_producto: cp.product.nombre_producto,
+              product_id: product.id,
+              nombre_producto: product.nombre_producto,
               cantidad: cp.cantidad,
-              precio_producto: cp.product.precio_producto,
-              imagen_url: cp.product.imagen.attached? ? url_for(cp.product.imagen) : nil,
-              precio_con_mejor_descuento: cp.product.precio_con_mejor_descuento,
-              mejor_descuento_para_precio: cp.product.mejor_descuento_para_precio
+              precio_producto: product.precio_producto,
+              imagen_url: product.imagen.attached? ? url_for(product.imagen) : nil,
+              
+              # ✅ (para web)
+              precio_con_mejor_descuento: precio_con_descuento,
+              mejor_descuento_para_precio: mejor_descuento,
+              
+              # (para móvil - más optimizados)
+              precio_con_descuento: precio_con_descuento,
+              tiene_descuento: mejor_descuento.present? && precio_con_descuento < product.precio_producto,
+              porcentaje_descuento: if mejor_descuento.present?
+                ((product.precio_producto - precio_con_descuento) / product.precio_producto * 100).round
+              else
+                0
+              end
             }
           end
         }

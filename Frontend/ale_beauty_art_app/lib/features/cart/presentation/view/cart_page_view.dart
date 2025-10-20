@@ -1,3 +1,4 @@
+import 'package:ale_beauty_art_app/core/utils/formatters.dart';
 import 'package:ale_beauty_art_app/core/views/loading_view.dart';
 import 'package:ale_beauty_art_app/features/cart/presentation/bloc/cart_bloc.dart';
 import 'package:ale_beauty_art_app/features/cart/presentation/bloc/cart_event.dart';
@@ -20,14 +21,12 @@ class _CartPageViewState extends State<CartPageView> {
   @override
   void initState() {
     super.initState();
-    // Sincronizar token del usuario (si existe) y cargar el carrito de inmediato
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final authState = context.read<AuthBloc>().state;
       final cartBloc = context.read<CartBloc>();
       if (authState is AuthSuccess) {
         cartBloc.add(UpdateCartToken(authState.token));
       } else {
-        // Limpiar token para mostrar carrito vacío sin error
         cartBloc.add(UpdateCartToken(''));
       }
       cartBloc.add(LoadCart());
@@ -79,11 +78,11 @@ class _CartPageViewState extends State<CartPageView> {
       body: BlocBuilder<CartBloc, CartState>(
         builder: (context, state) {
           if (state.isLoading) {
-            return LoadingView();
+            return const LoadingView();
           }
 
-          // Si no hay token o hay error, mostramos carrito vacío de forma amigable
-          if ((state.token == null || state.token!.isEmpty) && state.products.isEmpty) {
+          if ((state.token == null || state.token!.isEmpty) &&
+              state.products.isEmpty) {
             return const Center(
               child: Text(
                 'Agrega productos a tu carrito',
@@ -110,13 +109,23 @@ class _CartPageViewState extends State<CartPageView> {
             );
           }
 
-          final subtotal = state.products.fold<double>(
-            0,
-            (sum, item) =>
-                sum + (item['precio_producto'] ?? 0) * (item['cantidad'] ?? 1),
-          );
-          double shippingCost = 10000;
-          final total = subtotal + shippingCost;
+          // 💰 Cálculo de precios con descuentos
+          double subtotal = 0;
+          double totalDescuentos = 0;
+
+          for (var product in state.products) {
+            final cantidad = product['cantidad'] ?? 1;
+            final precioOriginal = _parsePrice(product['precio_producto']);
+            final precioConDescuento =
+                _parsePrice(product['precio_con_descuento']) ?? precioOriginal;
+
+            subtotal += precioOriginal * cantidad;
+            totalDescuentos += (precioOriginal - precioConDescuento) * cantidad;
+          }
+
+          final subtotalConDescuento = subtotal - totalDescuentos;
+          const double shippingCost = 10000;
+          final total = subtotalConDescuento + shippingCost;
           final token = state.token ?? '';
 
           return Column(
@@ -132,7 +141,25 @@ class _CartPageViewState extends State<CartPageView> {
                         product['nombre_producto'] ?? 'Producto sin nombre';
                     final imageUrl = product['imagen_url'] ?? '';
                     final cantidad = product['cantidad'] ?? 1;
-                    final precio = product['precio_producto'] ?? 0;
+
+                    // 🔥 CORREGIDO: Usar _parsePrice en lugar de .toDouble()
+                    final precioOriginal =
+                        _parsePrice(product['precio_producto']);
+                    final precioConDescuento =
+                        _parsePrice(product['precio_con_descuento']) ??
+                            precioOriginal;
+                    final tieneDescuento = product['tiene_descuento'] == true ||
+                        precioConDescuento < precioOriginal;
+
+                    // Calcular porcentaje de descuento
+                    int porcentajeDescuento = 0;
+                    if (tieneDescuento && precioOriginal > 0) {
+                      porcentajeDescuento =
+                          (((precioOriginal - precioConDescuento) /
+                                      precioOriginal) *
+                                  100)
+                              .round();
+                    }
 
                     return Stack(
                       clipBehavior: Clip.none,
@@ -154,53 +181,153 @@ class _CartPageViewState extends State<CartPageView> {
                           child: Row(
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
-                              ClipRRect(
-                                borderRadius: BorderRadius.circular(12),
-                                child: imageUrl.isNotEmpty
-                                    ? Image.network(
-                                        imageUrl,
-                                        width: 80,
-                                        height: 80,
-                                        fit: BoxFit.cover,
-                                        errorBuilder: (context, error, stackTrace) => Container(
-                                          width: 80,
-                                          height: 80,
-                                          color: Colors.grey.shade200,
-                                          child: const Icon(Icons.broken_image, color: Colors.grey),
+                              // 🖼️ Imagen del producto
+                              Stack(
+                                children: [
+                                  ClipRRect(
+                                    borderRadius: BorderRadius.circular(12),
+                                    child: imageUrl.isNotEmpty
+                                        ? Image.network(
+                                            imageUrl,
+                                            width: 80,
+                                            height: 80,
+                                            fit: BoxFit.cover,
+                                            errorBuilder:
+                                                (context, error, stackTrace) =>
+                                                    Container(
+                                              width: 80,
+                                              height: 80,
+                                              color: Colors.grey.shade200,
+                                              child: const Icon(
+                                                  Icons.broken_image,
+                                                  color: Colors.grey),
+                                            ),
+                                          )
+                                        : Container(
+                                            width: 80,
+                                            height: 80,
+                                            color: Colors.grey.shade200,
+                                            child: const Icon(
+                                                Icons.image_outlined,
+                                                color: Colors.grey),
+                                          ),
+                                  ),
+                                  // 🏷️ Badge de descuento en la imagen
+                                  if (tieneDescuento && porcentajeDescuento > 0)
+                                    Positioned(
+                                      top: 4,
+                                      left: 4,
+                                      child: Container(
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 6,
+                                          vertical: 3,
                                         ),
-                                      )
-                                    : Container(
-                                        width: 80,
-                                        height: 80,
-                                        color: Colors.grey.shade200,
-                                        child: const Icon(Icons.image_outlined, color: Colors.grey),
+                                        decoration: BoxDecoration(
+                                          gradient: const LinearGradient(
+                                            colors: [
+                                              Color(0xFFFF6B9D),
+                                              Color(0xFFFF8FB3),
+                                            ],
+                                          ),
+                                          borderRadius:
+                                              BorderRadius.circular(6),
+                                          boxShadow: [
+                                            BoxShadow(
+                                              color: const Color(0xFFFF6B9D)
+                                                  .withOpacity(0.4),
+                                              blurRadius: 4,
+                                              offset: const Offset(0, 2),
+                                            ),
+                                          ],
+                                        ),
+                                        child: Text(
+                                          '-$porcentajeDescuento%',
+                                          style: const TextStyle(
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 10,
+                                          ),
+                                        ),
                                       ),
+                                    ),
+                                ],
                               ),
                               const SizedBox(width: 16),
+
+                              // 📝 Información del producto
                               Expanded(
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
                                       nombre,
-                                      style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w600),
+                                      style: const TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis,
                                     ),
                                     const SizedBox(height: 6),
-                                    Text(
-                                      '\$${precio.toStringAsFixed(2)}',
-                                      style: const TextStyle(fontSize: 15, color: Colors.black54),
-                                    ),
+
+                                    // 💰 Precios
+                                    if (tieneDescuento)
+                                      Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          // Precio original tachado
+                                          Text(
+                                            formatPriceCOP(
+                                                precioOriginal.toInt()),
+                                            style: TextStyle(
+                                              fontSize: 12,
+                                              color: Colors.grey[500],
+                                              decoration:
+                                                  TextDecoration.lineThrough,
+                                              decorationColor: Colors.grey[400],
+                                              decorationThickness: 1.5,
+                                            ),
+                                          ),
+                                          const SizedBox(height: 2),
+                                          // Precio con descuento
+                                          Text(
+                                            formatPriceCOP(
+                                                precioConDescuento.toInt()),
+                                            style: const TextStyle(
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.bold,
+                                              color: Color(0xFFD95D85),
+                                            ),
+                                          ),
+                                        ],
+                                      )
+                                    else
+                                      Text(
+                                        formatPriceCOP(precioOriginal.toInt()),
+                                        style: const TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold,
+                                          color: Color(0xFFD95D85),
+                                        ),
+                                      ),
                                   ],
                                 ),
                               ),
                               const SizedBox(width: 12),
+
+                              // 🔢 Contador de cantidad
                               Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 6),
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 6),
                                 decoration: BoxDecoration(
                                   gradient: const LinearGradient(
                                     begin: Alignment.topLeft,
                                     end: Alignment.bottomRight,
-                                    colors: [Color(0xFFD95D85), Color(0xFFE58BB1)],
+                                    colors: [
+                                      Color(0xFFD95D85),
+                                      Color(0xFFE58BB1)
+                                    ],
                                   ),
                                   borderRadius: BorderRadius.circular(30),
                                   boxShadow: [
@@ -216,12 +343,15 @@ class _CartPageViewState extends State<CartPageView> {
                                     _iconButton(Icons.remove, () {
                                       if (cantidad > 1) {
                                         context.read<CartBloc>().add(
-                                              RemoveProductFromCart(productId: product['product_id']),
+                                              RemoveProductFromCart(
+                                                  productId:
+                                                      product['product_id']),
                                             );
                                       }
                                     }),
                                     Padding(
-                                      padding: const EdgeInsets.symmetric(horizontal: 10),
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 10),
                                       child: Text(
                                         cantidad.toString(),
                                         style: const TextStyle(
@@ -245,12 +375,15 @@ class _CartPageViewState extends State<CartPageView> {
                             ],
                           ),
                         ),
+
+                        // ❌ Botón eliminar
                         Positioned(
                           top: -6,
                           right: -6,
                           child: GestureDetector(
                             onTap: () async {
-                              final confirm = await _confirmDelete(context, nombre);
+                              final confirm =
+                                  await _confirmDelete(context, nombre);
                               if (confirm == true) {
                                 context.read<CartBloc>().add(
                                       RemoveProductCompletely(
@@ -266,11 +399,15 @@ class _CartPageViewState extends State<CartPageView> {
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
                                 gradient: const LinearGradient(
-                                  colors: [Color(0xFFD95D85), Color(0xFFE58BB1)],
+                                  colors: [
+                                    Color(0xFFD95D85),
+                                    Color(0xFFE58BB1)
+                                  ],
                                   begin: Alignment.topLeft,
                                   end: Alignment.bottomRight,
                                 ),
-                                border: Border.all(color: Colors.white, width: 2),
+                                border:
+                                    Border.all(color: Colors.white, width: 2),
                                 boxShadow: [
                                   BoxShadow(
                                     color: Colors.black.withOpacity(0.15),
@@ -280,7 +417,8 @@ class _CartPageViewState extends State<CartPageView> {
                                 ],
                               ),
                               child: const Center(
-                                child: Icon(Icons.close_rounded, size: 16, color: Colors.white),
+                                child: Icon(Icons.close_rounded,
+                                    size: 16, color: Colors.white),
                               ),
                             ),
                           ),
@@ -290,6 +428,8 @@ class _CartPageViewState extends State<CartPageView> {
                   },
                 ),
               ),
+
+              // 💳 Resumen de compra
               Container(
                 padding:
                     const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
@@ -307,12 +447,15 @@ class _CartPageViewState extends State<CartPageView> {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     _priceRow('Subtotal', subtotal),
+                    if (totalDescuentos > 0)
+                      _priceRow('Descuentos', -totalDescuentos,
+                          isDiscount: true),
                     _priceRow('Costo de envío', shippingCost),
-                    const Divider(),
+                    const Divider(height: 20),
                     _priceRow('Total', total, isBold: true),
                     const SizedBox(height: 18),
 
-                    // 🔹 BOTÓN CON GRADIENTE
+                    // 🛒 Botón de compra
                     Container(
                       decoration: BoxDecoration(
                         gradient: const LinearGradient(
@@ -353,8 +496,8 @@ class _CartPageViewState extends State<CartPageView> {
                         },
                         style: ElevatedButton.styleFrom(
                           padding: const EdgeInsets.symmetric(vertical: 18),
-                          backgroundColor: Colors.transparent, // transparente
-                          shadowColor: Colors.transparent, // sin sombra extra
+                          backgroundColor: Colors.transparent,
+                          shadowColor: Colors.transparent,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(14),
                           ),
@@ -388,7 +531,8 @@ class _CartPageViewState extends State<CartPageView> {
     );
   }
 
-  Widget _priceRow(String label, double value, {bool isBold = false}) {
+  Widget _priceRow(String label, double value,
+      {bool isBold = false, bool isDiscount = false}) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 3),
       child: Row(
@@ -397,16 +541,17 @@ class _CartPageViewState extends State<CartPageView> {
           Text(
             label,
             style: TextStyle(
-              color: Colors.black54,
+              color: isDiscount ? const Color(0xFFD95D85) : Colors.black54,
               fontSize: 14,
               fontWeight: isBold ? FontWeight.w600 : FontWeight.normal,
             ),
           ),
           Text(
-            '\$${value.toStringAsFixed(2)}',
+            formatPriceCOP(value.toInt()),
             style: TextStyle(
               fontSize: 15,
               fontWeight: isBold ? FontWeight.w700 : FontWeight.w500,
+              color: isDiscount ? const Color(0xFFD95D85) : Colors.black87,
             ),
           ),
         ],
@@ -422,8 +567,8 @@ class _CartPageViewState extends State<CartPageView> {
         titlePadding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
         contentPadding: const EdgeInsets.fromLTRB(20, 12, 20, 0),
         actionsPadding: const EdgeInsets.fromLTRB(12, 8, 12, 12),
-        title: Row(
-          children: const [
+        title: const Row(
+          children: [
             Icon(Icons.delete_forever_rounded, color: Color(0xFFD95D85)),
             SizedBox(width: 8),
             Text('Eliminar producto'),
@@ -447,16 +592,39 @@ class _CartPageViewState extends State<CartPageView> {
             style: ElevatedButton.styleFrom(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
               backgroundColor: const Color(0xFFD95D85),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10)),
               elevation: 0,
             ),
             child: const Text(
               'Eliminar',
-              style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
+              style:
+                  TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
             ),
           ),
         ],
       ),
     );
+  }
+
+  /// 🔧 Helper: Parsea de forma segura un precio que puede venir como int, double o String
+  double _parsePrice(dynamic value) {
+    if (value == null) return 0.0;
+
+    if (value is double) return value;
+    if (value is int) return value.toDouble();
+
+    if (value is String) {
+      // Intenta parsear el string
+      final parsed = double.tryParse(value);
+      return parsed ?? 0.0;
+    }
+
+    // Si es otro tipo (como num), conviértelo
+    try {
+      return (value as num).toDouble();
+    } catch (e) {
+      return 0.0;
+    }
   }
 }

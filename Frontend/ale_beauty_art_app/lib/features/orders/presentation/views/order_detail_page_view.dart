@@ -34,136 +34,248 @@ class _OrderDetailPageViewState extends State<OrderDetailPageView> {
     if (v == null) return null;
     if (v is int) {
       final isSeconds = v.toString().length == 10;
-      final dt = DateTime.fromMillisecondsSinceEpoch(isSeconds ? v * 1000 : v, isUtc: true);
+      final dt = DateTime.fromMillisecondsSinceEpoch(isSeconds ? v * 1000 : v,
+          isUtc: true);
       return dt.toLocal();
     }
     final dt = DateTime.tryParse(v.toString());
     return dt?.toLocal();
   }
 
+  double _parsePrice(dynamic value) {
+    if (value == null) return 0.0;
+    if (value is double) return value;
+    if (value is int) return value.toDouble();
+    if (value is String) {
+      final parsed = double.tryParse(value);
+      return parsed ?? 0.0;
+    }
+    try {
+      return (value as num).toDouble();
+    } catch (e) {
+      return 0.0;
+    }
+  }
+
+  Color _getStatusColor(String status) {
+    switch (status.toLowerCase()) {
+      case 'pagado':
+      case 'paid':
+      case 'completado':
+      case 'pagada':
+        return const Color(0xFF4CAF50);
+      case 'pendiente':
+      case 'pending':
+        return const Color(0xFFFF9800);
+      case 'cancelado':
+      case 'cancelled':
+        return const Color(0xFFE53935);
+      case 'enviado':
+      case 'shipped':
+        return const Color(0xFF2196F3);
+      default:
+        return Colors.grey;
+    }
+  }
+
+  IconData _getStatusIcon(String status) {
+    switch (status.toLowerCase()) {
+      case 'pagado':
+      case 'paid':
+      case 'completado':
+      case 'pagada':
+        return Icons.check_circle_rounded;
+      case 'pendiente':
+      case 'pending':
+        return Icons.schedule_rounded;
+      case 'cancelado':
+      case 'cancelled':
+        return Icons.cancel_rounded;
+      case 'enviado':
+      case 'shipped':
+        return Icons.local_shipping_rounded;
+      default:
+        return Icons.info_rounded;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 3,
-        centerTitle: true,
-        title: const Text(
-          'Detalle de pedido',
-          style: TextStyle(
-            color: Colors.black,
-            fontSize: 18,
-            fontWeight: FontWeight.w600,
+      backgroundColor: const Color(0xFFF8F8F8),
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(56),
+        child: Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.08),
+                blurRadius: 12,
+                offset: const Offset(0, 3),
+              ),
+            ],
+          ),
+          child: AppBar(
+            backgroundColor: Colors.white,
+            elevation: 0,
+            centerTitle: true,
+            systemOverlayStyle: SystemUiOverlayStyle.dark,
+            leading: IconButton(
+              icon: const Icon(
+                Icons.arrow_back_ios_new_rounded,
+                size: 20,
+                color: Color(0xFFD95D85),
+              ),
+              onPressed: () => Navigator.pop(context),
+            ),
+            title: const Text(
+              'Detalle del Pedido',
+              style: TextStyle(
+                color: Colors.black87,
+                fontSize: 18,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
           ),
         ),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 20, color: Colors.black87),
-          onPressed: () => Navigator.pop(context),
-        ),
-        systemOverlayStyle: SystemUiOverlayStyle.dark,
       ),
-      backgroundColor: const Color(0xFFF8F5F7),
       body: BlocBuilder<OrderDetailCubit, OrderDetailState>(
         builder: (context, state) {
           if (state is OrderDetailLoading) {
-            return const Center(child: CircularProgressIndicator());
+            return const Center(
+              child: CircularProgressIndicator(
+                color: Color(0xFFD95D85),
+              ),
+            );
           }
+
           if (state is OrderDetailError) {
             return RefreshIndicator(
+              color: const Color(0xFFD95D85),
               onRefresh: _refresh,
               child: ListView(
                 padding: const EdgeInsets.symmetric(vertical: 120),
                 children: [
-                  Center(child: Text(state.message)),
+                  Icon(
+                    Icons.error_outline_rounded,
+                    size: 80,
+                    color: Colors.grey[400],
+                  ),
+                  const SizedBox(height: 16),
+                  Center(
+                    child: Text(
+                      state.message,
+                      style: const TextStyle(
+                        fontSize: 16,
+                        color: Colors.black87,
+                      ),
+                    ),
+                  ),
                   const SizedBox(height: 8),
-                  const Center(child: Text('Desliza para reintentar')),
+                  Center(
+                    child: Text(
+                      'Desliza para reintentar',
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Colors.grey[600],
+                      ),
+                    ),
+                  ),
                 ],
               ),
             );
           }
+
           if (state is OrderDetailLoaded) {
             final o = state.order;
             final numero = _text(o['numero_de_orden'] ?? o['id']);
-            final status = _text(o['status']).toUpperCase();
+            final status = _text(o['status']);
             final totalRaw = o['pago_total'] ?? o['total'];
-            final total = totalRaw is num
-                ? (totalRaw).toDouble()
-                : (double.tryParse(totalRaw?.toString() ?? '') ?? 0.0);
-            final fechaRaw = o['fecha_pago'] ?? o['paid_at'] ?? o['created_at'] ?? o['updated_at'];
+            final total = _parsePrice(totalRaw);
+            final fechaRaw = o['fecha_pago'] ??
+                o['paid_at'] ??
+                o['created_at'] ??
+                o['updated_at'];
             final fecha = _date(fechaRaw);
-            final direccion = _text(o['direccion_envio'] ?? o['shipping_address'], fallback: 'No disponible');
-            final cardType = _text(o['tarjeta_tipo'] ?? o['card_type'], fallback: '');
-            final last4 = _text(o['tarjeta_ultimos4'] ?? o['card_last4'], fallback: '');
+            final direccion = _text(
+                o['direccion_envio'] ?? o['shipping_address'],
+                fallback: 'No disponible');
+            final cardType =
+                _text(o['tarjeta_tipo'] ?? o['card_type'], fallback: '');
+            final last4 =
+                _text(o['tarjeta_ultimos4'] ?? o['card_last4'], fallback: '');
             final productos = (o['productos'] as List?) ?? [];
 
-            // Subtotal y envío
+            // 💰 Cálculo de precios con descuentos
             double subtotal = 0;
+            double totalDescuentos = 0;
+
             for (final p in productos) {
               final mp = (p as Map<String, dynamic>);
-              final cantidad = int.tryParse(mp['cantidad']?.toString() ?? '1') ?? 1;
-              final precioRaw = mp['precio_unitario'] ?? mp['precio_producto'] ?? 0;
-              final precio = precioRaw is num
-                  ? (precioRaw).toDouble()
-                  : (double.tryParse(precioRaw.toString()) ?? 0.0);
-              subtotal += cantidad * precio;
+              final cantidad =
+                  int.tryParse(mp['cantidad']?.toString() ?? '1') ?? 1;
+
+              // 🔥 USAR LOS CAMPOS CORRECTOS DEL BACKEND
+              final precioOriginal =
+                  _parsePrice(mp['precio_producto']); // Precio original
+              final precioConDescuento =
+                  _parsePrice(mp['precio_descuento']); // Precio con descuento
+
+              subtotal += precioOriginal * cantidad;
+
+              // Calcular descuento si existe
+              if (precioConDescuento > 0 &&
+                  precioConDescuento < precioOriginal) {
+                totalDescuentos +=
+                    (precioOriginal - precioConDescuento) * cantidad;
+              }
             }
+
             final envioRaw = o['envio'] ?? 10000;
-            final envio = envioRaw is num ? envioRaw.toDouble() : (double.tryParse(envioRaw.toString()) ?? 10000.0);
-            final totalCalculado = (total > 0) ? total : (subtotal + envio);
+            final envio = _parsePrice(envioRaw);
+
+            final subtotalConDescuento = subtotal - totalDescuentos;
+            final totalCalculado =
+                (total > 0) ? total : (subtotalConDescuento + envio);
 
             return RefreshIndicator(
+              color: const Color(0xFFD95D85),
               onRefresh: _refresh,
               child: ListView(
                 padding: const EdgeInsets.all(16),
                 children: [
-                  // Cabecera con número de orden y estado
-                  _CardContainer(
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          'Orden #$numero',
-                          style: const TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.w600,
-                            color: Color(0xFF2E1A2D),
-                          ),
-                        ),
-                        Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                          decoration: BoxDecoration(
-                            color: Colors.blueGrey.shade50,
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: Text(status, style: const TextStyle(fontSize: 12)),
-                        ),
-                      ],
-                    ),
+                  // 🎯 Header con número de orden y estado
+                  _StatusCard(
+                    numero: numero,
+                    status: status,
+                    statusColor: _getStatusColor(status),
+                    statusIcon: _getStatusIcon(status),
                   ),
 
-                  const SizedBox(height: 12),
+                  const SizedBox(height: 16),
 
-                  // Información general
+                  // 📋 Información general
                   _CardContainer(
+                    title: 'Información del Pedido',
                     child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         _InfoRow(
-                          icon: Icons.event_available_outlined,
+                          icon: Icons.calendar_today_rounded,
                           title: 'Fecha de pago',
                           value: fecha != null
                               ? '${fecha.day.toString().padLeft(2, '0')}/${fecha.month.toString().padLeft(2, '0')}/${fecha.year}'
                               : '—',
                         ),
-                        const Divider(),
+                        const SizedBox(height: 16),
                         _InfoRow(
-                          icon: Icons.location_on_outlined,
+                          icon: Icons.location_on_rounded,
                           title: 'Dirección de envío',
                           value: direccion,
                         ),
-                        const Divider(),
+                        const SizedBox(height: 16),
                         _InfoRow(
-                          icon: Icons.credit_card,
+                          icon: Icons.credit_card_rounded,
                           title: 'Método de pago',
                           value: (cardType.isNotEmpty || last4.isNotEmpty)
                               ? '${cardType.toUpperCase()} •••• $last4'
@@ -173,12 +285,22 @@ class _OrderDetailPageViewState extends State<OrderDetailPageView> {
                     ),
                   ),
 
-                  const SizedBox(height: 12),
+                  const SizedBox(height: 16),
 
-                  // Productos y totales
-                  _ProductsCard(productos: productos),
-                  const SizedBox(height: 12),
-                  _TotalsCard(subtotal: subtotal, envio: envio, total: totalCalculado),
+                  // 📦 Productos
+                  _ProductsCard(productos: productos, parsePrice: _parsePrice),
+
+                  const SizedBox(height: 16),
+
+                  // 💰 Totales
+                  _TotalsCard(
+                    subtotal: subtotal,
+                    descuentos: totalDescuentos,
+                    envio: envio,
+                    total: totalCalculado,
+                  ),
+
+                  const SizedBox(height: 20),
                 ],
               ),
             );
@@ -190,50 +312,208 @@ class _OrderDetailPageViewState extends State<OrderDetailPageView> {
   }
 }
 
-// ---- Widgets auxiliares ----
+// ============ WIDGETS AUXILIARES ============
 
+/// 🎯 Card de estado con diseño destacado
+class _StatusCard extends StatelessWidget {
+  final String numero;
+  final String status;
+  final Color statusColor;
+  final IconData statusIcon;
+
+  const _StatusCard({
+    required this.numero,
+    required this.status,
+    required this.statusColor,
+    required this.statusIcon,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        gradient: const LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            Color(0xFFD95D85),
+            Color(0xFFE58BB1),
+          ],
+        ),
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: const Color(0xFFD95D85).withOpacity(0.3),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  'Orden',
+                  style: TextStyle(
+                    color: Colors.white70,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  '#$numero',
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    letterSpacing: 0.5,
+                  ),
+                ),
+              ],
+            ),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(30),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.1),
+                    blurRadius: 8,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    statusIcon,
+                    size: 18,
+                    color: statusColor,
+                  ),
+                  const SizedBox(width: 6),
+                  Text(
+                    status.toUpperCase(),
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
+                      color: statusColor,
+                      letterSpacing: 0.5,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// 📦 Container base para cards
 class _CardContainer extends StatelessWidget {
   final Widget child;
-  const _CardContainer({required this.child});
+  final String? title;
+
+  const _CardContainer({required this.child, this.title});
 
   @override
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: const Color.fromARGB(82, 209, 205, 206).withOpacity(0.5),
+            color: Colors.black.withOpacity(0.06),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
         ],
       ),
-      child: Padding(padding: const EdgeInsets.all(12), child: child),
+      child: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            if (title != null) ...[
+              Text(
+                title!,
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w700,
+                  color: Colors.black87,
+                ),
+              ),
+              const SizedBox(height: 16),
+            ],
+            child,
+          ],
+        ),
+      ),
     );
   }
 }
 
+/// 📋 Fila de información
 class _InfoRow extends StatelessWidget {
   final IconData icon;
   final String title;
   final String value;
-  const _InfoRow({required this.icon, required this.title, required this.value});
+
+  const _InfoRow({
+    required this.icon,
+    required this.title,
+    required this.value,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Icon(icon, size: 20, color: const Color(0xFFD95D85)),
-        const SizedBox(width: 10),
+        Container(
+          padding: const EdgeInsets.all(10),
+          decoration: BoxDecoration(
+            color: const Color(0xFFFFEEF3),
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Icon(
+            icon,
+            size: 20,
+            color: const Color(0xFFD95D85),
+          ),
+        ),
+        const SizedBox(width: 14),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(title, style: const TextStyle(fontWeight: FontWeight.w600)),
+              Text(
+                title,
+                style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.grey[600],
+                ),
+              ),
               const SizedBox(height: 4),
-              Text(value, style: const TextStyle(color: Colors.black87)),
+              Text(
+                value,
+                style: const TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.black87,
+                ),
+              ),
             ],
           ),
         ),
@@ -242,161 +522,398 @@ class _InfoRow extends StatelessWidget {
   }
 }
 
+/// 📦 Card de productos
 class _ProductsCard extends StatelessWidget {
   final List productos;
-  const _ProductsCard({required this.productos});
+  final Function(dynamic) parsePrice;
+
+  const _ProductsCard({
+    required this.productos,
+    required this.parsePrice,
+  });
 
   @override
   Widget build(BuildContext context) {
     return _CardContainer(
+      title: 'Productos (${productos.length})',
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text('Productos', style: TextStyle(fontWeight: FontWeight.w600)),
-          const SizedBox(height: 8),
-          ...productos.map((p) {
-            final mp = p as Map<String, dynamic>;
-            final nombre = mp['nombre_producto'] ?? mp['name'] ?? 'Producto';
-            final cantidad = int.tryParse(mp['cantidad']?.toString() ?? '1') ?? 1;
-            final precioRaw = mp['precio_unitario'] ?? mp['precio_producto'] ?? 0;
-            final precio = precioRaw is num
-                ? (precioRaw).toDouble()
-                : (double.tryParse(precioRaw.toString()) ?? 0.0);
-            final imagen = mp['imagen_url'] ?? mp['product']?['imagen_url'];
+        children: productos.asMap().entries.map((entry) {
+          final index = entry.key;
+          final p = entry.value;
+          final mp = p as Map<String, dynamic>;
+          final nombre = mp['nombre_producto'] ?? mp['name'] ?? 'Producto';
+          final cantidad = int.tryParse(mp['cantidad']?.toString() ?? '1') ?? 1;
 
-            // ID del producto para navegar (variaciones comunes)
-            final dynamic prodIdDyn = mp['product_id'] ?? mp['id'] ?? mp['product']?['id'];
-            final int productId = prodIdDyn is int
-                ? prodIdDyn
-                : int.tryParse(prodIdDyn?.toString() ?? '') ?? 0;
+          // 💰 USAR LOS CAMPOS CORRECTOS
+          final precioOriginal =
+              parsePrice(mp['precio_producto']); // Precio original
+          final precioConDescuento =
+              parsePrice(mp['precio_descuento']); // Precio con descuento
 
-            return InkWell(
-              borderRadius: BorderRadius.circular(10),
-             onTap: () {
-              if (productId <= 0) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Producto sin información de detalle')),
-                );
-                return;
-              }
+          final tieneDescuento =
+              precioConDescuento > 0 && precioConDescuento < precioOriginal;
 
-              Product product;
-              final rawProd = mp['product'];
+          // Calcular porcentaje de descuento
+          int porcentajeDescuento = 0;
+          if (tieneDescuento && precioOriginal > 0) {
+            porcentajeDescuento =
+                (((precioOriginal - precioConDescuento) / precioOriginal) * 100)
+                    .round();
+          }
 
-              if (rawProd is Map<String, dynamic>) {
-                // ✅ Viene el producto completo, usamos el modelo
-                try {
-                  product = Product.fromJson(rawProd);
-                } catch (_) {
-                  product = Product(
-                    id: productId,
-                    nombreProducto: rawProd['nombre_producto'] ?? nombre,
-                    precioProducto: (rawProd['precio_producto'] ?? precio).round(),
-                    descripcion: rawProd['descripcion']?.toString() ?? '',
-                    subCategoryId: (rawProd['sub_category']?['id'] ?? 0) as int,
-                    stock: rawProd['stock'] ?? 0,
-                    nombreSubCategoria: rawProd['sub_category']?['nombre']?.toString() ?? '',
-                    categoryId: rawProd['sub_category']?['category']?['id'] ?? 0,
-                    nombreCategoria: rawProd['sub_category']?['category']?['nombre_categoria']?.toString() ?? '',
-                    imagenUrl: rawProd['imagen_url'] ?? imagen?.toString(),
+          final imagen = mp['imagen_url'] ?? mp['product']?['imagen_url'];
+
+          final dynamic prodIdDyn =
+              mp['product_id'] ?? mp['id'] ?? mp['product']?['id'];
+          final int productId = prodIdDyn is int
+              ? prodIdDyn
+              : int.tryParse(prodIdDyn?.toString() ?? '') ?? 0;
+
+          return Column(
+            children: [
+              if (index > 0) const Divider(height: 24),
+              InkWell(
+                borderRadius: BorderRadius.circular(12),
+                onTap: () {
+                  if (productId <= 0) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Producto sin información de detalle'),
+                        backgroundColor: Color(0xFFD95D85),
+                      ),
+                    );
+                    return;
+                  }
+
+                  Product product;
+                  final rawProd = mp['product'];
+
+                  if (rawProd is Map<String, dynamic>) {
+                    try {
+                      product = Product.fromJson(rawProd);
+                    } catch (_) {
+                      product = Product(
+                        id: productId,
+                        nombreProducto: rawProd['nombre_producto'] ?? nombre,
+                        precioProducto:
+                            (rawProd['precio_producto'] ?? precioOriginal)
+                                .round(),
+                        descripcion: rawProd['descripcion']?.toString() ?? '',
+                        subCategoryId:
+                            (rawProd['sub_category']?['id'] ?? 0) as int,
+                        stock: rawProd['stock'] ?? 0,
+                        nombreSubCategoria:
+                            rawProd['sub_category']?['nombre']?.toString() ??
+                                '',
+                        categoryId:
+                            rawProd['sub_category']?['category']?['id'] ?? 0,
+                        nombreCategoria: rawProd['sub_category']?['category']
+                                    ?['nombre_categoria']
+                                ?.toString() ??
+                            '',
+                        imagenUrl: rawProd['imagen_url'] ?? imagen?.toString(),
+                      );
+                    }
+                  } else {
+                    final subCat = mp['sub_category'] as Map<String, dynamic>?;
+                    final cat = subCat?['category'] ??
+                        mp['category'] as Map<String, dynamic>?;
+
+                    product = Product(
+                      id: productId,
+                      nombreProducto: nombre,
+                      precioProducto: precioOriginal.round(),
+                      descripcion: mp['descripcion']?.toString() ?? '',
+                      subCategoryId: subCat?['id'] ?? 0,
+                      stock: int.tryParse(mp['stock']?.toString() ?? '') ??
+                          cantidad,
+                      nombreSubCategoria: subCat?['nombre']?.toString() ?? '',
+                      categoryId: cat?['id'] ?? 0,
+                      nombreCategoria:
+                          cat?['nombre_categoria']?.toString() ?? '',
+                      imagenUrl: imagen?.toString(),
+                    );
+                  }
+
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => ProductDetailView(product: product),
+                    ),
                   );
-                }
-              } else {
-                final subCat = mp['sub_category'] as Map<String, dynamic>?;
-                final cat = subCat?['category'] ?? mp['category'] as Map<String, dynamic>?;
-
-                product = Product(
-                  id: productId,
-                  nombreProducto: nombre,
-                  precioProducto: precio.round(),
-                  descripcion: mp['descripcion']?.toString() ?? '',
-                  subCategoryId: subCat?['id'] ?? 0,
-                  stock: int.tryParse(mp['stock']?.toString() ?? '') ?? cantidad,
-                  nombreSubCategoria: subCat?['nombre']?.toString() ?? '',
-                  categoryId: cat?['id'] ?? 0,
-                  nombreCategoria: cat?['nombre_categoria']?.toString() ?? '',
-                  imagenUrl: imagen?.toString(),
-                );
-              }
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (_) => ProductDetailView(product: product),
-                ),
-              );
-            },
-
-              child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 6),
+                },
                 child: Row(
                   children: [
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(8),
-                      child: Container(
-                        width: 48,
-                        height: 48,
-                        color: Colors.pink.shade50,
-                        child: (imagen != null && imagen.toString().isNotEmpty)
-                            ? Image.network(imagen, fit: BoxFit.cover)
-                            : const Icon(Icons.image_not_supported, color: Colors.grey),
-                      ),
+                    // Imagen del producto con badge de descuento
+                    Stack(
+                      children: [
+                        Container(
+                          width: 70,
+                          height: 70,
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFFAFAFA),
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(
+                              color: Colors.grey[200]!,
+                              width: 1,
+                            ),
+                          ),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(12),
+                            child: (imagen != null &&
+                                    imagen.toString().isNotEmpty)
+                                ? Image.network(
+                                    imagen,
+                                    fit: BoxFit.cover,
+                                    errorBuilder: (_, __, ___) => const Icon(
+                                      Icons.image_not_supported_rounded,
+                                      color: Colors.grey,
+                                    ),
+                                  )
+                                : const Icon(
+                                    Icons.image_outlined,
+                                    color: Colors.grey,
+                                    size: 30,
+                                  ),
+                          ),
+                        ),
+                        // 🏷️ Badge de descuento
+                        if (tieneDescuento && porcentajeDescuento > 0)
+                          Positioned(
+                            top: 2,
+                            left: 2,
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 4,
+                                vertical: 2,
+                              ),
+                              decoration: BoxDecoration(
+                                gradient: const LinearGradient(
+                                  colors: [
+                                    Color(0xFFFF6B9D),
+                                    Color(0xFFFF8FB3),
+                                  ],
+                                ),
+                                borderRadius: BorderRadius.circular(6),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: const Color(0xFFFF6B9D)
+                                        .withOpacity(0.4),
+                                    blurRadius: 4,
+                                    offset: const Offset(0, 2),
+                                  ),
+                                ],
+                              ),
+                              child: Text(
+                                '-$porcentajeDescuento%',
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 9,
+                                ),
+                              ),
+                            ),
+                          ),
+                      ],
                     ),
-                    const SizedBox(width: 12),
+                    const SizedBox(width: 14),
+
+                    // Info del producto
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(nombre, maxLines: 1, overflow: TextOverflow.ellipsis),
-                          Text('Cantidad: $cantidad',
-                              style: const TextStyle(color: Colors.black54, fontSize: 12)),
+                          Text(
+                            nombre,
+                            style: const TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.black87,
+                            ),
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          const SizedBox(height: 6),
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 8,
+                              vertical: 4,
+                            ),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFFFFEEF3),
+                              borderRadius: BorderRadius.circular(6),
+                            ),
+                            child: Text(
+                              'Cantidad: $cantidad',
+                              style: const TextStyle(
+                                color: Color(0xFFD95D85),
+                                fontSize: 12,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
                         ],
                       ),
                     ),
-                    Text(formatPriceCOP(precio)),
+
+                    // Precio con descuento
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        if (tieneDescuento) ...[
+                          // Precio original tachado
+                          Text(
+                            formatPriceCOP(precioOriginal.toInt()),
+                            style: TextStyle(
+                              fontSize: 11,
+                              color: Colors.grey[500],
+                              decoration: TextDecoration.lineThrough,
+                              decorationColor: Colors.grey[400],
+                              decorationThickness: 1.5,
+                            ),
+                          ),
+                          const SizedBox(height: 2),
+                        ],
+                        // Precio final pagado
+                        Text(
+                          formatPriceCOP(precioConDescuento.toInt()),
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: tieneDescuento
+                                ? const Color(0xFFD95D85)
+                                : Colors.black87,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          'c/u',
+                          style: TextStyle(
+                            fontSize: 11,
+                            color: Colors.grey[600],
+                          ),
+                        ),
+                      ],
+                    ),
                   ],
                 ),
               ),
-            );
-          }),
+            ],
+          );
+        }).toList(),
+      ),
+    );
+  }
+}
+
+/// 💰 Card de totales
+class _TotalsCard extends StatelessWidget {
+  final double subtotal;
+  final double descuentos;
+  final double envio;
+  final double total;
+
+  const _TotalsCard({
+    required this.subtotal,
+    required this.descuentos,
+    required this.envio,
+    required this.total,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return _CardContainer(
+      title: 'Resumen de Pago',
+      child: Column(
+        children: [
+          _TotalRow(
+            label: 'Subtotal',
+            value: formatPriceCOP(subtotal.toInt()),
+          ),
+          if (descuentos > 0) ...[
+            const SizedBox(height: 12),
+            _TotalRow(
+              label: 'Descuentos',
+              value: '-${formatPriceCOP(descuentos.toInt())}',
+              isDiscount: true,
+            ),
+          ],
+          const SizedBox(height: 12),
+          _TotalRow(
+            label: 'Envío',
+            value: formatPriceCOP(envio.toInt()),
+          ),
+          const SizedBox(height: 16),
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              gradient: const LinearGradient(
+                colors: [Color(0xFFFFEEF3), Color(0xFFFFF5F8)],
+              ),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text(
+                  'Total Pagado',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black87,
+                  ),
+                ),
+                Text(
+                  formatPriceCOP(total.toInt()),
+                  style: const TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xFFD95D85),
+                    letterSpacing: 0.5,
+                  ),
+                ),
+              ],
+            ),
+          ),
         ],
       ),
     );
   }
 }
 
-class _TotalsCard extends StatelessWidget {
-  final double subtotal;
-  final double envio;
-  final double total;
-  const _TotalsCard({required this.subtotal, required this.envio, required this.total});
+/// Fila de total
+class _TotalRow extends StatelessWidget {
+  final String label;
+  final String value;
+  final bool isDiscount;
+
+  const _TotalRow({
+    required this.label,
+    required this.value,
+    this.isDiscount = false,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return _CardContainer(
-      child: Column(
-        children: [
-          Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-            const Text('Subtotal:'),
-            Text(formatPriceCOP(subtotal), style: const TextStyle(fontWeight: FontWeight.w600)),
-          ]),
-          const SizedBox(height: 6),
-          Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-            const Text('Envío:'),
-            Text(formatPriceCOP(envio), style: const TextStyle(fontWeight: FontWeight.w600)),
-          ]),
-          const Divider(height: 20),
-          Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-            const Text('Total:', style: TextStyle(fontWeight: FontWeight.w700)),
-            Text(
-              formatPriceCOP(total),
-              style: const TextStyle(
-                fontWeight: FontWeight.bold,
-                color: Color(0xFFD95D85),
-              ),
-            ),
-          ]),
-        ],
-      ),
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(
+          label,
+          style: TextStyle(
+            fontSize: 15,
+            color: isDiscount ? const Color(0xFFD95D85) : Colors.black87,
+          ),
+        ),
+        Text(
+          value,
+          style: TextStyle(
+            fontSize: 15,
+            fontWeight: FontWeight.w600,
+            color: isDiscount ? const Color(0xFFD95D85) : Colors.black87,
+          ),
+        ),
+      ],
     );
   }
 }
