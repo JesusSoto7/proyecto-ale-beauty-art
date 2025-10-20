@@ -206,7 +206,7 @@ class _PaymentPageState extends State<PaymentPage> {
             elevation: 0,
             centerTitle: true,
             title: const Text(
-              'Pagar Orden',
+              'Pagar',
               style: TextStyle(
                 color: Colors.black87,
                 fontSize: 18,

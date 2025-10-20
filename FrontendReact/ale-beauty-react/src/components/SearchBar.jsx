@@ -210,22 +210,43 @@ export default function SearchBar() {
         />
       </Search>
 
-      {/* 🔽 Dropdown resultados */}
+      {/* 🔽 Dropdown resultados - CORREGIDO */}
       {(results.length > 0 || loading) && (
         <Box
           sx={{
             position: "absolute",
             top: "100%",
-            left: 0,
-            right: 0,
+            left: "50%",
+            transform: "translateX(-50%)",
             mt: 1,
             bgcolor: "white",
             boxShadow: 3,
             borderRadius: 2,
             zIndex: 1300,
-            width: "90%",
-            mx: "auto",
+            width: "90vw",
+            maxWidth: {
+              xs: "95vw",
+              sm: "600px",
+              md: "800px",
+              lg: "1000px"
+            },
             p: 1.5,
+            maxHeight: "70vh",
+            overflowY: "auto",
+            "&::-webkit-scrollbar": {
+              width: "8px",
+            },
+            "&::-webkit-scrollbar-track": {
+              background: "#f1f1f1",
+              borderRadius: "4px",
+            },
+            "&::-webkit-scrollbar-thumb": {
+              background: "#888",
+              borderRadius: "4px",
+              "&:hover": {
+                background: "#555",
+              },
+            },
           }}
         >
           {loading && <Box sx={{ p: 1 }}>{t("header.searching")}</Box>}
@@ -237,9 +258,9 @@ export default function SearchBar() {
                 sx={{
                   display: { xs: "none", sm: "grid" },
                   gridTemplateColumns: {
-                    sm: "repeat(3, 1fr)",
-                    md: "repeat(4, 1fr)",
-                    lg: "repeat(5, 1fr)",
+                    sm: "repeat(auto-fill, minmax(140px, 1fr))",
+                    md: "repeat(auto-fill, minmax(160px, 1fr))",
+                    lg: "repeat(auto-fill, minmax(180px, 1fr))",
                   },
                   gap: 1.5,
                 }}
@@ -262,25 +283,30 @@ export default function SearchBar() {
                         border: "1px solid #e0e0e0",
                         borderRadius: 1.5,
                         cursor: "pointer",
+                        transition: "all 0.2s ease",
                         "&:hover": {
                           boxShadow: 2,
                           borderColor: pinkTheme.primary,
+                          transform: "translateY(-2px)",
                         },
                         display: "flex",
                         flexDirection: "column",
                         height: "100%",
-                        minHeight: "180px",
+                        minHeight: "240px",
+                        overflow: "hidden",
                       }}
                     >
+                      {/* Contenedor de imagen - CORREGIDO */}
                       <Box
                         sx={{
                           width: "100%",
                           height: 0,
-                          paddingBottom: "80%",
+                          paddingBottom: "100%",
                           position: "relative",
                           overflow: "hidden",
                           borderRadius: 1,
                           mb: 0.75,
+                          bgcolor: "#f8f8f8",
                         }}
                       >
                         {img ? (
@@ -293,8 +319,8 @@ export default function SearchBar() {
                               left: 0,
                               width: "100%",
                               height: "100%",
-                              objectFit: "contain",
-                              backgroundColor: "#f8f8f8",
+                              objectFit: "cover", // ✅ CAMBIADO DE "contain" A "cover"
+                              objectPosition: "center",
                             }}
                             onError={(e) => {
                               e.target.src = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDIwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIyMDAiIGhlaWdodD0iMjAwIiBmaWxsPSIjRjVGNUY1Ii8+CjxwYXRoIGQ9Ik04MCA2MEgxMjBWMTQwSDgwVjYwWiIgZmlsbD0iI0RBREZEOSIvPgo8L3N2Zz4K";
@@ -308,7 +334,6 @@ export default function SearchBar() {
                               left: 0,
                               width: "100%",
                               height: "100%",
-                              bgcolor: "#f8f8f8",
                               display: "flex",
                               alignItems: "center",
                               justifyContent: "center",
@@ -326,13 +351,12 @@ export default function SearchBar() {
                         display: "flex", 
                         flexDirection: "column", 
                         justifyContent: "space-between",
-                        minHeight: "60px"
+                        gap: 0.5,
                       }}>
                         <Box style={{ 
                           display: "flex", 
                           alignItems: "center", 
                           justifyContent: "center",
-                          marginBottom: "3px",
                           width: "100%"
                         }}>
                           <Rating
@@ -364,14 +388,12 @@ export default function SearchBar() {
                             overflow: "hidden",
                             fontSize: "0.75rem",
                             lineHeight: 1.2,
-                            mb: 0.25,
                             textAlign: "center",
                             minHeight: "28px"
                           }}
                         >
                           {name}
                         </Typography>
-                        {/* Precio con descuento */}
                         {(priceOriginal !== null) && (
                           <Typography
                             variant="caption"
@@ -388,8 +410,9 @@ export default function SearchBar() {
                                 <span style={{
                                   textDecoration: "line-through",
                                   color: "#64748b",
-                                  marginLeft: "0.7em",
-                                  fontWeight: "normal"
+                                  marginLeft: "0.5em",
+                                  fontWeight: "normal",
+                                  fontSize: "0.9em"
                                 }}>
                                   {formatCOP(priceOriginal)}
                                 </span>
@@ -399,22 +422,19 @@ export default function SearchBar() {
                             )}
                           </Typography>
                         )}
-                        {/* Nombre del descuento */}
                         {prod.mejor_descuento_para_precio && (
                           <Typography
                             variant="caption"
                             sx={{
                               color: "#2563eb",
                               fontWeight: 500,
-                              fontSize: "0.8rem",
+                              fontSize: "0.7rem",
                               textAlign: "center",
-                              mt: 0.2
                             }}
                           >
-                            
                             {prod.mejor_descuento_para_precio.tipo === "porcentaje"
-                              ? ` (${prod.mejor_descuento_para_precio.valor}%)`
-                              : ` (-${formatCOP(prod.mejor_descuento_para_precio.valor)})`}
+                              ? `${prod.mejor_descuento_para_precio.valor}% OFF`
+                              : `-${formatCOP(prod.mejor_descuento_para_precio.valor)}`}
                           </Typography>
                         )}
                       </Box>
@@ -423,14 +443,23 @@ export default function SearchBar() {
                 })}
               </Box>
 
-              {/* 📱 Móvil - Tarjetas aún más compactas */}
+              {/* 📱 Móvil - CORREGIDO */}
               <Box
                 sx={{
                   display: { xs: "flex", sm: "none" },
                   overflowX: "auto",
                   gap: 1.5,
                   pb: 1,
-                  "&::-webkit-scrollbar": { display: "none" },
+                  "&::-webkit-scrollbar": { 
+                    height: "6px",
+                  },
+                  "&::-webkit-scrollbar-track": {
+                    background: "#f1f1f1",
+                  },
+                  "&::-webkit-scrollbar-thumb": {
+                    background: "#888",
+                    borderRadius: "3px",
+                  },
                 }}
               >
                 {results.map((prod) => {
@@ -446,8 +475,8 @@ export default function SearchBar() {
                       key={prod.id || prod.slug || name}
                       onClick={() => goToProduct(prod)}
                       sx={{
-                        minWidth: 120,
-                        maxWidth: 130,
+                        minWidth: 130,
+                        maxWidth: 140,
                         p: 0.75,
                         textAlign: "center",
                         border: "1px solid #e0e0e0",
@@ -456,18 +485,21 @@ export default function SearchBar() {
                         flexShrink: 0,
                         display: "flex",
                         flexDirection: "column",
-                        height: "auto",
+                        minHeight: "220px",
+                        overflow: "hidden",
                       }}
                     >
+                      {/* Contenedor de imagen móvil - CORREGIDO */}
                       <Box
                         sx={{
                           width: "100%",
                           height: 0,
-                          paddingBottom: "80%",
+                          paddingBottom: "100%",
                           position: "relative",
                           overflow: "hidden",
                           borderRadius: 1,
                           mb: 0.5,
+                          bgcolor: "#f8f8f8",
                         }}
                       >
                         {img ? (
@@ -480,8 +512,8 @@ export default function SearchBar() {
                               left: 0,
                               width: "100%",
                               height: "100%",
-                              objectFit: "contain",
-                              backgroundColor: "#f8f8f8",
+                              objectFit: "cover", // ✅ CAMBIADO DE "contain" A "cover"
+                              objectPosition: "center",
                             }}
                             onError={(e) => {
                               e.target.src = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDIwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIyMDAiIGhlaWdodD0iMjAwIiBmaWxsPSIjRjVGNUY1Ii8+CjxwYXRoIGQ9Ik04MCA2MEgxMjBWMTQwSDgwVjYwWiIgZmlsbD0iI0RBREZEOSIvPgo8L3N2Zz4K";
@@ -495,7 +527,6 @@ export default function SearchBar() {
                               left: 0,
                               width: "100%",
                               height: "100%",
-                              bgcolor: "#f8f8f8",
                               display: "flex",
                               alignItems: "center",
                               justifyContent: "center",
@@ -508,12 +539,16 @@ export default function SearchBar() {
                           </Box>
                         )}
                       </Box>
-                      <Box sx={{ flex: 1, display: "flex", flexDirection: "column" }}>
+                      <Box sx={{ 
+                        flex: 1, 
+                        display: "flex", 
+                        flexDirection: "column",
+                        gap: 0.25,
+                      }}>
                         <Box style={{ 
                           display: "flex", 
                           alignItems: "center", 
                           justifyContent: "center",
-                          marginBottom: "2px",
                           width: "100%"
                         }}>
                           <Rating
@@ -545,7 +580,6 @@ export default function SearchBar() {
                             WebkitBoxOrient: "vertical",
                             overflow: "hidden",
                             lineHeight: 1.1,
-                            mb: 0.25,
                             textAlign: "center",
                             minHeight: "24px"
                           }}
@@ -558,7 +592,7 @@ export default function SearchBar() {
                             sx={{
                               color: priceDiscount && priceDiscount < priceOriginal ? "#dc2626" : pinkTheme.primary,
                               fontWeight: "bold",
-                              fontSize: "0.65rem",
+                              fontSize: "0.7rem",
                               textAlign: "center"
                             }}
                           >
@@ -568,8 +602,9 @@ export default function SearchBar() {
                                 <span style={{
                                   textDecoration: "line-through",
                                   color: "#64748b",
-                                  marginLeft: "0.7em",
-                                  fontWeight: "normal"
+                                  marginLeft: "0.4em",
+                                  fontWeight: "normal",
+                                  fontSize: "0.85em"
                                 }}>
                                   {formatCOP(priceOriginal)}
                                 </span>
@@ -587,13 +622,11 @@ export default function SearchBar() {
                               fontWeight: 500,
                               fontSize: "0.65rem",
                               textAlign: "center",
-                              mt: 0.2
                             }}
                           >
-                            
                             {prod.mejor_descuento_para_precio.tipo === "porcentaje"
-                              ? ` (${prod.mejor_descuento_para_precio.valor}%)`
-                              : ` (-${formatCOP(prod.mejor_descuento_para_precio.valor)})`}
+                              ? `${prod.mejor_descuento_para_precio.valor}% OFF`
+                              : `-${formatCOP(prod.mejor_descuento_para_precio.valor)}`}
                           </Typography>
                         )}
                       </Box>
