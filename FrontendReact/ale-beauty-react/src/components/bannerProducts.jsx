@@ -11,7 +11,7 @@ function BannerProduct({ products, productRatings }) {
   // Espera a que las imágenes se carguen
   useEffect(() => {
     if (products && products.length > 0) {
-      const images = products.map(p => {
+      const images = products.map((p) => {
         const img = new Image();
         img.src = p.imagen_url;
         return new Promise((resolve) => {
@@ -23,7 +23,7 @@ function BannerProduct({ products, productRatings }) {
     }
   }, [products]);
 
-  // Cambia de producto cada 5 segundos
+  // Cambia de producto cada 10 segundos
   useEffect(() => {
     if (!products || products.length === 0) return;
     const interval = setInterval(() => {
@@ -36,21 +36,8 @@ function BannerProduct({ products, productRatings }) {
 
   if (loading) {
     return (
-      <div
-        style={{
-          width: "90%",
-          height: "500px",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          justifySelf: "center",
-          backgroundColor: "#df6897",
-          borderRadius: "10px",
-          color: "white",
-          fontSize: "1.5rem",
-        }}
-      >
-        Cargando productos...
+      <div className="bannerProducts-loading">
+        <div class="loader"></div> 
       </div>
     );
   }
@@ -59,65 +46,49 @@ function BannerProduct({ products, productRatings }) {
   const ratingValue = productRatings?.[product.id]?.avg || 0;
 
   return (
-    <div className="bannerProducts">
-      {/* Imagen */}
-      <div className="bannerProduct-image-container">
-        <img
-          src={product.imagen_url}
-          alt={product.nombre_producto || product.name || "Producto"}
-          className="banner-product-image"
-        />
-      </div>
-
-      {/* Información */}
-      <div className="banner-info">
+    <div className="banner">
+      {/* Contenido texto */}
+      <div className="content banner-info">
+        <h1>{product.nombre_producto || "no_name"}</h1>
+        <h2>{product.sub_category?.category?.nombre_categoria || ""}</h2>
+        <div id="desc" style={{minHeight: "130px", height: "fit-content", maxHeight: "140px", overflow: "hidden", marginBottom: "20px"}}>
+          <p className="banner-description">{product.descripcion}</p>
+        </div>
         
-        <h1 style={{ color: "#fff", fontSize: 50 }}>
-          {product.nombre_producto || product.name}
-        </h1>
 
-        <hr style={{ color: "#fff" }} />
-
-        <p className="banner-description">{product.descripcion}</p>
-
-        <section className="section-DataBanner">
-          <div style={{display: "flex", gap: 10, alignItems: "center"}}>
+        <section className="section-DataBanner" style={{    display: "flex", flexDirection: "row-reverse", justifyContent: "flex-end", gap: 20}}>
+          <div style={{ display: "flex", gap: 10, alignItems: "center", flexDirection: "row" }}>
             <Rating
               name={`product-rating-${product.id}`}
               value={ratingValue}
               precision={0.5}
               readOnly
               size="large"
-              sx={{ color: "#ffc107" }}
+              sx={{ color: "#fff" }}
             />
-            <h5 style={{marginBottom: 2, color: "#fff" }}>({ratingValue})</h5> 
+            <h5 style={{ marginBottom: 2, color: "#fff" }}>({ratingValue})</h5>
           </div>
-          
 
           <Link
             to={`/${lang}/producto/${product.slug || product.id}`}
-            style={{ textDecoration: "none", color: "inherit" }}
+            style={{ textDecoration: "none", color: "inherit", width: 200 }}
           >
-            <button
-              style={{
-                width: "100%",
-                padding: "10px",
-                borderRadius: "8px",
-                border: "none",
-                backgroundColor: "#fff",
-                color: "#df6897",
-                fontWeight: "bold",
-                cursor: "pointer",
-                transition: "0.3s",
-              }}
-            >
-              Ver detalles
-            </button>
+            <button className="btn-banner">Ver detalles</button>
           </Link>
         </section>
-        
       </div>
+
+      {/* Imagen a la derecha */}
+      <div className="image-area">
+        <img
+          src={product.imagen_url}
+          alt={product.nombre_producto || product.name || "Producto"}
+          className="circle-image"
+        />
+      </div>
+      
     </div>
+    
   );
 }
 

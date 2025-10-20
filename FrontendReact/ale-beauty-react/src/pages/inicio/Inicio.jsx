@@ -109,48 +109,6 @@ function Inicio() {
     setProductRatings(ratingsObj);
   };
 
-  useEffect(() => {
-    if (!products || products.length === 0) return;
-    setLoadingReviews(true);
-
-    // Generar promesas para cada producto
-    const reviewPromises = products.map((product) =>
-      fetch(`https://localhost:4000/api/v1/products/${product.slug}/reviews`, {
-        headers: { Authorization: `Bearer ${token}` },
-      })
-        .then((res) => res.json())
-        .then((reviews) => ({
-          productSlug: product.slug,
-          reviews,
-        }))
-    );
-
-    Promise.all(reviewPromises)
-      .then((allData) => {
-        // Combinar todas las reviews en un solo array
-        const allReviews = allData.flatMap((item) =>
-          item.reviews.map((r) => ({
-            ...r,
-            productSlug: item.productSlug, // Para saber de qué producto viene
-          }))
-        );
-
-        setReviews(allReviews);
-
-        // Calcular conteo total de estrellas
-        const ratingCount = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
-        allReviews.forEach((review) => {
-          ratingCount[review.rating] += 1;
-        });
-        setRatings(ratingCount);
-      })
-      .catch((err) => console.error("Error cargando reseñas:", err))
-      .finally(() => setLoadingReviews(false));
-  }, [products, token]);
-
-
-
-
   // Cargar productos + favoritos del usuario
   useEffect(() => {
     // Productos e inicio
@@ -613,8 +571,8 @@ function Inicio() {
       <h2 className="mb-4">productos mejor valorados</h2>
       <RankingPro products={products} productRatings={productRatings} loading={loading} />
       
-      <h2 className="mb-4">comentarios destacados</h2>
-      <PositiveReviews reviews={reviews} loading={loadingReviews} />
+      {/* <h2 className="mb-4">comentarios destacados</h2> */}
+      {/* <PositiveReviews reviews={reviews} loading={loadingReviews} /> */}
 
       
     </div>
