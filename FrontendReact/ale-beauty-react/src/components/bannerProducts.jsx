@@ -37,7 +37,7 @@ function BannerProduct({ products, productRatings }) {
   if (loading) {
     return (
       <div className="bannerProducts-loading">
-        <div class="loader"></div> 
+        <div className="loader"></div> 
       </div>
     );
   }

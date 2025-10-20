@@ -734,7 +734,7 @@ function ProductDetails() {
                         to={`/${lang}/producto/${rp.slug}`}
                         style={{ textDecoration: "none", color: "inherit" }}
                       >
-                        <div className="custom-image-wrapper">
+                        <div className="custom-image-wrapper" style={{height: "160px !important"}}>
                           <img
                             src={rp.imagen_url || noImage}
                             alt={rp.nombre_producto}

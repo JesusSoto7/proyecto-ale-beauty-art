@@ -14,7 +14,7 @@ import { useTranslation } from 'react-i18next';
 import Rating from "@mui/material/Rating";
 import FloatingChat from '../../components/FloatingChat';
 import BannerProduct from '../../components/bannerProducts';
-import "../../assets/stylesheets/ProductosCliente.css";
+// import "../../assets/stylesheets/ProductosCliente.css";
 import "../../assets/stylesheets/RankingPro.css";
 import RankingPro from '../../components/rankingPro.jsx';
 import PositiveReviews from "../../components/positiveReviews.jsx";
