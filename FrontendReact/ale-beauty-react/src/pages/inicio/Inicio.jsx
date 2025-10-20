@@ -14,13 +14,14 @@ import { useTranslation } from 'react-i18next';
 import Rating from "@mui/material/Rating";
 import FloatingChat from '../../components/FloatingChat';
 import BannerProduct from '../../components/bannerProducts';
-import "../../assets/stylesheets/ProductosCliente.css";
+// import "../../assets/stylesheets/ProductosCliente.css";
 import "../../assets/stylesheets/RankingPro.css";
 import RankingPro from '../../components/rankingPro.jsx';
 import PositiveReviews from "../../components/positiveReviews.jsx";
+import StaticBanner from "../../components/staticBanner.jsx"
 
 function Inicio() {
-  const [carousel, setCarousel] = useState([]);
+  // const [carousel, setCarousel] = useState([]);
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
   const [cart, setCart] = useState(null);
@@ -109,48 +110,6 @@ function Inicio() {
     setProductRatings(ratingsObj);
   };
 
-  useEffect(() => {
-    if (!products || products.length === 0) return;
-    setLoadingReviews(true);
-
-    // Generar promesas para cada producto
-    const reviewPromises = products.map((product) =>
-      fetch(`https://localhost:4000/api/v1/products/${product.slug}/reviews`, {
-        headers: { Authorization: `Bearer ${token}` },
-      })
-        .then((res) => res.json())
-        .then((reviews) => ({
-          productSlug: product.slug,
-          reviews,
-        }))
-    );
-
-    Promise.all(reviewPromises)
-      .then((allData) => {
-        // Combinar todas las reviews en un solo array
-        const allReviews = allData.flatMap((item) =>
-          item.reviews.map((r) => ({
-            ...r,
-            productSlug: item.productSlug, // Para saber de qué producto viene
-          }))
-        );
-
-        setReviews(allReviews);
-
-        // Calcular conteo total de estrellas
-        const ratingCount = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
-        allReviews.forEach((review) => {
-          ratingCount[review.rating] += 1;
-        });
-        setRatings(ratingCount);
-      })
-      .catch((err) => console.error("Error cargando reseñas:", err))
-      .finally(() => setLoadingReviews(false));
-  }, [products, token]);
-
-
-
-
   // Cargar productos + favoritos del usuario
   useEffect(() => {
     // Productos e inicio
@@ -158,13 +117,13 @@ function Inicio() {
       .then(res => res.json())
       .then(data => {
         const imgs = [
-          ...(data.admin_carousel || []),
+          // ...(data.admin_carousel || []),
           ...(data.products?.map(p => p.imagen_url) || [])
         ];
 
         let loadedCount = 0;
         if (imgs.length === 0) {
-          setCarousel(data.admin_carousel || []);
+          // setCarousel(data.admin_carousel || []);
           setProducts(data.products || []);
           setCategories(data.categories || []);
           setLoading(false);
@@ -193,7 +152,7 @@ function Inicio() {
           img.onload = img.onerror = () => {
             loadedCount++;
             if (loadedCount === imgs.length) {
-              setCarousel(data.admin_carousel || []);
+              // setCarousel(data.admin_carousel || []);
               setProducts(data.products || []);
               const productosRandom = [...(data.products || [])].sort(() => 0.5 - Math.random());
               setProducts(productosRandom);
@@ -314,7 +273,7 @@ function Inicio() {
 
   return (
     <div>
-      {loading ? (
+      {/* {loading ? (
         <Skeleton sx={{ bgcolor: 'grey.800' }} variant="rectangular" width={"100%"} height={350} />
       ) : carousel.length > 0 ? (
         <Carousel interval={3000} className="mb-0">
@@ -329,9 +288,9 @@ function Inicio() {
             </Carousel.Item>
           ))}
         </Carousel>
-      ) : null}
+      ) : null} */}
 
-
+      <StaticBanner/>
 
       {/* Sección Novedades Maquillaje */}
       <section className="mt-5">
@@ -613,8 +572,8 @@ function Inicio() {
       <h2 className="mb-4">productos mejor valorados</h2>
       <RankingPro products={products} productRatings={productRatings} loading={loading} />
       
-      <h2 className="mb-4">comentarios destacados</h2>
-      <PositiveReviews reviews={reviews} loading={loadingReviews} />
+      {/* <h2 className="mb-4">comentarios destacados</h2> */}
+      {/* <PositiveReviews reviews={reviews} loading={loadingReviews} /> */}
 
       
     </div>

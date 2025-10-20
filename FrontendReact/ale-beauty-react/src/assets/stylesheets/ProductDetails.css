@@ -2,6 +2,7 @@
   font-weight: bold;
   margin-bottom: 0px;
   color: #ccc;
+  justify-self: flex-start;
 }
 
 .datails-section{
@@ -62,7 +63,7 @@
 
 .product-image img {
   width: 100%;
-  height: 500px;
+  height: 400px;
   max-width: 450px;
   max-height: 700px;
   object-fit: contain; /* 🔑 nunca se corta */
@@ -89,6 +90,7 @@
   font-size: 1.3rem;
   font-weight: bold;
   color: #f896b8;
+  justify-self: flex-start;
 }
 
 .stock {
@@ -375,11 +377,6 @@
   border-radius: 16px;
   box-shadow: 0 8px 20px rgba(117, 117, 117, 0.25);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.product-image img:hover {
-  transform: scale(1.03);
-  box-shadow: 0 10px 25px rgba(83, 38, 54, 0.35);
 }
 
 /* --- Pestañas (Descripción / Reseñas) --- */

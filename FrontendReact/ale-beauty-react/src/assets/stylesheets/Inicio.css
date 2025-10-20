@@ -303,8 +303,8 @@
 .custom-product-card {
   flex: 0 0 auto;
   width: 100%;
-  max-width: 260px;
-  min-width: 230px;
+  max-width: 270px !important;
+  min-width: 270px;
   background: #fff;
   border-radius: 18px;
   box-shadow: 0 8px 22px rgba(0,0,0,0.09);
@@ -314,7 +314,7 @@
   position: relative;
   margin: 0 0.5rem;
   transition: box-shadow 0.2s, transform 0.2s;
-  height: 370px; /* Asegura altura suficiente */
+  height: 400px !important; /* Asegura altura suficiente */
 }
 
 .custom-product-card:hover {
@@ -325,19 +325,23 @@
 /* Imagen y corazón */
 .custom-image-wrapper {
   position: relative;
-  width: 100%;
-  height: 150px;
+  width: 95% !important;
+  height: 227px !important;
   display: flex;
   align-items: center;
   justify-content: center;
+  align-self: center;
+  margin-top: 5px;
   background: #f7f8fa;
-  border-radius: 18px 18px 0 0;
+  /* border-radius: 18px 18px 0 0; */
   overflow: hidden;
+  border-radius: 18px !important;
+  box-shadow: 0 10px 30px rgba(194, 194, 194, 0.16) !important;
 }
 .custom-image-wrapper img {
-  max-height: 120px;
+  max-height: 180px !important;
   width: auto;
-  object-fit: contain;
+  object-fit: contain !important;
   margin: 0 auto;
   display: block;
 }
@@ -367,9 +371,9 @@
 }
 
 .custom-product-name-v2 {
-  font-size: 1.07rem;
+  font-size: 1.1rem !important;
   font-weight: 700;
-  color: #232323;
+  color: #232323 !important;
   margin-bottom: 2px;
   text-align: left;
   display: -webkit-box;
@@ -381,7 +385,7 @@
 .custom-price-v2 {
   font-size: 1.09rem;
   font-weight: 700;
-  color: #dc2626;
+  color: #959595 !important;
   display: flex;
   align-items: center;
   gap: 7px;
