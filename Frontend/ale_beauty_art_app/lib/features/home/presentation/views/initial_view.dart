@@ -187,7 +187,7 @@ class InitialView extends StatelessWidget {
                 children: [
                   _sectionHeader("Productos populares", () {}),
                   const SizedBox(height: 20),
-                  const SizedBox(height: 230, child: ProductsCarousel()),
+                  const SizedBox(height: 280, child: ProductsCarousel()),
                 ],
               ),
             ),
