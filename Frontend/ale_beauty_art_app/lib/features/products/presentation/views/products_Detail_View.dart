@@ -217,13 +217,13 @@ class _ProductDetailViewState extends State<ProductDetailView> {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 12),
+                  const SizedBox(height: 18),
                   Text(
                     product.descripcion,
                     style: const TextStyle(
-                      fontSize: 14.5,
+                      fontSize: 16,
                       color: Color(0xFF374151),
-                      height: 1.45,
+                      height: 1.55,
                     ),
                   ),
                   const SizedBox(height: 64),
@@ -324,10 +324,11 @@ class _ProductDetailViewState extends State<ProductDetailView> {
                   }
               },
             ),
-            const SizedBox(width: 16),
-            // Botón circular: Comprar ahora (signo de dinero)
-            _buildCircleButton(
+            const SizedBox(width: 12),
+            // Botón con texto: Comprar
+            _buildPillButton(
               icon: Icons.attach_money_rounded,
+              label: 'Comprar',
               tooltip: 'Comprar ahora',
               gradient: const LinearGradient(
                 begin: Alignment.topLeft,
@@ -394,51 +395,6 @@ extension on _ProductDetailViewState {
     );
   }
 
-  Widget _buildCircleButton({
-    required IconData icon,
-    required LinearGradient gradient,
-    required VoidCallback onTap,
-    String? tooltip,
-  }) {
-    return Container(
-      width: 60,
-      height: 60,
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        gradient: gradient,
-        boxShadow: [
-          BoxShadow(
-            color: const Color(0xFFD95D85).withOpacity(0.25),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          onTap: onTap,
-          customBorder: const CircleBorder(),
-          child: Tooltip(
-            message: tooltip ?? '',
-            child: const Center(),
-          ),
-        ),
-      ),
-    ).stackWithIcon(icon);
-  }
-}
-
-extension _CircleIcon on Widget {
-  Widget stackWithIcon(IconData icon) {
-    return Stack(
-      alignment: Alignment.center,
-      children: [
-        this,
-        Icon(icon, color: Colors.white, size: 26),
-      ],
-    );
-  }
 }
 
 class _FavoriteButton extends StatefulWidget {
