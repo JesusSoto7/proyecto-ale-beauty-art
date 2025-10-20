@@ -51,8 +51,8 @@ function BannerProduct({ products, productRatings }) {
       <div className="content banner-info">
         <h1>{product.nombre_producto || "no_name"}</h1>
         <h2>{product.sub_category?.category?.nombre_categoria || ""}</h2>
-        <div id="desc" style={{minHeight: "130px", height: "fit-content", maxHeight: "140px", overflow: "hidden", marginBottom: "20px"}}>
-          <p className="banner-description">{product.descripcion}</p>
+        <div id="desc" style={{minHeight: "130px", height: "fit-content", maxHeight: "140px", overflowY: "auto", marginBottom: "20px"}}>
+          <p>{product.descripcion}</p>
         </div>
         
 
@@ -85,6 +85,36 @@ function BannerProduct({ products, productRatings }) {
           alt={product.nombre_producto || product.name || "Producto"}
           className="circle-image"
         />
+
+        <div class="text-strip-H">
+          <div class="text-content-H">
+            <span>OFERTAS</span>
+            <span>DESCUENTOS</span>
+            <span>NOVEDADES</span>
+            <span>PROMOCIONES</span>
+
+            <span>OFERTAS</span>
+            <span>DESCUENTOS</span>
+            <span>NOVEDADES</span>
+            <span>PROMOCIONES</span>
+          </div>
+        </div>
+
+      </div>
+
+      
+      <div class="text-strip">
+        <div class="text-content">
+          <span>OFERTAS</span>
+          <span>DESCUENTOS</span>
+          <span>NOVEDADES</span>
+          <span>PROMOCIONES</span>
+
+          <span>OFERTAS</span>
+          <span>DESCUENTOS</span>
+          <span>NOVEDADES</span>
+          <span>PROMOCIONES</span>
+        </div>
       </div>
       
     </div>

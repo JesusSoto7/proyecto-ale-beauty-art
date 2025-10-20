@@ -141,11 +141,119 @@ body {
   to {transform:scale(1.8);opacity:0}
 }
 
+#desc{
+    overflow-y: auto;
+    scrollbar-color: #fff transparent;
+  }
+
+
+/* texto animado */
+
+.text-strip {
+  width: 40px;
+  height: 500px;
+  overflow: hidden;
+  margin-right: 15px;
+  /* border-radius: 10px; */
+  background: #2c2c2c;
+  border: solid 2px white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+
+
+.text-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  animation: scrollText 13s linear infinite;
+}
+
+.text-content span {
+  writing-mode: vertical-rl;
+  text-orientation: upright;
+  font-size: 18px;
+  font-weight: bold;
+  color: white;
+  letter-spacing: 2px;
+  height: 500px; /* cada texto ocupa toda la tira */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+@keyframes scrollText {
+  0% {
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(-2000px); /* altura total de 4 spans x 500px */
+  }
+}
+
+/* tira horizontal */
+
+:root {
+  --H-width: 500px;          /* ancho de la tira visible */
+  --H-height: 40px;          /* alto de la tira */
+  --H-bg-color: #2c2c2c;     /* color de fondo */
+  --H-text-color: #fff;      /* color del texto */
+  --H-font-size: 18px;       /* tamaño de fuente */
+  --H-speed: 10s;            /* duración de la animación */
+  --H-gap: 40px;             /* separación entre palabras */
+}
+
+.text-strip-H {
+  width: var(--H-width);
+  height: var(--H-height);
+  overflow: hidden;
+  border:  solid 2px #fff;
+  background: var(--H-bg-color);
+  display: flex;
+  align-items: center;
+  position: relative;
+  display: none;
+}
+
+.text-content-H {
+  display: flex;
+  white-space: nowrap;
+  animation: scrollTextH var(--H-speed) linear infinite;
+}
+
+.text-content-H span {
+  font-size: var(--H-font-size);
+  font-weight: bold;
+  color: var(--H-text-color);
+  margin-right: var(--H-gap);
+  letter-spacing: 2px;
+}
+
+@keyframes scrollTextH {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+
+
 /* vista portatil */
-/* @media (max-width: 1370px) {
-  .bannerProducts {
+@media (max-width: 1272px) {
+  .banner {
+    width: 90%;
     flex-direction: row;
-    height: fit-content;
+    /* height: fit-content; */
+  }
+
+  .banner::before {
+    height: 400px;
+    /* background: transparent; */
+    z-index: 1;
   }
 
   .bannerProduct-image-container {
@@ -156,19 +264,15 @@ body {
   .section-DataBanner{
     justify-content: end;
   }
-  .banner-description{
-    max-height: 180px;
-    overflow-y: auto;
-    scrollbar-color: #fff #df6897;
-  }
+  
   .banner-info{
     width: 90%;
   }
-} */
+}
 
 
 /* vista portatil */
-/* @media (max-width: 1200px) {
+@media (max-width: 1145px) {
   .bannerProducts {
     flex-direction: column;
     height: fit-content;
@@ -187,36 +291,63 @@ body {
   .section-DataBanner{
     justify-content: end;
   }
-  .banner-description{
-    max-height: 200px;
-    overflow-y: auto;
-  }
+
   .banner-info{
     width: 90%;
   }
-} */
+}
 
 
 /* vista movil */
-/* @media (max-width: 700px) {
-  .bannerProducts {
-    flex-direction: column;
+@media (max-width: 1070px) {
+  .banner {
+    flex-direction: column-reverse;
     height: fit-content;
+    border: solid 1px #c9c9c9;
   }
 
-  .bannerProduct-image-container {
+  .banner::before{
+    background: transparent;
+  }
+
+  .image-area{
     width: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .text-strip-H{
+    width: 100%;
+    display: block;
+  }
+
+  .text-content-H span{
+    margin-top: 7px;
+  }
+  .text-strip{
+    display: none;
+    
+  }
+
+  .circle-image {
+    width: 100%;
+    height: 320px;
     border-radius: 0;
+    object-fit: contain;
+    background-color: #fff;
+    border: none;
+  }
+
+  .content {
+    padding-left: 0px;
+    max-width: 100%;
+    padding: 10px;
   }
 
   .section-DataBanner{
-    justify-content: center;
+    width: 100%;
   }
-  .banner-description{
-    max-height: 200px;
-    overflow-y: auto;
+  #desc{
+    width: 100%;
   }
-  .banner-info{
-    width: 90%;
-  }
-} */
+}
