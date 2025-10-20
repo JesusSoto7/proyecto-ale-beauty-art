@@ -1,6 +1,7 @@
 import 'package:ale_beauty_art_app/core/views/login_view.dart';
 import 'package:ale_beauty_art_app/features/auth/bloc/auth_bloc.dart';
 import 'package:ale_beauty_art_app/features/favorites/presentation/view/favorite_page.dart';
+import 'package:ale_beauty_art_app/features/orders/presentation/bloc/order_bloc.dart';
 import 'package:ale_beauty_art_app/features/orders/presentation/views/order_page_view.dart';
 import 'package:ale_beauty_art_app/features/shipping_address/presentation/bloc/shipping_address_bloc.dart';
 import 'package:ale_beauty_art_app/features/shipping_address/presentation/bloc/shipping_address_event.dart';
@@ -183,7 +184,17 @@ class ProfileView extends StatelessWidget {
                     context,
                     icon: Icons.shopping_bag,
                     title: 'Mis pedidos',
-                    onTap: () {
+                    onTap: () async {
+                      final authState = context.read<AuthBloc>().state;
+                      if (authState is! AuthSuccess) {
+                        final result = await Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (_) => const LoginPage()),
+                        );
+                        if (result != true) return;
+                      }
+                      final auth = context.read<AuthBloc>().state as AuthSuccess;
+                      context.read<OrderBloc>().add(UpdateOrderToken(auth.token));
                       Navigator.push(
                         context,
                         MaterialPageRoute(builder: (_) => const OrderPageView()),
