@@ -172,79 +172,61 @@ class _ProductDetailViewState extends State<ProductDetailView> {
             child: Padding(
               padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Tarjeta de información
+                  // Información sin contenedor (estilo limpio)
+                  // Badge de categoría arriba, pequeño
                   Container(
-                    width: double.infinity,
-                    padding: const EdgeInsets.all(16),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 10, vertical: 4),
                     decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(18),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.06),
-                          blurRadius: 10,
-                          offset: const Offset(0, 4),
-                        ),
-                      ],
+                      color: const Color(0xFFFFEEF3),
+                      borderRadius: BorderRadius.circular(8),
                     ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Expanded(
-                              child: Text(
-                                product.nombreProducto,
-                                style: const TextStyle(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.w700,
-                                  color: Color(0xFF1F2937),
-                                ),
-                              ),
-                            ),
-                            const SizedBox(width: 12),
-                            Text(
-                              formatPriceCOP(product.precioProducto),
-                              style: const TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.w800,
-                                color: Color(0xFFD95D85),
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 10),
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 10, vertical: 4),
-                          decoration: BoxDecoration(
-                            color: const Color(0xFFFFEEF3),
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: Text(
-                            product.nombreCategoria,
-                            style: const TextStyle(
-                              color: Color(0xFFD95D85),
-                              fontWeight: FontWeight.w600,
-                              fontSize: 12,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 12),
-                        Text(
-                          product.descripcion,
-                          style: const TextStyle(
-                            fontSize: 14.5,
-                            color: Color(0xFF374151),
-                            height: 1.45,
-                          ),
-                        ),
-                      ],
+                    child: Text(
+                      product.nombreCategoria,
+                      style: const TextStyle(
+                        color: Color(0xFFD95D85),
+                        fontWeight: FontWeight.w600,
+                        fontSize: 12,
+                      ),
                     ),
                   ),
-                  const SizedBox(height: 80),
+                  const SizedBox(height: 6),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        child: Text(
+                          product.nombreProducto,
+                          style: const TextStyle(
+                            fontSize: 22,
+                            fontWeight: FontWeight.w800,
+                            color: Color(0xFF1F2937),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Text(
+                        formatPriceCOP(product.precioProducto),
+                        style: const TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.w800,
+                          color: Color(0xFFD95D85),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+                  Text(
+                    product.descripcion,
+                    style: const TextStyle(
+                      fontSize: 14.5,
+                      color: Color(0xFF374151),
+                      height: 1.45,
+                    ),
+                  ),
+                  const SizedBox(height: 64),
                 ],
               ),
             ),
@@ -254,7 +236,7 @@ class _ProductDetailViewState extends State<ProductDetailView> {
 
       // Botones
       bottomNavigationBar: SafeArea(
-        minimum: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+        minimum: const EdgeInsets.symmetric(horizontal: 24, vertical: 22),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -374,7 +356,7 @@ extension on _ProductDetailViewState {
       child: Container(
         decoration: BoxDecoration(
           gradient: gradient,
-          borderRadius: BorderRadius.circular(14),
+          borderRadius: BorderRadius.circular(28),
           boxShadow: [
             BoxShadow(
               color: const Color(0xFFD95D85).withOpacity(0.25),
@@ -386,10 +368,10 @@ extension on _ProductDetailViewState {
         child: Material(
           color: Colors.transparent,
           child: InkWell(
-            borderRadius: BorderRadius.circular(14),
+            borderRadius: BorderRadius.circular(28),
             onTap: onTap,
             child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 18),
+              padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 20),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
