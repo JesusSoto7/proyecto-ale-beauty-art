@@ -1,5 +1,8 @@
 // ignore_for_file: use_key_in_widget_constructors, prefer_const_constructors
+import 'package:ale_beauty_art_app/features/auth/bloc/auth_bloc.dart';
 import 'package:ale_beauty_art_app/features/chat_ia/widget/chat_ia_widget.dart';
+import 'package:ale_beauty_art_app/features/home/presentation/widgets/notification_bell_icon.dart';
+import 'package:ale_beauty_art_app/features/notifications/presentation/bloc/notification_bloc.dart';
 import 'package:ale_beauty_art_app/features/products/presentation/bloc/product_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -19,6 +22,17 @@ class InitialView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final authState = context.read<AuthBloc>().state;
+    if (authState is AuthSuccess) {
+      context.read<NotificationBloc>().add(
+            UpdateNotificationToken(authState.token),
+          );
+      final currentState = context.read<NotificationBloc>().state;
+      if (currentState is NotificationInitial) {
+        context.read<NotificationBloc>().add(NotificationFetched());
+      }
+    }
+
     return WillPopScope(
         onWillPop: () async {
           final navBloc = context.read<NavigationBloc>();
@@ -35,7 +49,6 @@ class InitialView extends StatelessWidget {
         },
         child: Stack(children: [
           Scaffold(
-            // 🎨 Fondo general del color rosa degradado
             backgroundColor: Colors.transparent,
             body: Container(
               decoration: const BoxDecoration(
@@ -91,7 +104,6 @@ class InitialView extends StatelessWidget {
         ]));
   }
 
-  // 🏡 Contenido principal (Home)
   Widget _homeContent(BuildContext context) {
     final productBloc = context.read<ProductBloc>();
     if (productBloc.state is ProductInitial) {
@@ -105,7 +117,7 @@ class InitialView extends StatelessWidget {
         children: [
           const SizedBox(height: 20),
 
-          // 🔝 Header
+          // 🔝 Header con icono de notificaciones
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: Row(
@@ -121,24 +133,14 @@ class InitialView extends StatelessWidget {
                     fit: BoxFit.cover,
                   ),
                 ),
-                Container(
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.9),
-                    shape: BoxShape.circle,
-                  ),
-                  child: const Icon(
-                    Icons.notifications_none_rounded,
-                    color: Color(0xFFD95D85),
-                  ),
-                ),
+                // 🔔 Reemplaza el Container por el widget de notificaciones
+                NotificationBellIcon(),
               ],
             ),
           ),
 
           const SizedBox(height: 25),
 
-          // 🔍 Buscador
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: Container(
@@ -162,7 +164,6 @@ class InitialView extends StatelessWidget {
 
           const SizedBox(height: 25),
 
-          // 🌸 Categorías (en la parte rosa)
           const CategoriesRowView(),
 
           const SizedBox(height: 40),
@@ -170,7 +171,7 @@ class InitialView extends StatelessWidget {
           Container(
             width: double.infinity,
             constraints: BoxConstraints(
-              minHeight: screenHeight * 0.6, // ocupa toda la parte inferior
+              minHeight: screenHeight * 0.6,
             ),
             decoration: const BoxDecoration(
               color: Colors.white,
@@ -196,7 +197,6 @@ class InitialView extends StatelessWidget {
     );
   }
 
-  // ✨ Encabezado de sección
   Widget _sectionHeader(String title, VoidCallback onTap) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -227,7 +227,6 @@ class InitialView extends StatelessWidget {
     );
   }
 
-  // Barra de navegación inferior
   Widget _buildBottomNav(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
@@ -291,3 +290,5 @@ class InitialView extends StatelessWidget {
     );
   }
 }
+
+// 🔔 Widget del icono de notificaciones con badge
