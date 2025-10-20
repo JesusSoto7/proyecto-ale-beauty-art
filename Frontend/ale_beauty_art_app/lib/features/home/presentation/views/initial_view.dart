@@ -79,6 +79,8 @@ class InitialView extends StatelessWidget {
             ),
             bottomNavigationBar: _buildBottomNav(context),
           ),
+// Reemplaza el FloatingActionButton completo con esto:
+
           Positioned(
             bottom: 90,
             right: 24,
@@ -89,14 +91,12 @@ class InitialView extends StatelessWidget {
                 showModalBottomSheet(
                   context: context,
                   isScrollControlled: true,
+                  backgroundColor: Colors.transparent,
                   shape: RoundedRectangleBorder(
                     borderRadius:
-                        BorderRadius.vertical(top: Radius.circular(18)),
+                        BorderRadius.vertical(top: Radius.circular(24)),
                   ),
-                  builder: (context) => Padding(
-                    padding: const EdgeInsets.only(top: 15),
-                    child: ChatIAWidget(),
-                  ),
+                  builder: (context) => ChatIAWidget(),
                 );
               },
             ),
