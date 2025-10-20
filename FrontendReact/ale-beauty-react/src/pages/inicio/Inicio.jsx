@@ -18,9 +18,10 @@ import "../../assets/stylesheets/ProductosCliente.css";
 import "../../assets/stylesheets/RankingPro.css";
 import RankingPro from '../../components/rankingPro.jsx';
 import PositiveReviews from "../../components/positiveReviews.jsx";
+import StaticBanner from "../../components/staticBanner.jsx"
 
 function Inicio() {
-  const [carousel, setCarousel] = useState([]);
+  // const [carousel, setCarousel] = useState([]);
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
   const [cart, setCart] = useState(null);
@@ -116,13 +117,13 @@ function Inicio() {
       .then(res => res.json())
       .then(data => {
         const imgs = [
-          ...(data.admin_carousel || []),
+          // ...(data.admin_carousel || []),
           ...(data.products?.map(p => p.imagen_url) || [])
         ];
 
         let loadedCount = 0;
         if (imgs.length === 0) {
-          setCarousel(data.admin_carousel || []);
+          // setCarousel(data.admin_carousel || []);
           setProducts(data.products || []);
           setCategories(data.categories || []);
           setLoading(false);
@@ -151,7 +152,7 @@ function Inicio() {
           img.onload = img.onerror = () => {
             loadedCount++;
             if (loadedCount === imgs.length) {
-              setCarousel(data.admin_carousel || []);
+              // setCarousel(data.admin_carousel || []);
               setProducts(data.products || []);
               const productosRandom = [...(data.products || [])].sort(() => 0.5 - Math.random());
               setProducts(productosRandom);
@@ -272,7 +273,7 @@ function Inicio() {
 
   return (
     <div>
-      {loading ? (
+      {/* {loading ? (
         <Skeleton sx={{ bgcolor: 'grey.800' }} variant="rectangular" width={"100%"} height={350} />
       ) : carousel.length > 0 ? (
         <Carousel interval={3000} className="mb-0">
@@ -287,9 +288,9 @@ function Inicio() {
             </Carousel.Item>
           ))}
         </Carousel>
-      ) : null}
+      ) : null} */}
 
-
+      <StaticBanner/>
 
       {/* Sección Novedades Maquillaje */}
       <section className="mt-5">

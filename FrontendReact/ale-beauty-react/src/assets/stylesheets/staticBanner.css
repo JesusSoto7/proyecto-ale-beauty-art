@@ -1,0 +1,84 @@
+.banner-container {
+  position: relative;
+  width: 100%;
+  height: 400px;
+  margin: 10px auto;
+  /* border-radius: 12px; */
+  overflow: hidden;
+  /* box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2); */
+}
+
+.banner-slider {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+.banner-slide {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+  opacity: 0;
+  transition: opacity 1s ease-in-out;
+}
+
+.banner-slide.active {
+  opacity: 1;
+  z-index: 2;
+}
+
+/* Botones */
+.banner-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  /* background-color: rgba(0, 0, 0, 0.4); */
+  background-color: transparent;
+  border: none;
+  color: white;
+  font-size: 30px;
+  padding: 8px 14px;
+  cursor: pointer;
+  border-radius: 50%;
+  transition: background 0.3s;
+  z-index: 3;
+}
+
+.banner-btn:hover {
+  background-color: transparent;
+  color: rgb(253, 155, 207);
+}
+
+.banner-btn.prev {
+  left: 15px;
+}
+
+.banner-btn.next {
+  right: 15px;
+}
+
+/* Indicadores */
+.banner-indicators {
+  position: absolute;
+  bottom: 15px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 8px;
+  z-index: 3;
+}
+
+.dot {
+  width: 12px;
+  height: 12px;
+  background-color: rgba(255, 255, 255, 0.6);
+  border-radius: 50%;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.dot.active {
+  background-color: white;
+}
