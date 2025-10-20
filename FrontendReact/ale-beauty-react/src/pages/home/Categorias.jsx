@@ -505,7 +505,6 @@ const Categorias = () => {
                 required
                 error={!!errors.nombre}
                 helperText={errors.nombre}
-                placeholder="Ej: Electrónica, Ropa, Alimentos..."
                 InputLabelProps={{
                   shrink: true,
                   style: {

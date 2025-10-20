@@ -36,9 +36,10 @@ export default function DetallePedido() {
   if (error) return <p className="text-red-500">{error}</p>;
   if (!pedido) return <p className="text-red-500">{t("orderDetail.notFound")}</p>;
 
+
   const subTotal = (pedido.productos || []).reduce((acc, p) => {
     const cantidad = Number(p.cantidad || 0);
-    const precio = Number(p.precio_unitario || p.precio_producto || 0);
+    const precio = Number(p.precio_descuento || p.precio_unitario || p.precio_producto || 0);
     return acc + cantidad * precio;
   }, 0);
 
@@ -104,7 +105,11 @@ export default function DetallePedido() {
         <h3>{t("Productos adquiridos")}</h3>
         {(pedido.productos || []).map((p) => {
           const cantidad = p.cantidad;
-          const precio = p.precio_unitario || p.precio_producto;
+          const precioOriginal = p.precio_producto;
+          const precioDescuento = p.precio_descuento || p.precio_unitario;
+          const tieneDescuento = p.tiene_descuento || (precioDescuento < precioOriginal);
+          const porcentajeDescuento = p.porcentaje_descuento;
+          
           const nombre =
             p.nombre_producto ||
             p.product?.nombre_producto ||
@@ -128,9 +133,27 @@ export default function DetallePedido() {
                 <span>
                   {t("orderDetail.quantity")}: {cantidad}
                 </span>
+                
+                {tieneDescuento && porcentajeDescuento > 0 && (
+                  <span style={{ color: "#2563eb", fontWeight: 600, fontSize: "0.9em" }}>
+                    {porcentajeDescuento}% OFF
+                  </span>
+                )}
               </div>
               <div className="pedido-item-price">
-                {formatCOP(precio * cantidad)}
+               
+                {tieneDescuento ? (
+                  <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end" }}>
+                    <span style={{ color: "#dc2626", fontWeight: 700 }}>
+                      {formatCOP(precioDescuento * cantidad)}
+                    </span>
+                    <span style={{ textDecoration: "line-through", color: "#64748b", fontSize: "0.85em" }}>
+                      {formatCOP(precioOriginal * cantidad)}
+                    </span>
+                  </div>
+                ) : (
+                  <span>{formatCOP(precioDescuento * cantidad)}</span>
+                )}
               </div>
             </Link>
           );

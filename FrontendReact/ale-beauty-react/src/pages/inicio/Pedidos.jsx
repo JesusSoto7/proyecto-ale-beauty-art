@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useTranslation } from 'react-i18next';
 import { formatCOP } from "../../services/currency";
 import { useNavigate, useParams } from "react-router-dom";
-import CircularProgress from "@mui/material/CircularProgress"; // ⬅️ spinner
+import CircularProgress from "@mui/material/CircularProgress";
 import "../../assets/stylesheets/pedidos.css";
 
 function Pedidos() {

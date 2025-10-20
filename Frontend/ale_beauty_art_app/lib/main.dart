@@ -5,6 +5,7 @@ import 'package:ale_beauty_art_app/features/chat_ia/bloc/chat_ia_bloc.dart';
 import 'package:ale_beauty_art_app/features/checkout/payment/presentation/bloc/payment_bloc.dart';
 import 'package:ale_beauty_art_app/features/favorites/presentation/bloc/favorite_bloc.dart';
 import 'package:ale_beauty_art_app/features/navigation/bloc/navigation_bloc.dart';
+import 'package:ale_beauty_art_app/features/notifications/presentation/bloc/notification_bloc.dart';
 import 'package:ale_beauty_art_app/features/orders/presentation/bloc/order_bloc.dart';
 import 'package:ale_beauty_art_app/features/profile/presentation/bloc/profile_bloc.dart';
 import 'package:ale_beauty_art_app/features/shipping_address/presentation/bloc/shipping_address_bloc.dart';
@@ -53,6 +54,9 @@ class MyApp extends StatelessWidget {
           },
         ),
         BlocProvider(create: (context) => ChatIaBloc()),
+        BlocProvider(
+          create: (context) => NotificationBloc(),
+        ),
       ],
       child: const MaterialApp(
         debugShowCheckedModeBanner: false,

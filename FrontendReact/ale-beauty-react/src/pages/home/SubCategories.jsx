@@ -548,7 +548,6 @@ const SubCategorias = () => {
                   required
                   error={!!errors.nombre}
                   helperText={errors.nombre}
-                  placeholder="Ej: Laptops, Camisetas, Frutas..."
                   sx={{
                     "& .MuiOutlinedInput-root": {
                       borderRadius: "10px",
