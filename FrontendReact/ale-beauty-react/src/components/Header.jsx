@@ -311,18 +311,25 @@ export default function Header({ loadFavorites }) {
   }, [t]);
 
   const handleLogout = async () => {
-    // Limpiamos TODO al hacer logout
-    localStorage.removeItem('token');
-    localStorage.removeItem('userData');
-    setUser(null);
+    // Cerrar el menú primero para evitar el movimiento
+    setAnchorEl(null);
     
-    try {
-      await fetch('https://localhost:4000/api/v1/sign_out', {
-        method: 'DELETE',
-        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
-      });
-    } catch { }
-    window.location.href = `/${lang}/login`;
+    // Pequeño delay para que la animación de cierre se complete
+    setTimeout(() => {
+      // Limpiamos TODO al hacer logout
+      localStorage.removeItem('token');
+      localStorage.removeItem('userData');
+      setUser(null);
+      
+      try {
+        fetch('https://localhost:4000/api/v1/sign_out', {
+          method: 'DELETE',
+          headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+        }).catch(() => {}); // No nos importa si falla
+      } catch { }
+      
+      window.location.href = `/${lang}/login`;
+    }, 150);
   };
 
   // Función para navegar a categorías (corregida para subcategorías)
