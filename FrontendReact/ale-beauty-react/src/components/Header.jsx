@@ -46,7 +46,13 @@ export default function Header({ loadFavorites }) {
   const [hoveredNavCategory, setHoveredNavCategory] = useState(null);
   const { lang } = useParams();
   const { t, i18n } = useTranslation();
-  const [user, setUser] = useState(null);
+  
+  // ESTADO PERSISTENTE - Se inicializa con los datos guardados
+  const [user, setUser] = useState(() => {
+    const savedUser = localStorage.getItem('userData');
+    return savedUser ? JSON.parse(savedUser) : null;
+  });
+  
   const [scrolled, setScrolled] = useState(false);
   const SCROLL_THRESHOLD = 100;
 
@@ -142,6 +148,56 @@ export default function Header({ loadFavorites }) {
   };
   // --- Fin Notificaciones hooks ---
 
+  // VERIFICACIÓN SILENCIOSA - No afecta la UI
+  useEffect(() => {
+    const verifyUserSilently = async () => {
+      const token = localStorage.getItem("token");
+      
+      if (!token) {
+        // Si no hay token, limpiamos todo
+        localStorage.removeItem('userData');
+        setUser(null);
+        return;
+      }
+
+      try {
+        const response = await fetch("https://localhost:4000/api/v1/me", {
+          headers: { 
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          },
+        });
+
+        if (response.ok) {
+          const userData = await response.json();
+          // Actualizamos tanto el estado como localStorage
+          setUser(userData);
+          localStorage.setItem('userData', JSON.stringify(userData));
+        } else {
+          // Si el token es inválido, limpiamos todo SILENCIOSAMENTE
+          if (response.status === 401) {
+            localStorage.removeItem('token');
+            localStorage.removeItem('userData');
+            setUser(null);
+          }
+        }
+      } catch (error) {
+        console.error("Error verifying user:", error);
+        // En caso de error, mantenemos el estado actual
+        // No limpiamos para evitar flickering
+      }
+    };
+
+    verifyUserSilently();
+  }, []);
+
+  // Cuando el usuario inicia sesión, guardamos los datos
+  useEffect(() => {
+    if (user) {
+      localStorage.setItem('userData', JSON.stringify(user));
+    }
+  }, [user]);
+
   useEffect(() => {
     fetchCart();
     const handleCartUpdate = () => {
@@ -235,6 +291,7 @@ export default function Header({ loadFavorites }) {
     e.preventDefault();
   }
 
+  // Verificación inicial del usuario (mantenida del código original)
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token) return;
@@ -248,12 +305,17 @@ export default function Header({ loadFavorites }) {
       })
       .then((data) => {
         setUser(data);
+        localStorage.setItem('userData', JSON.stringify(data));
       })
       .catch((err) => console.error(err));
   }, [t]);
 
   const handleLogout = async () => {
+    // Limpiamos TODO al hacer logout
     localStorage.removeItem('token');
+    localStorage.removeItem('userData');
+    setUser(null);
+    
     try {
       await fetch('https://localhost:4000/api/v1/sign_out', {
         method: 'DELETE',
@@ -358,6 +420,7 @@ export default function Header({ loadFavorites }) {
     </Menu>
   );
 
+  // Icono de perfil - SIEMPRE muestra el estado guardado
   const perfilIcon = user ? (
     <Box
       onClick={(e) => setAnchorEl(e.currentTarget)}
@@ -484,10 +547,10 @@ export default function Header({ loadFavorites }) {
                 </Select>
               </FormControl>
 
-              {/* Icono de perfil */}
+              {/* Icono de perfil - SIEMPRE persistente */}
               {perfilIcon}
 
-              {/* Nombre del usuario */}
+              {/* Nombre del usuario - SIEMPRE persistente */}
               <Typography 
                 component={Link} 
                 to={user ? `/${lang}/perfil` : `/${lang}/login`}
@@ -498,7 +561,8 @@ export default function Header({ loadFavorites }) {
                   fontSize: '14px',
                   display: { xs: 'none', sm: 'block' },
                   transition: 'color 0.2s',
-                  '&:hover': { color: pinkTheme.primary }
+                  '&:hover': { color: pinkTheme.primary },
+                  minWidth: '80px'
                 }}
               >
                 {user ? user.nombre : 'Sign In'}
