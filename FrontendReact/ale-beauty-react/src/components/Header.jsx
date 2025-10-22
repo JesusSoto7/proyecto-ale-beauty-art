@@ -46,7 +46,13 @@ export default function Header({ loadFavorites }) {
   const [hoveredNavCategory, setHoveredNavCategory] = useState(null);
   const { lang } = useParams();
   const { t, i18n } = useTranslation();
-  const [user, setUser] = useState(null);
+  
+  // ESTADO PERSISTENTE - Se inicializa con los datos guardados
+  const [user, setUser] = useState(() => {
+    const savedUser = localStorage.getItem('userData');
+    return savedUser ? JSON.parse(savedUser) : null;
+  });
+  
   const [scrolled, setScrolled] = useState(false);
   const SCROLL_THRESHOLD = 100;
 
@@ -140,7 +146,77 @@ export default function Header({ loadFavorites }) {
   const handleCloseNotificationsMenu = () => {
     setNotificationsAnchorEl(null);
   };
+
+  const formatNotificationTime = (dateString) => {
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffMs = now - date;
+    const diffMins = Math.floor(diffMs / (1000 * 60));
+    const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+    const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+
+    if (diffMins < 1) return 'Ahora mismo';
+    if (diffMins < 60) return `Hace ${diffMins} min`;
+    if (diffHours < 24) return `Hace ${diffHours} h`;
+    if (diffDays === 1) return 'Ayer';
+    if (diffDays < 7) return `Hace ${diffDays} días`;
+    
+    return date.toLocaleDateString('es-ES', {
+      day: 'numeric',
+      month: 'short'
+    });
+  };
   // --- Fin Notificaciones hooks ---
+
+  // VERIFICACIÓN SILENCIOSA - No afecta la UI
+  useEffect(() => {
+    const verifyUserSilently = async () => {
+      const token = localStorage.getItem("token");
+      
+      if (!token) {
+        // Si no hay token, limpiamos todo
+        localStorage.removeItem('userData');
+        setUser(null);
+        return;
+      }
+
+      try {
+        const response = await fetch("https://localhost:4000/api/v1/me", {
+          headers: { 
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          },
+        });
+
+        if (response.ok) {
+          const userData = await response.json();
+          // Actualizamos tanto el estado como localStorage
+          setUser(userData);
+          localStorage.setItem('userData', JSON.stringify(userData));
+        } else {
+          // Si el token es inválido, limpiamos todo SILENCIOSAMENTE
+          if (response.status === 401) {
+            localStorage.removeItem('token');
+            localStorage.removeItem('userData');
+            setUser(null);
+          }
+        }
+      } catch (error) {
+        console.error("Error verifying user:", error);
+        // En caso de error, mantenemos el estado actual
+        // No limpiamos para evitar flickering
+      }
+    };
+
+    verifyUserSilently();
+  }, []);
+
+  // Cuando el usuario inicia sesión, guardamos los datos
+  useEffect(() => {
+    if (user) {
+      localStorage.setItem('userData', JSON.stringify(user));
+    }
+  }, [user]);
 
   useEffect(() => {
     fetchCart();
@@ -235,6 +311,7 @@ export default function Header({ loadFavorites }) {
     e.preventDefault();
   }
 
+  // Verificación inicial del usuario (mantenida del código original)
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token) return;
@@ -248,19 +325,31 @@ export default function Header({ loadFavorites }) {
       })
       .then((data) => {
         setUser(data);
+        localStorage.setItem('userData', JSON.stringify(data));
       })
       .catch((err) => console.error(err));
   }, [t]);
 
   const handleLogout = async () => {
-    localStorage.removeItem('token');
-    try {
-      await fetch('https://localhost:4000/api/v1/sign_out', {
-        method: 'DELETE',
-        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
-      });
-    } catch { }
-    window.location.href = `/${lang}/login`;
+    // Cerrar el menú primero para evitar el movimiento
+    setAnchorEl(null);
+    
+    // Pequeño delay para que la animación de cierre se complete
+    setTimeout(() => {
+      // Limpiamos TODO al hacer logout
+      localStorage.removeItem('token');
+      localStorage.removeItem('userData');
+      setUser(null);
+      
+      try {
+        fetch('https://localhost:4000/api/v1/sign_out', {
+          method: 'DELETE',
+          headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+        }).catch(() => {}); // No nos importa si falla
+      } catch { }
+      
+      window.location.href = `/${lang}/login`;
+    }, 150);
   };
 
   // Función para navegar a categorías (corregida para subcategorías)
@@ -358,6 +447,7 @@ export default function Header({ loadFavorites }) {
     </Menu>
   );
 
+  // Icono de perfil - SIEMPRE muestra el estado guardado
   const perfilIcon = user ? (
     <Box
       onClick={(e) => setAnchorEl(e.currentTarget)}
@@ -484,10 +574,10 @@ export default function Header({ loadFavorites }) {
                 </Select>
               </FormControl>
 
-              {/* Icono de perfil */}
+              {/* Icono de perfil - SIEMPRE persistente */}
               {perfilIcon}
 
-              {/* Nombre del usuario */}
+              {/* Nombre del usuario - SIEMPRE persistente */}
               <Typography 
                 component={Link} 
                 to={user ? `/${lang}/perfil` : `/${lang}/login`}
@@ -498,7 +588,8 @@ export default function Header({ loadFavorites }) {
                   fontSize: '14px',
                   display: { xs: 'none', sm: 'block' },
                   transition: 'color 0.2s',
-                  '&:hover': { color: pinkTheme.primary }
+                  '&:hover': { color: pinkTheme.primary },
+                  minWidth: '80px'
                 }}
               >
                 {user ? user.nombre : 'Sign In'}
@@ -562,44 +653,177 @@ export default function Header({ loadFavorites }) {
                   <BsBell size={22}/>
                 </Badge>
               </IconButton>
+              
+              {/* NUEVO MENÚ DE NOTIFICACIONES - DISEÑO LIMPIO */}
               <Menu
-                  anchorEl={notificationsAnchorEl}
-                  open={isNotificationsMenuOpen}
-                  onClose={handleCloseNotificationsMenu}
-                  PaperProps={{
-                    style: {
-                      width: 340, padding: 0, borderRadius: 12, boxShadow: '0 10px 30px rgba(0,0,0,0.13)'
-                    }
-                  }}
-                  anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-                  transformOrigin={{ vertical: 'top', horizontal: 'right' }}
-                >
-                <Box sx={{ px: 2, py: 2 }}>
-                  <Typography variant="h6" sx={{ mb: 1, color: pinkTheme.primary, fontWeight: 'bold' }}>
-                    Notificaciones
-                  </Typography>
+                anchorEl={notificationsAnchorEl}
+                open={isNotificationsMenuOpen}
+                onClose={handleCloseNotificationsMenu}
+                PaperProps={{
+                  style: {
+                    width: 380,
+                    maxHeight: 480,
+                    borderRadius: 12,
+                    boxShadow: '0 8px 24px rgba(0,0,0,0.12)',
+                    overflow: 'hidden'
+                  }
+                }}
+                anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+                transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+              >
+                {/* Header */}
+                <Box sx={{ 
+                  p: 2, 
+                  borderBottom: `1px solid #f0f0f0`,
+                  backgroundColor: 'white'
+                }}>
+                  <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
+                    <Typography variant="h6" sx={{ fontWeight: 600, color: '#333', fontSize: '16px' }}>
+                      Notificaciones
+                    </Typography>
+                    {notificaciones.length > 0 && (
+                      <Typography variant="caption" sx={{ color: '#666', fontWeight: 500, fontSize: '12px' }}>
+                        {notificaciones.length} {notificaciones.length === 1 ? 'notificación' : 'notificaciones'}
+                      </Typography>
+                    )}
+                  </Box>
+                </Box>
+
+                {/* Contenido */}
+                <Box sx={{ maxHeight: 360, overflow: 'auto' }}>
                   {notificacionesLoading ? (
-                    <div className="text-center py-10">
-                      <CircularProgress style={{ color: "#ca5679ff" }} />
-                    </div>
+                    <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', py: 4 }}>
+                      <CircularProgress sx={{ color: pinkTheme.primary }} size={24} />
+                    </Box>
+                  ) : notificaciones.length === 0 ? (
+                    <Box sx={{ textAlign: 'center', py: 4, px: 2 }}>
+                      <BsBell size={28} style={{ color: '#ccc', marginBottom: 12 }} />
+                      <Typography variant="body2" sx={{ color: '#999', fontSize: '14px' }}>
+                        No tienes notificaciones
+                      </Typography>
+                    </Box>
                   ) : (
-                  <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
-                    {notificaciones.length === 0 && <li>No tienes notificaciones.</li>}
-                    {notificaciones.map(n => (
-                      <li key={n.id} style={{
-                        background: "#eee",
-                        margin: "8px 0",
-                        padding: "12px",
-                        borderRadius: "8px"
-                      }}>
-                        <strong>{n.notification_message.title}</strong>
-                        <p>{n.notification_message.message}</p>
-                        <small>{new Date(n.notification_message.created_at).toLocaleString()}</small>
-                      </li>
-                    ))}
-                  </ul>
+                    <Box sx={{ p: 1 }}>
+                      {notificaciones.map((notificacion) => (
+                        <Box
+                          key={notificacion.id}
+                          sx={{
+                            p: 2,
+                            mb: 1,
+                            borderRadius: 8,
+                            backgroundColor: 'white',
+                            border: `1px solid #f0f0f0`,
+                            cursor: 'pointer',
+                            transition: 'all 0.2s ease',
+                            '&:hover': {
+                              backgroundColor: '#fafafa',
+                              borderColor: pinkTheme.secondary
+                            }
+                          }}
+                        >
+                          <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 2 }}>
+                            {/* Icono de notificación */}
+                            <Box
+                              sx={{
+                                width: 32,
+                                height: 32,
+                                borderRadius: '50%',
+                                backgroundColor: pinkTheme.light,
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                flexShrink: 0
+                              }}
+                            >
+                              <BsBell size={14} style={{ color: pinkTheme.primary }} />
+                            </Box>
+                            
+                            {/* Contenido */}
+                            <Box sx={{ flex: 1, minWidth: 0 }}>
+                              <Typography 
+                                variant="subtitle2" 
+                                sx={{ 
+                                  fontWeight: 600,
+                                  color: '#333',
+                                  lineHeight: 1.3,
+                                  mb: 0.5,
+                                  fontSize: '13px'
+                                }}
+                              >
+                                {notificacion.notification_message?.title || 'Nueva notificación'}
+                              </Typography>
+                              
+                              <Typography 
+                                variant="body2" 
+                                sx={{ 
+                                  color: '#666',
+                                  lineHeight: 1.4,
+                                  mb: 1,
+                                  fontSize: '12px',
+                                  display: '-webkit-box',
+                                  WebkitLineClamp: 2,
+                                  WebkitBoxOrient: 'vertical',
+                                  overflow: 'hidden'
+                                }}
+                              >
+                                {notificacion.notification_message?.message || 'Sin descripción'}
+                              </Typography>
+                              
+                              <Typography 
+                                variant="caption" 
+                                sx={{ 
+                                  color: '#999',
+                                  fontSize: '11px'
+                                }}
+                              >
+                                {formatNotificationTime(notificacion.notification_message?.created_at || notificacion.created_at)}
+                              </Typography>
+                            </Box>
+                            
+                            {/* Indicador de no leída */}
+                            {!notificacion.read && (
+                              <Box 
+                                sx={{ 
+                                  width: 8, 
+                                  height: 8, 
+                                  borderRadius: '50%', 
+                                  backgroundColor: pinkTheme.primary,
+                                  flexShrink: 0,
+                                  mt: 0.5
+                                }} 
+                              />
+                            )}
+                          </Box>
+                        </Box>
+                      ))}
+                    </Box>
                   )}
                 </Box>
+
+                {/* Footer */}
+                {notificaciones.length > 0 && (
+                  <Box sx={{ 
+                    p: 2, 
+                    borderTop: `1px solid #f0f0f0`,
+                    backgroundColor: '#fafafa'
+                  }}>
+                    <Typography 
+                      variant="body2" 
+                      sx={{ 
+                        color: pinkTheme.primary, 
+                        fontWeight: 500,
+                        textAlign: 'center',
+                        display: 'block',
+                        cursor: 'pointer',
+                        fontSize: '13px',
+                        '&:hover': { color: pinkTheme.dark }
+                      }}
+                      onClick={handleCloseNotificationsMenu}
+                    >
+                      Ver todas las notificaciones
+                    </Typography>
+                  </Box>
+                )}
               </Menu>
             </Box>
 
