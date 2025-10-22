@@ -1,10 +1,85 @@
-<p>Hola <%= @order.user.nombre %></p>
-<p>Estos son los detalles de tu pedido:</p>
+<!-- Banner -->
+    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="background-color:#fb73a9;">
+      <tr>
+        <td align="center" style="padding:20px 0;">
+          <img src="https://raw.githubusercontent.com/JesusSoto7/proyecto-ale-beauty-art/refs/heads/main/Backend/app/assets/images/ale_logo.jpg"
+               width="80" height="80" alt="Ale Beauty Art"
+               style="border-radius:50%; border:3px solid #fff; display:block;">
+        </td>
+      </tr>
+      <tr>
+        <td align="center">
+          <!-- OLA SVG -->
+          <svg viewBox="0 0 1440 320" width="100%" height="60" style="display:block;">
+            <path fill="#ffffff" fill-opacity="1"
+              d="M0,224L60,213.3C120,203,240,181,360,165.3C480,149,600,139,720,149.3C840,160,960,192,1080,192C1200,192,1320,160,1380,144L1440,128L1440,320L0,320Z" />
+          </svg>
+        </td>
+      </tr>
+    </table>
 
-<ul>
-  <% @order.order_details.each do |item| %>
-    <li><%= item.product.nombre_producto %> - $<%= item.precio_unitario %> x <%= item.cantidad %></li>
-  <% end %>
-</ul>
+    <!-- Contenido principal -->
+    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="max-width:650px; margin:0 auto;">
+      <tr>
+        <td align="center" style="padding:20px;">
+          <h1 style="margin:0; font-size:26px;">¡Pedido Exitoso!</h1>
+          <p style="font-size:16px;">Hola <strong style="color:#fb73a9;"><%= @order.user.nombre %></strong>!</p>
+          <p style="font-size:16px;">¡Gracias por tu compra!</p>
+          <hr style="border:none; border-top:1px solid #ccc; width:100%;">
+          <h2 style="font-size:18px; font-weight:normal;">
+            número de pedido:
+            <strong style="color:#fb73a9;"><%= @order.numero_de_orden %></strong>
+          </h2>
+        </td>
+      </tr>
+    </table>
 
-<p><strong>Total: $<%= @order.total_con_envio %></strong></p>
+    <!-- Datos del pedido -->
+    <table role="presentation" width="100%" cellspacing="0" cellpadding="10" border="0" style="max-width:650px; margin:0 auto;">
+      <tr>
+        <td style="font-size:14px; color:#918f8f;">Este es tu pedido:</td>
+      </tr>
+      <tr>
+        <td>
+          <table role="presentation" width="100%" cellspacing="0" cellpadding="5" border="0">
+            <tr>
+              <td width="50%" valign="top">
+                <strong style="color:#202020;">N. orden:</strong><br>
+                <span style="color:#918f8f;"><%= @order.numero_de_orden %></span><br><br>
+                <strong style="color:#202020;">Fecha de pedido:</strong><br>
+                <span style="color:#918f8f;"><%= @order.created_at.strftime("%d %b %Y") %></span>
+              </td>
+              <td width="50%" valign="top">
+                <strong style="color:#202020;">Factura a:</strong><br>
+                <span style="color:#918f8f;"><%= @order.correo_cliente %></span><br><br>
+                <strong style="color:#202020;">Fuente:</strong><br>
+                <span style="color:#918f8f;">Ale beauty art</span>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+
+    <!-- Resumen de productos -->
+    <table role="presentation" width="100%" cellspacing="0" cellpadding="5" border="0" style="max-width:650px; margin:10px auto; border-collapse:collapse; border:1px solid #ddd;">
+      <tr style="background-color:#202020; color:#fff;">
+        <th align="left" style="padding:8px;">Producto</th>
+        <th align="center" style="padding:8px;">Cantidad</th>
+        <th align="right" style="padding:8px;">Valor unitario</th>
+      </tr>
+      <% @order.order_details.each do |item| %>
+        <tr style="background-color:#fff;">
+          <td style="padding:8px; border-top:1px solid #eee;"><%= item.product.nombre_producto %></td>
+          <td align="center" style="padding:8px; border-top:1px solid #eee;">x<%= item.cantidad %></td>
+          <td align="right" style="padding:8px; border-top:1px solid #eee;">$<%= item.precio_unitario %></td>
+        </tr>
+      <% end %>
+    </table>
+
+    <!-- Total -->
+    <table role="presentation" width="100%" cellspacing="0" cellpadding="10" border="0" style="max-width:650px; margin:0 auto;">
+      <tr>
+        <td align="right" style="font-size:16px; font-weight:bold;">Total: $<%= @order.total_con_envio %></td>
+      </tr>
+    </table>
