@@ -18,7 +18,7 @@ import BannerProduct from '../../components/bannerProducts';
 import "../../assets/stylesheets/RankingPro.css";
 import RankingPro from '../../components/rankingPro.jsx';
 import PositiveReviews from "../../components/positiveReviews.jsx";
-import StaticBanner from "../../components/staticBanner.jsx"
+
 
 function Inicio() {
   // const [carousel, setCarousel] = useState([]);
@@ -111,69 +111,46 @@ function Inicio() {
   };
 
   // Cargar productos + favoritos del usuario
-  useEffect(() => {
+    useEffect(() => {
     // Productos e inicio
     fetch('https://localhost:4000/api/v1/inicio')
       .then(res => res.json())
       .then(data => {
-        const imgs = [
-          // ...(data.admin_carousel || []),
-          ...(data.products?.map(p => p.imagen_url) || [])
-        ];
+        // ✅ MOSTRAR PÁGINA INMEDIATAMENTE
+        setProducts(data.products || []);
+        setCategories(data.categories || []);
+        setLoading(false); // ← Página visible YA
 
-        let loadedCount = 0;
-        if (imgs.length === 0) {
-          // setCarousel(data.admin_carousel || []);
-          setProducts(data.products || []);
-          setCategories(data.categories || []);
-          setLoading(false);
-          return;
+        // ✅ Cargar ratings DESPUÉS (no bloquear)
+        if (data.products && data.products.length > 0) {
+          // Solo cargar 4 ratings iniciales
+          setTimeout(() => {
+            loadProductRatings(data.products.slice(0, 4), false);
+          }, 500);
         }
-
-        // Novedades
-        fetch('https://localhost:4000/api/v1/products/novedades', {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          }
-        })
-          .then(res => res.json())
-          .then(data => {
-            setNewProducts(data);
-            // Cargar ratings para productos nuevos
-            if (Array.isArray(data) && data.length > 0) {
-              loadProductRatings(data);
-            }
-          })
-          .catch(err => console.error("Error cargando novedades", err));
-
-        imgs.forEach(src => {
-          const img = new Image();
-          img.src = src;
-          img.onload = img.onerror = () => {
-            loadedCount++;
-            if (loadedCount === imgs.length) {
-              // setCarousel(data.admin_carousel || []);
-              setProducts(data.products || []);
-              const productosRandom = [...(data.products || [])].sort(() => 0.5 - Math.random());
-              setProducts(productosRandom);
-              setCategories(data.categories || []);
-              
-              // Cargar ratings para todos los productos
-              if (data.products && data.products.length > 0) {
-                loadProductRatings(data.products);
-              }
-              
-              setLoading(false);
-            }
-          };
-        });
       })
       .catch(err => {
         console.error(t('home.loadError'), err);
         setLoading(false);
       });
 
-    // Carrito
+    // Novedades (en paralelo, no esperar)
+    fetch('https://localhost:4000/api/v1/products/novedades', {
+      headers: { Authorization: `Bearer ${token}` }
+    })
+      .then(res => res.json())
+      .then(data => {
+        setNewProducts(data);
+        // Ratings después también
+        setTimeout(() => {
+          if (Array.isArray(data) && data.length > 0) {
+            loadProductRatings(data.slice(0, 4), true);
+          }
+        }, 800);
+      })
+      .catch(err => console.error("Error cargando novedades", err));
+
+    // Carrito (no esperar tampoco)
     fetch('https://localhost:4000/api/v1/cart', {
       headers: { Authorization: `Bearer ${token}` },
     })
@@ -181,7 +158,7 @@ function Inicio() {
       .then(data => setCart(data.cart))
       .catch(err => console.error(t('home.cartError'), err));
 
-    // Favoritos del usuario
+    // Favoritos (no esperar tampoco)
     fetch('https://localhost:4000/api/v1/favorites', {
       headers: { Authorization: `Bearer ${token}` },
     })
@@ -290,7 +267,7 @@ function Inicio() {
         </Carousel>
       ) : null} */}
 
-      <StaticBanner/>
+
 
       {/* Sección Novedades Maquillaje */}
       <section className="mt-5">

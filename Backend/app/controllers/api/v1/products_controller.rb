@@ -3,7 +3,7 @@ class Api::V1::ProductsController < Api::V1::BaseController
   before_action :set_product, only: [:show, :update, :destroy]
 
   def index
-    products = Product.with_attached_imagen.includes(sub_category: :category).all
+    products = Product.with_attached_imagen.includes(:discount, sub_category: :category).all
     products = products.where(sub_category_id: params[:sub_category_id]) if params[:sub_category_id].present?
 
     render json: products.as_json(
