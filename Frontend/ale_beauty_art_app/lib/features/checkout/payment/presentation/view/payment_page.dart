@@ -5,6 +5,7 @@ import 'package:ale_beauty_art_app/features/checkout/payment/presentation/data/r
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:ale_beauty_art_app/features/checkout/payment/presentation/view/payment_success_page.dart';
 
 class PaymentPage extends StatefulWidget {
   final int orderId;
@@ -80,6 +81,7 @@ class _PaymentPageState extends State<PaymentPage> {
 
     final paymentMethod = await _mpService.getPaymentMethod(_cardNumber.text);
     final paymentMethodId = paymentMethod?["id"];
+    final paymentTypeId = paymentMethod?["payment_type_id"];
 
     if (paymentMethod == null ||
         (paymentMethod["payment_type_id"] != "credit_card" &&
@@ -104,10 +106,36 @@ class _PaymentPageState extends State<PaymentPage> {
         response["status"] ?? response["payment"]?["status"] ?? "unknown";
 
     if (status == "approved") {
-      _showMessage("¡Pago aprobado exitosamente!", isError: false);
+      // Preparar detalles para la vista de éxito
+      final payment = response["payment"] ?? response;
+      final paymentId = (payment["id"] ?? payment["payment_id"])?.toString();
+      // Prefer the detected values from MP search; fallback to backend response
+      final resolvedPaymentMethodId = (paymentMethodId ?? (payment["payment_method_id"] ?? payment["method_id"]))?.toString();
+      final resolvedPaymentTypeId = (paymentTypeId ?? payment["payment_type_id"])?.toString();
+      final cardLastFour = (payment["card"]?['last_four_digits'] ?? payment['last_four_digits'])?.toString();
+      final installments = payment['installments'] is int ? payment['installments'] as int : 1;
+      final approvedAt = (payment['date_approved'] ?? payment['approved_at'])?.toString();
+
       context.read<CartBloc>().add(LoadCart());
-      await Future.delayed(const Duration(milliseconds: 500));
-      if (mounted) Navigator.pop(context, true);
+
+      if (!mounted) return;
+      await Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (_) => PaymentSuccessPage(
+            amount: widget.amount,
+            paymentId: paymentId,
+            status: status,
+            paymentMethodId: resolvedPaymentMethodId,
+            paymentTypeId: resolvedPaymentTypeId,
+            cardLastFour: cardLastFour ?? _cardNumber.text.replaceAll(' ', '').substring(_cardNumber.text.replaceAll(' ', '').length - 4),
+            cardholderName: _name.text,
+            email: _email.text,
+            installments: installments,
+            approvedAt: approvedAt,
+          ),
+        ),
+      );
     } else {
       _showMessage(
           "Pago $status: ${response["detail"] ?? 'Intenta nuevamente'}",
