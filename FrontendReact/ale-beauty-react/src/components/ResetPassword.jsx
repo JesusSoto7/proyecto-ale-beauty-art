@@ -27,7 +27,7 @@ function ResetPassword() {
     setLoading(true);
 
     if (password !== passwordConfirmation) {
-      setError("Las contraseñas no coinciden");
+      setError(t("resetPassword.passwordMismatch"));
       setLoading(false);
       return;
     }

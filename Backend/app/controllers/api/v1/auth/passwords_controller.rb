@@ -13,14 +13,11 @@ module Api
             token = user.send(:set_reset_password_token)
             
             # In a production environment, you would send an email here
-            # For now, we'll return the token in the response for testing
             # UserMailer.password_reset(user, token).deliver_now
             
             render json: {
               status: 'success',
-              message: 'Si el correo existe, recibirás instrucciones para restablecer tu contraseña',
-              # Remove this in production - only for development/testing
-              reset_token: token
+              message: 'Si el correo existe, recibirás instrucciones para restablecer tu contraseña'
             }, status: :ok
           else
             # Return success even if email doesn't exist (security best practice)

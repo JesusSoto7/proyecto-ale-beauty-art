@@ -521,6 +521,7 @@
     "resetButton": "Reset password",
     "success": "Password successfully updated",
     "error": "An error occurred while resetting the password",
+    "passwordMismatch": "Passwords do not match",
     "redirecting": "Redirecting to login..."
   }
 }

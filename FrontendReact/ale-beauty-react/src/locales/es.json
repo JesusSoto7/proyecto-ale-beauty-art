@@ -521,6 +521,7 @@
     "resetButton": "Restablecer contraseña",
     "success": "Contraseña actualizada exitosamente",
     "error": "Ocurrió un error al restablecer la contraseña",
+    "passwordMismatch": "Las contraseñas no coinciden",
     "redirecting": "Redirigiendo al inicio de sesión..."
   }
 }
