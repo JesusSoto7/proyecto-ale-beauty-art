@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../../../../models/category.dart';
 import '../../../../../models/product.dart';
 import '../../../products/presentation/views/products_by_category_view.dart';
+import 'subcategories_view.dart';
 
 class CategoriesListView extends StatelessWidget {
   final List<Category> categories;
@@ -43,17 +44,30 @@ class CategoriesListView extends StatelessWidget {
               final filtered = allProducts
                   .where((p) => p.categoryId == category.id)
                   .toList();
-
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (_) => ProductsByCategoryView(
-                    categoryId: category.id,
-                    categoryName: category.nombreCategoria,
-                    products: filtered,
+              final hasSubcats = filtered.any((p) => p.subCategoryId != 0);
+              if (hasSubcats) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => SubCategoriesView(
+                      categoryId: category.id,
+                      categoryName: category.nombreCategoria,
+                      allProductsInCategory: filtered,
+                    ),
                   ),
-                ),
-              );
+                );
+              } else {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => ProductsByCategoryView(
+                      categoryId: category.id,
+                      categoryName: category.nombreCategoria,
+                      products: filtered,
+                    ),
+                  ),
+                );
+              }
             },
           ),
         );

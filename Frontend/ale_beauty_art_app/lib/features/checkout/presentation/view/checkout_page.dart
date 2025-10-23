@@ -8,6 +8,7 @@ class CheckoutPage extends StatefulWidget {
   final double cartTotal;
   final String token;
   final int selectedAddressId;
+  final bool restoreCartAfterPayment; // true cuando viene de compra rápida
 
   const CheckoutPage({
     super.key,
@@ -15,6 +16,7 @@ class CheckoutPage extends StatefulWidget {
     required this.cartTotal,
     required this.token,
     required this.selectedAddressId,
+    this.restoreCartAfterPayment = false,
   });
 
   @override
@@ -53,6 +55,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
                 orderId: state.orderId,
                 amount: widget.cartTotal,
                 token: widget.token,
+                restoreCartAfterPayment: widget.restoreCartAfterPayment,
               ),
             ),
           );

@@ -488,6 +488,7 @@ class _CartPageViewState extends State<CartPageView> {
                                   cartTotal: total,
                                   token: token,
                                   selectedAddressId: selectedAddressId,
+                                  restoreCartAfterPayment: false,
                                 ),
                               ),
                             );
