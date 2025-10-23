@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../products/presentation/bloc/product_bloc.dart';
 import '../../../products/presentation/views/products_by_category_view.dart';
+import 'subcategories_view.dart';
 import '../bloc/categories_bloc.dart';
 import '../../../../styles/colors.dart';
 
@@ -45,17 +46,31 @@ class CategoriesPageView extends StatelessWidget {
                         final filtered = allProductsState.products
                             .where((p) => p.categoryId == category.id)
                             .toList();
-
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => ProductsByCategoryView(
-                              categoryId: category.id,
-                              categoryName: category.nombreCategoria,
-                              products: filtered,
+                        // Si hay subcategorías derivables, mostramos SubCategoriesView; si no, directo a productos
+                        final hasSubcats = filtered.any((p) => p.subCategoryId != 0);
+                        if (hasSubcats) {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => SubCategoriesView(
+                                categoryId: category.id,
+                                categoryName: category.nombreCategoria,
+                                allProductsInCategory: filtered,
+                              ),
                             ),
-                          ),
-                        );
+                          );
+                        } else {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => ProductsByCategoryView(
+                                categoryId: category.id,
+                                categoryName: category.nombreCategoria,
+                                products: filtered,
+                              ),
+                            ),
+                          );
+                        }
                       } else {
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(

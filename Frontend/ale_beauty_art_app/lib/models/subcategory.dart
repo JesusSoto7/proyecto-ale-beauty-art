@@ -1,11 +1,15 @@
 class SubCategory {
   final int id;
   final String nombre;
+  final String imagen; // imagen_url expuesta por el backend
+  final String slug;
   final Category? category;
 
   SubCategory({
     required this.id,
     required this.nombre,
+    this.imagen = '',
+    this.slug = '',
     this.category,
   });
 
@@ -13,6 +17,8 @@ class SubCategory {
     return SubCategory(
       id: json['id'],
       nombre: json['nombre'],
+      imagen: json['imagen_url'] ?? '',
+      slug: json['slug'] ?? '',
       category:
           json['category'] != null ? Category.fromJson(json['category']) : null,
     );
