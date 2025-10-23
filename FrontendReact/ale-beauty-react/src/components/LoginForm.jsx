@@ -86,6 +86,12 @@ function LoginForm({ onLogin }) {
 
           {error && <p className="text-danger small">{error}</p>}
 
+          <div className="text-end mb-3">
+            <Link to={`/${lang}/forgot-password`} className="rosa text-decoration-none small">
+              {t("login.forgotPassword")}
+            </Link>
+          </div>
+
           <button type="submit" className="rosa-fondo btn-light w-100 login-btn">
             {t("login.signIn")}
           </button>

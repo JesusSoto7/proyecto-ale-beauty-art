@@ -118,7 +118,8 @@
     "terms1": "Al continuar confirmas que aceptas nuestros",
     "termsOfService": "Términos de Servicio",
     "and": "y",
-    "privacyPolicy": "Política de Privacidad"
+    "privacyPolicy": "Política de Privacidad",
+    "forgotPassword": "¿Olvidaste tu contraseña?"
   },
   "profile": {
     "loading": "Cargando perfil...",
@@ -502,6 +503,25 @@
       "text": "De acuerdo con el Estatuto del Consumidor colombiano, usted tiene derecho a reclamar por productos defectuosos. Solo aceptamos devoluciones de productos sellados y sin uso. Para ejercer sus derechos, contacte a"
     },
     "lastUpdate": "Última actualización:"
+  },
+  "forgotPassword": {
+    "title": "Recuperar contraseña",
+    "subtitle": "Ingresa tu correo electrónico y te enviaremos instrucciones para restablecer tu contraseña",
+    "emailPlaceholder": "tucorreo@gmail.com",
+    "sendInstructions": "Enviar instrucciones",
+    "backToLogin": "Volver al inicio de sesión",
+    "success": "Si el correo existe, recibirás instrucciones para restablecer tu contraseña",
+    "error": "Ocurrió un error al procesar tu solicitud"
+  },
+  "resetPassword": {
+    "title": "Restablecer contraseña",
+    "subtitle": "Ingresa tu nueva contraseña",
+    "newPasswordPlaceholder": "Nueva contraseña",
+    "confirmPasswordPlaceholder": "Confirmar nueva contraseña",
+    "resetButton": "Restablecer contraseña",
+    "success": "Contraseña actualizada exitosamente",
+    "error": "Ocurrió un error al restablecer la contraseña",
+    "redirecting": "Redirigiendo al inicio de sesión..."
   }
 }
 

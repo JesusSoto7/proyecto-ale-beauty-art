@@ -2,6 +2,8 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, Outlet, useParams } from 'react-router-dom';
 import LoginForm from './components/LoginForm';
 import Register from './components/RegisterForm';
+import ForgotPassword from './components/ForgotPassword';
+import ResetPassword from './components/ResetPassword';
 import Inicio from './pages/inicio/Inicio';
 import LayoutInicio from './components/Layout';
 import Cart from './components/Cart';
@@ -109,6 +111,8 @@ function App() {
 
           <Route path="login" element={<LoginForm onLogin={() => setIsLoggedIn(true)} />} />
           <Route path="register" element={<Register />} />
+          <Route path="forgot-password" element={<ForgotPassword />} />
+          <Route path="reset-password" element={<ResetPassword />} />
 
           <Route path="home" element={
             <ProtectedRoute requiredRole="admin">

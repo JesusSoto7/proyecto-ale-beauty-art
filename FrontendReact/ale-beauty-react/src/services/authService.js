@@ -37,3 +37,41 @@ export async function login({ email, password }) {
   const data = await response.json();
   return data;
 }
+
+export async function forgotPassword({ email }) {
+  const response = await fetch('https://localhost:4000/api/v1/auth/password/forgot', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json'
+    },
+    body: JSON.stringify({ email }),
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(errorData.message || 'Error al solicitar restablecimiento de contraseña');
+  }
+
+  const data = await response.json();
+  return data;
+}
+
+export async function resetPassword({ reset_password_token, password, password_confirmation }) {
+  const response = await fetch('https://localhost:4000/api/v1/auth/password/reset', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json'
+    },
+    body: JSON.stringify({ reset_password_token, password, password_confirmation }),
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(errorData.errors ? errorData.errors.join(', ') : 'Error al restablecer contraseña');
+  }
+
+  const data = await response.json();
+  return data;
+}
