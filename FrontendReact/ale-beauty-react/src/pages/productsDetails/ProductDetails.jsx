@@ -196,7 +196,13 @@ function ProductDetails() {
 
   function ProductImage({ product, noImage }) {
     return (
-      <div className="product-image" style={{ position: "relative", maxWidth: "500px" }}>
+      <div className="product-image" style={{ 
+        position: "relative", 
+        maxWidth: "500px",
+        borderRadius: "12px",
+        overflow: "hidden",
+        boxShadow: "0 4px 20px rgba(0,0,0,0.1)"
+      }}>
         {!imgLoaded && (
           <Skeleton
             variant="rectangular"
@@ -213,6 +219,11 @@ function ProductDetails() {
             e.currentTarget.src = noImage;
             setImgLoaded(true);
           }}
+          style={{
+            width: "100%",
+            height: "auto",
+            display: imgLoaded ? "block" : "none"
+          }}
         />
       </div>
     );
@@ -220,7 +231,7 @@ function ProductDetails() {
 
   if (!product) {
     return(
-            <div style={{
+      <div style={{
         display: "flex",
         flexDirection: "column",
         justifyContent: "center",
@@ -249,27 +260,42 @@ function ProductDetails() {
   }
 
   const activeBtnStyle = {
-    borderBottom: "2px solid #f896b8",
-    fontWeight: "bold",
-    color: "#f896b8",
-    borderRadius: "none",
-    backgroundColor: "transparent"
+    borderBottom: "3px solid #e91e63",
+    fontWeight: "700",
+    color: "#e91e63",
+    borderRadius: "0",
+    backgroundColor: "transparent",
+    padding: "12px 24px",
+    fontSize: "16px",
+    transition: "all 0.3s ease"
+  };
+
+  const inactiveBtnStyle = {
+    borderBottom: "2px solid transparent",
+    fontWeight: "500",
+    color: "#666",
+    borderRadius: "0",
+    backgroundColor: "transparent",
+    padding: "12px 24px",
+    fontSize: "16px",
+    transition: "all 0.3s ease"
   };
 
   function ProductRating({ value = 0, count = 0 }) {
     return (
-      <Box display="flex" alignItems="center">
+      <Box display="flex" alignItems="center" sx={{ mb: 2 }}>
         <Rating
           name="product-rating"
           value={Number(value) || 0}
           precision={0.5}
           readOnly
           sx={{
-            color: "#f896b8",
+            color: "#e91e63",
+            fontSize: "1.2rem"
           }}
         />
-        <Typography variant="body2" sx={{ ml: 1 }}>
-          ({Number(value).toFixed(1)}) ({count})
+        <Typography variant="body1" sx={{ ml: 1, fontWeight: "600", color: "#333" }}>
+          {Number(value).toFixed(1)} · {count} {t("productDetails.reviews")}
         </Typography>
       </Box>
     );
@@ -293,7 +319,14 @@ function ProductDetails() {
     };
 
     return (
-      <p style={{ lineHeight: "1.5", fontSize: "16px", overflowWrap: "anywhere", marginBottom: "0", marginTop: "10px" }}>
+      <p style={{ 
+        lineHeight: "1.6", 
+        fontSize: "16px", 
+        overflowWrap: "anywhere", 
+        marginBottom: "0", 
+        marginTop: "10px",
+        color: "#555"
+      }}>
         {shortText}
         {description.length > limit && (
           <a
@@ -304,10 +337,11 @@ function ProductDetails() {
             }}
             style={{
               marginLeft: "8px",
-              color: "#f896b8",
+              color: "#e91e63",
               cursor: "pointer",
-              textDecoration: "underline",
-              fontWeight: "bold",
+              textDecoration: "none",
+              fontWeight: "600",
+              borderBottom: "1px solid #e91e63"
             }}
           >
             {t("productDetails.viewMore")}
@@ -396,6 +430,7 @@ function ProductDetails() {
       if (res.ok) {
         setReviews((prev) => [...prev, data]);
         setNewReview({ rating: 0, comentario: "" });
+        setShowReviewForm(false);
       } else {
         alert("Error al enviar reseña: " + (data.errors || "desconocido"));
       }
@@ -444,75 +479,205 @@ function ProductDetails() {
   const discount = product.mejor_descuento_para_precio;
 
   return (
-    <div className="product-details-page" style={{marginTop: "60px"}}>
-      <div className="product-container">
+    <div className="product-details-page" style={{
+      marginTop: "60px",
+      maxWidth: "1200px",
+      margin: "60px auto 0",
+      padding: "0 20px"
+    }}>
+      <div className="product-container" style={{
+        display: "grid",
+        gridTemplateColumns: "1fr 1fr",
+        gap: "60px",
+        alignItems: "start",
+        marginBottom: "60px"
+      }}>
         <ProductImage product={product} noImage={noImage} />
 
-        <div className="product-info">
-          <div className="title-category">
-            <p className="negrita">{product.sub_category?.category?.nombre_categoria}</p>
-            <div style={{ display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center"
-             }}>
-              <h2>{product.nombre_producto}</h2>
+        <div className="product-info" style={{
+          padding: "20px 0"
+        }}>
+          <div className="title-category" style={{ width: "100%" }}>
+            <p className="negrita" style={{
+              color: "#e91e63",
+              fontSize: "14px",
+              fontWeight: "600",
+              textTransform: "uppercase",
+              letterSpacing: "0.5px",
+              marginBottom: "8px",
+              textAlign: "left"
+            }}>{product.sub_category?.category?.nombre_categoria}</p>
+            <div style={{ 
+              display: "flex", 
+              flexDirection: "row", 
+              justifyContent: "space-between", 
+              alignItems: "flex-start",
+              marginBottom: "16px",
+              width: "100%"
+            }}>
+              <div style={{ flex: 1 }}>
+                <h2 style={{
+                  fontSize: "28px",
+                  fontWeight: "700",
+                  color: "#333",
+                  lineHeight: "1.3",
+                  margin: "0",
+                  textAlign: "left"
+                }}>{product.nombre_producto}</h2>
+              </div>
 
-              <IconButton id="favBtn" onClick={() => toggleFavorite(product.id)}>
+              <IconButton 
+                id="favBtn" 
+                onClick={() => toggleFavorite(product.id)}
+                sx={{
+                  bgcolor: "white",
+                  boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
+                  "&:hover": { 
+                    bgcolor: "grey.50",
+                    transform: "scale(1.1)"
+                  },
+                  transition: "all 0.2s ease"
+                }}
+              >
                 {isFavorite ? (
-                  <Favorite sx={{ color: "white" }} />
+                  <Favorite sx={{ color: "#e91e63", fontSize: "28px" }} />
                 ) : (
-                  <FavoriteBorder />
+                  <FavoriteBorder sx={{ fontSize: "28px" }} />
                 )}
               </IconButton>
             </div>
             
           </div>
-          <ProductRating value={averageRating} count={reviews.length} />
+          <div style={{ width: "100%", textAlign: "left" }}>
+            <ProductRating value={averageRating} count={reviews.length} />
+          </div>
 
           <br></br>
           
           {/* Precio con descuento */}
-          <div>
+          <div style={{ marginBottom: "30px", textAlign: "left" }}>
             {priceDiscount && priceDiscount < priceOriginal ? (
               <>
-                <p className="price" style={{ color: "#dc2626", fontWeight: "bold", marginBottom: "0.5rem" }}>
+                <p className="price" style={{ 
+                  color: "#e91e63", 
+                  fontWeight: "700", 
+                  marginBottom: "4px",
+                  fontSize: "28px"
+                }}>
                   {formatCOP(priceDiscount)}
-                  <span style={{ textDecoration: "line-through", color: "#64748b", marginLeft: "1em", fontSize: "0.9em" }}>
+                  <span style={{ 
+                    textDecoration: "line-through", 
+                    color: "#999", 
+                    marginLeft: "12px", 
+                    fontSize: "18px",
+                    fontWeight: "400"
+                  }}>
                     {formatCOP(priceOriginal)}
                   </span>
                 </p>
                 {discount && discount.tipo === "porcentaje" && (
-                  <p style={{ color: "#2563eb", fontWeight: 500, fontSize: "0.95rem", marginTop: "0" }}>
-                    {discount.valor}% de descuento
+                  <p style={{ 
+                    color: "#4caf50", 
+                    fontWeight: 600, 
+                    fontSize: "14px", 
+                    marginTop: "0",
+                    backgroundColor: "#e8f5e8",
+                    padding: "4px 12px",
+                    borderRadius: "12px",
+                    display: "inline-block"
+                  }}>
+                    🎉 {discount.valor}% DE DESCUENTO
                   </p>
                 )}
               </>
             ) : (
-              <p className="price">{formatCOP(priceOriginal)}</p>
+              <p className="price" style={{
+                fontSize: "28px",
+                fontWeight: "700",
+                color: "#333"
+              }}>{formatCOP(priceOriginal)}</p>
             )}
           </div>
 
-          <div className="actions">
-            <button onClick={() => handleBuyNow(product.id)}>
+          <div className="actions" style={{
+            display: "flex",
+            gap: "16px",
+            marginTop: "30px"
+          }}>
+            <button 
+              onClick={() => handleBuyNow(product.id)}
+              style={{
+                flex: 2,
+                padding: "14px 24px",
+                fontSize: "16px",
+                fontWeight: "600",
+                backgroundColor: "#e91e63",
+                color: "white",
+                border: "none",
+                borderRadius: "8px",
+                cursor: "pointer",
+                transition: "all 0.2s ease",
+                boxShadow: "0 2px 8px rgba(233, 30, 99, 0.3)"
+              }}
+              onMouseOver={(e) => {
+                e.target.style.backgroundColor = "#d81b60";
+                e.target.style.transform = "translateY(-1px)";
+                e.target.style.boxShadow = "0 4px 12px rgba(233, 30, 99, 0.4)";
+              }}
+              onMouseOut={(e) => {
+                e.target.style.backgroundColor = "#e91e63";
+                e.target.style.transform = "translateY(0)";
+                e.target.style.boxShadow = "0 2px 8px rgba(233, 30, 99, 0.3)";
+              }}
+            >
               {t("productDetails.buy")}
             </button>
 
-            <button onClick={() => addToCart(product.id)}>
-              <BsCart4 size={25} />
+            <button 
+              onClick={() => addToCart(product.id)}
+              style={{
+                padding: "14px",
+                backgroundColor: "white",
+                border: "2px solid #e91e63",
+                borderRadius: "8px",
+                cursor: "pointer",
+                transition: "all 0.2s ease",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center"
+              }}
+              onMouseOver={(e) => {
+                e.target.style.backgroundColor = "#fff5f7";
+                e.target.style.transform = "scale(1.05)";
+              }}
+              onMouseOut={(e) => {
+                e.target.style.backgroundColor = "white";
+                e.target.style.transform = "scale(1)";
+              }}
+            >
+              <BsCart4 size={24} color="#e91e63" />
             </button>
           </div>
         </div>
       </div>
 
-    <section id="detalles-producto" className="details-reviews-container">
+    <section id="detalles-producto" className="details-reviews-container" style={{
+      backgroundColor: "white",
+      borderRadius: "12px",
+      padding: "32px",
+      boxShadow: "0 2px 16px rgba(0,0,0,0.08)",
+      marginBottom: "60px"
+    }}>
       <div style={{ 
         display: 'flex', 
         flexDirection: 'row', 
-        borderBottom: '1px solid #eee', 
-        marginBottom: '1rem' 
+        borderBottom: '2px solid #f0f0f0', 
+        marginBottom: '2rem' 
       }}>
         <button 
           className="botonTap"
           onClick={() => setActiveTab("description")} 
-          style={activeTab === "description" ? activeBtnStyle : {}}
+          style={activeTab === "description" ? activeBtnStyle : inactiveBtnStyle}
         >
           {t("productDetails.description")}
         </button>
@@ -520,15 +685,20 @@ function ProductDetails() {
         <button 
           className="botonTap"
           onClick={() => setActiveTab("reviews")} 
-          style={activeTab === "reviews" ? activeBtnStyle : {}}
+          style={activeTab === "reviews" ? activeBtnStyle : inactiveBtnStyle}
         >
-          {t("productDetails.reviews")}
+          {t("productDetails.reviews")} ({reviews.length})
         </button>
       </div>
 
       {activeTab === "description" && (
         <div className="description-section">
-          <p style={{ color: '#3d3d3dff', overflowWrap: "anywhere" }}>
+          <p style={{ 
+            color: '#555',
+            overflowWrap: "anywhere",
+            lineHeight: "1.7",
+            fontSize: "16px"
+          }}>
             {product.descripcion}
           </p>
         </div>
@@ -536,7 +706,7 @@ function ProductDetails() {
 
       {activeTab === "reviews" && (
         <div className="reviews-section">
-          <div id="areaRating" >
+          <div id="areaRating" style={{ marginBottom: "32px" }}>
             <RatingSummary 
             ratings={ratings} 
             showReviewForm={showReviewForm} 
@@ -547,8 +717,14 @@ function ProductDetails() {
           </div>
 
           {showReviewForm && canReview && (
-            <div id="formReviewCard" style={{ marginTop: "1rem" }}>
-              <form onSubmit={handleSubmitReview} style={{gap: 0}}>
+            <div id="formReviewCard" style={{ 
+              marginTop: "2rem",
+              backgroundColor: "#f8f9fa",
+              padding: "24px",
+              borderRadius: "12px",
+              border: "1px solid #e9ecef"
+            }}>
+              <form onSubmit={handleSubmitReview} style={{ gap: 0 }}>
                 <textarea
                   id="textReview"
                   placeholder={t("productDetails.writeReview")}
@@ -556,8 +732,17 @@ function ProductDetails() {
                   onChange={(e) =>
                     setNewReview({ ...newReview, comentario: e.target.value })
                   }
-                  rows={3}
-                  style={{ width: "100%", border: "none", borderBottom: "solid 1px #ccc"}}
+                  rows={4}
+                  style={{ 
+                    width: "100%", 
+                    border: "1px solid #ddd",
+                    borderRadius: "8px",
+                    padding: "16px",
+                    fontSize: "14px",
+                    resize: "vertical",
+                    marginBottom: "16px",
+                    fontFamily: "inherit"
+                  }}
                 />
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                   <Rating
@@ -566,10 +751,30 @@ function ProductDetails() {
                     onChange={(e, value) =>
                       setNewReview({ ...newReview, rating: value })
                     }
-                    sx={{ color: "#f896b8", marginLeft: 2 }}
+                    sx={{ color: "#e91e63" }}
+                    size="large"
                   />
                   <div>
-                    <button type="submit" id="ReviewUP">
+                    <button 
+                      type="submit" 
+                      id="ReviewUP"
+                      style={{
+                        backgroundColor: "#e91e63",
+                        color: "white",
+                        border: "none",
+                        padding: "10px 24px",
+                        borderRadius: "6px",
+                        fontWeight: "600",
+                        cursor: "pointer",
+                        transition: "all 0.2s ease"
+                      }}
+                      onMouseOver={(e) => {
+                        e.target.style.backgroundColor = "#d81b60";
+                      }}
+                      onMouseOut={(e) => {
+                        e.target.style.backgroundColor = "#e91e63";
+                      }}
+                    >
                       {t("productDetails.submitReview")}
                     </button>
                   </div>
@@ -578,40 +783,63 @@ function ProductDetails() {
             </div>
           )}
 
-          <hr/>
+          <hr style={{ margin: "32px 0", border: "none", borderTop: "1px solid #eee" }}/>
 
-          <h3>{t("productDetails.reviews")}</h3>
+          <h3 style={{ 
+            marginBottom: "24px",
+            color: "#333",
+            fontSize: "20px",
+            fontWeight: "600"
+          }}>
+            {t("productDetails.reviews")} ({reviews.length})
+          </h3>
 
           {loadingReviews ? (
-            <div style={{ textAlign: "center", padding: "1rem" }}>
-              <CircularProgress sx={{ color: "#f896b8" }} />
+            <div style={{ textAlign: "center", padding: "2rem" }}>
+              <CircularProgress sx={{ color: "#e91e63" }} />
             </div>
           ) : (
             <>
               <div>
                 {reviews.length === 0 ? (
-                  <p>{t("productDetails.noReviews")}</p>
+                  <div style={{
+                    textAlign: "center",
+                    padding: "40px",
+                    color: "#666"
+                  }}>
+                    <RateReviewIcon sx={{ fontSize: 48, color: "#ddd", mb: 2 }} />
+                    <p style={{ fontSize: "16px" }}>{t("productDetails.noReviews")}</p>
+                  </div>
                 ) : (
                   reviews.slice(0, visibleReviews).map((review) => (
                     <div
                       key={review.id}
                       style={{
-                        backgroundColor: "#fff",
+                        backgroundColor: "#fafafa",
                         borderRadius: "12px",
-                        padding: "16px",
-                        boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
-                        marginBottom: "1rem",
+                        padding: "20px",
+                        marginBottom: "16px",
+                        border: "1px solid #f0f0f0",
+                        transition: "all 0.2s ease"
+                      }}
+                      onMouseOver={(e) => {
+                        e.currentTarget.style.boxShadow = "0 2px 8px rgba(0,0,0,0.05)";
+                      }}
+                      onMouseOut={(e) => {
+                        e.currentTarget.style.boxShadow = "none";
                       }}
                     >
-                      <div style={{ display: "flex", alignItems: "flex-start", gap: "12px" }}>
+                      <div style={{ display: "flex", alignItems: "flex-start", gap: "16px" }}>
                         <img
                           src={review.user?.avatar_url || userFoto}
                           alt={review.user?.nombre || "Usuario"}
                           style={{
-                            width: "45px",
-                            height: "45px",
+                            width: "50px",
+                            height: "50px",
                             borderRadius: "50%",
                             objectFit: "cover",
+                            border: "2px solid #fff",
+                            boxShadow: "0 2px 4px rgba(0,0,0,0.1)"
                           }}
                         />
 
@@ -620,30 +848,36 @@ function ProductDetails() {
                             style={{
                               display: "flex",
                               justifyContent: "space-between",
-                              alignItems: "center",
+                              alignItems: "flex-start",
+                              marginBottom: "8px"
                             }}
                           >
                             <div>
-                              <strong style={{ color: "#222", fontSize: "15px" }}>
+                              <strong style={{ color: "#222", fontSize: "16px", display: "block" }}>
                                 {review.user?.nombre || "Usuario"}
                               </strong>
-                              <p style={{ fontSize: "12px", color: "#888", marginTop: "2px" }}>
+                              <p style={{ fontSize: "13px", color: "#888", marginTop: "2px" }}>
                                 {new Date(review.created_at).toLocaleDateString("es-CO", {
                                   day: "2-digit",
-                                  month: "short",
+                                  month: "long",
                                   year: "numeric",
                                 })}
                               </p>
                             </div>
-                            <Rating value={review.rating} readOnly sx={{ color: "#f896b8" }} size="small" />
+                            <Rating 
+                              value={review.rating} 
+                              readOnly 
+                              sx={{ color: "#e91e63" }} 
+                              size="medium" 
+                            />
                           </div>
 
                           <p
                             style={{
                               color: "#444",
-                              fontSize: "14px",
-                              lineHeight: "1.5",
-                              margin: "8px 0 6px 0",
+                              fontSize: "15px",
+                              lineHeight: "1.6",
+                              margin: "12px 0 0 0",
                             }}
                           >
                             {review.comentario}
@@ -658,21 +892,57 @@ function ProductDetails() {
               </div>
 
               {reviews.length > visibleReviews && (
-                <button 
-                  onClick={() => setVisibleReviews((prev) => prev + 5)} 
-                  style={{ marginTop: "1rem", backgroundColor: "#f896b8", color: "white", padding: "8px 12px", borderRadius: "5px" }}
-                >
-                  {t("productDetails.viewMore")}
-                </button>
+                <div style={{ textAlign: "center", marginTop: "2rem" }}>
+                  <button 
+                    onClick={() => setVisibleReviews((prev) => prev + 5)} 
+                    style={{ 
+                      backgroundColor: "#e91e63", 
+                      color: "white", 
+                      padding: "12px 24px", 
+                      borderRadius: "6px",
+                      border: "none",
+                      fontWeight: "600",
+                      cursor: "pointer",
+                      transition: "all 0.2s ease"
+                    }}
+                    onMouseOver={(e) => {
+                      e.target.style.backgroundColor = "#d81b60";
+                      e.target.style.transform = "translateY(-1px)";
+                    }}
+                    onMouseOut={(e) => {
+                      e.target.style.backgroundColor = "#e91e63";
+                      e.target.style.transform = "translateY(0)";
+                    }}
+                  >
+                    {t("productDetails.viewMore")} ({reviews.length - visibleReviews} {t("productDetails.more")})
+                  </button>
+                </div>
               )}
 
               {visibleReviews > 5 && (
-                <button 
-                  onClick={() => setVisibleReviews(5)} 
-                  style={{ marginTop: "1rem", marginLeft: "10px", backgroundColor: "#ccc", color: "black", padding: "8px 12px", borderRadius: "5px" }}
-                >
-                  {t("productDetails.viewLess")}
-                </button>
+                <div style={{ textAlign: "center", marginTop: "1rem" }}>
+                  <button 
+                    onClick={() => setVisibleReviews(5)} 
+                    style={{ 
+                      backgroundColor: "transparent", 
+                      color: "#666", 
+                      padding: "8px 16px", 
+                      borderRadius: "6px",
+                      border: "1px solid #ddd",
+                      fontWeight: "500",
+                      cursor: "pointer",
+                      transition: "all 0.2s ease"
+                    }}
+                    onMouseOver={(e) => {
+                      e.target.style.backgroundColor = "#f5f5f5";
+                    }}
+                    onMouseOut={(e) => {
+                      e.target.style.backgroundColor = "transparent";
+                    }}
+                  >
+                    {t("productDetails.viewLess")}
+                  </button>
+                </div>
               )}
             </>
           )}
@@ -683,21 +953,31 @@ function ProductDetails() {
 
 
       {relatedProducts && relatedProducts.length > 0 ?(
-        <section className="related-products">
-          <h3 style={{ display: "flex", justifySelf: "center" }}>
+        <section className="related-products" style={{ marginBottom: "60px" }}>
+          <h3 style={{ 
+            textAlign: "center",
+            fontSize: "24px",
+            fontWeight: "700",
+            color: "#333",
+            marginBottom: "8px"
+          }}>
             {t("productDetails.relatedproducts")}
           </h3>
-          <hr
-            style={{
-              display: "flex",
-              justifySelf: "center",
-              width: "70%",
-              color: "#ccc",
-            }}
-          ></hr>
+          <p style={{
+            textAlign: "center",
+            color: "#666",
+            marginBottom: "32px",
+            fontSize: "16px"
+          }}>
+            Productos similares que podrían interesarte
+          </p>
 
-          <div className="carousel-container">
-            <div className="carousel-items">
+          <div className="carousel-container" style={{ overflowX: "auto", paddingBottom: "20px" }}>
+            <div className="carousel-items" style={{
+              display: "flex",
+              gap: "24px",
+              padding: "0 10px"
+            }}>
               {relatedProducts
                 .filter((rp) => rp.subcategoria_id === product.subcategoria_id)
                 .slice(0, 4)
@@ -708,9 +988,27 @@ function ProductDetails() {
 
                   return (
                     <div
-                      className="custom-product-card"
                       key={rp.id}
-                      style={{ position: "relative" }}
+                      style={{ 
+                        position: "relative",
+                        backgroundColor: "white",
+                        borderRadius: "12px",
+                        overflow: "hidden",
+                        boxShadow: "0 2px 12px rgba(0,0,0,0.1)",
+                        transition: "all 0.3s ease",
+                        width: "280px",
+                        flexShrink: 0,
+                        display: "flex",
+                        flexDirection: "column"
+                      }}
+                      onMouseOver={(e) => {
+                        e.currentTarget.style.transform = "translateY(-4px)";
+                        e.currentTarget.style.boxShadow = "0 8px 24px rgba(0,0,0,0.15)";
+                      }}
+                      onMouseOut={(e) => {
+                        e.currentTarget.style.transform = "translateY(0)";
+                        e.currentTarget.style.boxShadow = "0 2px 12px rgba(0,0,0,0.1)";
+                      }}
                     >
                       <IconButton
                         onClick={() => toggleFavorite(rp.id)}
@@ -719,9 +1017,14 @@ function ProductDetails() {
                           top: 8,
                           right: 8,
                           bgcolor: "white",
-                          "&:hover": { bgcolor: "grey.200" },
+                          boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
+                          "&:hover": { 
+                            bgcolor: "grey.200",
+                            transform: "scale(1.1)"
+                          },
+                          transition: "all 0.2s ease",
+                          zIndex: 2
                         }}
-                        className="custom-favorite-btn"
                       >
                         {favoriteIds.includes(rp.id) ? (
                           <GradientHeart filled />
@@ -732,37 +1035,66 @@ function ProductDetails() {
 
                       <Link
                         to={`/${lang}/producto/${rp.slug}`}
-                        style={{ textDecoration: "none", color: "inherit" }}
+                        style={{ textDecoration: "none", color: "inherit", flex: 1, display: "flex", flexDirection: "column" }}
                       >
-                        <div className="custom-image-wrapper" style={{height: "160px !important"}}>
+                        <div style={{
+                          height: "200px",
+                          overflow: "hidden",
+                          position: "relative"
+                        }}>
                           <img
                             src={rp.imagen_url || noImage}
                             alt={rp.nombre_producto}
                             onError={(e) => {
                               e.currentTarget.src = noImage;
                             }}
+                            style={{
+                              width: "100%",
+                              height: "100%",
+                              objectFit: "cover",
+                              transition: "transform 0.3s ease"
+                            }}
                           />
                         </div>
 
-                        <div className="custom-product-info">
-                          <div className="custom-product-name-v2">
+                        <div style={{ padding: "16px", flex: 1, display: "flex", flexDirection: "column" }}>
+                          <div style={{
+                            fontSize: "16px",
+                            fontWeight: "600",
+                            color: "#333",
+                            marginBottom: "8px",
+                            lineHeight: "1.4",
+                            minHeight: "44px",
+                            overflow: "hidden",
+                            display: "-webkit-box",
+                            WebkitLineClamp: 2,
+                            WebkitBoxOrient: "vertical"
+                          }}>
                             {rp.nombre_producto}
                           </div>
-                          <div
-                            className="custom-price-row-v2"
-                            style={{
-                              display: "flex",
-                              flexDirection: "row",
-                              gap: "30px",
-                            }}
-                          >
-                            <span className="custom-price-v2">
+                          
+                          <div style={{
+                            display: "flex",
+                            justifyContent: "space-between",
+                            alignItems: "center",
+                            marginBottom: "8px"
+                          }}>
+                            <span style={{
+                              fontSize: "18px",
+                              fontWeight: "700"
+                            }}>
                               {rpPriceDiscount && rpPriceDiscount < rpPriceOriginal ? (
                                 <>
-                                  <span style={{ color: "#dc2626", fontWeight: 700 }}>
+                                  <span style={{ color: "#e91e63" }}>
                                     {formatCOP(rpPriceDiscount)}
                                   </span>
-                                  <span style={{ textDecoration: "line-through", color: "#64748b", marginLeft: "0.7em", fontWeight: "normal" }}>
+                                  <span style={{ 
+                                    textDecoration: "line-through", 
+                                    color: "#999", 
+                                    marginLeft: "8px", 
+                                    fontSize: "14px",
+                                    fontWeight: "400"
+                                  }}>
                                     {formatCOP(rpPriceOriginal)}
                                   </span>
                                 </>
@@ -770,43 +1102,71 @@ function ProductDetails() {
                                 formatCOP(rpPriceOriginal)
                               )}
                             </span>
-                            <div className="custom-rating-row-v2">
-                              <span style={{ flex: 1 }}></span>
-                              <span className="custom-star">
-                                <svg
-                                  width="17"
-                                  height="17"
-                                  viewBox="0 0 24 24"
-                                  fill="#FFC107"
-                                  xmlns="http://www.w3.org/2000/svg"
-                                  style={{
-                                    marginRight: "2px",
-                                    verticalAlign: "middle",
-                                  }}
-                                >
-                                  <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
-                                </svg>
-                                <span className="custom-rating-number-v2">
-                                  {productRatings[rp.id]?.avg
-                                    ? Number(productRatings[rp.id]?.avg).toFixed(1)
-                                    : "0.0"}
-                                </span>
+                            <div style={{ display: "flex", alignItems: "center" }}>
+                              <svg
+                                width="16"
+                                height="16"
+                                viewBox="0 0 24 24"
+                                fill="#FFC107"
+                                xmlns="http://www.w3.org/2000/svg"
+                                style={{
+                                  marginRight: "4px"
+                                }}
+                              >
+                                <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
+                              </svg>
+                              <span style={{
+                                fontSize: "14px",
+                                color: "#666"
+                              }}>
+                                {productRatings[rp.id]?.avg
+                                  ? Number(productRatings[rp.id]?.avg).toFixed(1)
+                                  : "0.0"}
                               </span>
                             </div>
                           </div>
+                          
                           {/* Mostrar porcentaje si aplica */}
                           {rpDiscount && rpDiscount.tipo === "porcentaje" && rpPriceDiscount < rpPriceOriginal && (
-                            <div style={{ color: "#2563eb", fontWeight: 500, fontSize: "0.9rem", marginTop: "0.3rem", textAlign: "center" }}>
+                            <div style={{ 
+                              color: "#4caf50", 
+                              fontWeight: 600, 
+                              fontSize: "12px", 
+                              backgroundColor: "#e8f5e8",
+                              padding: "2px 8px",
+                              borderRadius: "8px",
+                              display: "inline-block",
+                              alignSelf: "flex-start",
+                              marginTop: "4px"
+                            }}>
                               {rpDiscount.valor}% OFF
                             </div>
                           )}
                         </div>
                       </Link>
 
-                      <div className="custom-card-footer">
+                      <div style={{ padding: "0 16px 16px" }}>
                         <button
-                          className="custom-add-btn"
                           onClick={() => addToCart(rp.id)}
+                          style={{
+                            width: "100%",
+                            backgroundColor: "#e91e63",
+                            color: "white",
+                            border: "none",
+                            padding: "10px",
+                            borderRadius: "6px",
+                            fontWeight: "600",
+                            cursor: "pointer",
+                            transition: "all 0.2s ease"
+                          }}
+                          onMouseOver={(e) => {
+                            e.target.style.backgroundColor = "#d81b60";
+                            e.target.style.transform = "translateY(-1px)";
+                          }}
+                          onMouseOut={(e) => {
+                            e.target.style.backgroundColor = "#e91e63";
+                            e.target.style.transform = "translateY(0)";
+                          }}
                         >
                           {t("home.addToCart")}
                         </button>
@@ -818,30 +1178,39 @@ function ProductDetails() {
           </div>
         </section>
       ) : (
-        <section className="related-products">
-          <h3 style={{ display: "flex", justifySelf: "center" }}>
+        <section className="related-products" style={{ marginBottom: "60px" }}>
+          <h3 style={{ 
+            textAlign: "center",
+            fontSize: "24px",
+            fontWeight: "700",
+            color: "#333",
+            marginBottom: "32px"
+          }}>
             {t("productDetails.relatedproducts")}
           </h3>
-          <hr
-            style={{
-              display: "flex",
-              justifySelf: "center",
-              width: "70%",
-              color: "#ccc",
-            }}
-          ></hr>
 
-          <div className="carousel-container">
-            <div className="carousel-items">
+          <div className="carousel-container" style={{ overflowX: "auto", paddingBottom: "20px" }}>
+            <div className="carousel-items" style={{
+              display: "flex",
+              gap: "24px",
+              padding: "0 10px"
+            }}>
               {[1, 2, 3, 4].map((skeleton) => (
-                <div className="product-card" key={skeleton}>
-                  <div className="image-container">
-                    <Skeleton variant="rectangular" width={"100%"} height={200} />
+                <div key={skeleton} style={{
+                  backgroundColor: "white",
+                  borderRadius: "12px",
+                  padding: "16px",
+                  boxShadow: "0 2px 12px rgba(0,0,0,0.1)",
+                  width: "280px",
+                  flexShrink: 0
+                }}>
+                  <div style={{ marginBottom: "12px" }}>
+                    <Skeleton variant="rectangular" width={"100%"} height={200} sx={{ borderRadius: "8px" }} />
                   </div>
-                  <Skeleton variant="text" width={150} height={30} />
-                  <Skeleton variant="text" width={80} height={20} />
-                  <div className="actions">
-                    <Skeleton variant="rectangular" width={120} height={36} />
+                  <Skeleton variant="text" width={150} height={30} sx={{ mb: 1 }} />
+                  <Skeleton variant="text" width={80} height={20} sx={{ mb: 2 }} />
+                  <div style={{ display: "flex", gap: "8px" }}>
+                    <Skeleton variant="rectangular" width={120} height={36} sx={{ borderRadius: "6px" }} />
                     <Skeleton variant="circular" width={36} height={36} />
                   </div>
                 </div>
@@ -850,8 +1219,6 @@ function ProductDetails() {
           </div>
         </section>
       )}
-
-
 
     </div>
   );
