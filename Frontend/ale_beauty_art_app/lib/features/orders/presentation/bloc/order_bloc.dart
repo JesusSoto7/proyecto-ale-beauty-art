@@ -59,7 +59,9 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
           '/api/v1/orders',
           {
             "shipping_address_id": event.shippingAddressId,
-            "products": event.products,
+            "order": {
+              "products": event.products,
+            },
           },
           headers: {
             'Content-Type': 'application/json',

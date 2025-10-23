@@ -3,6 +3,8 @@ import 'package:ale_beauty_art_app/features/auth/bloc/auth_bloc.dart';
 import 'package:ale_beauty_art_app/features/cart/presentation/bloc/cart_bloc.dart';
 import 'package:ale_beauty_art_app/features/cart/presentation/bloc/cart_event.dart';
 import 'package:ale_beauty_art_app/models/product.dart';
+import 'package:ale_beauty_art_app/features/checkout/presentation/view/checkout_page.dart';
+import 'package:ale_beauty_art_app/features/checkout/shippingAddress/select_address_Page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -335,7 +337,70 @@ class _ProductDetailViewState extends State<ProductDetailView> {
                 end: Alignment.bottomRight,
                 colors: [Color(0xFFD95D85), Color(0xFFE58BB1)],
               ),
-              onTap: () {},
+              onTap: () async {
+                // Quick Buy: pide login si no hay sesión, luego selecciona dirección y crea checkout con SOLO este producto
+                final authState = context.read<AuthBloc>().state;
+
+                Future<void> proceedWithToken(String token) async {
+                  // 1) Seleccionar dirección de envío
+                  final selectedAddressId = await Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => SelectAddressPage(
+                        onContinue: (addressId) {
+                          Navigator.pop(context, addressId);
+                        },
+                      ),
+                    ),
+                  );
+
+                  if (selectedAddressId == null) return; // cancelado
+
+                  // 2) Calcular total SOLO para este producto (con descuento si aplica) + envío
+                  final double unitPrice =
+                      (product.precioConMejorDescuento ?? product.precioProducto)
+                          .toDouble();
+                  const double shippingCost = 10000;
+                  final double total = unitPrice + shippingCost;
+
+                  // 3) Ir a CheckoutPage pasando una lista con un solo producto
+                  final oneItemProducts = [
+                    {
+                      'product_id': product.id,
+                      'quantity': 1,
+                    }
+                  ];
+
+                  // Nota: CheckoutPage se encarga de crear la orden y redirigir a PaymentPage
+                  //       usando el token y la dirección seleccionada.
+                  if (!mounted) return;
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => CheckoutPage(
+                        cartProducts: oneItemProducts,
+                        cartTotal: total,
+                        token: token,
+                        selectedAddressId: selectedAddressId,
+                        restoreCartAfterPayment: true,
+                      ),
+                    ),
+                  );
+                }
+
+                if (authState is! AuthSuccess) {
+                  final result = await Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => const LoginPage()),
+                  );
+                  if (result == true && mounted) {
+                    final auth = context.read<AuthBloc>().state as AuthSuccess;
+                    await proceedWithToken(auth.token);
+                  }
+                } else {
+                  await proceedWithToken(authState.token);
+                }
+              },
             ),
           ],
         ),

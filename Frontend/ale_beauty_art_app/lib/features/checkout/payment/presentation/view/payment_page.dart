@@ -11,12 +11,15 @@ class PaymentPage extends StatefulWidget {
   final int orderId;
   final double amount;
   final String token;
+  // Si es true, al aprobar el pago se restaura el carrito previo (compra rápida)
+  final bool restoreCartAfterPayment;
 
   const PaymentPage({
     super.key,
     required this.orderId,
     required this.amount,
     required this.token,
+    this.restoreCartAfterPayment = false,
   });
 
   @override
@@ -38,6 +41,53 @@ class _PaymentPageState extends State<PaymentPage> {
 
   final _mpService = MercadoPagoService();
   bool _loading = false;
+  List<Map<String, dynamic>> _cartSnapshot = const [];
+
+  @override
+  void initState() {
+    super.initState();
+    // Si debemos restaurar el carrito, hacemos un snapshot del estado actual
+    if (widget.restoreCartAfterPayment) {
+      _snapshotCart();
+    }
+  }
+
+  Future<void> _snapshotCart() async {
+    try {
+      // Asegurar token en CartBloc y cargar carrito actual
+      context.read<CartBloc>().add(UpdateCartToken(widget.token));
+      context.read<CartBloc>().add(LoadCart());
+      await Future.delayed(const Duration(milliseconds: 300));
+      final products = List<Map<String, dynamic>>.from(
+          context.read<CartBloc>().state.products);
+      setState(() {
+        _cartSnapshot = products
+            .map((p) => {
+                  'product_id': p['product_id'],
+                  'cantidad': (p['cantidad'] ?? 1) as int,
+                })
+            .toList();
+      });
+    } catch (_) {
+      // Silencioso: si falla, simplemente no restauramos
+    }
+  }
+
+  Future<void> _restoreCart() async {
+    if (_cartSnapshot.isEmpty) return;
+    // Reponer productos previos al pago
+    context.read<CartBloc>().add(UpdateCartToken(widget.token));
+    for (final item in _cartSnapshot) {
+      final int productId = item['product_id'] as int;
+      final int qty = (item['cantidad'] ?? 1) as int;
+      for (int i = 0; i < qty; i++) {
+        context.read<CartBloc>().add(AddProductToCart(productId: productId));
+      }
+    }
+    // Dar tiempo a que se apliquen los eventos
+    await Future.delayed(const Duration(milliseconds: 200));
+    context.read<CartBloc>().add(LoadCart());
+  }
 
   @override
   void dispose() {
@@ -116,7 +166,13 @@ class _PaymentPageState extends State<PaymentPage> {
       final installments = payment['installments'] is int ? payment['installments'] as int : 1;
       final approvedAt = (payment['date_approved'] ?? payment['approved_at'])?.toString();
 
-      context.read<CartBloc>().add(LoadCart());
+      // Si esta compra vino desde "Comprar" (compra rápida), restaurar carrito previo
+      if (widget.restoreCartAfterPayment) {
+        await _restoreCart();
+      } else {
+        // Caso checkout desde carrito: solo recarga
+        context.read<CartBloc>().add(LoadCart());
+      }
 
       if (!mounted) return;
       await Navigator.push(
