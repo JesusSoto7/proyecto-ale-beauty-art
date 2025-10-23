@@ -21,7 +21,14 @@ class Product < ApplicationRecord
   scope :novedades, -> { order(created_at: :desc).limit(10) }
 
   def imagen_url
-    Rails.application.routes.url_helpers.url_for(imagen) if imagen.attached?
+    return nil unless imagen.attached?
+    
+    # URL directa de S3 sin pasar por Rails
+    bucket = ENV['AWS_BUCKET']
+    region = ENV['AWS_REGION']
+    key = imagen.key
+    
+    "https://#{bucket}.s3.#{region}.amazonaws.com/#{key}"
   end
 
   def generate_slug

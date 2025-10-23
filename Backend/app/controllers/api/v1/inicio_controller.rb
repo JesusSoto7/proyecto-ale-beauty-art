@@ -4,18 +4,22 @@ class Api::V1::InicioController < Api::V1::BaseController
   skip_before_action :authorize_request, only: [:index]
 
   def index
-    admin = User.with_role(:admin).first
-    products = Product.all
-    categories = Category.all
+    # Limitar productos devueltos
+    products = Product.with_attached_imagen
+                    .includes(:discount, sub_category: :category)
+                    .limit(12) # Solo 12 productos iniciales
+                    .order(created_at: :desc)
 
     render json: {
-      admin_carousel: admin&.carousel_images&.map { |img| url_for(img) },
-      products: products.map { |p|
-        p.as_json.merge(imagen_url: p.imagen.attached? ? url_for(p.imagen) : nil)
-      },
-      categories: categories.map { |c|
-        c.as_json.merge(imagen_url: c.imagen.attached? ? url_for(c.imagen) : nil)
-      }
+      products: products.as_json(
+        only: [:id, :nombre_producto, :precio_producto, :slug, :stock],
+        include: {
+          sub_category: { only: [:id, :nombre] },
+          discount: { only: [:id, :nombre, :tipo, :valor] }
+        },
+        methods: [:imagen_url, :precio_con_mejor_descuento]
+      ),
+      categories: Category.limit(10).as_json(only: [:id, :nombre_categoria, :slug])
     }
   end
 end

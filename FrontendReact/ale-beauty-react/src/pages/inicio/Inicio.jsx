@@ -14,14 +14,12 @@ import { useTranslation } from 'react-i18next';
 import Rating from "@mui/material/Rating";
 import FloatingChat from '../../components/FloatingChat';
 import BannerProduct from '../../components/bannerProducts';
-// import "../../assets/stylesheets/ProductosCliente.css";
 import "../../assets/stylesheets/RankingPro.css";
 import RankingPro from '../../components/rankingPro.jsx';
 import PositiveReviews from "../../components/positiveReviews.jsx";
-import StaticBanner from "../../components/staticBanner.jsx"
+
 
 function Inicio() {
-  // const [carousel, setCarousel] = useState([]);
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
   const [cart, setCart] = useState(null);
@@ -32,19 +30,15 @@ function Inicio() {
   const [newProducts, setNewProducts] = useState([]);
   const [productRatings, setProductRatings] = useState({});
   const { slug } = useParams();
-  const [reviews, setReviews] = useState([]);
-  const [loadingReviews, setLoadingReviews] = useState(true);
-  const [ratings, setRatings] = useState({ 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 });
-
   
   const token = localStorage.getItem('token');
   const interesRef = useRef(null);
 
+  // Auto-scroll para el carrusel de interés
   useEffect(() => {
     const interval = setInterval(() => {
       if (interesRef.current) {
         const { scrollLeft, scrollWidth, clientWidth } = interesRef.current;
-
         if (scrollLeft + clientWidth >= scrollWidth) {
           interesRef.current.scrollTo({ left: 0, behavior: "smooth" });
         } else {
@@ -52,7 +46,6 @@ function Inicio() {
         }
       }
     }, 2700);
-
     return () => clearInterval(interval);
   }, []);
 
@@ -82,115 +75,79 @@ function Inicio() {
     );
   }
 
-  // Cargar ratings de productos
-  const loadProductRatings = async (productList) => {
-    const ratingsObj = {};
-    
-    await Promise.all(productList.map(async (product) => {
+  // ✅ Función para cargar ratings en background (SIN bloquear)
+  const loadRatingsInBackground = async (productList) => {
+    for (const product of productList) {
       try {
         const res = await fetch(`https://localhost:4000/api/v1/products/${product.slug}/reviews`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         const reviews = await res.json();
+        
         if (Array.isArray(reviews) && reviews.length > 0) {
           const avg = reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length;
-          ratingsObj[product.id] = { 
-            avg, 
-            count: reviews.length 
-          };
+          setProductRatings(prev => ({
+            ...prev,
+            [product.id]: { avg, count: reviews.length }
+          }));
         } else {
-          ratingsObj[product.id] = { avg: 0, count: 0 };
+          setProductRatings(prev => ({
+            ...prev,
+            [product.id]: { avg: 0, count: 0 }
+          }));
         }
       } catch (error) {
-        console.error(`Error cargando rating para producto ${product.id}:`, error);
-        ratingsObj[product.id] = { avg: 0, count: 0 };
+        console.error(`Error loading rating for product ${product.id}:`, error);
       }
-    }));
-    
-    setProductRatings(ratingsObj);
+      
+      // Esperar 100ms entre cada petición para no bloquear UI
+      await new Promise(resolve => setTimeout(resolve, 100));
+    }
   };
 
-  // Cargar productos + favoritos del usuario
+  // ✅ Cargar TODOS los datos en paralelo usando Promise.all
   useEffect(() => {
-    // Productos e inicio
-    fetch('https://localhost:4000/api/v1/inicio')
-      .then(res => res.json())
-      .then(data => {
-        const imgs = [
-          // ...(data.admin_carousel || []),
-          ...(data.products?.map(p => p.imagen_url) || [])
-        ];
-
-        let loadedCount = 0;
-        if (imgs.length === 0) {
-          // setCarousel(data.admin_carousel || []);
-          setProducts(data.products || []);
-          setCategories(data.categories || []);
-          setLoading(false);
-          return;
-        }
-
-        // Novedades
-        fetch('https://localhost:4000/api/v1/products/novedades', {
-          headers: {
-            Authorization: `Bearer ${token}`,
+    Promise.all([
+      fetch('https://localhost:4000/api/v1/inicio').then(r => r.json()),
+      fetch('https://localhost:4000/api/v1/products/novedades', {
+        headers: { Authorization: `Bearer ${token}` }
+      }).then(r => r.json()),
+      fetch('https://localhost:4000/api/v1/cart', {
+        headers: { Authorization: `Bearer ${token}` }
+      }).then(r => r.json()),
+      fetch('https://localhost:4000/api/v1/favorites', {
+        headers: { Authorization: `Bearer ${token}` }
+      }).then(r => r.json())
+    ])
+      .then(([inicioData, novedadesData, cartData, favoritesData]) => {
+        // Establecer todo inmediatamente
+        setProducts(inicioData.products || []);
+        setCategories(inicioData.categories || []);
+        setNewProducts(novedadesData || []);
+        setCart(cartData.cart);
+        
+        // Cargar favoritos usando la función del outlet context
+        loadFavorites();
+        
+        // ✅ Mostrar página INMEDIATAMENTE
+        setLoading(false);
+        
+        // ✅ Cargar ratings DESPUÉS (en background, sin bloquear)
+        setTimeout(() => {
+          if (novedadesData && novedadesData.length > 0) {
+            loadRatingsInBackground(novedadesData.slice(0, 6));
           }
-        })
-          .then(res => res.json())
-          .then(data => {
-            setNewProducts(data);
-            // Cargar ratings para productos nuevos
-            if (Array.isArray(data) && data.length > 0) {
-              loadProductRatings(data);
-            }
-          })
-          .catch(err => console.error("Error cargando novedades", err));
-
-        imgs.forEach(src => {
-          const img = new Image();
-          img.src = src;
-          img.onload = img.onerror = () => {
-            loadedCount++;
-            if (loadedCount === imgs.length) {
-              // setCarousel(data.admin_carousel || []);
-              setProducts(data.products || []);
-              const productosRandom = [...(data.products || [])].sort(() => 0.5 - Math.random());
-              setProducts(productosRandom);
-              setCategories(data.categories || []);
-              
-              // Cargar ratings para todos los productos
-              if (data.products && data.products.length > 0) {
-                loadProductRatings(data.products);
-              }
-              
-              setLoading(false);
-            }
-          };
-        });
+          if (inicioData.products && inicioData.products.length > 0) {
+            setTimeout(() => {
+              loadRatingsInBackground(inicioData.products.slice(0, 6));
+            }, 500);
+          }
+        }, 1500); // Después de 1.5 segundos
       })
       .catch(err => {
         console.error(t('home.loadError'), err);
         setLoading(false);
       });
-
-    // Carrito
-    fetch('https://localhost:4000/api/v1/cart', {
-      headers: { Authorization: `Bearer ${token}` },
-    })
-      .then(res => res.json())
-      .then(data => setCart(data.cart))
-      .catch(err => console.error(t('home.cartError'), err));
-
-    // Favoritos del usuario
-    fetch('https://localhost:4000/api/v1/favorites', {
-      headers: { Authorization: `Bearer ${token}` },
-    })
-      .then(res => res.json())
-      .then(data => {
-        const ids = data.map(fav => fav.id);
-        setFavoriteIds(ids);
-      })
-      .catch(err => console.error(t('home.favoritesError'), err));
   }, [token, t]);
 
   const addToCart = (productId) => {
@@ -206,11 +163,8 @@ function Inicio() {
       .then((data) => {
         if (data.cart) {
           setCart(data.cart);
-          // Disparar evento para actualizar el Header
           window.dispatchEvent(new CustomEvent("cartUpdatedCustom", { bubbles: false }));
 
-          // === Evento GA4: add_to_cart ===
-          // Busca el producto agregado en el array del carrito actualizado
           const product = data.cart.products.find(p => p.product_id === productId);
           if (window.gtag && product) {
             window.gtag("event", "add_to_cart", {
@@ -227,7 +181,6 @@ function Inicio() {
             });
             console.log("🛒 Evento GA4 enviado: add_to_cart", product);
           }
-          // ===============================
         } else if (data.errors) {
           alert(t('productDetails.error') + data.errors.join(", "));
         }
@@ -238,7 +191,6 @@ function Inicio() {
       });
   };
 
-  // Toggle favoritos
   const toggleFavorite = async (productId) => {
     if (favoriteIds.includes(productId)) {
       try {
@@ -273,7 +225,7 @@ function Inicio() {
 
   return (
     <div>
-      {/* {loading ? (
+            {/* {loading ? (
         <Skeleton sx={{ bgcolor: 'grey.800' }} variant="rectangular" width={"100%"} height={350} />
       ) : carousel.length > 0 ? (
         <Carousel interval={3000} className="mb-0">
@@ -288,9 +240,8 @@ function Inicio() {
             </Carousel.Item>
           ))}
         </Carousel>
-      ) : null} */}
+      ) : null} 
 
-      <StaticBanner/>
 
       {/* Sección Novedades Maquillaje */}
       <section className="mt-5">
@@ -332,7 +283,15 @@ function Inicio() {
                     <img
                       src={prod.imagen_url || noImage}
                       alt={prod.nombre_producto}
+                      loading="lazy"
+                      decoding="async"
                       onError={(e) => { e.currentTarget.src = noImage; }}
+                      style={{
+                        width: '100%',
+                        height: '100%',
+                        objectFit: 'cover',
+                        aspectRatio: '1/1'
+                      }}
                     />
                     <IconButton
                       onClick={() => toggleFavorite(prod.id)}
@@ -373,7 +332,7 @@ function Inicio() {
                         <span className="custom-rating-number-v2">
                           {productRatings[prod.id]?.avg
                             ? Number(productRatings[prod.id]?.avg).toFixed(1)
-                            : "0.0"}
+                            : "..."}
                         </span>
                       </div>
                       {prod.mejor_descuento_para_precio && (
@@ -421,6 +380,8 @@ function Inicio() {
         <img
           src={bannerNovedades} 
           alt={t('home.newsBannerAlt')}
+          loading="lazy"
+          decoding="async"
           style={{
             width: "100%",
             height: "350px",
@@ -490,7 +451,15 @@ function Inicio() {
                       <img
                         src={prod.imagen_url || noImage}
                         alt={prod.nombre_producto}
+                        loading="lazy"
+                        decoding="async"
                         onError={(e) => { e.currentTarget.src = noImage; }}
+                        style={{
+                          width: '100%',
+                          height: '100%',
+                          objectFit: 'cover',
+                          aspectRatio: '1/1'
+                        }}
                       />
                       <IconButton
                         onClick={() => toggleFavorite(prod.id)}
@@ -531,7 +500,7 @@ function Inicio() {
                           <span className="custom-rating-number-v2">
                             {productRatings[prod.id]?.avg
                               ? Number(productRatings[prod.id]?.avg).toFixed(1)
-                              : "0.0"}
+                              : "..."}
                           </span>
                         </div>
                         {prod.mejor_descuento_para_precio && (
@@ -571,11 +540,6 @@ function Inicio() {
       <RotatingBanner />
       <h2 className="mb-4">productos mejor valorados</h2>
       <RankingPro products={products} productRatings={productRatings} loading={loading} />
-      
-      {/* <h2 className="mb-4">comentarios destacados</h2> */}
-      {/* <PositiveReviews reviews={reviews} loading={loadingReviews} /> */}
-
-      
     </div>
   );
 }

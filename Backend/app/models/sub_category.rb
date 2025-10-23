@@ -12,7 +12,13 @@ class SubCategory < ApplicationRecord
   
 
   def imagen_url
-    Rails.application.routes.url_helpers.url_for(imagen) if imagen.attached?
+    return nil unless imagen.attached?
+    
+    bucket = ENV['AWS_BUCKET']
+    region = ENV['AWS_REGION']
+    key = imagen.key
+    
+    "https://#{bucket}.s3.#{region}.amazonaws.com/#{key}"
   end
 
   def generate_slug
