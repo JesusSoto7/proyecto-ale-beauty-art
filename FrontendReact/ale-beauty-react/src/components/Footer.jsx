@@ -1,11 +1,13 @@
 import FacebookIcon from "@mui/icons-material/Facebook";
 import InstagramIcon from "@mui/icons-material/Instagram";
-import TwitterIcon from "@mui/icons-material/Twitter"; // sigue siendo Twitter
+import TwitterIcon from "@mui/icons-material/Twitter";
 import PinterestIcon from "@mui/icons-material/Pinterest";
 import { useTranslation } from "react-i18next";
+import { useParams } from "react-router-dom";
 
 export default function Footer() {
   const { t } = useTranslation();
+  const { lang } = useParams();
 
   return (
     <footer>
@@ -13,8 +15,8 @@ export default function Footer() {
         <div className="footer-section">
           <h3>{t("footer.information.title")}</h3>
           <ul>
-            <li><a href="https://localhost:3000/es/about">{t("footer.information.about")}</a></li>
-            <li><a href="https://localhost:3000/es/terms">{t("footer.information.terms")}</a></li>
+            <li><a href={`/${lang}/about`}>{t("footer.information.about")}</a></li>
+            <li><a href={`/${lang}/terms`}>{t("footer.information.terms")}</a></li>
             <li><a href="#">{t("footer.information.privacy")}</a></li>
           </ul>
         </div>
