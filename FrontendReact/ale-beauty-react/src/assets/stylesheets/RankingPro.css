@@ -1,163 +1,277 @@
+/* === RANKING PRO COMPONENT - VERSIÓN MEJORADA === */
 .ranking-container {
   display: flex;
-  gap: 1.5rem;
-  justify-content: center;
   flex-wrap: wrap;
-  padding: 2rem;
+  gap: 2rem;
+  justify-content: center;
+  padding: 2rem 1rem;
+  max-width: 1400px;
+  margin: 0 auto;
 }
 
 .ranking-card {
   position: relative;
+  width: 100%;
+  max-width: 340px;
   background: #fff;
-  width: 270px;
-  border-radius: 16px;
+  border-radius: 20px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
   overflow: hidden;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.ranking-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 6px 18px rgba(0,0,0,0.15);
+  transition: all 0.3s ease;
   cursor: pointer;
 }
 
-/* Imagen azul tipo banner */
+.ranking-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 15px 45px rgba(217, 93, 133, 0.2);
+}
+
+/* Imagen del producto */
 .ranking-image {
-  height: 200px;
   width: 100%;
-  /* background: linear-gradient(135deg, #5b6ee1, #8540c6); */
-  background-color: "width";
+  height: 280px;
   display: flex;
-  justify-content: center;
   align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #f5f7fa 0%, #e8ecf1 100%);
+  overflow: hidden;
+  padding: 25px;
   position: relative;
 }
 
 .ranking-image img {
-  max-height: 200px;
+  max-width: 90%;
+  max-height: 230px;
   object-fit: contain;
+  transition: transform 0.3s ease;
 }
 
-/* Etiquetas (pill tags) */
+.ranking-card:hover .ranking-image img {
+  transform: scale(1.08);
+}
+
+/* Línea divisoria elegante */
+.ranking-card hr {
+  margin: 0;
+  border: none;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    #e0e0e0 20%,
+    #e0e0e0 80%,
+    transparent
+  );
+}
+
+/* Información del producto */
+.ranking-info {
+  padding: 1.25rem 1.5rem 1.5rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+/* Título del producto - MÁS PEQUEÑO */
+.ranking-title {
+  font-size: 0.95rem !important;
+  font-weight: 600 !important;
+  color: #2c3e50 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  text-align: left !important;
+  width: 100% !important;
+  line-height: 1.4 !important;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-height: 40px;
+}
+
+/* Etiquetas y rating */
 .ranking-labels {
   display: flex;
   justify-content: space-between;
-  padding-bottom: 0.5rem;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
 }
 
 .label {
   font-size: 0.7rem !important;
-  font-weight: 600;
-  padding: 0.25rem 0.6rem;
-  border-radius: 12px;
+  font-weight: 600 !important;
+  padding: 0.3rem 0.75rem !important;
+  border-radius: 16px !important;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  white-space: nowrap;
+}
+
+.label.in-stock {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
   color: #fff !important;
+  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
 }
 
-.in-stock {
-  background-color: #4ad295;
+.label.out-stock {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  color: #fff !important;
+  box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3);
 }
 
-.category {
-  background-color: #e649a3;
-}
-
-/* Info producto */
-.ranking-info {
-  padding: 0.5rem 1rem 1rem 1rem;
-}
-
-.ranking-title {
-    display: flex;
-    justify-self: start;
-  font-size: 1rem;
-  font-weight: 700;
-  color: #333;
-}
-
+/* Rating con estrellas */
 .ranking-rating {
   display: flex;
   align-items: center;
-  gap: 0.3rem;
+  gap: 0.4rem;
+}
+
+.ranking-rating .MuiRating-root {
+  font-size: 1rem !important;
 }
 
 .rating-count {
-  font-size: 0.8rem;
-  color: #666;
+  font-size: 0.8rem !important;
+  color: #6b7280 !important;
+  font-weight: 500;
+  margin-left: 0.2rem;
 }
 
+/* Comentarios */
 .ranking-comments {
-  font-size: 0.8rem;
-  color: #999;
-  margin-top: 0.2rem;
+  font-size: 0.8rem !important;
+  color: #9ca3af !important;
+  margin: 0 !important;
+  font-style: italic;
 }
 
-/* Badge “Top 1”, “Top 2”, etc. */
+/* Badge Top 1, 2, 3 - MÁS DESTACADO */
 .ranking-top-badge {
   position: absolute;
-  top: 10px;
-  right: 10px;
-  background-color: #ffc83d;
-  color: #333;
-  font-weight: 700;
-  font-size: 0.8rem;
-  padding: 0.25rem 0.6rem;
-  border-radius: 8px;
+  top: 18px;
+  left: 18px;
+  background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+  color: #78350f;
+  font-weight: 800;
+  font-size: 0.85rem;
+  padding: 0.45rem 0.9rem;
+  border-radius: 25px;
+  box-shadow: 0 4px 15px rgba(251, 191, 36, 0.5);
+  z-index: 10;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  border: 2px solid #ffffff;
 }
 
-.ranking-container {
-  display: flex;
-  gap: 1.5rem;
-  justify-content: center;
-  flex-wrap: wrap;
-  padding: 2rem;
+/* Badge específico para Top 1 */
+.ranking-card:first-child .ranking-top-badge {
+  background: linear-gradient(135deg, #ffc67b 0%, #ff5990 100%);
+  box-shadow: 0 6px 20px rgba(245, 158, 11, 0.6);
 }
 
-.ranking-card {
-  position: relative;
-  background: #fff;
-  width: 270px;
-  border-radius: 16px;
-  overflow: hidden;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+/* === RESPONSIVE === */
+@media (max-width: 1200px) {
+  .ranking-container {
+    gap: 1.5rem;
+    padding: 1.5rem 1rem;
+  }
+
+  .ranking-card {
+    max-width: 320px;
+  }
 }
 
-.ranking-info {
-  padding: 1rem;
+@media (max-width: 768px) {
+  .ranking-container {
+    gap: 1.5rem;
+    padding: 1rem 0.5rem;
+  }
+
+  .ranking-card {
+    max-width: 100%;
+  }
+
+  .ranking-image {
+    height: 240px;
+    padding: 20px;
+  }
+
+  .ranking-image img {
+    max-height: 200px;
+  }
+
+  .ranking-title {
+    font-size: 0.9rem !important;
+    min-height: 38px;
+  }
+
+  .ranking-info {
+    padding: 1rem 1.25rem 1.25rem 1.25rem;
+  }
+
+  .ranking-top-badge {
+    font-size: 0.75rem;
+    padding: 0.35rem 0.7rem;
+    top: 14px;
+    left: 14px;
+  }
+
+  .label {
+    font-size: 0.65rem !important;
+    padding: 0.25rem 0.6rem !important;
+  }
 }
 
-.ranking-labels {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-top: 0.5rem;
-}
+@media (max-width: 480px) {
+  .ranking-container {
+    padding: 1rem 0.5rem;
+  }
 
-.label {
-  font-size: 0.75rem;
-  font-weight: 600;
-  padding: 0.25rem 0.6rem;
-  border-radius: 12px;
-  color: #fff;
-}
+  .ranking-card {
+    max-width: 100%;
+  }
 
-.in-stock {
-  background-color: #4ad295;
-}
+  .ranking-image {
+    height: 200px;
+    padding: 15px;
+  }
 
-.out-stock {
-  background-color: #e94d4d;
-}
+  .ranking-image img {
+    max-height: 170px;
+  }
 
-.ranking-top-badge {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  background-color: #ffc83d;
-  color: #333;
-  font-weight: 700;
-  font-size: 0.8rem;
-  padding: 0.25rem 0.6rem;
-  border-radius: 8px;
+  .ranking-title {
+    font-size: 0.85rem !important;
+    min-height: 36px;
+  }
+
+  .ranking-info {
+    padding: 0.85rem 1rem 1rem 1rem;
+    gap: 0.5rem;
+  }
+
+  .label {
+    font-size: 0.6rem !important;
+    padding: 0.2rem 0.5rem !important;
+  }
+
+  .ranking-comments {
+    font-size: 0.75rem !important;
+  }
+
+  .ranking-top-badge {
+    font-size: 0.7rem;
+    padding: 0.3rem 0.6rem;
+    top: 12px;
+    left: 12px;
+  }
+
+  .ranking-rating .MuiRating-root {
+    font-size: 0.9rem !important;
+  }
+
+  .rating-count {
+    font-size: 0.75rem !important;
+  }
 }
