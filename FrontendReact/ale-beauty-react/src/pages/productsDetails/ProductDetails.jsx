@@ -21,6 +21,7 @@ import RatingSummary from "../../components/RatingSummary";
 import "../../assets/stylesheets/RatingSummary.css";
 import RateReviewIcon from '@mui/icons-material/RateReview';
 import "../../assets/stylesheets/ProductosCliente.css";
+import { useAlert } from "../../components/AlertProvider.jsx";
 
 function ProductDetails() {
   const { slug } = useParams();
@@ -50,6 +51,7 @@ function ProductDetails() {
   const [activeTab, setActiveTab] = useState("description");
   const [showReviewForm, setShowReviewForm] = useState(false);
   const [user, setUser] = useState(null);
+  const { addAlert } = useAlert();
 
 
   function GradientHeart({ filled = false, size = 36 }) {
@@ -221,8 +223,10 @@ function ProductDetails() {
           }}
           style={{
             width: "100%",
-            height: "auto",
-            display: imgLoaded ? "block" : "none"
+            height: "400px",
+            display: imgLoaded ? "block" : "none",
+            width: "100%",
+            objectFit: "contain",
           }}
         />
       </div>
@@ -264,6 +268,7 @@ function ProductDetails() {
     fontWeight: "700",
     color: "#e91e63",
     borderRadius: "0",
+    border: "none",
     backgroundColor: "transparent",
     padding: "12px 24px",
     fontSize: "16px",
@@ -274,6 +279,7 @@ function ProductDetails() {
     borderBottom: "2px solid transparent",
     fontWeight: "500",
     color: "#666",
+    border: "none",
     borderRadius: "0",
     backgroundColor: "transparent",
     padding: "12px 24px",
@@ -402,6 +408,7 @@ function ProductDetails() {
         if (data.cart) {
           setCart(data.cart);
           window.dispatchEvent(new CustomEvent("cartUpdatedCustom", { bubbles: false }));
+          addAlert("se agregó al carrito", "success");
         } else if (data.errors) {
           alert(t('productDetails.error') + data.errors.join(", "));
         }
@@ -440,6 +447,18 @@ function ProductDetails() {
     }
   };
 
+  const handleOpenReviewForm = () => {
+    if (!canReview) {
+      addAlert("Solo puedes reseñar productos que hayas comprado", "warning", 5000);
+      return;
+    }
+
+    setShowReviewForm(true);
+  };
+
+  const handleCloseReviewForm = () => {
+    setShowReviewForm(false);
+  };
 
   const toggleFavorite = async (productId) => {
     try {
@@ -453,6 +472,7 @@ function ProductDetails() {
         );
         if (res.ok) {
           await loadFavorites();
+          addAlert("se elimino de tus favoritos", "warning", 3500);
         }
       } else {
         const res = await fetch("https://localhost:4000/api/v1/favorites", {
@@ -466,10 +486,12 @@ function ProductDetails() {
         const data = await res.json();
         if (data.success) {
           await loadFavorites();
+          addAlert("se agregó a tus favoritos", "success", 3500);
         }
       }
     } catch (err) {
       console.error("Error al cambiar favorito:", err);
+      addAlert("Algo salió mal", "error", 3500);
     }
   };
 
@@ -710,7 +732,8 @@ function ProductDetails() {
             <RatingSummary 
             ratings={ratings} 
             showReviewForm={showReviewForm} 
-            setShowReviewForm={setShowReviewForm}
+            onOpenReviewForm={handleOpenReviewForm}
+            onCloseReviewForm={handleCloseReviewForm}
             productName={product.nombre_producto}
             />
             

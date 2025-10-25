@@ -17,6 +17,8 @@ import BannerProduct from '../../components/bannerProducts';
 import "../../assets/stylesheets/RankingPro.css";
 import RankingPro from '../../components/rankingPro.jsx';
 import PositiveReviews from "../../components/positiveReviews.jsx";
+import { useAlert } from "../../components/AlertProvider.jsx";
+
 
 
 function Inicio() {
@@ -26,6 +28,7 @@ function Inicio() {
   const { lang } = useParams();
   const [loading, setLoading] = useState(true);
   const { favoriteIds, loadFavorites } = useOutletContext();
+  const { addAlert } = useAlert();
   const { t } = useTranslation();
   const [newProducts, setNewProducts] = useState([]);
   const [productRatings, setProductRatings] = useState({});
@@ -179,15 +182,18 @@ function Inicio() {
                 },
               ],
             });
+            addAlert("se agregó al carrito", "success", 3500);
             console.log("🛒 Evento GA4 enviado: add_to_cart", product);
           }
         } else if (data.errors) {
           alert(t('productDetails.error') + data.errors.join(", "));
+          // addAlert(t('productDetails.error') + data.errors.join(", "), "error");
         }
       })
       .catch((err) => {
         console.error(t('productDetails.cartAddError'), err);
-        alert(t('productDetails.cartAddError'));
+        // alert(t('productDetails.cartAddError'));
+        addAlert(t('productDetails.cartAddError'), "error", 3500);
       });
   };
 
@@ -200,9 +206,11 @@ function Inicio() {
         });
         if (res.ok) {
           await loadFavorites();
+          addAlert("se elimino de tus favoritos", "warning", 3500);
         }
       } catch (err) {
         console.error(t('home.removeFavoriteError'), err);
+        addAlert("Algo salió mal", "error", 3500);
       }
     } else {
       try {
@@ -216,9 +224,11 @@ function Inicio() {
         const data = await res.json();
         if (data.success) {
           await loadFavorites();
+          addAlert("se agregó a tus favoritos", "success", 3500);
         }
       } catch (err) {
         console.error(t('home.addFavoriteError'), err);
+        addAlert("Algo salió mal", "error", 3500);
       }
     }
   };

@@ -2,7 +2,7 @@ import React from "react";
 import { FaStar } from "react-icons/fa";
 import "../assets/stylesheets/RatingSummary.css";
 
-function RatingSummary({ ratings, showReviewForm, setShowReviewForm, productName }) {
+function RatingSummary({ ratings, showReviewForm, onOpenReviewForm, onCloseReviewForm, productName }) {
   const totalVotes = Object.values(ratings).reduce((a, b) => a + b, 0);
   const average =
     totalVotes === 0
@@ -74,9 +74,13 @@ function RatingSummary({ ratings, showReviewForm, setShowReviewForm, productName
           ))}
         </div>
         <p>Haznos conocer tu opinión.</p>
-        <button className="rating-button" onClick={() => setShowReviewForm(prev => !prev)}>
+        <button
+          className="rating-button"
+          onClick={showReviewForm ? onCloseReviewForm : onOpenReviewForm}
+        >
           {showReviewForm ? "Cancelar" : "Calificar"}
         </button>
+
       </div>
     </div>
   );
