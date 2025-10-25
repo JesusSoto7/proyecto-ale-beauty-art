@@ -6,37 +6,25 @@ module Api
 
         # POST /api/v1/auth/password/forgot
         def forgot
-          user = User.find_by(email: params[:email])
-          
-          if user
-            # Generate password reset token
-            token = user.send(:set_reset_password_token)
-            
-            # In a production environment, you would send an email here
-            # UserMailer.password_reset(user, token).deliver_now
-            
-            render json: {
-              status: 'success',
-              message: 'Si el correo existe, recibirás instrucciones para restablecer tu contraseña'
-            }, status: :ok
-          else
-            # Return success even if email doesn't exist (security best practice)
-            render json: {
-              status: 'success',
-              message: 'Si el correo existe, recibirás instrucciones para restablecer tu contraseña'
-            }, status: :ok
-          end
+          # Esto usa Devise: genera token y envía el email si el usuario existe.
+          User.send_reset_password_instructions(email: params[:email])
+
+          # Por seguridad respondemos siempre igual (no revelar existencia de email)
+          render json: {
+            status: 'success',
+            message: 'Si el correo existe, recibirás instrucciones para restablecer tu contraseña'
+          }, status: :ok
         end
 
         # POST /api/v1/auth/password/reset
         def reset
-          user = User.reset_password_by_token(
+          resource = User.reset_password_by_token(
             reset_password_token: params[:reset_password_token],
             password: params[:password],
             password_confirmation: params[:password_confirmation]
           )
 
-          if user.errors.empty?
+          if resource.errors.empty?
             render json: {
               status: 'success',
               message: 'Contraseña actualizada exitosamente'
@@ -44,7 +32,7 @@ module Api
           else
             render json: {
               status: 'error',
-              errors: user.errors.full_messages
+              errors: resource.errors.full_messages
             }, status: :unprocessable_entity
           end
         end

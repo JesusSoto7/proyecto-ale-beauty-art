@@ -19,12 +19,24 @@ function ResetPassword() {
   const { lang } = useParams();
   const { t } = useTranslation();
 
-  const resetToken = searchParams.get("token");
+  
+
+  const resetToken =
+    searchParams.get("reset_password_token") || searchParams.get("token");
+
+  console.log('ResetPassword mounted, token=', resetToken, 'searchParams=', Object.fromEntries(searchParams.entries()))
+  const emailFromQuery = searchParams.get("email") || "";
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
     setLoading(true);
+
+    if (!resetToken) {
+      setError(t("resetPassword.missingToken") || "Token missing");
+      setLoading(false);
+      return;
+    }
 
     if (password !== passwordConfirmation) {
       setError(t("resetPassword.passwordMismatch"));
@@ -36,15 +48,18 @@ function ResetPassword() {
       await resetPassword({
         reset_password_token: resetToken,
         password,
-        password_confirmation: passwordConfirmation
+        password_confirmation: passwordConfirmation,
+        email: emailFromQuery || undefined
       });
       setSuccess(true);
       // Redirect to login after 3 seconds
       setTimeout(() => {
-        navigate(`/${lang}/login`);
+        navigate(`/${lang || ""}/login`);
       }, 3000);
     } catch (err) {
-      setError(err.message);
+      // Maneja respuestas del backend que devuelvan JSON con errors
+      const message = err?.message || (err?.errors && err.errors.join(", ")) || "Error";
+      setError(message);
     } finally {
       setLoading(false);
     }
@@ -76,56 +91,88 @@ function ResetPassword() {
           </div>
         ) : (
           <>
-            {/* Formulario */}
-            <form onSubmit={handleSubmit} className="mb-4">
-              <div className="mb-3 position-relative">
-                <input
-                  type={showPassword ? "text" : "password"}
-                  className="login-input pe-5"
-                  placeholder={t("resetPassword.newPasswordPlaceholder")}
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                  minLength={6}
-                />
-                <button
-                  type="button"
-                  className="btn position-absolute top-50 end-0 translate-middle-y border-0 bg-transparent"
-                  onClick={() => setShowPassword(!showPassword)}
-                >
-                  {showPassword ? <VisibilityOff style={{color: "#ccc"}} /> : <Visibility style={{color: "#ccc"}} />}
-                </button>
+            {/* Si no hay token mostramos mensaje útil */}
+            {!resetToken ? (
+              <div>
+                <div className="alert alert-warning" role="alert">
+                  {t("resetPassword.missingToken") ||
+                    "No se encontró el token de restablecimiento en la URL. Asegúrate de abrir el enlace recibido por correo."}
+                </div>
+                <p className="text-secondary small">
+                  {t("resetPassword.ifNotWork") ||
+                    "Si el enlace no funciona, copia manualmente el token del correo y pégalo en la URL como ?reset_password_token=..."}
+                </p>
               </div>
+            ) : (
+              <>
+                {/* Formulario */}
+                <form onSubmit={handleSubmit} className="mb-4">
+                  <div className="mb-3 position-relative">
+                    <input
+                      type={showPassword ? "text" : "password"}
+                      className="login-input pe-5"
+                      placeholder={t("resetPassword.newPasswordPlaceholder")}
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      required
+                      minLength={6}
+                    />
+                    <button
+                      type="button"
+                      className="btn position-absolute top-50 end-0 translate-middle-y border-0 bg-transparent"
+                      onClick={() => setShowPassword(!showPassword)}
+                    >
+                      {showPassword ? (
+                        <VisibilityOff style={{ color: "#ccc" }} />
+                      ) : (
+                        <Visibility style={{ color: "#ccc" }} />
+                      )}
+                    </button>
+                  </div>
 
-              <div className="mb-3 position-relative">
-                <input
-                  type={showPasswordConfirmation ? "text" : "password"}
-                  className="login-input pe-5"
-                  placeholder={t("resetPassword.confirmPasswordPlaceholder")}
-                  value={passwordConfirmation}
-                  onChange={(e) => setPasswordConfirmation(e.target.value)}
-                  required
-                  minLength={6}
-                />
-                <button
-                  type="button"
-                  className="btn position-absolute top-50 end-0 translate-middle-y border-0 bg-transparent"
-                  onClick={() => setShowPasswordConfirmation(!showPasswordConfirmation)}
-                >
-                  {showPasswordConfirmation ? <VisibilityOff style={{color: "#ccc"}} /> : <Visibility style={{color: "#ccc"}} />}
-                </button>
-              </div>
+                  <div className="mb-3 position-relative">
+                    <input
+                      type={
+                        showPasswordConfirmation ? "text" : "password"
+                      }
+                      className="login-input pe-5"
+                      placeholder={t(
+                        "resetPassword.confirmPasswordPlaceholder"
+                      )}
+                      value={passwordConfirmation}
+                      onChange={(e) =>
+                        setPasswordConfirmation(e.target.value)
+                      }
+                      required
+                      minLength={6}
+                    />
+                    <button
+                      type="button"
+                      className="btn position-absolute top-50 end-0 translate-middle-y border-0 bg-transparent"
+                      onClick={() =>
+                        setShowPasswordConfirmation(!showPasswordConfirmation)
+                      }
+                    >
+                      {showPasswordConfirmation ? (
+                        <VisibilityOff style={{ color: "#ccc" }} />
+                      ) : (
+                        <Visibility style={{ color: "#ccc" }} />
+                      )}
+                    </button>
+                  </div>
 
-              {error && <p className="text-danger small">{error}</p>}
+                  {error && <p className="text-danger small">{error}</p>}
 
-              <button 
-                type="submit" 
-                className="rosa-fondo btn-light w-100 login-btn"
-                disabled={loading}
-              >
-                {loading ? "..." : t("resetPassword.resetButton")}
-              </button>
-            </form>
+                  <button
+                    type="submit"
+                    className="rosa-fondo btn-light w-100 login-btn"
+                    disabled={loading}
+                  >
+                    {loading ? "..." : t("resetPassword.resetButton")}
+                  </button>
+                </form>
+              </>
+            )}
           </>
         )}
       </div>

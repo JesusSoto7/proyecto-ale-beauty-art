@@ -225,7 +225,6 @@ function ProductDetails() {
             width: "100%",
             height: "400px",
             display: imgLoaded ? "block" : "none",
-            width: "100%",
             objectFit: "contain",
           }}
         />
