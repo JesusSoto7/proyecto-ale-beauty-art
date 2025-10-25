@@ -11,7 +11,7 @@ import ShippingAddress from './components/ShippingAddress';
 import ShippingAddressForm from './components/ShippingAddressForm';
 import Dashboard from './pages/home/Dashboard';
 import DashboardLayout from './components/DashboardLayout';
-import ProductTable from './pages/home/Productos';
+import ProductTable from './pages/home/productTable/Productos';
 import Categorias from './pages/home/Categorias';
 import Carousel from './pages/home/Carousel';
 import ProductDetails from './pages/productsDetails/ProductDetails';
