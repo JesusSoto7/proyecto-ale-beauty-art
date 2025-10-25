@@ -1,0 +1,116 @@
+.alert-container {
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  /* width: 320px; */
+  width: fit-content;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  z-index: 9999;
+}
+
+.alert-icon{ 
+    background-color: #4138382b;
+    width: 45px;
+    height: 45px;
+    border-radius: 5px;
+    margin-right: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.alert {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 14px;
+  border-radius: 6px;
+  font-size: 14px;
+  color: white;
+  animation: slide 0.25s ease;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.2);
+  max-height: 70px;
+}
+
+.alert.info {
+  background: #2196f3;
+  color: #fff;
+}
+
+.alert.success {
+  background: #4caf50;
+  color: #fff;
+}
+
+.alert.warning {
+  background: #ff9800;
+  color: #fff;
+}
+
+.alert.error {
+  background: #f44336;
+  color: #fff;
+}
+
+.alert button {
+  background: transparent;
+  border: none;
+  font-weight: bold;
+  color: inherit;
+  cursor: pointer;
+  font-size: 16px;
+}
+.alert button:hover {
+    background-color: transparent;
+    color: #5f584d70;
+}
+
+@keyframes slide {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Animation when appearing */
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Animation when closing */
+.alert.closing {
+  opacity: 0;
+  transform: translateY(-10px);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+/* Barra de progreso */
+.alert {
+  position: relative;
+  overflow: hidden;
+}
+
+.alert-progress {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 4px;
+  width: 100%;
+  opacity: 0.6;
+  background: rgba(255, 255, 255, 0.7);
+  animation-name: progress;
+  animation-timing-function: linear;
+  animation-fill-mode: forwards;
+}
+
+@keyframes progress {
+  from { width: 100%; }
+  to   { width: 0%; }
+}

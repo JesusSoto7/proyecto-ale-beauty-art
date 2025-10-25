@@ -10,6 +10,7 @@ import Typography from "@mui/material/Typography";
 import "../assets/stylesheets/SubCateProds.css";
 import { formatCOP } from "../services/currency";
 import noImage from "../assets/images/no_image.png";
+import { useAlert } from "../components/AlertProvider.jsx";
 
 export default function ProductsPageSubCategory() {
   const { categorySlug, subCategorySlug, lang } = useParams();
@@ -27,6 +28,7 @@ export default function ProductsPageSubCategory() {
   const [selectedRatings, setSelectedRatings] = useState([]);
   const [productRatings, setProductRatings] = useState({});
   const [subCategory, setSubCategory] = useState(null);
+  const { addAlert } = useAlert();
 
   useEffect(() => {
     const savedToken = localStorage.getItem("token");
@@ -154,7 +156,10 @@ export default function ProductsPageSubCategory() {
           method: "DELETE",
           headers: { Authorization: `Bearer ${token}` },
         });
-        if (res.ok) await loadFavorites();
+        if (res.ok) {
+          await loadFavorites();
+          addAlert("se elimino de tus favoritos", "warning", 3500);
+        }
       } else {
         const res = await fetch("https://localhost:4000/api/v1/favorites", {
           method: "POST",
@@ -164,10 +169,14 @@ export default function ProductsPageSubCategory() {
           body: JSON.stringify({ product_id: productId }),
         });
         const data = await res.json();
-        if (data.success) await loadFavorites();
+        if (data.success) {
+          await loadFavorites();
+          addAlert("se agregó a tus favoritos", "success", 3500);
+        };
       }
     } catch (err) {
       console.error("Error al cambiar favorito:", err);
+      addAlert("Algo salió mal", "error", 3500);
     }
   };
 
@@ -185,6 +194,7 @@ export default function ProductsPageSubCategory() {
         if (data.cart) {
           setCart(data.cart);
           window.dispatchEvent(new CustomEvent("cartUpdatedCustom", { bubbles: false }));
+          addAlert("se agregó al carrito", "success");
         }
       })
       .catch((err) => {

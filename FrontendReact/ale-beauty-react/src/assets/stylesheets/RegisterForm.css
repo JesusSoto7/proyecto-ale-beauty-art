@@ -76,7 +76,7 @@ form {
   border-color: #f597cb;
 }
 
-button {
+.register-container button {
   background: #fab1d9;
   color: white;
   padding: 12px;
@@ -86,7 +86,7 @@ button {
   cursor: pointer;
 }
 
-button:hover {
+.register-container button:hover {
   background-color: #f597cb;
 }
 
