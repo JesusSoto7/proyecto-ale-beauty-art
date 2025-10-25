@@ -1,3 +1,4 @@
+import 'package:ale_beauty_art_app/core/views/forgot_password_page.dart';
 import 'package:ale_beauty_art_app/core/views/register_view.dart';
 import 'package:ale_beauty_art_app/features/auth/bloc/auth_bloc.dart';
 import 'package:ale_beauty_art_app/styles/colors.dart';
@@ -89,7 +90,10 @@ class _LoginPageState extends State<LoginPage> {
                 child: AnimatedContainer(
                   duration: const Duration(milliseconds: 180),
                   curve: Curves.easeOut,
-                  margin: EdgeInsets.only(bottom: bottomInset > 0 ? bottomInset - 10 : 24, left: 16, right: 16),
+                  margin: EdgeInsets.only(
+                      bottom: bottomInset > 0 ? bottomInset - 10 : 24,
+                      left: 16,
+                      right: 16),
                   padding: const EdgeInsets.fromLTRB(20, 22, 20, 16),
                   width: size.width,
                   decoration: BoxDecoration(
@@ -136,11 +140,13 @@ class _LoginPageState extends State<LoginPage> {
                           controller: _emailController,
                           keyboardType: TextInputType.emailAddress,
                           decoration: InputDecoration(
-                            prefixIcon: const Icon(Icons.alternate_email, color: AppColors.textSecondary),
+                            prefixIcon: const Icon(Icons.alternate_email,
+                                color: AppColors.textSecondary),
                             hintText: "Correo electrónico",
                             filled: true,
                             fillColor: Colors.grey.shade100,
-                            contentPadding: const EdgeInsets.symmetric(vertical: 14, horizontal: 12),
+                            contentPadding: const EdgeInsets.symmetric(
+                                vertical: 14, horizontal: 12),
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(14),
                               borderSide: BorderSide.none,
@@ -153,18 +159,23 @@ class _LoginPageState extends State<LoginPage> {
                           controller: _passwordController,
                           obscureText: obscurePassword,
                           decoration: InputDecoration(
-                            prefixIcon: const Icon(Icons.lock_outline_rounded, color: AppColors.textSecondary),
+                            prefixIcon: const Icon(Icons.lock_outline_rounded,
+                                color: AppColors.textSecondary),
                             hintText: "Contraseña",
                             suffixIcon: IconButton(
                               icon: Icon(
-                                obscurePassword ? Icons.visibility_off : Icons.visibility,
+                                obscurePassword
+                                    ? Icons.visibility_off
+                                    : Icons.visibility,
                                 color: Colors.grey,
                               ),
-                              onPressed: () => setState(() => obscurePassword = !obscurePassword),
+                              onPressed: () => setState(
+                                  () => obscurePassword = !obscurePassword),
                             ),
                             filled: true,
                             fillColor: Colors.grey.shade100,
-                            contentPadding: const EdgeInsets.symmetric(vertical: 14, horizontal: 12),
+                            contentPadding: const EdgeInsets.symmetric(
+                                vertical: 14, horizontal: 12),
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(14),
                               borderSide: BorderSide.none,
@@ -179,13 +190,20 @@ class _LoginPageState extends State<LoginPage> {
                               children: [
                                 Checkbox(
                                   value: rememberMe,
-                                  onChanged: (value) => setState(() => rememberMe = value ?? false),
+                                  onChanged: (value) => setState(
+                                      () => rememberMe = value ?? false),
                                 ),
                                 const Text("Recordarme"),
                               ],
                             ),
                             TextButton(
-                              onPressed: () {},
+                              onPressed: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (_) =>
+                                            const ForgotPasswordPage()));
+                              },
                               child: const Text("¿Olvidaste tu contraseña?"),
                             ),
                           ],
@@ -196,19 +214,25 @@ class _LoginPageState extends State<LoginPage> {
                           width: double.infinity,
                           height: 52,
                           child: ElevatedButton(
-                            onPressed: state is AuthInProgress ? null : _onLoginPressed,
+                            onPressed: state is AuthInProgress
+                                ? null
+                                : _onLoginPressed,
                             style: ElevatedButton.styleFrom(
                               padding: EdgeInsets.zero,
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(14),
                               ),
                             ).copyWith(
-                              backgroundColor: MaterialStateProperty.all(Colors.transparent),
+                              backgroundColor:
+                                  MaterialStateProperty.all(Colors.transparent),
                             ),
                             child: Ink(
                               decoration: BoxDecoration(
                                 gradient: const LinearGradient(
-                                  colors: [Color(0xFFF48FB1), Color(0xFFF8BBD0)],
+                                  colors: [
+                                    Color(0xFFF48FB1),
+                                    Color(0xFFF8BBD0)
+                                  ],
                                   begin: Alignment.centerLeft,
                                   end: Alignment.centerRight,
                                 ),
@@ -219,7 +243,9 @@ class _LoginPageState extends State<LoginPage> {
                                     ? const SizedBox(
                                         width: 22,
                                         height: 22,
-                                        child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                                        child: CircularProgressIndicator(
+                                            strokeWidth: 2,
+                                            color: Colors.white),
                                       )
                                     : const Text(
                                         "Iniciar Sesión",
@@ -242,7 +268,8 @@ class _LoginPageState extends State<LoginPage> {
                               GestureDetector(
                                 onTap: () => Navigator.push(
                                   context,
-                                  MaterialPageRoute(builder: (_) => const RegisterPage()),
+                                  MaterialPageRoute(
+                                      builder: (_) => const RegisterPage()),
                                 ),
                                 child: const Text(
                                   "Regístrate",

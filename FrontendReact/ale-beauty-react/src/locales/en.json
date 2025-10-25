@@ -118,7 +118,8 @@
     "terms1": "You acknowledge that you have read, and agree to, our",
     "termsOfService": "Terms of Service",
     "and": "and",
-    "privacyPolicy": "Privacy Policy"
+    "privacyPolicy": "Privacy Policy",
+    "forgotPassword": "Forgot your password?"
   },
   "profile": {
     "loading": "Loading profile...",
@@ -502,6 +503,26 @@
       "text": "In accordance with the Colombian Consumer Statute, you have the right to claim for defective products. We only accept returns of sealed and unused products. To exercise your rights, contact"
     },
     "lastUpdate": "Last updated:"
+  },
+  "forgotPassword": {
+    "title": "Recover password",
+    "subtitle": "Enter your email address and we will send you instructions to reset your password",
+    "emailPlaceholder": "youremail@gmail.com",
+    "sendInstructions": "Send instructions",
+    "backToLogin": "Back to login",
+    "success": "If the email exists, you will receive instructions to reset your password",
+    "error": "An error occurred while processing your request"
+  },
+  "resetPassword": {
+    "title": "Reset password",
+    "subtitle": "Enter your new password",
+    "newPasswordPlaceholder": "New password",
+    "confirmPasswordPlaceholder": "Confirm new password",
+    "resetButton": "Reset password",
+    "success": "Password successfully updated",
+    "error": "An error occurred while resetting the password",
+    "passwordMismatch": "Passwords do not match",
+    "redirecting": "Redirecting to login..."
   }
 }
 

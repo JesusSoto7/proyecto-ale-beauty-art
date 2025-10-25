@@ -12,6 +12,8 @@ Rails.application.routes.draw do
         post 'sign_in', to: 'sessions#create'
         post 'sign_up', to: 'registrations#create'
         delete 'sign_out', to: 'sessions#logout'
+        post 'password/forgot', to: 'passwords#forgot'
+        post 'password/reset', to: 'passwords#reset'
       end
       # Carrito
       get "cart", to: "cart#show"
