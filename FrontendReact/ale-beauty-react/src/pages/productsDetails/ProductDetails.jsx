@@ -986,14 +986,6 @@ function ProductDetails() {
           }}>
             {t("productDetails.relatedproducts")}
           </h3>
-          <p style={{
-            textAlign: "center",
-            color: "#666",
-            marginBottom: "32px",
-            fontSize: "16px"
-          }}>
-            Productos similares que podrían interesarte
-          </p>
 
           <div className="carousel-container" style={{ overflowX: "auto", paddingBottom: "20px" }}>
             <div className="carousel-items" style={{
@@ -1019,7 +1011,7 @@ function ProductDetails() {
                         overflow: "hidden",
                         boxShadow: "0 2px 12px rgba(0,0,0,0.1)",
                         transition: "all 0.3s ease",
-                        width: "280px",
+                        width: "250px",
                         flexShrink: 0,
                         display: "flex",
                         flexDirection: "column"
@@ -1074,7 +1066,7 @@ function ProductDetails() {
                             style={{
                               width: "100%",
                               height: "100%",
-                              objectFit: "cover",
+                              objectFit: "contain",
                               transition: "transform 0.3s ease"
                             }}
                           />

@@ -11,6 +11,7 @@ import "../../assets/stylesheets/ProductosCliente.css";
 import { formatCOP } from "../../services/currency";
 import noImage from "../../assets/images/no_image.png";
 import { useOutletContext } from "react-router-dom";
+import { useAlert } from "../../components/AlertProvider.jsx";
 
 function ProductosCliente() {
   const [products, setProducts] = useState([]);
@@ -25,6 +26,7 @@ function ProductosCliente() {
   const [priceRange, setPriceRange] = useState({ min: "", max: "" });
   const [productRatings, setProductRatings] = useState({});
   const [selectedRatings, setSelectedRatings] = useState([]);
+  const { addAlert } = useAlert();
 
   const { lang } = useParams();
   const { t } = useTranslation();
@@ -228,6 +230,7 @@ function ProductosCliente() {
         );
         if (res.ok) {
           await loadFavorites();
+          addAlert("se elimino de tus favoritos", "warning", 3500);
         }
       } else {
         const res = await fetch("https://localhost:4000/api/v1/favorites", {
@@ -240,10 +243,12 @@ function ProductosCliente() {
         const data = await res.json();
         if (data.success) {
           await loadFavorites();
+          addAlert("se agregó a tus favoritos", "success", 3500);
         }
       }
     } catch (err) {
       console.error("Error al cambiar favorito:", err);
+      addAlert("Algo salió mal", "error", 3500);
     }
   };
 
@@ -261,6 +266,7 @@ function ProductosCliente() {
         if (data.cart) {
           setCart(data.cart);
           window.dispatchEvent(new CustomEvent("cartUpdatedCustom", { bubbles: false }));
+          addAlert("se agregó al carrito", "success");
         } else if (data.errors) {
           alert(t('productDetails.error') + data.errors.join(", "));
         }
