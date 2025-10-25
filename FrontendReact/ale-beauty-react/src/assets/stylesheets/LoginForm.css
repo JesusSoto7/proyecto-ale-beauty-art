@@ -13,6 +13,15 @@
   bottom: 0;
 }
 
+.login-card button{
+  background: #fab1d9;
+  color: white;
+  padding: 12px;
+  border: none;
+  border-radius: 1rem !important;
+  font-weight: bold;
+  cursor: pointer;
+}
 
 
 /* Fondo con degradado oscuro */
