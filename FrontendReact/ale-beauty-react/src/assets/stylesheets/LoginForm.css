@@ -1,8 +1,16 @@
+/* ======== RESET PARA LOGIN ======== */
+.login-bg,
+.login-bg *,
+.login-card,
+.login-card * {
+  box-sizing: border-box;
+}
 
 .wave-wrapper {
   position: absolute;
   width: 100%;
   overflow: hidden;
+  z-index: 0;
 }
 
 .wave-svg {
@@ -13,24 +21,16 @@
   bottom: 0;
 }
 
-.login-card button{
-  background: #fab1d9;
-  color: white;
-  padding: 12px;
-  border: none;
-  border-radius: 1rem !important;
-  font-weight: bold;
-  cursor: pointer;
-}
-
-
-/* Fondo con degradado oscuro */
+/* ======== FONDO ======== */
 .login-bg {
-    min-height: 100vh;
-    /* background-color: #1e1e20; */
-    background: linear-gradient(135deg, #7f9cf5, #d6bcfa, #90cdf4);
-    padding: 20px;
-    }
+  min-height: 100vh;
+  background: linear-gradient(135deg, #7f9cf5, #d6bcfa, #90cdf4);
+  padding: 20px;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 
 .login-bg::before {
   content: '';
@@ -43,68 +43,229 @@
   z-index: 0;
 }
 
-/* Card central con efecto blur */
+/* ======== CARD ======== */
 .login-card {
-    background-color: #fff;
-    max-width: 420px;
-    width: 100%;
-    border-radius: 1.5rem;
-    backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    color: white;
-    z-index: 1;
+  background-color: #fff;
+  max-width: 420px;
+  width: 100%;
+  border-radius: 1.5rem;
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  z-index: 1;
+  position: relative;
 }
 
-.rosa{
-    color: #fab1d9;
+/* ======== TEXTOS ======== */
+.login-card h4 {
+  font-size: 1.5rem !important;
+  margin-bottom: 0.5rem !important;
+  font-weight: 700 !important;
+  line-height: 1.2 !important;
 }
 
-.rosa-fondo{
-    background-color: #fab1d9;
+.login-card p {
+  font-size: 0.875rem !important;
+  margin-bottom: 0.5rem !important;
+  line-height: 1.5 !important;
 }
 
-.rosa-fondo:hover{
-    background-color: #f597cb;
+.login-card .small {
+  font-size: 0.875rem !important;
+  line-height: 1.5 !important;
 }
 
-/* Inputs oscuros */
+.login-card .text-secondary {
+  color: #6c757d !important;
+}
+
+.login-card .text-danger {
+  color: #dc3545 !important;
+}
+
+.rosa {
+  color: #fab1d9 !important;
+}
+
+.rosa-fondo {
+  background-color: #fab1d9 !important;
+  color: white !important;
+}
+
+.rosa-fondo:hover {
+  background-color: #f597cb !important;
+}
+
+/* ======== INPUTS ======== */
 .login-input {
-    width: 100%;
-    background-color: #f5f5f5 !important;
-    border: 1px solid rgba(255, 255, 255, 0.1) !important;
-    color: rgb(43, 43, 43) !important;
-    border-radius: 0.75rem;
-    padding: 0.8rem;
-    height: 38px;
+  width: 100% !important;
+  background-color: #f5f5f5 !important;
+  border: 1px solid rgba(0, 0, 0, 0.1) !important;
+  color: rgb(43, 43, 43) !important;
+  border-radius: 0.75rem !important;
+  padding: 0.5rem 0.75rem !important; /* ✅ Padding reducido */
+  height: 42px !important; /* ✅ Altura ligeramente mayor para mejor alineación */
+  font-size: 14px !important;
+  line-height: 1.5 !important;
+  transition: border-color 0.15s ease-in-out !important;
 }
 
+.login-input.pe-5 {
+  padding-right: 2.5rem !important; /* ✅ Espacio para el botón de visibilidad */
+}
 
-.login-input:focus{
+.login-input:focus {
   border-color: #f597cb !important;
-  outline: none;
+  outline: none !important;
+  box-shadow: none !important;
 }
 
 .login-input::placeholder {
   color: #c4c4c4 !important;
-
+  font-size: 14px !important;
 }
 
-/* Botón principal */
+/* ======== BOTONES ======== */
+.login-card button {
+  font-size: 14px !important;
+  font-weight: 600 !important;
+  line-height: 1.5 !important;
+}
+
 .login-btn {
-  border-radius: 2rem;
-  font-weight: 600;
-  padding: 0.8rem;
+  border-radius: 2rem !important;
+  font-weight: 600 !important;
+  padding: 0.6rem 1rem !important; /* ✅ Padding ajustado */
+  background-color: #fab1d9 !important;
+  color: white !important;
+  border: none !important;
+  cursor: pointer !important;
+  font-size: 14px !important;
+  transition: background-color 0.2s ease !important;
 }
 
-/* Botones alternativos */
+.login-btn:hover {
+  background-color: #f597cb !important;
+}
+
 .login-alt-btn {
-  border-radius: 0.75rem;
-  padding: 0.8rem;
-  color: white;
+  border-radius: 0.75rem !important;
+  padding: 0.6rem 1rem !important; /* ✅ Padding ajustado */
+  color: white !important;
   background-color: #111 !important;
-  transition: background 0.2s;
+  transition: background 0.2s !important;
+  font-size: 14px !important;
 }
 
 .login-alt-btn:hover {
   background-color: #222 !important;
+}
+
+/* ======== BOTÓN DE VISIBILIDAD - CORREGIDO ======== */
+.login-card .position-relative {
+  position: relative !important;
+}
+
+.login-card .btn.position-absolute {
+  position: absolute !important;
+  right: 0.8rem !important; /* ✅ Posición ajustada */
+  top: 60% !important;
+  transform: translateY(-50%) !important; /* ✅ Centrado vertical perfecto */
+  padding: 0.25rem !important;
+  height: auto !important;
+  width: auto !important;
+  min-width: auto !important;
+  background: transparent !important;
+  border: none !important;
+  z-index: 10 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.login-card .btn.position-absolute:hover {
+  background: transparent !important;
+}
+
+.login-card .btn.position-absolute svg {
+  font-size: 25px !important; /* ✅ Tamaño del icono */
+}
+
+/* ======== ENLACES ======== */
+.login-card a {
+  font-size: 0.875rem !important;
+  text-decoration: none !important;
+  transition: color 0.2s ease !important;
+}
+
+.login-card a.rosa:hover {
+  color: #f597cb !important;
+}
+
+/* ======== LOGO ======== */
+.login-card img {
+  width: 60px !important;
+  height: 60px !important;
+  object-fit: cover !important;
+}
+
+/* ======== ESPACIADO REDUCIDO ======== */
+.login-card .mb-3 {
+  margin-bottom: 0.15rem !important; /* ✅ Reducido de 1rem */
+}
+
+.login-card .mb-4 {
+  margin-bottom: 1rem !important; /* ✅ Reducido de 1.5rem */
+}
+
+.login-card .mt-4 {
+  margin-top: 1rem !important; /* ✅ Reducido de 1.5rem */
+}
+
+.login-card .p-5 {
+  padding: 2rem !important; /* ✅ Reducido de 3rem */
+}
+
+.login-card .text-center {
+  text-align: center !important;
+}
+
+.login-card .text-end {
+  text-align: end !important;
+}
+
+/* ======== RESPONSIVE ======== */
+@media (max-width: 576px) {
+  .login-card {
+    max-width: 95% !important;
+  }
+  
+  .login-card .p-5 {
+    padding: 1.5rem !important;
+  }
+  
+  .login-card h4 {
+    font-size: 1.25rem !important;
+  }
+  
+  .login-input {
+    font-size: 14px !important;
+  }
+  
+  .login-card .btn.position-absolute {
+    right: 0.5rem !important;
+  }
+}
+
+@media (max-width: 400px) {
+  .login-card .p-5 {
+    padding: 1rem !important;
+  }
+  
+  .login-card h4 {
+    font-size: 1.1rem !important;
+  }
+  
+  .login-card .mb-3 {
+    margin-bottom: 0.6rem !important;
+  }
 }

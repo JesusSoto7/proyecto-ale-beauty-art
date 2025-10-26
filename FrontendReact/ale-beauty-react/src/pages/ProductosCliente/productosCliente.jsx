@@ -1,17 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { Link, useParams, useNavigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { useTranslation } from 'react-i18next';
-import IconButton from '@mui/joy/IconButton';
-import FavoriteBorder from '@mui/icons-material/FavoriteBorder';
-import Favorite from "@mui/icons-material/Favorite";
 import CircularProgress from '@mui/material/CircularProgress';
 import Typography from '@mui/material/Typography';
-import Rating from "@mui/material/Rating";
 import "../../assets/stylesheets/ProductosCliente.css";
-import { formatCOP } from "../../services/currency";
-import noImage from "../../assets/images/no_image.png";
 import { useOutletContext } from "react-router-dom";
 import { useAlert } from "../../components/AlertProvider.jsx";
+import ProductCard from "../../components/ProductCard"; // ✅ IMPORTAR
 
 function ProductosCliente() {
   const [products, setProducts] = useState([]);
@@ -30,7 +25,6 @@ function ProductosCliente() {
 
   const { lang } = useParams();
   const { t } = useTranslation();
-  const navigate = useNavigate();
 
   useEffect(() => {
     const savedToken = localStorage.getItem("token");
@@ -43,7 +37,7 @@ function ProductosCliente() {
     const loadData = async () => {
       try {
         setLoading(true);
-        const [productsResponse, categoriesResponse, cartResponse, favoritesResponse] = await Promise.all([
+        const [productsResponse, categoriesResponse, cartResponse] = await Promise.all([
           fetch("https://localhost:4000/api/v1/products", {
             headers: { Authorization: `Bearer ${token}` }
           }),
@@ -52,22 +46,17 @@ function ProductosCliente() {
           }),
           fetch("https://localhost:4000/api/v1/cart", {
             headers: { Authorization: `Bearer ${token}` }
-          }),
-          fetch("https://localhost:4000/api/v1/favorites", {
-            headers: { Authorization: `Bearer ${token}` }
           })
         ]);
 
         if (!productsResponse.ok) throw new Error('Error cargando productos');
         if (!categoriesResponse.ok) throw new Error('Error cargando categorías');
         if (!cartResponse.ok) throw new Error('Error cargando carrito');
-        if (!favoritesResponse.ok) throw new Error('Error cargando favoritos');
 
-        const [productsData, categoriesData, cartData, favoritesData] = await Promise.all([
+        const [productsData, categoriesData, cartData] = await Promise.all([
           productsResponse.json(),
           categoriesResponse.json(),
-          cartResponse.json(),
-          favoritesResponse.json()
+          cartResponse.json()
         ]);
 
         const prods = Array.isArray(productsData) ? productsData : productsData.products || [];
@@ -94,7 +83,6 @@ function ProductosCliente() {
           }
         }));
         setProductRatings(ratingsObj);
-
         setCart(cartData.cart);
 
       } catch (err) {
@@ -106,32 +94,6 @@ function ProductosCliente() {
 
     loadData();
   }, [token]);
-
-  function GradientHeart({ filled = false, size = 36 }) {
-    return (
-      <svg
-        width={size}
-        height={size}
-        viewBox="0 0 24 24"
-        style={{ display: "block" }}
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <defs>
-          <linearGradient id="heart-gradient" x1="0" y1="0" x2="24" y2="24" gradientUnits="userSpaceOnUse">
-            <stop stopColor="#cf0d5bff"/>
-            <stop offset="1" stopColor="#f7c1dcff"/>
-          </linearGradient>
-        </defs>
-        <path
-          d="M12.1 18.55l-.1.1-.1-.1C7.14 14.24 4 11.39 4 8.5 4 6.5 5.5 5 7.5 5c1.54 0 3.04.99 3.57 2.36h1.87C13.46 5.99 14.96 5 16.5 5c2 0 3.5 1.5 3.5 3.5 0 2.89-3.14 5.74-7.9 10.05z"
-          fill={filled ? "url(#heart-gradient)" : "none"}
-          stroke="url(#heart-gradient)"
-          strokeWidth="2"
-        />
-      </svg>
-    );
-  }
 
   const getSubcategoriesForCategory = (categoryId) => {
     if (categoryId === "Todos") return [];
@@ -230,20 +192,21 @@ function ProductosCliente() {
         );
         if (res.ok) {
           await loadFavorites();
-          addAlert("se elimino de tus favoritos", "warning", 3500);
+          addAlert("Se eliminó de tus favoritos", "warning", 3500);
         }
       } else {
         const res = await fetch("https://localhost:4000/api/v1/favorites", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${token}` },
+            Authorization: `Bearer ${token}` 
+          },
           body: JSON.stringify({ product_id: productId }),
         });
         const data = await res.json();
         if (data.success) {
           await loadFavorites();
-          addAlert("se agregó a tus favoritos", "success", 3500);
+          addAlert("Se agregó a tus favoritos", "success", 3500);
         }
       }
     } catch (err) {
@@ -253,6 +216,13 @@ function ProductosCliente() {
   };
 
   const addToCart = (productId) => {
+    // ✅ Optimistic update
+    window.dispatchEvent(new CustomEvent("cartUpdatedOptimistic", { 
+      bubbles: false,
+      detail: { productId, action: 'add' }
+    }));
+    addAlert("Se agregó al carrito", "success", 3500);
+
     fetch("https://localhost:4000/api/v1/cart/add_product", {
       method: "POST",
       headers: {
@@ -266,14 +236,21 @@ function ProductosCliente() {
         if (data.cart) {
           setCart(data.cart);
           window.dispatchEvent(new CustomEvent("cartUpdatedCustom", { bubbles: false }));
-          addAlert("se agregó al carrito", "success");
         } else if (data.errors) {
-          alert(t('productDetails.error') + data.errors.join(", "));
+          addAlert(t('productDetails.error') + data.errors.join(", "), "error", 3500);
+          window.dispatchEvent(new CustomEvent("cartUpdateFailed", { 
+            bubbles: false,
+            detail: { productId, action: 'add' }
+          }));
         }
       })
       .catch((err) => {
         console.error(t('productDetails.cartAddError'), err);
-        alert(t('productDetails.cartAddError'));
+        addAlert(t('productDetails.cartAddError'), "error", 3500);
+        window.dispatchEvent(new CustomEvent("cartUpdateFailed", { 
+          bubbles: false,
+          detail: { productId, action: 'add' }
+        }));
       });
   };
 
@@ -299,7 +276,6 @@ function ProductosCliente() {
 
   return (
     <section className="prodcli-section prodcli-centered">
-      {/* Banner gris grande */}
       <div className="prodcli-banner">
         <h1>{t('banner.title')}</h1>
         <p>{t('banner.description')}</p>
@@ -483,94 +459,20 @@ function ProductosCliente() {
             )}
           </div>
 
-          {/* Productos */}
+          {/* ✅ PRODUCTOS CON PRODUCTCARD - AQUÍ ES EL CAMBIO */}
           <div className="prodcli-main prodcli-main-centered">
-            <div className="prodcli-grid prodcli-grid-3cols">
+            <div className="prodcli-products-grid">
               {filteredProducts.map((prod, index) => (
-                <div 
-                  key={prod.id} 
-                  className="custom-product-card"
-                  style={{ animationDelay: `${index * 0.1}s`, cursor: "pointer" }}
-                  onClick={() => navigate(`/${lang}/producto/${prod.slug}`)}
-                  tabIndex={0}
-                  onKeyDown={e => {
-                    if (e.key === 'Enter' || e.key === ' ') {
-                      navigate(`/${lang}/producto/${prod.slug}`);
-                    }
-                  }}
-                >
-                  <div className="custom-image-wrapper">
-                    <img
-                      src={prod.imagen_url || noImage}
-                      alt={prod.nombre_producto}
-                      onError={(e) => { e.currentTarget.src = noImage; }}
-                    />
-                    <IconButton
-                      onClick={e => {
-                        e.stopPropagation();
-                        toggleFavorite(prod.id);
-                      }}
-                      className="custom-favorite-btn"
-                      style={{ padding: 0, background: "transparent" }}
-                    >
-                      {favoriteIds.includes(prod.id)
-                        ? <GradientHeart filled />
-                        : <GradientHeart filled={false} />
-                      }
-                    </IconButton>
-                  </div>
-                  <div className="custom-product-info">
-                    <div className="custom-product-name-v2">{prod.nombre_producto}</div>
-                    
-                    {/* PRECIO con descuento y tachado */}
-                    <div className="custom-price-v2">
-                      {prod.precio_con_mejor_descuento && prod.precio_con_mejor_descuento < prod.precio_producto ? (
-                        <>
-                          <span>{formatCOP(prod.precio_con_mejor_descuento)}</span>
-                          <span className="line-through">{formatCOP(prod.precio_producto)}</span>
-                        </>
-                      ) : (
-                        <span>{formatCOP(prod.precio_producto)}</span>
-                      )}
-                    </div>
-
-                    {/* Nombre del descuento si existe */}
-                    {prod.mejor_descuento_para_precio && (
-                      <div className="custom-descuento-nombre">
-                        {prod.mejor_descuento_para_precio.nombre}
-                        {prod.mejor_descuento_para_precio.tipo === "porcentaje"
-                          ? ` (${prod.mejor_descuento_para_precio.valor}%)`
-                          : ` (-${formatCOP(prod.mejor_descuento_para_precio.valor)})`}
-                      </div>
-                    )}
-
-                    {/* Rating ABAJO del precio */}
-                    <div className="custom-rating-row-v2">
-                      <svg width="17" height="17" viewBox="0 0 24 24" fill="#FFC107" style={{ marginRight: "2px", verticalAlign: "middle" }}>
-                        <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/>
-                      </svg>
-                      <span className="custom-rating-number-v2">
-                        {productRatings[prod.id]?.avg
-                          ? Number(productRatings[prod.id]?.avg).toFixed(1)
-                          : "0.0"}
-                      </span>
-                    </div>
-                  </div>
-                  <div className="custom-card-footer">
-                    <button
-                      onClick={e => {
-                        e.stopPropagation();
-                        addToCart(prod.id);
-                      }}
-                      className="custom-add-btn"
-                    >
-                      {t('products.addToCart')}
-                    </button>
-                  </div>
-                </div>
-              ))}
-              {Array.from({length: Math.max(0, 3 - filteredProducts.length)}).map((_, idx) => (
-                <div className="prodcli-placeholder" key={`ph-${idx}`}></div>
+                <ProductCard
+                  key={prod.id}
+                  product={prod}
+                  lang={lang}
+                  isFavorite={favoriteIds.includes(prod.id)}
+                  onToggleFavorite={toggleFavorite}
+                  onAddToCart={addToCart}
+                  productRating={productRatings[prod.id]}
+                  t={t}
+                />
               ))}
             </div>
             

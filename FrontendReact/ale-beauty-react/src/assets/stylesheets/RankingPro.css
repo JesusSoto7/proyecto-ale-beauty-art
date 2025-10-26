@@ -26,7 +26,7 @@
   box-shadow: 0 15px 45px rgba(217, 93, 133, 0.2);
 }
 
-/* Imagen del producto */
+/* ✅ IMAGEN DEL PRODUCTO - COMPLETA */
 .ranking-image {
   width: 100%;
   height: 280px;
@@ -35,14 +35,15 @@
   justify-content: center;
   background: linear-gradient(135deg, #f5f7fa 0%, #e8ecf1 100%);
   overflow: hidden;
-  padding: 25px;
+  padding: 0; /* ✅ Sin padding */
   position: relative;
 }
 
 .ranking-image img {
-  max-width: 90%;
-  max-height: 230px;
-  object-fit: contain;
+  width: 100%; /* ✅ Ancho completo */
+  height: 100%; /* ✅ Alto completo */
+  object-fit: cover; /* ✅ CAMBIADO: Cubre todo el espacio */
+  object-position: center; /* ✅ Centrada */
   transition: transform 0.3s ease;
 }
 
@@ -72,7 +73,7 @@
   gap: 0.65rem;
 }
 
-/* Título del producto - MÁS PEQUEÑO */
+/* Título del producto */
 .ranking-title {
   font-size: 0.95rem !important;
   font-weight: 600 !important;
@@ -146,7 +147,7 @@
   font-style: italic;
 }
 
-/* Badge Top 1, 2, 3 - MÁS DESTACADO */
+/* Badge Top 1, 2, 3 */
 .ranking-top-badge {
   position: absolute;
   top: 18px;
@@ -166,8 +167,8 @@
 
 /* Badge específico para Top 1 */
 .ranking-card:first-child .ranking-top-badge {
-  background: linear-gradient(135deg, #ffc67b 0%, #ff5990 100%);
-  box-shadow: 0 6px 20px rgba(245, 158, 11, 0.6);
+  background: linear-gradient(135deg, #c899fd 0%, #dd347a 100%);
+  box-shadow: 0 6px 20px rgba(240, 137, 159, 0.6);
 }
 
 /* === RESPONSIVE === */
@@ -194,11 +195,13 @@
 
   .ranking-image {
     height: 240px;
-    padding: 20px;
+    padding: 0; /* ✅ Sin padding */
   }
 
   .ranking-image img {
-    max-height: 200px;
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* ✅ Cubre todo */
   }
 
   .ranking-title {
@@ -233,12 +236,14 @@
   }
 
   .ranking-image {
-    height: 200px;
-    padding: 15px;
+    height: 220px; /* ✅ Altura ajustada */
+    padding: 0;
   }
 
   .ranking-image img {
-    max-height: 170px;
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* ✅ Cubre todo */
   }
 
   .ranking-title {
@@ -274,4 +279,27 @@
   .rating-count {
     font-size: 0.75rem !important;
   }
+}
+
+/* ✅ EXTRA: Efecto de overlay opcional para las imágenes */
+.ranking-image::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(0, 0, 0, 0) 0%,
+    rgba(0, 0, 0, 0) 70%,
+    rgba(0, 0, 0, 0.05) 100%
+  );
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.ranking-card:hover .ranking-image::after {
+  opacity: 1;
 }
