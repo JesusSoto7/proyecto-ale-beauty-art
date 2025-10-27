@@ -365,7 +365,7 @@ function Cart() {
                 <Typography level="body2" sx={{ mb: 1 }}>
                   {t("cart.set")}: {product.color || "N/A"}
                 </Typography>
-                {/* PRECIO CON DESCUENTO Y NOMBRE DEL DESCUENTO */}
+                {/* PRECIO CON DESCUENTO */}
                 {product.precio_con_mejor_descuento && product.precio_con_mejor_descuento < product.precio_producto ? (
                   <Box>
                     <Typography level="body1" fontWeight="bold" color="primary" component="span">
@@ -378,23 +378,6 @@ function Cart() {
                     >
                       {formatCOP(product.precio_producto)}
                     </Typography>
-                    {product.mejor_descuento_para_precio && (
-                      <Typography
-                        level="body2"
-                        sx={{
-                          color: "#2563eb",
-                          fontWeight: 500,
-                          fontSize: "0.97em",
-                          marginTop: "0.2em",
-                          display: "block"
-                        }}
-                      >
-                        {product.mejor_descuento_para_precio.nombre}
-                        {product.mejor_descuento_para_precio.tipo === "porcentaje"
-                          ? ` (${product.mejor_descuento_para_precio.valor}%)`
-                          : ` (-${formatCOP(product.mejor_descuento_para_precio.valor)})`}
-                      </Typography>
-                    )}
                   </Box>
                 ) : (
                   <Typography level="body1" fontWeight="bold">
