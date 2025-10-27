@@ -27,37 +27,52 @@ const SearchIconWrapper = styled("div")(({ theme }) => ({
   justifyContent: "center",
 }));
 
+// ✅ BARRA MÁS GRANDE
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
-  borderRadius: 20,
+  borderRadius: 25,
   border: "1px solid #ccc",
   backgroundColor: alpha(theme.palette.common.white, 0.15),
   "&:hover": {
     backgroundColor: alpha(theme.palette.common.white, 0.25),
+    borderColor: "#ff4d94",
   },
   marginLeft: theme.spacing(2),
   transition: "all 0.3s ease",
-  width: "160px",
+  width: "220px", // ✅ Más ancho por defecto (antes: 160px)
   [theme.breakpoints.up("sm")]: {
-    width: "200px",
+    width: "280px", // ✅ Más ancho en tablets (antes: 200px)
+  },
+  [theme.breakpoints.up("md")]: {
+    width: "350px", // ✅ Más ancho en escritorio
   },
   "&:focus-within": {
-    width: "260px",
+    width: "350px", // ✅ Más ancho al enfocarse (antes: 260px)
+    borderColor: "#ff4d94",
+    boxShadow: "0 0 0 2px rgba(255, 77, 148, 0.1)",
     [theme.breakpoints.up("sm")]: {
-      width: "320px",
+      width: "420px", // ✅ Más ancho al enfocarse en tablet (antes: 320px)
+    },
+    [theme.breakpoints.up("md")]: {
+      width: "500px", // ✅ Más ancho al enfocarse en escritorio
     },
   },
 }));
 
 const StyledInputBase = styled(InputBase)(({ theme }) => ({
   color: "inherit",
+  width: "100%",
   "& .MuiInputBase-input": {
-    padding: theme.spacing(1, 1, 1, 0),
+    padding: theme.spacing(1.2, 1.2, 1.2, 0), // ✅ Padding aumentado
     paddingLeft: `calc(1em + ${theme.spacing(4)})`,
     transition: theme.transitions.create(["width", "padding"], {
       duration: theme.transitions.duration.short,
     }),
     width: "100%",
+    fontSize: "0.95rem", // ✅ Texto ligeramente más grande
+    "&::placeholder": {
+      opacity: 0.8,
+    },
   },
 }));
 
@@ -201,7 +216,7 @@ export default function SearchBar() {
     >
       <Search>
         <SearchIconWrapper>
-          <SearchIcon />
+          <SearchIcon sx={{ fontSize: "1.3rem" }} /> {/* ✅ Icono ligeramente más grande */}
         </SearchIconWrapper>
         <StyledInputBase
           placeholder={t("header.searchPlaceholder")}
@@ -210,7 +225,7 @@ export default function SearchBar() {
         />
       </Search>
 
-      {/* 🔽 Dropdown resultados - CORREGIDO */}
+      {/* Dropdown resultados */}
       {(results.length > 0 || loading) && (
         <Box
           sx={{
@@ -266,8 +281,7 @@ export default function SearchBar() {
                 }}
               >
                 {results.map((prod) => {
-                  const name =
-                    prod?.nombre_producto || prod?.name || t("header.noName");
+                  const name = prod?.nombre_producto || prod?.name || t("header.noName");
                   const img = prod?.imagen_url || prod?.image || null;
                   const priceOriginal = prod?.precio_producto || prod?.price || null;
                   const priceDiscount = prod?.precio_con_mejor_descuento;
@@ -296,7 +310,6 @@ export default function SearchBar() {
                         overflow: "hidden",
                       }}
                     >
-                      {/* Contenedor de imagen - CORREGIDO */}
                       <Box
                         sx={{
                           width: "100%",
@@ -319,7 +332,7 @@ export default function SearchBar() {
                               left: 0,
                               width: "100%",
                               height: "100%",
-                              objectFit: "cover", // ✅ CAMBIADO DE "contain" A "cover"
+                              objectFit: "cover",
                               objectPosition: "center",
                             }}
                             onError={(e) => {
@@ -443,7 +456,7 @@ export default function SearchBar() {
                 })}
               </Box>
 
-              {/* 📱 Móvil - CORREGIDO */}
+              {/* 📱 Móvil */}
               <Box
                 sx={{
                   display: { xs: "flex", sm: "none" },
@@ -463,8 +476,7 @@ export default function SearchBar() {
                 }}
               >
                 {results.map((prod) => {
-                  const name =
-                    prod?.nombre_producto || prod?.name || t("header.noName");
+                  const name = prod?.nombre_producto || prod?.name || t("header.noName");
                   const img = prod?.imagen_url || prod?.image || null;
                   const priceOriginal = prod?.precio_producto || prod?.price || null;
                   const priceDiscount = prod?.precio_con_mejor_descuento;
@@ -489,7 +501,6 @@ export default function SearchBar() {
                         overflow: "hidden",
                       }}
                     >
-                      {/* Contenedor de imagen móvil - CORREGIDO */}
                       <Box
                         sx={{
                           width: "100%",
@@ -512,7 +523,7 @@ export default function SearchBar() {
                               left: 0,
                               width: "100%",
                               height: "100%",
-                              objectFit: "cover", // ✅ CAMBIADO DE "contain" A "cover"
+                              objectFit: "cover",
                               objectPosition: "center",
                             }}
                             onError={(e) => {

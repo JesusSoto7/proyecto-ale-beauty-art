@@ -1,43 +1,61 @@
-import React, { useEffect, useState, useRef } from 'react';
-import Carousel from 'react-bootstrap/Carousel';
-import IconButton from '@mui/joy/IconButton';
-import FavoriteBorder from '@mui/icons-material/FavoriteBorder';
-import Favorite from "@mui/icons-material/Favorite";
-import { Link, useParams } from 'react-router-dom';
+import React, { useEffect, useRef, useMemo } from 'react';
+import { useParams } from 'react-router-dom';
 import Skeleton from '@mui/material/Skeleton';
-import { formatCOP } from '../../services/currency';
 import bannerNovedades from '../../assets/images/bannerNovedades.jpg'
 import { useOutletContext } from "react-router-dom";
-import noImage from "../../assets/images/no_image.png";
 import RotatingBanner from "./RotatingBanner";
 import { useTranslation } from 'react-i18next';
-import Rating from "@mui/material/Rating";
 import FloatingChat from '../../components/FloatingChat';
 import BannerProduct from '../../components/bannerProducts';
 import "../../assets/stylesheets/RankingPro.css";
+import '../../assets/stylesheets/ProductCard.css';
 import RankingPro from '../../components/rankingPro.jsx';
-import PositiveReviews from "../../components/positiveReviews.jsx";
 import { useAlert } from "../../components/AlertProvider.jsx";
-
-
+import { useHomeData } from './hooks/useHomeData';
+import { useProductRatings } from './hooks/useProductsRating.js';
+import { useCartActions } from './hooks/useCartActions';
+import { useFavoriteActions } from './hooks/useFavoriteActions';
+import ProductCard from '../../components/ProductCard.jsx';
 
 function Inicio() {
-  const [products, setProducts] = useState([]);
-  const [categories, setCategories] = useState([]);
-  const [cart, setCart] = useState(null);
   const { lang } = useParams();
-  const [loading, setLoading] = useState(true);
   const { favoriteIds, loadFavorites } = useOutletContext();
   const { addAlert } = useAlert();
   const { t } = useTranslation();
-  const [newProducts, setNewProducts] = useState([]);
-  const [productRatings, setProductRatings] = useState({});
-  const { slug } = useParams();
   
   const token = localStorage.getItem('token');
   const interesRef = useRef(null);
 
-  // Auto-scroll para el carrusel de interés
+  // ✅ Custom hooks separados
+  const { 
+    products, 
+    newProducts, 
+    cart, 
+    setCart, 
+    loading 
+  } = useHomeData(token, addAlert);
+
+  const { 
+    productRatings, 
+    loadRatings 
+  } = useProductRatings(token);
+
+  const { addToCart } = useCartActions(token, setCart, addAlert, t);
+  
+  // ✅ Hook de favoritos con validación
+  const { toggleFavorite, effectiveFavorites } = useFavoriteActions(
+    token, 
+    loadFavorites, 
+    addAlert, 
+    favoriteIds || [], // ✅ Fallback a array vacío
+    t
+  );
+
+  // ✅ Memoizar productos para evitar re-renders
+  const memoizedProducts = useMemo(() => products.slice(0, 9), [products]);
+  const memoizedNewProducts = useMemo(() => newProducts, [newProducts]);
+
+  // ✅ Auto-scroll para el carrusel
   useEffect(() => {
     const interval = setInterval(() => {
       if (interesRef.current) {
@@ -52,207 +70,33 @@ function Inicio() {
     return () => clearInterval(interval);
   }, []);
 
-  function GradientHeart({ filled = false, size = 36 }) {
-    return (
-      <svg
-        width={size}
-        height={size}
-        viewBox="0 0 24 24"
-        style={{ display: "block" }}
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <defs>
-          <linearGradient id="heart-gradient" x1="0" y1="0" x2="24" y2="24" gradientUnits="userSpaceOnUse">
-            <stop stopColor="#cf0d5bff"/>
-            <stop offset="1" stopColor="#f7c1dcff"/>
-          </linearGradient>
-        </defs>
-        <path
-          d="M12.1 18.55l-.1.1-.1-.1C7.14 14.24 4 11.39 4 8.5 4 6.5 5.5 5 7.5 5c1.54 0 3.04.99 3.57 2.36h1.87C13.46 5.99 14.96 5 16.5 5c2 0 3.5 1.5 3.5 3.5 0 2.89-3.14 5.74-7.9 10.05z"
-          fill={filled ? "url(#heart-gradient)" : "none"}
-          stroke="url(#heart-gradient)"
-          strokeWidth="2"
-        />
-      </svg>
-    );
-  }
-
-  // ✅ Función para cargar ratings en background (SIN bloquear)
-  const loadRatingsInBackground = async (productList) => {
-    for (const product of productList) {
-      try {
-        const res = await fetch(`https://localhost:4000/api/v1/products/${product.slug}/reviews`, {
-          headers: { Authorization: `Bearer ${token}` }
-        });
-        const reviews = await res.json();
-        
-        if (Array.isArray(reviews) && reviews.length > 0) {
-          const avg = reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length;
-          setProductRatings(prev => ({
-            ...prev,
-            [product.id]: { avg, count: reviews.length }
-          }));
-        } else {
-          setProductRatings(prev => ({
-            ...prev,
-            [product.id]: { avg: 0, count: 0 }
-          }));
-        }
-      } catch (error) {
-        console.error(`Error loading rating for product ${product.id}:`, error);
-      }
-      
-      // Esperar 100ms entre cada petición para no bloquear UI
-      await new Promise(resolve => setTimeout(resolve, 100));
-    }
-  };
-
-  // ✅ Cargar TODOS los datos en paralelo usando Promise.all
+  // ✅ Cargar ratings de TODOS los productos (para el ranking)
   useEffect(() => {
-    Promise.all([
-      fetch('https://localhost:4000/api/v1/inicio').then(r => r.json()),
-      fetch('https://localhost:4000/api/v1/products/novedades', {
-        headers: { Authorization: `Bearer ${token}` }
-      }).then(r => r.json()),
-      fetch('https://localhost:4000/api/v1/cart', {
-        headers: { Authorization: `Bearer ${token}` }
-      }).then(r => r.json()),
-      fetch('https://localhost:4000/api/v1/favorites', {
-        headers: { Authorization: `Bearer ${token}` }
-      }).then(r => r.json())
-    ])
-      .then(([inicioData, novedadesData, cartData, favoritesData]) => {
-        // Establecer todo inmediatamente
-        setProducts(inicioData.products || []);
-        setCategories(inicioData.categories || []);
-        setNewProducts(novedadesData || []);
-        setCart(cartData.cart);
-        
-        // Cargar favoritos usando la función del outlet context
-        loadFavorites();
-        
-        // ✅ Mostrar página INMEDIATAMENTE
-        setLoading(false);
-        
-        // ✅ Cargar ratings DESPUÉS (en background, sin bloquear)
-        setTimeout(() => {
-          if (novedadesData && novedadesData.length > 0) {
-            loadRatingsInBackground(novedadesData.slice(0, 6));
-          }
-          if (inicioData.products && inicioData.products.length > 0) {
-            setTimeout(() => {
-              loadRatingsInBackground(inicioData.products.slice(0, 6));
-            }, 500);
-          }
-        }, 1500); // Después de 1.5 segundos
-      })
-      .catch(err => {
-        console.error(t('home.loadError'), err);
-        setLoading(false);
-      });
-  }, [token, t]);
-
-  const addToCart = (productId) => {
-    fetch("https://localhost:4000/api/v1/cart/add_product", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({ product_id: productId }),
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.cart) {
-          setCart(data.cart);
-          window.dispatchEvent(new CustomEvent("cartUpdatedCustom", { bubbles: false }));
-
-          const product = data.cart.products.find(p => p.product_id === productId);
-          if (window.gtag && product) {
-            window.gtag("event", "add_to_cart", {
-              currency: "COP",
-              value: product.precio_producto,
-              items: [
-                {
-                  item_id: product.product_id,
-                  item_name: product.nombre_producto,
-                  price: product.precio_producto,
-                  quantity: product.cantidad,
-                },
-              ],
-            });
-            addAlert("se agregó al carrito", "success", 3500);
-            console.log("🛒 Evento GA4 enviado: add_to_cart", product);
-          }
-        } else if (data.errors) {
-          alert(t('productDetails.error') + data.errors.join(", "));
-          // addAlert(t('productDetails.error') + data.errors.join(", "), "error");
-        }
-      })
-      .catch((err) => {
-        console.error(t('productDetails.cartAddError'), err);
-        // alert(t('productDetails.cartAddError'));
-        addAlert(t('productDetails.cartAddError'), "error", 3500);
-      });
-  };
-
-  const toggleFavorite = async (productId) => {
-    if (favoriteIds.includes(productId)) {
-      try {
-        const res = await fetch(`https://localhost:4000/api/v1/favorites/${productId}`, {
-          method: "DELETE",
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        if (res.ok) {
-          await loadFavorites();
-          addAlert("se elimino de tus favoritos", "warning", 3500);
-        }
-      } catch (err) {
-        console.error(t('home.removeFavoriteError'), err);
-        addAlert("Algo salió mal", "error", 3500);
-      }
-    } else {
-      try {
-        const res = await fetch("https://localhost:4000/api/v1/favorites", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}` },
-          body: JSON.stringify({ product_id: productId }),
-        });
-        const data = await res.json();
-        if (data.success) {
-          await loadFavorites();
-          addAlert("se agregó a tus favoritos", "success", 3500);
-        }
-      } catch (err) {
-        console.error(t('home.addFavoriteError'), err);
-        addAlert("Algo salió mal", "error", 3500);
-      }
+    if (!loading && products.length > 0) {
+      const timer = setTimeout(() => {
+        loadRatings(products);
+      }, 1000);
+      return () => clearTimeout(timer);
     }
+  }, [loading, products, loadRatings]);
+
+  // ✅ Cargar ratings de novedades
+  useEffect(() => {
+    if (!loading && newProducts.length > 0) {
+      const timer = setTimeout(() => {
+        loadRatings(newProducts.slice(0, 6));
+      }, 500);
+      return () => clearTimeout(timer);
+    }
+  }, [loading, newProducts, loadRatings]);
+
+  // ✅ Helper seguro para verificar favoritos
+  const isFavorite = (productId) => {
+    return Array.isArray(effectiveFavorites) && effectiveFavorites.includes(productId);
   };
 
   return (
     <div>
-            {/* {loading ? (
-        <Skeleton sx={{ bgcolor: 'grey.800' }} variant="rectangular" width={"100%"} height={350} />
-      ) : carousel.length > 0 ? (
-        <Carousel interval={3000} className="mb-0">
-          {carousel.map((img, idx) => (
-            <Carousel.Item key={idx} sx={{ marginTop: "70px"}}>
-              <img
-                className="d-block w-100"
-                src={img}
-                alt={`${t('home.slide')} ${idx + 1}`}
-                style={{ height: "450px", objectFit: "cover" }}
-              />
-            </Carousel.Item>
-          ))}
-        </Carousel>
-      ) : null} 
-
-
       {/* Sección Novedades Maquillaje */}
       <section className="mt-5">
         <h2 className="mb-4">{t('home.newMakeup')}</h2>
@@ -262,7 +106,7 @@ function Inicio() {
               {[1, 2, 3, 4].map((skeleton) => (
                 <div className="product-card" key={skeleton}>
                   <div className="image-container">
-                    <Skeleton variant="rectangular" width={"100%"} height={200} />
+                    <Skeleton variant="rectangular" width="100%" height={200} />
                   </div>
                   <Skeleton variant="text" width={150} height={30} />
                   <Skeleton variant="text" width={80} height={20} />
@@ -274,99 +118,31 @@ function Inicio() {
               ))}
             </div>
           </div>
-        ) : newProducts.length > 0 ? (
+        ) : memoizedNewProducts.length > 0 ? (
           <div className="carousel-container">
             <button
               className="carousel-btn prev"
               onClick={() => {
                 document.querySelector(".carousel-items")
-                  .scrollBy({ left: -300, behavior: "smooth" });
+                  ?.scrollBy({ left: -300, behavior: "smooth" });
               }}
+              aria-label="Anterior"
             >
               ❮
             </button>
 
             <div className="carousel-items">
-              {newProducts.map((prod) => (
-                <div className="custom-product-card" key={prod.id}>
-                  <div className="custom-image-wrapper">
-                    <img
-                      src={prod.imagen_url || noImage}
-                      alt={prod.nombre_producto}
-                      loading="lazy"
-                      decoding="async"
-                      onError={(e) => { e.currentTarget.src = noImage; }}
-                      style={{
-                        width: '100%',
-                        height: '100%',
-                        objectFit: 'cover',
-                        aspectRatio: '1/1'
-                      }}
-                    />
-                    <IconButton
-                      onClick={() => toggleFavorite(prod.id)}
-                      className="custom-favorite-btn"
-                      sx={{
-                        position: "absolute",
-                        top: 14,
-                        right: 14,
-                        bgcolor: "white",
-                        boxShadow: 2,
-                        borderRadius: "50%",
-                        zIndex: 2
-                      }}
-                    >
-                      {favoriteIds.includes(prod.id)
-                        ? <GradientHeart filled />
-                        : <GradientHeart filled={false} />
-                      }
-                    </IconButton>
-                  </div>
-                  <Link to={`/${lang}/producto/${prod.slug}`} style={{ textDecoration: "none", color: "inherit" }}>
-                    <div className="custom-product-info">
-                      <div className="custom-product-name-v2">{prod.nombre_producto}</div>
-                      <div className="custom-price-v2">
-                        {prod.precio_con_mejor_descuento && prod.precio_con_mejor_descuento < prod.precio_producto ? (
-                          <>
-                            <span>{formatCOP(prod.precio_con_mejor_descuento)}</span>
-                            <span className="line-through">{formatCOP(prod.precio_producto)}</span>
-                          </>
-                        ) : (
-                          <span>{formatCOP(prod.precio_producto)}</span>
-                        )}
-                      </div>
-                      <div className="custom-rating-row-v2">
-                        <svg width="17" height="17" viewBox="0 0 24 24" fill="#FFC107" style={{ marginRight: "2px", verticalAlign: "middle" }}>
-                          <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/>
-                        </svg>
-                        <span className="custom-rating-number-v2">
-                          {productRatings[prod.id]?.avg
-                            ? Number(productRatings[prod.id]?.avg).toFixed(1)
-                            : "..."}
-                        </span>
-                      </div>
-                      {prod.mejor_descuento_para_precio && (
-                        <div className="custom-descuento-nombre">
-                          {prod.mejor_descuento_para_precio.nombre}
-                          {prod.mejor_descuento_para_precio.tipo === "porcentaje"
-                            ? ` (${prod.mejor_descuento_para_precio.valor}%)`
-                            : ` (-${formatCOP(prod.mejor_descuento_para_precio.valor)})`}
-                        </div>
-                      )}
-                    </div>
-                  </Link>
-                  <div className="custom-card-footer">
-                    <button
-                      onClick={e => {
-                        e.stopPropagation();
-                        addToCart(prod.id);
-                      }}
-                      className="custom-add-btn"
-                    >
-                      {t('home.addToCart')}
-                    </button>
-                  </div>
-                </div>
+              {memoizedNewProducts.map((prod) => (
+                <ProductCard
+                  key={prod.id}
+                  product={prod}
+                  lang={lang}
+                  isFavorite={isFavorite(prod.id)}
+                  onToggleFavorite={toggleFavorite}
+                  onAddToCart={addToCart}
+                  productRating={productRatings[prod.id]}
+                  t={t}
+                />
               ))}
             </div>
 
@@ -374,8 +150,9 @@ function Inicio() {
               className="carousel-btn next"
               onClick={() => {
                 document.querySelector(".carousel-items")
-                  .scrollBy({ left: 300, behavior: "smooth" });
+                  ?.scrollBy({ left: 300, behavior: "smooth" });
               }}
+              aria-label="Siguiente"
             >
               ❯
             </button>
@@ -385,8 +162,8 @@ function Inicio() {
         )}
       </section>
 
-      {/* Banner */}
-      <div>
+      {/* Banner - SIN MARGEN */}
+      <div style={{ margin: 0, padding: 0, width: "100%" }}>
         <img
           src={bannerNovedades} 
           alt={t('home.newsBannerAlt')}
@@ -395,13 +172,16 @@ function Inicio() {
           style={{
             width: "100%",
             height: "350px",
-            objectFit: "cover"
+            objectFit: "cover",
+            display: "block",
+            margin: 0,
+            padding: 0
           }}
         />
       </div>
 
-      {/* Banner delgado en movimiento */}
-      <div className="banner-ticker">
+      {/* Banner delgado en movimiento - PEGADO AL BANNER */}
+      <div className="banner-ticker" style={{ marginTop: 0 }}>
         <div className="banner-track">
           {[
             t('home.bannerText1'),
@@ -439,7 +219,7 @@ function Inicio() {
               {[1, 2, 3, 4, 5, 6].map((skeleton) => (
                 <div className="product-card" key={skeleton}>
                   <div className="image-container">
-                    <Skeleton variant="rectangular" width={"100%"} height={200} />
+                    <Skeleton variant="rectangular" width="100%" height={200} />
                   </div>
                   <Skeleton variant="text" width={150} height={30} />
                   <Skeleton variant="text" width={80} height={20} />
@@ -451,104 +231,33 @@ function Inicio() {
               ))}
             </div>
           </div>
-        ) : products.length > 0 ? (
+        ) : memoizedProducts.length > 0 ? (
           <div className="carousel-container">
-
             <div className="carousel-items" ref={interesRef}>
-              {products.slice(0, 9).map((prod) => (
-                  <div className="custom-product-card" key={prod.id}>
-                    <div className="custom-image-wrapper">
-                      <img
-                        src={prod.imagen_url || noImage}
-                        alt={prod.nombre_producto}
-                        loading="lazy"
-                        decoding="async"
-                        onError={(e) => { e.currentTarget.src = noImage; }}
-                        style={{
-                          width: '100%',
-                          height: '100%',
-                          objectFit: 'cover',
-                          aspectRatio: '1/1'
-                        }}
-                      />
-                      <IconButton
-                        onClick={() => toggleFavorite(prod.id)}
-                        className="custom-favorite-btn"
-                        sx={{
-                          position: "absolute",
-                          top: 14,
-                          right: 14,
-                          bgcolor: "white",
-                          boxShadow: 2,
-                          borderRadius: "50%",
-                          zIndex: 2
-                        }}
-                      >
-                        {favoriteIds.includes(prod.id)
-                          ? <GradientHeart filled />
-                          : <GradientHeart filled={false} />
-                        }
-                      </IconButton>
-                    </div>
-                    <Link to={`/${lang}/producto/${prod.slug}`} style={{ textDecoration: "none", color: "inherit" }}>
-                      <div className="custom-product-info">
-                        <div className="custom-product-name-v2">{prod.nombre_producto}</div>
-                        <div className="custom-price-v2">
-                          {prod.precio_con_mejor_descuento && prod.precio_con_mejor_descuento < prod.precio_producto ? (
-                            <>
-                              <span>{formatCOP(prod.precio_con_mejor_descuento)}</span>
-                              <span className="line-through">{formatCOP(prod.precio_producto)}</span>
-                            </>
-                          ) : (
-                            <span>{formatCOP(prod.precio_producto)}</span>
-                          )}
-                        </div>
-                        <div className="custom-rating-row-v2">
-                          <svg width="17" height="17" viewBox="0 0 24 24" fill="#FFC107" style={{ marginRight: "2px", verticalAlign: "middle" }}>
-                            <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/>
-                          </svg>
-                          <span className="custom-rating-number-v2">
-                            {productRatings[prod.id]?.avg
-                              ? Number(productRatings[prod.id]?.avg).toFixed(1)
-                              : "..."}
-                          </span>
-                        </div>
-                        {prod.mejor_descuento_para_precio && (
-                          <div className="custom-descuento-nombre">
-                            {prod.mejor_descuento_para_precio.nombre}
-                            {prod.mejor_descuento_para_precio.tipo === "porcentaje"
-                              ? ` (${prod.mejor_descuento_para_precio.valor}%)`
-                              : ` (-${formatCOP(prod.mejor_descuento_para_precio.valor)})`}
-                          </div>
-                        )}
-                      </div>
-                    </Link>
-                    <div className="custom-card-footer">
-                      <button
-                        onClick={e => {
-                          e.stopPropagation();
-                          addToCart(prod.id);
-                        }}
-                        className="custom-add-btn"
-                      >
-                        {t('home.addToCart')}
-                      </button>
-                    </div>
-                  </div>
+              {memoizedProducts.map((prod) => (
+                <ProductCard
+                  key={prod.id}
+                  product={prod}
+                  lang={lang}
+                  isFavorite={isFavorite(prod.id)}
+                  onToggleFavorite={toggleFavorite}
+                  onAddToCart={addToCart}
+                  productRating={productRatings[prod.id]}
+                  t={t}
+                />
               ))}
             </div>
-
           </div>
         ) : (
           <p>{t('home.noProducts')}</p>
         )}
       </section>
+
       <FloatingChat />
       <BannerProduct products={products} productRatings={productRatings}/>
-
-      {/* Banner rotativo */}
       <RotatingBanner />
-      <h2 className="mb-4">productos mejor valorados</h2>
+      
+      <h2 className="mb-4">Productos mejor valorados</h2>
       <RankingPro products={products} productRatings={productRatings} loading={loading} />
     </div>
   );

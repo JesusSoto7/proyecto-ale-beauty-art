@@ -81,6 +81,18 @@
   font-weight: bold;
 }
 
+
+section h2,
+.mb-4 {
+  font-size: 2rem !important;
+  font-weight: 700 !important;
+  margin: 40px 0 24px 0 !important;
+  text-align: center !important; /* ✅ CENTRADO */
+  color: #2c3e50 !important;
+  padding: 0 20px !important;
+  width: 100% !important;
+}
+
 /* === CARRUSEL DE PRODUCTOS === */
 .carousel-container {
   position: relative;

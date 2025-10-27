@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import {  useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import user_icon from "../assets/images/user_default.png";
 
@@ -12,7 +13,7 @@ export default function Perfil() {
     telefono: "",
     direccion: "",
   });
-
+  const { lang } = useParams();
   const { t } = useTranslation();
 
   useEffect(() => {
@@ -157,7 +158,7 @@ export default function Perfil() {
                     className="btn btn-outline-danger ms-2 px-4 py-2"
                     onClick={() => {
                       localStorage.removeItem("token");
-                      window.location.href = "/login";
+                      window.location.href =`/${lang}/login`;
                     }}
                   >
                     {t("profile.logout")}
