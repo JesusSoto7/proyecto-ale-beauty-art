@@ -21,6 +21,7 @@ import RemoveIcon from "@mui/icons-material/Remove";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import ShoppingCartCheckoutIcon from "@mui/icons-material/ShoppingCartCheckout";
 import WarningIcon from "@mui/icons-material/Warning";
+import DeleteSweepIcon from "@mui/icons-material/DeleteSweep";
 
 function Cart() {
   const navigate = useNavigate();
@@ -117,41 +118,74 @@ function Cart() {
 
 
   const removeAllQuantity = (productId, productName, quantity) => {
-    if (window.confirm(t("cart.removeConfirm", { product: productName, quantity }))) {
-      const removalPromises = [];
+    const removalPromises = [];
 
-      for (let i = 0; i < quantity; i++) {
-        removalPromises.push(
-          fetch("https://localhost:4000/api/v1/cart/remove_product", {
-            method: "DELETE",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`,
-            },
-            body: JSON.stringify({ product_id: productId }),
-          }).then((res) => {
-            if (!res.ok) throw new Error("Remove failed");
-            return res.json();
-          })
-        );
-      }
-
-      Promise.all(removalPromises)
-        .then((results) => {
-          // Tomar el último resultado para actualizar el estado
-          const lastResult = results[results.length - 1];
-          setCart(lastResult.cart);
-
-          // Notificar al Header para que se actualice
-          window.dispatchEvent(new CustomEvent("cartUpdatedCustom", { bubbles: false }));
+    for (let i = 0; i < quantity; i++) {
+      removalPromises.push(
+        fetch("https://localhost:4000/api/v1/cart/remove_product", {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ product_id: productId }),
+        }).then((res) => {
+          if (!res.ok) throw new Error("Remove failed");
+          return res.json();
         })
-        .catch(() => {
-          setError(t("cart.updatingError"));
-          fetchCart(); // mantener sincronización
-        });
+      );
     }
+
+    Promise.all(removalPromises)
+      .then((results) => {
+        // Tomar el último resultado para actualizar el estado
+        const lastResult = results[results.length - 1];
+        setCart(lastResult.cart);
+
+        // Notificar al Header para que se actualice
+        window.dispatchEvent(new CustomEvent("cartUpdatedCustom", { bubbles: false }));
+      })
+      .catch(() => {
+        setError(t("cart.updatingError"));
+        fetchCart(); // mantener sincronización
+      });
   };
 
+  const clearCart = () => {
+    setUpdating(true);
+    
+    // Crear un array de promesas para eliminar todos los productos
+    const removalPromises = cart.products.flatMap(product => 
+      Array.from({ length: product.cantidad }, () => 
+        fetch("https://localhost:4000/api/v1/cart/remove_product", {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ product_id: product.product_id }),
+        }).then((res) => {
+          if (!res.ok) throw new Error("Remove failed");
+          return res.json();
+        })
+      )
+    );
+
+    Promise.all(removalPromises)
+      .then((results) => {
+        // Tomar el último resultado para actualizar el estado
+        const lastResult = results[results.length - 1];
+        setCart(lastResult.cart);
+
+        // Notificar al Header para que se actualice
+        window.dispatchEvent(new CustomEvent("cartUpdatedCustom", { bubbles: false }));
+      })
+      .catch(() => {
+        setError(t("cart.updatingError"));
+        fetchCart(); // mantener sincronización
+      })
+      .finally(() => setUpdating(false));
+  };
 
   const handleCheckout = () => {
     fetch("https://localhost:4000/api/v1/orders", {
@@ -178,6 +212,10 @@ function Cart() {
         }
       })
       .catch(() => setError(t("cart.orderError")));
+  };
+
+  const handleProductClick = (productId) => {
+    navigate(`/${lang}/product/${productId}`);
   };
 
   if (loading) {
@@ -287,18 +325,38 @@ function Cart() {
               alignItems: "center",
               flexDirection: { xs: "column", sm: "row" }
             }}>
-              <img 
-                src={product.imagen_url || noImage} 
-                alt={product.nombre_producto} 
-                style={{ 
-                  width: 100, 
-                  height: 100, 
-                  objectFit: "cover",
-                  borderRadius: 8
-                }} 
-              />
+              <Box 
+                sx={{ 
+                  cursor: 'pointer',
+                  '&:hover': {
+                    opacity: 0.8
+                  }
+                }}
+                onClick={() => handleProductClick(product.product_id)}
+              >
+                <img 
+                  src={product.imagen_url || noImage} 
+                  alt={product.nombre_producto} 
+                  style={{ 
+                    width: 100, 
+                    height: 100, 
+                    objectFit: "cover",
+                    borderRadius: 8
+                  }} 
+                />
+              </Box>
               
-              <Box sx={{ flexGrow: 1, minWidth: 0 }}>
+              <Box 
+                sx={{ 
+                  flexGrow: 1, 
+                  minWidth: 0,
+                  cursor: 'pointer',
+                  '&:hover': {
+                    color: 'primary.500'
+                  }
+                }}
+                onClick={() => handleProductClick(product.product_id)}
+              >
                 <Typography level="title-md" sx={{ mb: 0.5 }}>
                   {product.nombre_producto}
                 </Typography>
@@ -444,6 +502,17 @@ function Cart() {
           }}
         >
           {t("cart.buy")}
+        </Button>
+
+        <Button
+          fullWidth
+          variant="outlined"
+          color="danger"
+          onClick={clearCart}
+          disabled={updating}
+          startDecorator={<DeleteSweepIcon />}
+        >
+          {t("cart.clearAll")}
         </Button>
       </Sheet>
     </Box>
