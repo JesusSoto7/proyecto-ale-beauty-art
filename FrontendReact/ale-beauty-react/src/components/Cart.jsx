@@ -215,7 +215,9 @@ function Cart() {
   };
 
   const handleProductClick = (productId) => {
-    navigate(`/${lang}/product/${productId}`);
+    // Usar el ID del producto como slug para la navegación
+    // Si necesitas un slug específico, deberías obtenerlo de los datos del producto
+    navigate(`/${lang}/producto/${productId}`);
   };
 
   if (loading) {
