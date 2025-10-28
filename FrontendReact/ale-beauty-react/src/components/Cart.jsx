@@ -316,7 +316,7 @@ function Cart() {
         borderRadius: "md", 
         p: { xs: 2, sm: 3 },
         mb: { xs: 2, lg: 0 },
-        background: 'linear-gradient(135deg, #fdf2f8 0%, #fce7f3 100%)'
+        backgroundColor: 'background.surface'
       }}>
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
           <Typography level="h2" sx={{ 
@@ -328,10 +328,14 @@ function Cart() {
           </Typography>
           <Chip 
             variant="soft" 
-            color="primary" 
+            sx={{ 
+              backgroundColor: 'rgba(255, 77, 148, 0.1)', 
+              color: '#ff4d94',
+              fontSize: '1rem',
+              fontWeight: 600
+            }}
             size="lg"
             startDecorator={<DiscountIcon />}
-            sx={{ backgroundColor: 'rgba(255, 77, 148, 0.1)', color: '#ff4d94' }}
           >
             {cantidad} {t("cart.items")}
           </Chip>
@@ -399,25 +403,6 @@ function Cart() {
                   }}>
                     {product.nombre_producto}
                   </Typography>
-                  <Typography level="body2" sx={{ 
-                    mb: 2,
-                    color: 'text.secondary',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: 1
-                  }}>
-                    <Box
-                      component="span"
-                      sx={{
-                        width: 12,
-                        height: 12,
-                        borderRadius: '50%',
-                        backgroundColor: product.color ? '#ff4d94' : 'neutral.300',
-                        display: 'inline-block'
-                      }}
-                    />
-                    {t("cart.set")}: {product.color || "N/A"}
-                  </Typography>
                   
                   {/* PRECIO CON DESCUENTO */}
                   {product.precio_con_mejor_descuento && product.precio_con_mejor_descuento < product.precio_producto ? (
@@ -439,10 +424,9 @@ function Cart() {
                         variant="soft" 
                         size="sm"
                         sx={{ 
-                          ml: 1, 
-                          backgroundColor: 'rgba(255, 77, 148, 0.1)', 
-                          color: '#ff4d94',
-                          borderColor: '#ff80b0'
+                          backgroundColor: 'rgba(76, 175, 80, 0.1)', 
+                          color: '#4caf50',
+                          borderColor: '#4caf50'
                         }}
                       >
                         {Math.round((1 - product.precio_con_mejor_descuento / product.precio_producto) * 100)}% OFF
@@ -484,10 +468,13 @@ function Cart() {
                     sx={{ 
                       minWidth: 40,
                       backgroundColor: '#ff4d94',
-                      color: 'white'
+                      color: 'white',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center'
                     }}
                   >
-                    <Typography fontWeight="bold" fontSize="sm">
+                    <Typography fontWeight="bold" fontSize="sm" sx={{ lineHeight: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', height: '100%' }}>
                       {product.cantidad}
                     </Typography>
                   </Chip>
@@ -512,9 +499,6 @@ function Cart() {
                 </Box>
                 
                 <Box sx={{ textAlign: 'center', minWidth: 100 }}>
-                  <Typography level="body2" color="text.secondary" sx={{ mb: 0.5 }}>
-                    Subtotal
-                  </Typography>
                   <Typography level="title-lg" fontWeight="bold" color="#ff4d94">
                     {formatCOP(
                       (product.precio_con_mejor_descuento && product.precio_con_mejor_descuento < product.precio_producto
@@ -527,23 +511,22 @@ function Cart() {
                 
                 <IconButton 
                   variant="soft" 
-                  color="danger"
+                  sx={{ 
+                    borderRadius: 'md',
+                    backgroundColor: 'rgba(244, 67, 54, 0.1)',
+                    color: '#f44336',
+                    '&:hover': {
+                      backgroundColor: 'rgba(244, 67, 54, 0.2)',
+                      transform: 'scale(1.1)'
+                    },
+                    transition: 'all 0.2s ease-in-out'
+                  }}
                   disabled={updating}
                   onClick={() => removeAllQuantity(
                     product.product_id, 
                     product.nombre_producto, 
                     product.cantidad
                   )}
-                  sx={{ 
-                    borderRadius: 'md',
-                    backgroundColor: 'rgba(255, 77, 148, 0.1)',
-                    color: '#ff4d94',
-                    '&:hover': {
-                      backgroundColor: 'rgba(255, 77, 148, 0.2)',
-                      transform: 'scale(1.1)'
-                    },
-                    transition: 'all 0.2s ease-in-out'
-                  }}
                 >
                   <DeleteOutlineIcon />
                 </IconButton>
@@ -559,10 +542,7 @@ function Cart() {
         borderRadius: "md", 
         p: 3,
         alignSelf: "flex-start",
-        background: 'linear-gradient(135deg, #fdf2f8 0%, #fce7f3 100%)',
-        border: '2px solid',
-        borderColor: '#ff80b0',
-        boxShadow: '0 8px 32px rgba(255, 77, 148, 0.1)'
+        backgroundColor: 'background.surface'
       }}>
         <Typography level="h3" sx={{ 
           mb: 3, 
@@ -668,12 +648,12 @@ function Cart() {
               fontSize: '1rem',
               fontWeight: 500,
               borderWidth: 2,
-              borderColor: '#ff4d94',
-              color: '#ff4d94',
+              borderColor: '#f44336',
+              color: '#f44336',
               '&:hover': {
                 borderWidth: 2,
-                borderColor: '#ff4d94',
-                backgroundColor: 'rgba(255, 77, 148, 0.1)',
+                borderColor: '#f44336',
+                backgroundColor: 'rgba(244, 67, 54, 0.1)',
                 transform: 'translateY(-1px)'
               },
               transition: 'all 0.2s ease-in-out'
