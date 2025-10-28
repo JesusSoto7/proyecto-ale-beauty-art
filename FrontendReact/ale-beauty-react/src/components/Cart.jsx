@@ -119,12 +119,19 @@ function Cart() {
       .finally(() => setUpdating(false));
   };
 
+  const removeAllQuantity = async (productId, productName, quantity) => {
+    setUpdating(true);
+    
+    try {
+      // ✅ SOLUCIÓN: Hacer múltiples llamadas DELETE en paralelo para eliminar todas las unidades
+      const product = cart.products.find(p => p.product_id === productId);
+      
+      if (!product) {
+        throw new Error("Product not found in cart");
+      }
 
-  const removeAllQuantity = (productId, productName, quantity) => {
-    const removalPromises = [];
-
-    for (let i = 0; i < quantity; i++) {
-      removalPromises.push(
+      // Crear un array de promesas para eliminar todas las unidades
+      const removalPromises = Array.from({ length: quantity }, () =>
         fetch("https://localhost:4000/api/v1/cart/remove_product", {
           method: "DELETE",
           headers: {
@@ -137,21 +144,40 @@ function Cart() {
           return res.json();
         })
       );
+
+      // Ejecutar todas las eliminaciones en paralelo
+      await Promise.all(removalPromises);
+      
+      // Recargar el carrito actualizado
+      fetchCart();
+      
+      // ✅ Disparar evento GA4 para la eliminación completa
+      if (window.gtag) {
+        window.gtag("event", "remove_from_cart", {
+          currency: "COP",
+          value: (product.precio_con_mejor_descuento && product.precio_con_mejor_descuento < product.precio_producto 
+            ? product.precio_con_mejor_descuento 
+            : product.precio_producto) * quantity,
+          items: [
+            {
+              item_id: productId,
+              item_name: productName,
+              quantity: quantity,
+            },
+          ],
+        });
+      }
+
+      window.dispatchEvent(new CustomEvent("cartUpdatedCustom", { bubbles: false }));
+      
+    } catch (error) {
+      console.error("Error removing all quantity:", error);
+      setError(t("cart.updatingError"));
+      // Recargar el carrito para mantener sincronización
+      fetchCart();
+    } finally {
+      setUpdating(false);
     }
-
-    Promise.all(removalPromises)
-      .then((results) => {
-        // Tomar el último resultado para actualizar el estado
-        const lastResult = results[results.length - 1];
-        setCart(lastResult.cart);
-
-        // Notificar al Header para que se actualice
-        window.dispatchEvent(new CustomEvent("cartUpdatedCustom", { bubbles: false }));
-      })
-      .catch(() => {
-        setError(t("cart.updatingError"));
-        fetchCart(); // mantener sincronización
-      });
   };
 
   const clearCart = () => {
