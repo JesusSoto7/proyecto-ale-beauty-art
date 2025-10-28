@@ -12,7 +12,8 @@ module Api
       end
 
       def me
-        render json: current_user, only: [:id, :email, :nombre, :apellido, :telefono]
+        render json: current_user.as_json(only: [:id, :email, :nombre, :apellido, :telefono])
+                                .merge(roles: current_user.roles.pluck(:name))
       end
       
       def update
