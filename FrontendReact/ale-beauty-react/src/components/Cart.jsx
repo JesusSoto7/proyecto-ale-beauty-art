@@ -157,6 +157,15 @@ function Cart() {
   const clearCart = () => {
     setUpdating(true);
     
+    // Crear un carrito vacío inmediatamente para forzar la actualización visual
+    const emptyCart = {
+      ...cart,
+      products: []
+    };
+    
+    // Actualizar el estado inmediatamente para que la UI se limpie
+    setCart(emptyCart);
+    
     // Crear un array de promesas para eliminar todos los productos
     const removalPromises = cart.products.flatMap(product => 
       Array.from({ length: product.cantidad }, () => 
@@ -176,16 +185,16 @@ function Cart() {
 
     Promise.all(removalPromises)
       .then((results) => {
-        // Tomar el último resultado para actualizar el estado
-        const lastResult = results[results.length - 1];
-        setCart(lastResult.cart);
-
+        // Forzar una nueva carga del carrito para asegurar sincronización
+        fetchCart();
+        
         // Notificar al Header para que se actualice
         window.dispatchEvent(new CustomEvent("cartUpdatedCustom", { bubbles: false }));
       })
       .catch(() => {
         setError(t("cart.updatingError"));
-        fetchCart(); // mantener sincronización
+        // En caso de error, igual forzar la actualización
+        fetchCart();
       })
       .finally(() => setUpdating(false));
   };
