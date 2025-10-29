@@ -6,6 +6,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import Accordion from "./Accordion";
 import { DataGrid } from "@mui/x-data-grid";
 import { Box, Card, CardContent, Typography, Rating, Stack } from "@mui/material";
+import LogoutIcon from '@mui/icons-material/Logout';
 import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
 const sample1 = "https://i.pinimg.com/736x/11/3b/bb/113bbbd36915506258c7bb13ee0754f0.jpg";
 const sample2 = "https://i.pinimg.com/736x/37/8e/a6/378ea60eee35ee300bab91576e8acf73.jpg";
@@ -290,14 +291,14 @@ function UserProfile() {
       {/* Perfil principal */}
       <div className="profile-content">
         <div style={{display:"flex", marginTop: 25, justifyContent:"space-between"}}>
-            <div display="flex" style={{display:"flex"}}>
+            <div display="flex" style={{display:"flex", zIndex: 100}}>
                 <div style={{ position: "relative" }}>
                     <img
                     src={profilePic}
                     alt="Profile"
                     className="profile-img"/>
                 </div>
-                <div style={{display:"flex", flexDirection:"column", marginLeft:"20px", justifyContent:"end"}}>
+                <div id="div-name-role" style={{display:"flex", flexDirection:"column", marginLeft:"20px", justifyContent:"end"}}>
                     <h1 className="profile-name">{user.nombre} {user.apellido}</h1>
                     <p className="profile-role">
                     I'm a Product Designer based in Melbourne.
@@ -307,7 +308,8 @@ function UserProfile() {
             
 
             <div className="profile-actions">
-                <button className="btn btn-primary">Logout</button>
+                <button id="logout-button-1" className="btn btn-primary">Logout</button>
+                <button id="logout-button-2" className="btn btn-primary"><LogoutIcon /></button>
             </div>
         </div>
 
@@ -348,7 +350,7 @@ function UserProfile() {
 
             </div>
             
-            <div style={{width: "66%"}}>
+            <div id="more-me">
                 <h2 className="h2-unic">More About me</h2>
                 <div className="about-details">
                     <div>
