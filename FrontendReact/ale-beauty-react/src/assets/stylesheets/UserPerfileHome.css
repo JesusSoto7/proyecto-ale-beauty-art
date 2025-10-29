@@ -72,6 +72,17 @@
   color: #c9d1d9;
 }
 
+.edit-btn{
+    width: 100%;
+    height: 40px;
+    background-color: transparent;
+    border-radius: 10px;
+}
+
+.edit-btn:hover{
+    background-color: #1f2630;
+}
+
 #role-user{
    display: flex;
    align-items: center;
@@ -82,7 +93,7 @@
     color: #000;
 }
 
-section {
+.section-user-profile {
   text-align: left;
   margin-top: 2rem;
 }
@@ -93,6 +104,14 @@ section {
   font-size: 1.3rem;
   margin-bottom: 0.8rem;
   color: #58a6ff;
+}
+
+.h2-unic{
+    font-size: 20px !important;
+   margin: 0px !important;
+   margin-bottom: 0.8rem !important;
+   display: flex;
+   padding: 0 !important;
 }
 
 .about-section p {
@@ -113,6 +132,13 @@ section {
   text-decoration: none;
 }
 
+.about-details hr{
+    color: #30363d;
+    margin: 15px;
+    margin-left: 0;
+    margin-right: 0;
+}
+
 .experience-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
@@ -120,6 +146,13 @@ section {
 }
 
 .exp-card {
+  background: #242a32;
+  padding: 1rem;
+  border-radius: 10px;
+  transition: background 0.3s;
+}
+
+.exp-section {
   background: #161b22;
   padding: 1rem;
   border-radius: 10px;

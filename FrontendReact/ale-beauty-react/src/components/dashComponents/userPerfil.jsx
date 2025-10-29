@@ -106,28 +106,65 @@ function UserProfile() {
         </div>
 
         {/* Sección sobre mí */}
-        <section className="about-section">
-          <h2>About me</h2>
-          <p>
-            I'm a Product Designer based in Melbourne, Australia. I enjoy working on
-            product design and Webflow projects. I occasionally take on freelance work.
-          </p>
+        <section className="about-section section-user-profile">
+          <section className="section-user-profile" style={{display: "flex", flexDirection: "row", justifyContent: "space-between", gap: "20px"}}>
+            <div style={{width: "66%"}}>
+                <h2 className="h2-unic">About me</h2>
+                <div className="exp-section" style={{ display: "flex", flexDirection: "row", gap: "15px"}}>
+                    <div style={{display: "flex", flexDirection: "column", width: 333, gap: "15px"}}>
+                        <div className="exp-card" style={{}}>
+                            <h3>compras realizadas</h3>
+                            <p>10</p>
+                        </div>
+                        <div className="exp-card">
+                            <h3>reviews escritas</h3>
+                            <p>5</p>
+                        </div>    
+                    </div>
+                    <div style={{display: "flex", flexDirection: "column", width: 333, gap: "15px"}}>
+                        <div className="exp-card">
+                            <h3>Productos en favoritos</h3>
+                            <p>20</p>
+                        </div>
+                        <div className="exp-card">
+                            <h3>Productos en carrito</h3>
+                            <p>5</p>
+                        </div>    
+                    </div>
+                    
+                </div>
 
-          <div className="about-details">
-            <div>
-              <strong>Dirección:</strong> {user.direccion || "Not provided"}
+
             </div>
-            <div>
-              <strong>Telefono:</strong> {user.telefono || "Not provided"}
+            
+            <div style={{width: "66%"}}>
+                <h2 className="h2-unic">About me</h2>
+                <div className="about-details">
+                    <div>
+                        <strong>Dirección:</strong> {user.direccion || "Not provided"}
+                    </div>
+                    <hr />
+                    <div>
+                        <strong>Telefono:</strong> {user.telefono || "Not provided"}
+                    </div>
+                    <hr />
+                    <div>
+                        <strong>Email:</strong> <a href={`mailto:${user.email}`}>{user.email}</a>
+                    </div>
+                    <hr />
+                    <button className="edit-btn">
+                        {editMode ? "Save Changes" : "Edit Profile"}
+                    </button>
+                </div>
             </div>
-            <div>
-              <strong>Email:</strong> <a href={`mailto:${user.email}`}>{user.email}</a>
-            </div>
-          </div>
+            
+          </section>
+
+          
         </section>
 
         {/* Experiencia */}
-        <section className="experience-section">
+        <section className="experience-section section-user-profile">
           <h2>informacion</h2>
           <div className="experience-grid">
             <div className="exp-card">
@@ -141,7 +178,7 @@ function UserProfile() {
               <span>Mar 2017 - Jan 2018</span>
             </div>
             {user.roles?.includes("admin") ? (
-                <div id="role-user" className="exp-card">
+                <div id="role-user" className="exp-card" style={{background: "linear-gradient(90deg,rgba(36, 42, 50, 1) 35%, rgba(56, 75, 68, 1) 50%, rgba(167, 255, 167, 1) 100%)"}}>
                     <div>
                         <h3>Tipo de usuario</h3>
                         <p>Admin</p>
@@ -163,7 +200,7 @@ function UserProfile() {
         </section>
 
         {/* Trabajos recientes */}
-        <section className="recent-section">
+        <section className="recent-section section-user-profile">
           <h2>Recent work</h2>
           <div className="recent-grid">
             <img src={sample1} alt="Work 1" />
