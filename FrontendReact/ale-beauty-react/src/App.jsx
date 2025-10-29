@@ -47,6 +47,8 @@ import GestionUsuarios from './components/dashComponents/GestionUsuarios';
 import Notificationes from './pages/home/Notifications';
 import ApplyDiscount from './pages/home/ApplyDiscount';
 import CreateDiscount from './pages/home/CreateDiscount';
+import OptionsMenu from "./components/dashComponents/OptionsMenu.jsx";
+import UserProfile from "./components/dashComponents/userPerfil.jsx";
 
 function Wrapper() {
   const { lang } = useParams();
@@ -130,6 +132,7 @@ function App() {
               <Route path="notificaciones" element={<Notificationes />} />
               <Route path="crear_descuento" element={<CreateDiscount />} />
               <Route path="aplicar_descuento" element={<ApplyDiscount />} />
+              <Route path="user-profile" element={<UserProfile />} />
           </Route>
         </Route>
         <Route path="/:lang/403" element={<Forbidden403 />} />

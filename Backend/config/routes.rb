@@ -15,6 +15,9 @@ Rails.application.routes.draw do
         post 'password/forgot', to: 'passwords#forgot'
         post 'password/reset', to: 'passwords#reset'
       end
+
+      get "my_reviews", to: "reviews#my_reviews"
+
       # Carrito
       get "cart", to: "cart#show"
       post 'cart/add_product', to: 'cart#add_product'        

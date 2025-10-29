@@ -10,14 +10,15 @@ import ListItemIcon, { listItemIconClasses } from '@mui/material/ListItemIcon';
 import LogoutRoundedIcon from '@mui/icons-material/LogoutRounded';
 import MoreVertRoundedIcon from '@mui/icons-material/MoreVertRounded';
 import MenuButton from './MenuButton';
-import { useParams } from 'react-router-dom'; // ✅ Importa esto
+import { useNavigate, useParams } from "react-router-dom";
 
 const MenuItem = styled(MuiMenuItem)({
   margin: '2px 0',
 });
 
 export default function OptionsMenu() {
-  const { lang } = useParams(); // ✅ Obtiene el idioma actual de la URL
+  const { lang } = useParams();
+  const navigate = useNavigate();
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
 
@@ -42,6 +43,11 @@ export default function OptionsMenu() {
     localStorage.removeItem('token');
     window.location.href = `/${lang || 'es'}/login`; // ✅ Redirección con idioma por defecto
   }
+
+  const handleProfile = () => {
+    handleClose();
+    navigate(`/${lang || 'es'}/home/user-profile`);
+  };
 
   return (
     <React.Fragment>
@@ -72,7 +78,7 @@ export default function OptionsMenu() {
           },
         }}
       >
-        <MenuItem onClick={handleClose}>Profile</MenuItem>
+        <MenuItem onClick={handleProfile}>Profile</MenuItem>
         <MenuItem onClick={handleClose}>My account</MenuItem>
         <Divider />
         <MenuItem onClick={handleClose}>Add another account</MenuItem>
