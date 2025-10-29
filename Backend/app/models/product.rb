@@ -55,14 +55,6 @@ class Product < ApplicationRecord
       candidatos << discount
     end
 
-    # descuentos activos de la subcategoría
-    if sub_category_id.present?
-      sub_descuentos = Discount.joins(:subcategory_discounts)
-                              .where(subcategory_discounts: { sub_category_id: sub_category_id })
-                              .merge(Discount.activos)
-      candidatos.concat(sub_descuentos)
-    end
-
     candidatos.uniq.max_by { |d| d.monto_descuento_en(precio_base.to_d) }
   end
 

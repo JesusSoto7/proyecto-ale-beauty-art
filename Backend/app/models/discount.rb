@@ -1,6 +1,4 @@
 class Discount < ApplicationRecord
-  has_many :subcategory_discounts, dependent: :destroy
-  has_many :sub_categories, through: :subcategory_discounts
   has_many :products
 
   validates :nombre, :tipo, :valor, :fecha_inicio, presence: true

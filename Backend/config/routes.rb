@@ -62,7 +62,6 @@ Rails.application.routes.draw do
 
       resources :discounts
 
-      resources :subcategory_discounts, only: [:index, :show, :create, :destroy]
 
       resources :categories
 

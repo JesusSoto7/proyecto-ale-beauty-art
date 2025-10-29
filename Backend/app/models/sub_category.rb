@@ -1,6 +1,4 @@
 class SubCategory < ApplicationRecord
-  has_many :subcategory_discounts, dependent: :destroy
-  has_many :discounts, through: :subcategory_discounts
   belongs_to :category
   has_many :products, dependent: :destroy
 
