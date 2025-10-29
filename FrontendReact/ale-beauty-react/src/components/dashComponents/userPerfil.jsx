@@ -4,14 +4,21 @@ import { useEffect, useState } from "react";
 import profilePic from "../../assets/images/user_default.png";
 import EditIcon from '@mui/icons-material/Edit';
 import Accordion from "./Accordion";
+import { DataGrid } from "@mui/x-data-grid";
+import Box from "@mui/material/Box";
+import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
 const sample1 = "https://i.pinimg.com/736x/11/3b/bb/113bbbd36915506258c7bb13ee0754f0.jpg";
 const sample2 = "https://i.pinimg.com/736x/37/8e/a6/378ea60eee35ee300bab91576e8acf73.jpg";
 const sample3 = "https://i.pinimg.com/736x/ed/c9/85/edc985cfe1938991bdf4e7957be0dd3b.jpg";
 
 
+
 function UserProfile() {
     const [user, setUser] = useState(null);
     const [editMode, setEditMode] = useState(false);
+    const [orders, setOrders] = useState([]);
+    const [token, setToken] = useState(null);
+    const [loading, setLoading] = useState(true);
     const [formData, setFormData] = useState({
         nombre: "",
         apellido: "",
@@ -19,20 +26,139 @@ function UserProfile() {
         telefono: "",
         direccion: "",
     });
+
+    const rows = orders.map((order) => ({
+        id: order.id,
+        created_at: order.fecha_pago,
+        estado: order.status || "Pendiente",
+        numero_de_orden: order.numero_de_orden || "No especificado",
+        total: order.pago_total || 0,
+        cliente: order.clientes || "No especificado",
+        email_cliente: order.email || "No especificado",
+        pdf_url: order.pdf_url || "No especificado",
+    }));
+
+    const columns = [
+        { field: "id", headerName: "ID Pedido", width: 120 },
+        {
+        field: "numero_de_orden",
+        headerName: "N° de Orden",
+        width: 150,
+        },
+        {
+        field: "created_at",
+        headerName: "Fecha",
+        width: 150,
+        valueGetter: (value, row) =>
+            new Date(row.created_at).toLocaleDateString(),
+        },
+        {
+        field: "estado",
+        headerName: "Estado",
+        width: 120,
+        },
+        {
+        field: "total",
+        headerName: "Total ($)",
+        width: 110,
+        type: "number",
+        },
+        {
+        field: "cliente",
+        headerName: "Cliente",
+        width: 160,
+        },
+        {
+        field: "email_cliente",
+        headerName: "Email Cliente",
+        width: 200,
+        },
+        {
+            field: "pdf_url",
+            headerName: "Factura (PDF)",
+            width: 150,
+            sortable: false,
+            renderCell: (params) => {
+            const pdfUrl = params.value;
+            if (!pdfUrl) return "—";
+
+            return (
+                <a
+                href={pdfUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{
+                    color: "#D32F2F",
+                    display: "flex",
+                    alignItems: "center",
+                    textDecoration: "none",
+                }}
+                >
+                <PictureAsPdfIcon />
+                </a>
+            );
+            },
+        },
+    ];
+    
     const faqItems = [
         {
         title: "Pedidos realizados",
-        content: "Es una plataforma para comprar productos del hogar fácilmente.",
+        content: (
+            <Box sx={{ height: 420, width: "100%" }}>
+            <DataGrid
+                rows={rows}
+                columns={columns}
+                loading={loading}
+                initialState={{
+                pagination: { paginationModel: { pageSize: 5 } },
+                }}
+                pageSizeOptions={[5, 10]}
+                disableRowSelectionOnClick
+                sx={{
+                "& .MuiDataGrid-columnHeaders": {
+                    backgroundColor: "#0078FF",
+                    color: "white",
+                    fontWeight: "bold",
+                },
+                "& .MuiDataGrid-cell": {
+                    fontSize: "0.95rem",
+                },
+                }}
+            />
+            </Box>
+        ),
         },
         {
-        title: "reviews escritas",
-        content: "Solo debes crear una cuenta con tu correo electrónico.",
+        title: "Reviews escritas",
+        content: "Aquí irán las reseñas que has escrito.",
         },
         {
         title: "- - -",
-        content: "pestaña libre para futuros usos.",
+        content: "Pestaña libre para futuros usos.",
         },
     ];
+
+    useEffect(() => {
+        const savedToken = localStorage.getItem("token");
+        if (savedToken) {
+        setToken(savedToken);
+        } else {
+        alert(t('orders.notAuthenticated'));
+        setLoading(false);
+        }
+    }, []);
+
+    useEffect(() => {
+        if (!token) return;
+        fetch("https://localhost:4000/api/v1/my_orders", {
+        headers: { Authorization: `Bearer ${token}` },
+        })
+        .then((res) => res.json())
+        .then((data) => setOrders(data))
+        .catch((err) => console.error(t('orders.loadError'), err))
+        .finally(() => setLoading(false));
+    }, [token]);
 
     useEffect(() => {
         const token = localStorage.getItem("token");

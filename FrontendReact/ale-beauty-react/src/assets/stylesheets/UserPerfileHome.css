@@ -195,3 +195,22 @@
 .recent-grid img:hover {
   transform: scale(1.05);
 }
+
+.order-item {
+  display: flex;
+  justify-content: space-around;
+  background: #5e5e5e;
+  padding: 10px 15px;
+  border-radius: 6px;
+  margin-bottom: 10px;
+}
+
+.order-item p {
+  margin: 5px 0;
+}
+
+.order-item hr {
+  border: 0;
+  border-top: 1px solid #ddd;
+  margin-top: 8px;
+}

@@ -21,6 +21,7 @@
   padding: 15px;
   text-align: left;
   border: none;
+  border-bottom: 1px solid #212529;
   outline: none;
   cursor: pointer;
   display: flex;
