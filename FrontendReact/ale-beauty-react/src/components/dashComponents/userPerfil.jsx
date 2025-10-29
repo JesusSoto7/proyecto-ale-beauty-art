@@ -8,6 +8,7 @@ import { DataGrid } from "@mui/x-data-grid";
 import { Box, Card, CardContent, Typography, Rating, Stack } from "@mui/material";
 import LogoutIcon from '@mui/icons-material/Logout';
 import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
+import { useNavigate, useParams } from "react-router-dom";
 const sample1 = "https://i.pinimg.com/736x/11/3b/bb/113bbbd36915506258c7bb13ee0754f0.jpg";
 const sample2 = "https://i.pinimg.com/736x/37/8e/a6/378ea60eee35ee300bab91576e8acf73.jpg";
 const sample3 = "https://i.pinimg.com/736x/ed/c9/85/edc985cfe1938991bdf4e7957be0dd3b.jpg";
@@ -25,6 +26,8 @@ function UserProfile() {
     const [error, setError] = useState(null);
     const [reviewCount, setReviewCount] = useState(0);
     const [userReviews, setUserReviews] = useState([]);
+    const { lang } = useParams();
+    const navigate = useNavigate();
 
     const [formData, setFormData] = useState({
         nombre: "",
@@ -280,6 +283,20 @@ function UserProfile() {
         }
     }
 
+    async function handleLogout() {
+        const token = localStorage.getItem('token');
+        try {
+        await fetch('https://localhost:4000/api/v1/sign_out', {
+            method: 'DELETE',
+            headers: { Authorization: `Bearer ${token}` },
+        });
+        } catch (err) {
+        console.warn('Error cerrando sesión:', err);
+        }
+        localStorage.removeItem('token');
+        window.location.href = `/${lang || 'es'}/login`; // ✅ Redirección con idioma por defecto
+    }
+
   return (
     <div className="profile-container">
       {/* Banner */}
@@ -308,8 +325,8 @@ function UserProfile() {
             
 
             <div className="profile-actions">
-                <button id="logout-button-1" className="btn btn-primary">Logout</button>
-                <button id="logout-button-2" className="btn btn-primary"><LogoutIcon /></button>
+                <button id="logout-button-1" className="btn btn-primary" onClick={handleLogout}>Logout <LogoutIcon fontSize="small"/></button>
+                <button id="logout-button-2" className="btn btn-primary" onClick={handleLogout}><LogoutIcon fontSize="small" /></button>
             </div>
         </div>
 
