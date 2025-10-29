@@ -23,6 +23,10 @@ export default function ProductsPageSubCategory() {
   const [productRatings, setProductRatings] = useState({});
   const [subCategory, setSubCategory] = useState(null);
   const { addAlert } = useAlert();
+  
+  // ✅ ESTADOS PARA PAGINACIÓN
+  const [currentPage, setCurrentPage] = useState(1);
+  const [productsPerPage] = useState(9);
 
   useEffect(() => {
     const savedToken = localStorage.getItem("token");
@@ -94,6 +98,11 @@ export default function ProductsPageSubCategory() {
     fetchSubCategory();
   }, [token, categorySlug, subCategorySlug]);
 
+  // ✅ EFECTO PARA RESETEAR A PÁGINA 1 CUANDO CAMBIAN LOS FILTROS
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [sortOrder, priceRange, selectedRatings]);
+
   let filteredProducts = products;
   
   if (priceRange.min || priceRange.max) {
@@ -118,6 +127,21 @@ export default function ProductsPageSubCategory() {
   } else if (sortOrder === "desc") {
     filteredProducts = [...filteredProducts].sort((a, b) => b.precio_producto - a.precio_producto);
   }
+
+  // ✅ LÓGICA DE PAGINACIÓN
+  const indexOfLastProduct = currentPage * productsPerPage;
+  const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
+  const currentProducts = filteredProducts.slice(indexOfFirstProduct, indexOfLastProduct);
+  const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
+
+  // ✅ FUNCIONES DE PAGINACIÓN
+  const paginate = (pageNumber) => setCurrentPage(pageNumber);
+  const nextPage = () => {
+    if (currentPage < totalPages) setCurrentPage(currentPage + 1);
+  };
+  const prevPage = () => {
+    if (currentPage > 1) setCurrentPage(currentPage - 1);
+  };
 
   const toggleFavorite = async (productId) => {
     try {
@@ -325,20 +349,71 @@ export default function ProductsPageSubCategory() {
             )}
           </aside>
           
-          {/* ✅ GRID CON PRODUCTCARD */}
-          <div className="products-grid">
-            {filteredProducts.map((prod, index) => (
-              <ProductCard
-                key={prod.id}
-                product={prod}
-                lang={lang}
-                isFavorite={favoriteIds.includes(prod.id)}
-                onToggleFavorite={toggleFavorite}
-                onAddToCart={addToCart}
-                productRating={productRatings[prod.id]}
-                t={t}
-              />
-            ))}
+          {/* ✅ GRID CON PRODUCTCARD Y PAGINACIÓN */}
+          <div className="products-main">
+            <div className="products-grid">
+              {currentProducts.map((prod, index) => (
+                <ProductCard
+                  key={prod.id}
+                  product={prod}
+                  lang={lang}
+                  isFavorite={favoriteIds.includes(prod.id)}
+                  onToggleFavorite={toggleFavorite}
+                  onAddToCart={addToCart}
+                  productRating={productRatings[prod.id]}
+                  t={t}
+                />
+              ))}
+            </div>
+            
+            {filteredProducts.length === 0 && (
+              <div className="no-products">
+                <p>No se encontraron productos con los filtros seleccionados.</p>
+                <button
+                  className="clear-filters"
+                  onClick={() => {
+                    setSortOrder(null);
+                    setPriceRange({ min: "", max: "" });
+                    setSelectedRatings([]);
+                  }}
+                >
+                  Limpiar filtros
+                </button>
+              </div>
+            )}
+
+            {/* ✅ PAGINACIÓN - SOLO SI HAY MÁS DE 10 PRODUCTOS */}
+            {filteredProducts.length > 10 && (
+              <div className="pagination">
+                <button 
+                  onClick={prevPage} 
+                  disabled={currentPage === 1}
+                  className="page-btn prev-btn"
+                >
+                  ←
+                </button>
+                
+                <div className="page-numbers">
+                  {Array.from({ length: totalPages }, (_, i) => i + 1).map(number => (
+                    <button
+                      key={number}
+                      onClick={() => paginate(number)}
+                      className={`page-number ${currentPage === number ? 'page-active' : ''}`}
+                    >
+                      {number}
+                    </button>
+                  ))}
+                </div>
+                
+                <button 
+                  onClick={nextPage} 
+                  disabled={currentPage === totalPages}
+                  className="page-btn next-btn"
+                >
+                  →
+                </button>
+              </div>
+            )}
           </div>
         </div>
       </div>

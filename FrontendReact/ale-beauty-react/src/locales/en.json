@@ -262,7 +262,8 @@
     "min": "Min",
     "max": "Max",
     "stars": "Stars",
-    "star": "Star"
+    "star": "Star",
+    "page": "Page"
   },
   "filters": {
     "title": "Filters",

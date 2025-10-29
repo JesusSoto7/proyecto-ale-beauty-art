@@ -6,7 +6,7 @@ import Typography from '@mui/material/Typography';
 import "../../assets/stylesheets/ProductosCliente.css";
 import { useOutletContext } from "react-router-dom";
 import { useAlert } from "../../components/AlertProvider.jsx";
-import ProductCard from "../../components/ProductCard"; // ✅ IMPORTAR
+import ProductCard from "../../components/ProductCard";
 
 function ProductosCliente() {
   const [products, setProducts] = useState([]);
@@ -22,6 +22,9 @@ function ProductosCliente() {
   const [productRatings, setProductRatings] = useState({});
   const [selectedRatings, setSelectedRatings] = useState([]);
   const { addAlert } = useAlert();
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const [productsPerPage] = useState(15);
 
   const { lang } = useParams();
   const { t } = useTranslation();
@@ -95,6 +98,11 @@ function ProductosCliente() {
     loadData();
   }, [token]);
 
+  // ✅ EFECTO PARA RESETEAR A PÁGINA 1 CUANDO CAMBIAN LOS FILTROS
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [selectedCategory, selectedSubcategory, priceRange, selectedRatings, sortOrder]);
+
   const getSubcategoriesForCategory = (categoryId) => {
     if (categoryId === "Todos") return [];
     const category = categories.find(c => 
@@ -147,6 +155,21 @@ function ProductosCliente() {
     filteredProducts = [...filteredProducts].sort((a, b) => b.precio_producto - a.precio_producto);
   }
 
+  // ✅ LÓGICA DE PAGINACIÓN
+  const indexOfLastProduct = currentPage * productsPerPage;
+  const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
+  const currentProducts = filteredProducts.slice(indexOfFirstProduct, indexOfLastProduct);
+  const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
+
+  // ✅ FUNCIONES DE PAGINACIÓN
+  const paginate = (pageNumber) => setCurrentPage(pageNumber);
+  const nextPage = () => {
+    if (currentPage < totalPages) setCurrentPage(currentPage + 1);
+  };
+  const prevPage = () => {
+    if (currentPage > 1) setCurrentPage(currentPage - 1);
+  };
+
   const handleSelectCategory = (catId) => {
     setSelectedCategory(catId);
     setSelectedSubcategory("Todos");
@@ -162,6 +185,7 @@ function ProductosCliente() {
     setSortOrder(null);
     setPriceRange({ min: "", max: "" });
     setSelectedRatings([]);
+    setCurrentPage(1);
   };
 
   const handleSort = (order) => {
@@ -284,7 +308,7 @@ function ProductosCliente() {
       <div className="prodcli-contentwrap">
         <div className="prodcli-info-bar">
           <p>
-            {t('products.showing')} <strong>{filteredProducts.length}</strong> {t('products.of')} <strong>{products.length}</strong> {t('products.products')}
+            {t('products.showing')} <strong>{currentProducts.length}</strong> {t('products.of')} <strong>{filteredProducts.length}</strong> {t('products.products')}
             {selectedCategory !== "Todos" && (
               <span className="prodcli-filtros">
                 • {t('products.category')}: {categories.find(c => String(c.id_categoria || c.id) === String(selectedCategory))?.nombre_categoria}
@@ -303,6 +327,12 @@ function ProductosCliente() {
             {selectedRatings.length > 0 && (
               <span className="prodcli-filtros">
                 • {t('products.rating')}: {selectedRatings.map(r => `${r}★`).join(", ")}
+              </span>
+            )}
+            {/* ✅ INFORMACIÓN DE PAGINACIÓN */}
+            {totalPages > 1 && (
+              <span className="prodcli-filtros">
+                • {t('products.page')} {currentPage} {t('products.of')} {totalPages}
               </span>
             )}
           </p>
@@ -459,10 +489,10 @@ function ProductosCliente() {
             )}
           </div>
 
-          {/* ✅ PRODUCTOS CON PRODUCTCARD - AQUÍ ES EL CAMBIO */}
+          {/* ✅ PRODUCTOS CON PRODUCTCARD Y PAGINACIÓN */}
           <div className="prodcli-main prodcli-main-centered">
             <div className="prodcli-products-grid">
-              {filteredProducts.map((prod, index) => (
+              {currentProducts.map((prod, index) => (
                 <ProductCard
                   key={prod.id}
                   product={prod}
@@ -489,6 +519,39 @@ function ProductosCliente() {
                   className="prodcli-clearbtn"
                 >
                   {t('products.clearFilters')}
+                </button>
+              </div>
+            )}
+
+            {/* ✅ COMPONENTE DE PAGINACIÓN CON FLECHAS */}
+            {totalPages > 1 && (
+              <div className="prodcli-pagination">
+                <button 
+                  onClick={prevPage} 
+                  disabled={currentPage === 1}
+                  className="prodcli-page-btn"
+                >
+                  ←
+                </button>
+                
+                <div className="prodcli-page-numbers">
+                  {Array.from({ length: totalPages }, (_, i) => i + 1).map(number => (
+                    <button
+                      key={number}
+                      onClick={() => paginate(number)}
+                      className={`prodcli-page-number ${currentPage === number ? 'prodcli-page-active' : ''}`}
+                    >
+                      {number}
+                    </button>
+                  ))}
+                </div>
+                
+                <button 
+                  onClick={nextPage} 
+                  disabled={currentPage === totalPages}
+                  className="prodcli-page-btn"
+                >
+                  →
                 </button>
               </div>
             )}

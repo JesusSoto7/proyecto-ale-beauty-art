@@ -398,3 +398,73 @@
 /* ======== ELIMINADOS - YA NO SE USAN ======== */
 /* Eliminamos todos los estilos .custom-product-card, .custom-image-wrapper, etc.
    porque ahora usamos ProductCard.css */
+
+   /* ✅ ESTILOS PARA PAGINACIÓN */
+.prodcli-pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 2rem;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.prodcli-page-btn {
+  padding: 0.5rem 1rem;
+  border: 1px solid #ddd;
+  background: white;
+  color: #333;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.prodcli-page-btn:hover:not(:disabled) {
+  background: #ff4d94;
+  color: white;
+  border-color: #ff4d94;
+}
+
+.prodcli-page-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.prodcli-page-numbers {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.prodcli-page-number {
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #ddd;
+  background: white;
+  color: #333;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  min-width: 40px;
+}
+
+.prodcli-page-number:hover {
+  background: #f0f0f0;
+}
+
+.prodcli-page-active {
+  background: #ff4d94;
+  color: white;
+  border-color: #ff4d94;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .prodcli-pagination {
+    gap: 0.5rem;
+  }
+  
+  .prodcli-page-number {
+    padding: 0.4rem 0.6rem;
+    min-width: 35px;
+  }
+}
