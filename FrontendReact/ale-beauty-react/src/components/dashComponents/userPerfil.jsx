@@ -3,6 +3,7 @@ import "../../assets/stylesheets/UserPerfileHome.css";
 import { useEffect, useState } from "react";
 import profilePic from "../../assets/images/user_default.png";
 import EditIcon from '@mui/icons-material/Edit';
+import Accordion from "./Accordion";
 const sample1 = "https://i.pinimg.com/736x/11/3b/bb/113bbbd36915506258c7bb13ee0754f0.jpg";
 const sample2 = "https://i.pinimg.com/736x/37/8e/a6/378ea60eee35ee300bab91576e8acf73.jpg";
 const sample3 = "https://i.pinimg.com/736x/ed/c9/85/edc985cfe1938991bdf4e7957be0dd3b.jpg";
@@ -18,6 +19,20 @@ function UserProfile() {
         telefono: "",
         direccion: "",
     });
+    const faqItems = [
+        {
+        title: "Pedidos realizados",
+        content: "Es una plataforma para comprar productos del hogar fácilmente.",
+        },
+        {
+        title: "reviews escritas",
+        content: "Solo debes crear una cuenta con tu correo electrónico.",
+        },
+        {
+        title: "- - -",
+        content: "pestaña libre para futuros usos.",
+        },
+    ];
 
     useEffect(() => {
         const token = localStorage.getItem("token");
@@ -208,6 +223,8 @@ function UserProfile() {
             <img src={sample3} alt="Work 3" />
           </div>
         </section>
+
+        <Accordion items={faqItems} />
         {/* compras realizadas */}
         {/* comentarios */}
       </div>
