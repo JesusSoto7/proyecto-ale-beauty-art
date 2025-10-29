@@ -26,7 +26,7 @@ export default function ProductsPageSubCategory() {
   
   // ✅ ESTADOS PARA PAGINACIÓN
   const [currentPage, setCurrentPage] = useState(1);
-  const [productsPerPage] = useState(10);
+  const [productsPerPage] = useState(9);
 
   useEffect(() => {
     const savedToken = localStorage.getItem("token");

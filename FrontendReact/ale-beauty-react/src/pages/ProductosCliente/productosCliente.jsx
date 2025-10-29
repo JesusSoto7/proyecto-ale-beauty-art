@@ -6,7 +6,7 @@ import Typography from '@mui/material/Typography';
 import "../../assets/stylesheets/ProductosCliente.css";
 import { useOutletContext } from "react-router-dom";
 import { useAlert } from "../../components/AlertProvider.jsx";
-import ProductCard from "../../components/ProductCard"; // ✅ IMPORTAR
+import ProductCard from "../../components/ProductCard";
 
 function ProductosCliente() {
   const [products, setProducts] = useState([]);
@@ -22,9 +22,9 @@ function ProductosCliente() {
   const [productRatings, setProductRatings] = useState({});
   const [selectedRatings, setSelectedRatings] = useState([]);
   const { addAlert } = useAlert();
-  // ✅ ESTADOS PARA PAGINACIÓN
+
   const [currentPage, setCurrentPage] = useState(1);
-  const [productsPerPage] = useState(10);
+  const [productsPerPage] = useState(15);
 
   const { lang } = useParams();
   const { t } = useTranslation();
