@@ -88,11 +88,29 @@
     height: 40px;
     background-color: transparent;
     border-radius: 10px;
+    color: #ffffff;
 }
 
 .edit-btn:hover{
     background-color: #1f2630;
 }
+
+.input-edit {
+  width: 100%;
+  margin-top: 5px;
+  padding: 8px 10px;
+  border: 1px solid #30363d;
+  border-radius: 6px;
+  background-color: #0d1117;
+  color: #c9d1d9;
+  font-size: 0.95rem;
+}
+
+.input-edit:focus {
+  outline: none;
+  border-color: #58a6ff;
+}
+
 
 #role-user{
    display: flex;
@@ -137,6 +155,7 @@
   /* width: 333px; */
   height: 224px;
   width: 100%;
+  color: #ffffff;
 }
 
 .about-details a {
@@ -163,6 +182,7 @@
   border-radius: 10px;
   transition: background 0.3s;
 }
+
 
 .exp-section {
   background: #161b22;

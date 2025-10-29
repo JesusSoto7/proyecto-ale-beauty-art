@@ -3,12 +3,17 @@ import "../../assets/stylesheets/UserPerfileHome.css";
 import { useEffect, useState } from "react";
 import profilePic from "../../assets/images/user_default.png";
 import EditIcon from '@mui/icons-material/Edit';
+import SwipeableDrawer from "@mui/material/SwipeableDrawer";
 import Accordion from "./Accordion";
 import { DataGrid } from "@mui/x-data-grid";
 import { Box, Card, CardContent, Typography, Rating, Stack } from "@mui/material";
 import LogoutIcon from '@mui/icons-material/Logout';
 import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
 import { useNavigate, useParams } from "react-router-dom";
+import { useTheme } from "@mui/material/styles";
+import Button from "@mui/material/Button";
+import TextField from "@mui/material/TextField";
+
 const sample1 = "https://i.pinimg.com/736x/11/3b/bb/113bbbd36915506258c7bb13ee0754f0.jpg";
 const sample2 = "https://i.pinimg.com/736x/37/8e/a6/378ea60eee35ee300bab91576e8acf73.jpg";
 const sample3 = "https://i.pinimg.com/736x/ed/c9/85/edc985cfe1938991bdf4e7957be0dd3b.jpg";
@@ -28,6 +33,17 @@ function UserProfile() {
     const [userReviews, setUserReviews] = useState([]);
     const { lang } = useParams();
     const navigate = useNavigate();
+    const theme = useTheme();
+    const isDarkMode = theme.palette.mode === "dark";
+    const [openDrawer, setOpenDrawer] = useState(false);
+
+    const toggleDrawer = (open) => (event) => {
+    if (event && event.type === "keydown" && (event.key === "Tab" || event.key === "Shift")) {
+        return;
+    }
+    setOpenDrawer(open);
+    };
+
 
     const [formData, setFormData] = useState({
         nombre: "",
@@ -258,6 +274,28 @@ function UserProfile() {
         .catch((err) => console.error(err));
     }, []);
 
+    const handleSave = () => {
+        const token = localStorage.getItem("token");
+
+        fetch("https://localhost:4000/api/v1/me", {
+        method: "PATCH",
+        headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(formData),
+        })
+        .then((res) => {
+            if (!res.ok) throw new Error(t("profile.updateError"));
+            return res.json();
+        })
+        .then((updatedUser) => {
+            setUser(updatedUser);
+            setEditMode(false);
+        })
+        .catch((err) => console.error(err));
+    };
+
     if (!user) {
         return <div className="profile-loading">Loading profile...</div>;
     }
@@ -371,21 +409,118 @@ function UserProfile() {
                 <h2 className="h2-unic">More About me</h2>
                 <div className="about-details">
                     <div>
-                        <strong>Dirección:</strong> {user.direccion || "Not provided"}
+                        <strong>Dirección:</strong> {user.direccion || "No proporcionada"}
                     </div>
                     <hr />
                     <div>
-                        <strong>Telefono:</strong> {user.telefono || "Not provided"}
+                        <strong>Teléfono:</strong> {user.telefono || "No proporcionado"}
                     </div>
                     <hr />
                     <div>
-                        <strong>Email:</strong> <a href={`mailto:${user.email}`}>{user.email}</a>
+                        <strong>Email:</strong>{" "}
+                        <a href={`mailto:${user.email}`}>{user.email}</a>
                     </div>
                     <hr />
-                    <button className="edit-btn">
-                        {editMode ? "Save Changes" : "Edit Profile"}
+
+                    {/* 🟢 Botón que abre el Drawer */}
+                    <button className="edit-btn" onClick={toggleDrawer(true)}>
+                        Editar perfil
                     </button>
-                </div>
+
+                    {/* 🟣 Drawer deslizante */}
+                    <SwipeableDrawer
+                        id="SwipeableDrawer"
+                        anchor="right"
+                        open={openDrawer}
+                        onClose={toggleDrawer(false)}
+                        onOpen={toggleDrawer(true)}
+                        PaperProps={{
+                        sx: {
+                            // backgroundColor: "#161b22",
+                            color: "#c9d1d9",
+                            padding: "20px",
+                            background: "#161b22"
+                        },
+                        }}
+                    >
+                        <Box
+                        sx={{
+                            display: "flex",
+                            flexDirection: "column",
+                            gap: 2,
+                        }}
+                        >
+                        <h3 style={{ textAlign: "center", margin: 0 }}>Editar perfil</h3>
+
+                        <TextField
+                            label="Nombre"
+                            variant="outlined"
+                            value={formData.nombre}
+                            onChange={(e) =>
+                            setFormData({ ...formData, nombre: e.target.value })
+                            }
+                            fullWidth
+                            InputLabelProps={{ style: { color: "#8b949e" } }}
+                            InputProps={{ style: { color: "#c9d1d9" } }}
+                        />
+
+                        <TextField
+                            label="Apellido"
+                            variant="outlined"
+                            value={formData.apellido}
+                            onChange={(e) =>
+                            setFormData({ ...formData, apellido: e.target.value })
+                            }
+                            fullWidth
+                            InputLabelProps={{ style: { color: "#8b949e" } }}
+                            InputProps={{ style: { color: "#c9d1d9" } }}
+                        />
+
+                        <TextField
+                            label="Teléfono"
+                            variant="outlined"
+                            value={formData.telefono}
+                            onChange={(e) =>
+                            setFormData({ ...formData, telefono: e.target.value })
+                            }
+                            fullWidth
+                            InputLabelProps={{ style: { color: "#8b949e" } }}
+                            InputProps={{ style: { color: "#c9d1d9" } }}
+                        />
+
+                        <TextField
+                            label="Email"
+                            type="email"
+                            variant="outlined"
+                            value={formData.email}
+                            onChange={(e) =>
+                            setFormData({ ...formData, email: e.target.value })
+                            }
+                            fullWidth
+                            InputLabelProps={{ style: { color: "#8b949e" } }}
+                            InputProps={{ style: { color: "#c9d1d9" } }}
+                        />
+
+                        <Button
+                            variant="contained"
+                            onClick={() => {
+                            handleSave(formData);
+                            setOpenDrawer(false);
+                            }}
+                            sx={{
+                            mt: 2,
+                            backgroundColor: "#238636",
+                            "&:hover": { backgroundColor: "#2ea043" },
+                            color: "#fff",
+                            borderRadius: "8px",
+                            }}
+                        >
+                            Guardar cambios
+                        </Button>
+                        </Box>
+                    </SwipeableDrawer>
+                    </div>
+
             </div>
             
           </section>
@@ -398,12 +533,12 @@ function UserProfile() {
           <h2>informacion</h2>
           <div className="experience-grid">
             <div className="exp-card">
-              <h3>Lead Product Designer</h3>
-              <p>CollabTech</p>
+              <h3>ultima vez conectado</h3>
+              <p>ahora mismo</p>
               <span>May 2020 - Present</span>
             </div>
             <div className="exp-card">
-              <h3>Fecha de creación</h3>
+              <h3>ID de usuario</h3>
               <p> USER ID: {user.id || "Not provided"}</p>
               <span>Mar 2017 - Jan 2018</span>
             </div>
