@@ -1,5 +1,5 @@
 class Api::V1::ReviewsController < Api::V1::BaseController
-  before_action :set_product   
+  before_action :set_product, except: [:my_reviews]  
 
   def index
     reviews = @product.reviews.includes(:user)
@@ -27,6 +27,27 @@ class Api::V1::ReviewsController < Api::V1::BaseController
     else
       render json: review.errors, status: :unprocessable_entity
     end
+  end
+
+  def my_reviews
+    reviews = current_user.reviews.includes(:product)
+
+    render json: {
+      total: reviews.count,
+      reviews: reviews.map { |r|
+        {
+          id: r.id,
+          rating: r.rating,
+          comentario: r.comentario,
+          created_at: r.created_at,
+          product: {
+            id: r.product.id,
+            nombre_producto: r.product.nombre_producto,
+            slug: r.product.slug
+          }
+        }
+      }
+    }
   end
 
   private

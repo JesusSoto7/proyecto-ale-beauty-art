@@ -5,7 +5,7 @@ import profilePic from "../../assets/images/user_default.png";
 import EditIcon from '@mui/icons-material/Edit';
 import Accordion from "./Accordion";
 import { DataGrid } from "@mui/x-data-grid";
-import Box from "@mui/material/Box";
+import { Box, Card, CardContent, Typography, Rating, Stack } from "@mui/material";
 import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
 const sample1 = "https://i.pinimg.com/736x/11/3b/bb/113bbbd36915506258c7bb13ee0754f0.jpg";
 const sample2 = "https://i.pinimg.com/736x/37/8e/a6/378ea60eee35ee300bab91576e8acf73.jpg";
@@ -19,6 +19,12 @@ function UserProfile() {
     const [orders, setOrders] = useState([]);
     const [token, setToken] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [favorites, setFavorites] = useState([]);
+    const [cart, setCart] = useState(null);
+    const [error, setError] = useState(null);
+    const [reviewCount, setReviewCount] = useState(0);
+    const [userReviews, setUserReviews] = useState([]);
+
     const [formData, setFormData] = useState({
         nombre: "",
         apellido: "",
@@ -131,8 +137,36 @@ function UserProfile() {
         },
         {
         title: "Reviews escritas",
-        content: "Aquí irán las reseñas que has escrito.",
+        content: (
+            <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+            {userReviews.length > 0 ? (
+                userReviews.map((review) => (
+                <div
+                    key={review.id}
+                    style={{
+                    borderRadius: "8px",
+                    padding: "10px 15px",
+                    background: "#161b22",
+                    display: "flex",
+                    justifyContent: "space-around",
+                    alignItems: "center",
+                    }}
+                >
+                    <h4>{review.product.nombre_producto}</h4>
+                    <p style={{ margin: "5px 0" }}>{review.comentario}</p>
+                    <p style={{ fontSize: "0.9rem", color: "#777" }}>
+                    ⭐ {review.rating} —{" "}
+                    {new Date(review.created_at).toLocaleDateString()}
+                    </p>
+                </div>
+                ))
+            ) : (
+                <p>No has escrito reseñas aún.</p>
+            )}
+            </div>
+        ),
         },
+
         {
         title: "- - -",
         content: "Pestaña libre para futuros usos.",
@@ -150,6 +184,41 @@ function UserProfile() {
     }, []);
 
     useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) return;
+
+    fetch("https://localhost:4000/api/v1/my_reviews", {
+        headers: { Authorization: `Bearer ${token}` },
+    })
+        .then((res) => res.json())
+        .then((data) => {
+        setReviewCount(data.total);     // número total
+        setUserReviews(data.reviews);   // lista completa
+        })
+        .catch((err) => console.error("Error al obtener reseñas:", err));
+    }, []);
+
+    const fetchCart = () => {
+        setLoading(true);
+        setError(null);
+        fetch("https://localhost:4000/api/v1/cart", {
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+        })
+        .then((res) => {
+            if (!res.ok) throw new Error("Failed to fetch cart");
+            return res.json();
+        })
+        .then((data) => setCart(data))
+        .catch((err) => {
+            console.error("Error cargando cart: ", err);
+            setError(t("cart.loadingError"));
+        })
+        .finally(() => setLoading(false));
+    };
+
+    useEffect(() => {
         if (!token) return;
         fetch("https://localhost:4000/api/v1/my_orders", {
         headers: { Authorization: `Bearer ${token}` },
@@ -158,6 +227,8 @@ function UserProfile() {
         .then((data) => setOrders(data))
         .catch((err) => console.error(t('orders.loadError'), err))
         .finally(() => setLoading(false));
+        fetchFavorites();
+        fetchCart();
     }, [token]);
 
     useEffect(() => {
@@ -187,13 +258,33 @@ function UserProfile() {
         return <div className="profile-loading">Loading profile...</div>;
     }
 
+    
 
+    async function fetchFavorites() {
+        setLoading(true);
+        try {
+        const res = await fetch("https://localhost:4000/api/v1/favorites", {
+            headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+        });
+        if (res.ok) {
+            const data = await res.json();
+            setFavorites(data.map(p => ({ ...p, isRemoving: false })));
+        }
+        } catch (err) {
+        console.error(t('favorites.loadError'), err);
+        } finally {
+        setLoading(false);
+        }
+    }
 
   return (
     <div className="profile-container">
       {/* Banner */}
       <div className="banner-perfil">
         <div className="banner-overlay"></div>
+        <svg id="figure" xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:svgjs="http://svgjs.dev/svgjs" viewBox="0 0 800 800"><defs><linearGradient gradientTransform="rotate(45 0.5 0.5)" x1="50%" y1="0%" x2="50%" y2="100%" id="ppperspective-grad2"><stop stop-color="hsl(0, 0%, 100%)" stop-opacity="1" offset="0%"></stop><stop stop-color="hsl(0, 0%, 100%)" stop-opacity="0" offset="100%"></stop></linearGradient></defs><g fill="hsl(0, 0%, 100%)" shape-rendering="crispEdges"><polygon points="0,578 289,289 289,511 0,800" fill="url(#ppperspective-grad2)" opacity="0.45"></polygon><polygon points="0,800 289,511 511,511 222,800" fill="url(#ppperspective-grad2)" opacity="0.2"></polygon><rect width="222" height="222" x="289" y="289"></rect></g></svg>
       </div>
 
       {/* Perfil principal */}
@@ -205,31 +296,6 @@ function UserProfile() {
                     src={profilePic}
                     alt="Profile"
                     className="profile-img"/>
-
-                    {/* Mostrar circulito con "A" si el usuario es admin */}
-                    {user.roles?.includes("admin") && (
-                    <div
-                        style={{
-                        position: "absolute",
-                        bottom: 0,
-                        right: 0,
-                        width: "20px",
-                        height: "20px",
-                        background: "linear-gradient(135deg, #1E90FF, #0078FF)",
-                        borderRadius: "50%",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        color: "white",
-                        fontSize: "12px",
-                        fontWeight: "bold",
-                        border: "2px solid white",
-                        boxShadow: "0 0 6px rgba(0,0,0,0.2)",
-                        }}
-                    >
-                        A
-                    </div>
-                    )}
                 </div>
                 <div style={{display:"flex", flexDirection:"column", marginLeft:"20px", justifyContent:"end"}}>
                     <h1 className="profile-name">{user.nombre} {user.apellido}</h1>
@@ -241,7 +307,6 @@ function UserProfile() {
             
 
             <div className="profile-actions">
-                <button className="btn btn-secondary"><EditIcon /></button>
                 <button className="btn btn-primary">Logout</button>
             </div>
         </div>
@@ -249,27 +314,32 @@ function UserProfile() {
         {/* Sección sobre mí */}
         <section className="about-section section-user-profile">
           <section className="section-user-profile" style={{display: "flex", flexDirection: "row", justifyContent: "space-between", gap: "20px"}}>
-            <div style={{width: "66%"}}>
+            <div style={{width: "135%"}}>
                 <h2 className="h2-unic">About me</h2>
                 <div className="exp-section" style={{ display: "flex", flexDirection: "row", gap: "15px"}}>
-                    <div style={{display: "flex", flexDirection: "column", width: 333, gap: "15px"}}>
+                    <div style={{display: "flex", flexDirection: "column", width: "100%", gap: "15px"}}>
                         <div className="exp-card" style={{}}>
                             <h3>compras realizadas</h3>
-                            <p>10</p>
+                            <p>{orders.length}</p>
                         </div>
                         <div className="exp-card">
                             <h3>reviews escritas</h3>
-                            <p>5</p>
+                            <p>{reviewCount}</p>
                         </div>    
                     </div>
-                    <div style={{display: "flex", flexDirection: "column", width: 333, gap: "15px"}}>
+                    <div style={{display: "flex", flexDirection: "column", width: "100%", gap: "15px"}}>
                         <div className="exp-card">
                             <h3>Productos en favoritos</h3>
-                            <p>20</p>
+                            <p>{favorites.length}</p>
                         </div>
                         <div className="exp-card">
                             <h3>Productos en carrito</h3>
-                            <p>5</p>
+                            <p>
+                                {cart && cart.products
+                                    ? cart.products.reduce((total, item) => total + item.cantidad, 0)
+                                    : 0
+                                }
+                            </p>
                         </div>    
                     </div>
                     
@@ -279,7 +349,7 @@ function UserProfile() {
             </div>
             
             <div style={{width: "66%"}}>
-                <h2 className="h2-unic">About me</h2>
+                <h2 className="h2-unic">More About me</h2>
                 <div className="about-details">
                     <div>
                         <strong>Dirección:</strong> {user.direccion || "Not provided"}
@@ -304,7 +374,7 @@ function UserProfile() {
           
         </section>
 
-        {/* Experiencia */}
+        {/* información */}
         <section className="experience-section section-user-profile">
           <h2>informacion</h2>
           <div className="experience-grid">
@@ -340,7 +410,7 @@ function UserProfile() {
           </div>
         </section>
 
-        {/* Trabajos recientes */}
+        {/* Trabajos recientes
         <section className="recent-section section-user-profile">
           <h2>Recent work</h2>
           <div className="recent-grid">
@@ -348,7 +418,7 @@ function UserProfile() {
             <img src={sample2} alt="Work 2" />
             <img src={sample3} alt="Work 3" />
           </div>
-        </section>
+        </section> */}
 
         <Accordion items={faqItems} />
         {/* compras realizadas */}

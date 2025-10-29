@@ -9,9 +9,20 @@
   height: 180px;
   /* background: url("https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&w=1000&q=60")
     center/cover no-repeat; */
-    background-color: #d8bfd8;
-  /* border-radius: 0 0 12px 12px; */
+  background-color: #eb5e8c;
+  position: relative;
+  z-index: 0;
   border-radius: 10px;
+  overflow: hidden;
+}
+
+.banner-perfil #figure {
+  position: absolute;
+  bottom: 30px;
+  left: 100px;
+  width: 200px;
+  height: 150px;
+  scale: 2.5;
 }
 
 
@@ -123,8 +134,9 @@
   padding: 1rem;
   border-radius: 10px;
   transition: background 0.3s;
-  width: 333px;
+  /* width: 333px; */
   height: 224px;
+  width: 100%;
 }
 
 .about-details a {
