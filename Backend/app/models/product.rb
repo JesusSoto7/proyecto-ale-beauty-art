@@ -1,5 +1,4 @@
 class Product < ApplicationRecord
-
   belongs_to :sub_category
   belongs_to :discount, optional: true
   has_one :category, through: :sub_category
@@ -15,19 +14,17 @@ class Product < ApplicationRecord
   validates :nombre_producto, presence: true
   validates :precio_producto, numericality: { greater_than: 0 }
 
-  
   before_validation :generate_slug, on: [:create, :update]
-  
   scope :novedades, -> { order(created_at: :desc).limit(10) }
 
   def imagen_url
     return nil unless imagen.attached?
-    
+
     # URL directa de S3 sin pasar por Rails
     bucket = ENV['AWS_BUCKET']
     region = ENV['AWS_REGION']
     key = imagen.key
-    
+
     "https://#{bucket}.s3.#{region}.amazonaws.com/#{key}"
   end
 
@@ -42,26 +39,24 @@ class Product < ApplicationRecord
     end
 
     self.slug = slug_candidate
-  end 
+  end
 
-
+  # Devuelve el descuento activo (si existe) que genere mayor monto para el precio_base.
   def mejor_descuento_para_precio(precio_base = nil)
     precio_base ||= self.precio_producto
-    ahora = Time.current
+    hoy = Date.current
     candidatos = []
 
-    # descuento propio activo
-    if discount.present? && discount.activo && discount.fecha_inicio <= ahora && (discount.fecha_fin.nil? || discount.fecha_fin >= ahora)
-      candidatos << discount
+    # descuento propio activo (comparamos solo la parte fecha)
+    if discount.present? && discount.activo
+      inicio = discount.fecha_inicio.respond_to?(:to_date) ? discount.fecha_inicio.to_date : discount.fecha_inicio
+      fin = discount.fecha_fin.respond_to?(:to_date) ? discount.fecha_fin.to_date : discount.fecha_fin
+
+      if inicio && inicio <= hoy && (fin.nil? || fin >= hoy)
+        candidatos << discount
+      end
     end
 
-    # descuentos activos de la subcategoría
-    if sub_category_id.present?
-      sub_descuentos = Discount.joins(:subcategory_discounts)
-                              .where(subcategory_discounts: { sub_category_id: sub_category_id })
-                              .merge(Discount.activos)
-      candidatos.concat(sub_descuentos)
-    end
 
     candidatos.uniq.max_by { |d| d.monto_descuento_en(precio_base.to_d) }
   end

@@ -120,7 +120,8 @@
     "terms1": "Al continuar confirmas que aceptas nuestros",
     "termsOfService": "Términos de Servicio",
     "and": "y",
-    "privacyPolicy": "Política de Privacidad"
+    "privacyPolicy": "Política de Privacidad",
+    "forgotPassword": "¿Olvidaste tu contraseña?"
   },
   "profile": {
     "loading": "Cargando perfil...",
@@ -307,6 +308,25 @@
     "submitReview": "Enviar Reseña",
     "writeReview": "Escribe tu reseña...",
     "inStock": "Disponibles:"
+  },
+  "resetPassword": {
+    "title": "Restablecer contraseña",
+    "subtitle": "Introduce tu nueva contraseña abajo",
+    "missingToken": "No se encontró el token de restablecimiento en la URL",
+    "ifNotWork": "Si el enlace no funciona, copia el token del correo y pégalo en la URL como ?reset_password_token=...",
+    "passwordMismatch": "Las contraseñas no coinciden",
+    "success": "Tu contraseña se ha restablecido correctamente",
+    "redirecting": "Redirigiendo al inicio de sesión...",
+    "newPasswordPlaceholder": "Nueva contraseña",
+    "confirmPasswordPlaceholder": "Confirmar nueva contraseña",
+    "resetButton": "Restablecer contraseña"
+  },
+  "forgotPassword": {
+    "title": "¿Olvidaste tu contraseña?",
+    "subtitle": "Introduce tu correo y te enviaremos instrucciones para restablecerla",
+    "emailPlaceholder": "Tu correo",
+    "sendInstructions": "Enviar instrucciones",
+    "backToLogin": "Volver al inicio de sesión"
   },
    "about": {
     "companyName": "Ale Beauty Art",

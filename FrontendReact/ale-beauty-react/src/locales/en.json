@@ -120,7 +120,8 @@
     "terms1": "You acknowledge that you have read, and agree to, our",
     "termsOfService": "Terms of Service",
     "and": "and",
-    "privacyPolicy": "Privacy Policy"
+    "privacyPolicy": "Privacy Policy",
+    "forgotPassword": "Forgot your password?"
   },
   "profile": {
     "loading": "Loading profile...",
@@ -307,6 +308,7 @@
     "writeReview": "Write your review",
     "inStock": "In Stock"
   },
+  
   "about": {
     "companyName": "Ale Beauty Art",
     "heroAlt": "Ale Beauty Art beauty products",
@@ -357,6 +359,25 @@
     "ctaTitle": "Join the Ale Beauty Art Community",
     "ctaDescription": "Discover the beauty within you with products that really work",
     "exploreButton": "Explore Products"
+  },
+  "resetPassword": {
+    "title": "Reset your password",
+    "subtitle": "Enter your new password below",
+    "missingToken": "Reset token not found in the URL",
+    "ifNotWork": "If the link doesn't work, copy the token from the email and append ?reset_password_token=... to the URL",
+    "passwordMismatch": "Passwords do not match",
+    "success": "Your password has been reset successfully",
+    "redirecting": "Redirecting to login...",
+    "newPasswordPlaceholder": "New password",
+    "confirmPasswordPlaceholder": "Confirm new password",
+    "resetButton": "Reset password"
+  },
+  "forgotPassword": {
+    "title": "Forgot your password?",
+    "subtitle": "Enter your email and we will send reset instructions",
+    "emailPlaceholder": "Your email",
+    "sendInstructions": "Send instructions",
+    "backToLogin": "Back to login"
   },
   "terms": {
     "title": "Terms and Conditions",

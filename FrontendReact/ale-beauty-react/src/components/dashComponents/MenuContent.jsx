@@ -95,12 +95,6 @@ export default function MenuContent() {
               >
                 <ListItemText primary="Crear Descuento" primaryTypographyProps={{ fontSize: 13 }} />
               </ListItemButton>
-              <ListItemButton
-                sx={{ pl: 6, py: 0.3 }}
-                onClick={() => navigate(`/${lang}/home/aplicar_descuento`)}
-              >
-                <ListItemText primary="Aplicar Descuento" primaryTypographyProps={{ fontSize: 13 }} />
-              </ListItemButton>
             </List>
           </AccordionDetails>
         </Accordion>

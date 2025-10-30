@@ -1,6 +1,4 @@
 class Discount < ApplicationRecord
-  has_many :subcategory_discounts, dependent: :destroy
-  has_many :sub_categories, through: :subcategory_discounts
   has_many :products
 
   validates :nombre, :tipo, :valor, :fecha_inicio, presence: true
@@ -11,7 +9,7 @@ class Discount < ApplicationRecord
 
   scope :activos, -> {
     where(activo: true)
-      .where("fecha_inicio <= ? AND (fecha_fin IS NULL OR fecha_fin >= ?)", Date.current, Date.current)
+      .where("DATE(fecha_inicio) <= ? AND (fecha_fin IS NULL OR DATE(fecha_fin) >= ?)", Date.current, Date.current)
   }
 
   def validar_fechas
