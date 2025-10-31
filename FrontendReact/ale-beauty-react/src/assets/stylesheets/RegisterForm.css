@@ -118,6 +118,10 @@ form {
   object-fit: cover;
 }
 
+.is-invalid {
+  border: 1px solid #dc3545 !important;
+}
+
 @media (max-width: 768px) {
 
 .register-card {
