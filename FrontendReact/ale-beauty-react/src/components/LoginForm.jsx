@@ -1,38 +1,82 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate, Link, useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { login } from "../services/authService";
 import ale_logo from "../assets/images/ale_logo.jpg";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
+import { useAlert } from "../components/AlertProvider.jsx";
 
 function LoginForm({ onLogin }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
+  const [emailError, setEmailError] = useState("");
+  const [passwordError, setPasswordError] = useState("");
   const navigate = useNavigate();
   const { lang } = useParams();
+  const { addAlert } = useAlert();
   const { t } = useTranslation();
+
+  useEffect(() => {
+    if (emailError) {
+      addAlert(emailError, "warning", 8000);
+    }
+  }, [emailError]);
+
+  useEffect(() => {
+    if (passwordError) {
+      addAlert(passwordError, "warning", 8000);
+    }
+  }, [passwordError]);
+
+  const validateFields = () => {
+    let isValid = true;
+
+    if (!email) {
+      setEmailError("El correo es obligatorio.");
+      isValid = false;
+    } else if (!/^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/.test(email)) {
+      setEmailError("El correo no tiene un formato válido.");
+      isValid = false;
+    } else if (/[A-ZÁÉÍÓÚÜÑáéíóúüñ]/.test(email)) {
+      setEmailError("El correo no debe contener mayúsculas ni acentos.");
+      isValid = false;
+    } else {
+      setEmailError("");
+    }
+
+
+    if (!password) {
+      setPasswordError("La contraseña es obligatoria.");
+      isValid = false;
+    } else if (password.length < 6) {
+      setPasswordError("Debe tener al menos 6 caracteres.");
+      isValid = false;
+    } else {
+      setPasswordError("");
+    }
+
+    return isValid;
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
 
+    if (!validateFields()) return;
+
     try {
       const data = await login({ email, password });
       localStorage.setItem("token", data.token);
       localStorage.setItem("roles", JSON.stringify(data.user.roles));
-
       onLogin();
 
-      if (data.user.roles.includes("admin")) {
-        navigate(`/${lang}/home`);
-      } else {
-        navigate(`/${lang}/inicio`);
-      }
+      navigate(`/${lang}/${data.user.roles.includes("admin") ? "home" : "inicio"}`);
     } catch (err) {
       setError(err.message);
+      addAlert(err.message || "Error al iniciar sesión.", "error", 8000);
     }
   };
 
@@ -55,36 +99,39 @@ function LoginForm({ onLogin }) {
           <div className="mb-3">
             <input
               type="email"
-              name="email"
-              className="login-input"
+              className={`login-input ${emailError ? "is-invalid" : ""}`}
               placeholder={t("login.emailPlaceholder")}
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               autoComplete="email"
-              required
             />
-
+            {/* {emailError && <small className="text-danger">{emailError}</small>} */}
           </div>
-          
+
           <div className="mb-3 position-relative">
             <input
               type={showPassword ? "text" : "password"}
-              className="login-input pe-5"
+              className={`login-input pe-5 ${passwordError ? "is-invalid" : ""}`}
               placeholder={t("login.passwordPlaceholder")}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              required
             />
+            {/* {passwordError && <small className="text-danger">{passwordError}</small>} */}
+
             <button
               type="button"
               className="btn position-absolute top-50 end-0 translate-middle-y border-0 bg-transparent"
               onClick={() => setShowPassword(!showPassword)}
             >
-              {showPassword ? <VisibilityOff style={{color: "#ccc"}} /> : <Visibility style={{color: "#ccc"}} />}
+              {showPassword ? (
+                <VisibilityOff style={{ color: "#ccc" }} />
+              ) : (
+                <Visibility style={{ color: "#ccc" }} />
+              )}
             </button>
           </div>
 
-          {error && <p className="text-danger small">{error}</p>}
+          {/* {error && <p className="text-danger small">{error}</p>} */}
 
           <div className="text-end mb-3">
             <Link to={`/${lang}/forgot-password`} className="rosa text-decoration-none small">
@@ -105,7 +152,6 @@ function LoginForm({ onLogin }) {
           </Link>
         </p>
 
-        {/* Términos */}
         <p className="text-secondary text-center mt-4 small">
           {t("login.terms1")}{" "}
           <span className="rosa text-decoration-underline">{t("login.termsOfService")}</span>{" "}
