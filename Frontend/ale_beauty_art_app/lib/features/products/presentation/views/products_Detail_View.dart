@@ -6,6 +6,7 @@ import 'package:ale_beauty_art_app/models/product.dart';
 import 'package:ale_beauty_art_app/features/checkout/presentation/view/checkout_page.dart';
 import 'package:ale_beauty_art_app/features/checkout/shippingAddress/select_address_Page.dart';
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shimmer/shimmer.dart';
@@ -245,8 +246,8 @@ class _ProductDetailViewState extends State<ProductDetailView> {
             // Botón con texto: Agregar al carrito
             _buildPillButton(
               icon: Icons.add_shopping_cart,
-              label: 'Agregar',
-              tooltip: 'Agregar al carrito',
+              label: 'product_detail.add'.tr(),
+              tooltip: 'product_detail.add_tooltip'.tr(),
               gradient: const LinearGradient(
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
@@ -279,9 +280,9 @@ class _ProductDetailViewState extends State<ProductDetailView> {
                       context.read<CartBloc>().add(LoadCart());
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
-                          content: const Text(
-                            'Producto Agregado',
-                            style: TextStyle(
+                          content: Text(
+                            'product_detail.added_snackbar'.tr(),
+                            style: const TextStyle(
                                 color: Colors.white,
                                 fontWeight: FontWeight.bold),
                           ),
@@ -309,9 +310,9 @@ class _ProductDetailViewState extends State<ProductDetailView> {
 
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
-                        content: const Text(
-                          'Producto Agregado',
-                          style: TextStyle(
+                        content: Text(
+                          'product_detail.added_snackbar'.tr(),
+                          style: const TextStyle(
                               color: Colors.white, fontWeight: FontWeight.bold),
                         ),
                             backgroundColor: const Color(0xFFD95D85),
@@ -330,8 +331,8 @@ class _ProductDetailViewState extends State<ProductDetailView> {
             // Botón con texto: Comprar
             _buildPillButton(
               icon: Icons.attach_money_rounded,
-              label: 'Comprar',
-              tooltip: 'Comprar ahora',
+              label: 'product_detail.buy'.tr(),
+              tooltip: 'product_detail.buy_tooltip'.tr(),
               gradient: const LinearGradient(
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
@@ -544,7 +545,9 @@ class _FavoriteButtonState extends State<_FavoriteButton> {
         final btn = IconButton(
           icon: iconWidget,
           onPressed: () => _toggle(isFav),
-          tooltip: isFav ? 'Quitar de favoritos' : 'Agregar a favoritos',
+          tooltip: isFav
+              ? 'product_detail.favorite_remove'.tr()
+              : 'product_detail.favorite_add'.tr(),
           padding: widget.compact ? EdgeInsets.zero : null,
           constraints: widget.compact
               ? const BoxConstraints.tightFor(width: 28, height: 28)

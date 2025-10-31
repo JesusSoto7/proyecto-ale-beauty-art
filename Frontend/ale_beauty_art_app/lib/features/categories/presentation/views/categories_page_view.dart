@@ -2,6 +2,7 @@ import 'package:ale_beauty_art_app/core/views/failure_view.dart';
 import 'package:ale_beauty_art_app/core/views/loading_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:easy_localization/easy_localization.dart';
 import '../../../products/presentation/bloc/product_bloc.dart';
 import '../../../products/presentation/views/products_by_category_view.dart';
 import 'subcategories_view.dart';
@@ -14,6 +15,13 @@ class CategoriesPageView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: Text('nav.categories'.tr()),
+        centerTitle: true,
+        backgroundColor: Colors.white,
+        foregroundColor: Colors.black87,
+        elevation: 0,
+      ),
       resizeToAvoidBottomInset: false,
       backgroundColor: const Color.fromARGB(255, 247, 246, 246),
       body: BlocBuilder<CategoriesBloc, CategoriesState>(
@@ -74,8 +82,8 @@ class CategoriesPageView extends StatelessWidget {
                           }
                         } else {
                           ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('Productos no disponibles todavía'),
+                            SnackBar(
+                              content: Text('categories.products_not_available'.tr()),
                             ),
                           );
                         }

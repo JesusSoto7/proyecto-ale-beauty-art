@@ -7,6 +7,7 @@ import 'package:ale_beauty_art_app/features/checkout/presentation/view/checkout_
 import 'package:ale_beauty_art_app/features/checkout/shippingAddress/select_address_Page.dart';
 import 'package:ale_beauty_art_app/features/auth/bloc/auth_bloc.dart';
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -55,9 +56,9 @@ class _CartPageViewState extends State<CartPageView> {
             backgroundColor: Colors.white,
             elevation: 0,
             centerTitle: true,
-            title: const Text(
-              'Mi Carrito',
-              style: TextStyle(
+            title: Text(
+              'cart.title'.tr(),
+              style: const TextStyle(
                 color: Colors.black,
                 fontSize: 17,
                 fontWeight: FontWeight.w500,
@@ -83,28 +84,28 @@ class _CartPageViewState extends State<CartPageView> {
 
           if ((state.token == null || state.token!.isEmpty) &&
               state.products.isEmpty) {
-            return const Center(
+            return Center(
               child: Text(
-                'Agrega productos a tu carrito',
-                style: TextStyle(fontSize: 16, color: Colors.black54),
+                'cart.empty'.tr(),
+                style: const TextStyle(fontSize: 16, color: Colors.black54),
               ),
             );
           }
 
           if (state.error != null && state.products.isEmpty) {
-            return const Center(
+            return Center(
               child: Text(
-                'Agrega productos a tu carrito',
-                style: TextStyle(fontSize: 16, color: Colors.black54),
+                'cart.empty'.tr(),
+                style: const TextStyle(fontSize: 16, color: Colors.black54),
               ),
             );
           }
 
           if (state.products.isEmpty) {
-            return const Center(
+            return Center(
               child: Text(
-                'Agrega productos a tu carrito',
-                style: TextStyle(fontSize: 16, color: Colors.black54),
+                'cart.empty'.tr(),
+                style: const TextStyle(fontSize: 16, color: Colors.black54),
               ),
             );
           }

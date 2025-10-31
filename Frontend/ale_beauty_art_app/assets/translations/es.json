@@ -1,0 +1,152 @@
+{
+  "app_name": "Ale Beauty Art",
+  "common": {
+    "ok": "Aceptar",
+    "cancel": "Cancelar",
+    "error": "Error",
+    "select_language": "Seleccionar idioma",
+    "english": "Inglés",
+    "spanish": "Español",
+    "see_more": "Ver más"
+  },
+  "categories": {
+    "products_not_available": "Productos no disponibles todavía"
+  },
+  "profile": {
+    "guest": "Invitado",
+    "user": "Usuario",
+    "logout": "Cerrar Sesión",
+    "logout_success": "Sesión cerrada",
+    "login": "Iniciar Sesión",
+    "my_orders": "Mis pedidos",
+    "favorites": "Favoritos",
+    "my_addresses": "Mis direcciones"
+  },
+  "nav": {
+    "home": "Inicio",
+    "products": "Productos",
+    "categories": "Categorías",
+    "cart": "Carrito",
+    "profile": "Perfil"
+  },
+  "products": {
+    "filters": "Filtros",
+    "sort": "Ordenar",
+    "empty_title": "No hay productos",
+    "empty_subtitle": "No se encontraron productos\nen esta categoría"
+  },
+  "home": {
+    "popular_products": "Productos populares"
+  },
+  "auth": {
+    "no_account": "¿No tienes una cuenta? ",
+    "register": "Regístrate"
+  },
+  "register": {
+    "title": "Crear cuenta",
+    "success_login": "Registro exitoso e inicio de sesión",
+    "join_header": "¡Únete a Ale Beauty Art!",
+    "name": "Nombre",
+    "lastname": "Apellido",
+    "email": "Correo electrónico",
+    "email_required": "Por favor ingresa un correo",
+    "email_invalid": "Ingresa un correo válido",
+    "phone_optional": "Teléfono (opcional)",
+    "password": "Contraseña",
+    "password_min": "La contraseña debe tener al menos 6 caracteres",
+    "confirm_password": "Confirmar contraseña",
+    "password_mismatch": "Las contraseñas no coinciden",
+    "submit": "Registrarse"
+  },
+  "product_detail": {
+    "add": "Agregar",
+    "add_tooltip": "Agregar al carrito",
+    "buy": "Comprar",
+    "buy_tooltip": "Comprar ahora",
+    "added_snackbar": "Producto Agregado",
+    "favorite_add": "Agregar a favoritos",
+    "favorite_remove": "Quitar de favoritos"
+  },
+  "forgot_password": {
+    "title": "Recuperar contraseña",
+    "description": "Ingresa el correo asociado a tu cuenta y te enviaremos un enlace para restablecer la contraseña.",
+    "email_label": "Correo electrónico",
+    "email_hint": "ejemplo@correo.com",
+    "email_required": "Ingresa un correo",
+    "email_invalid": "Correo no válido",
+    "send_link": "Enviar enlace",
+    "back_to_login": "Volver al inicio de sesión",
+    "info": "Si no recibes el correo, revisa la carpeta de spam o intenta nuevamente más tarde.",
+    "link_sent_title": "Enlace enviado",
+    "error_title": "Error"
+  },
+  "reset_password": {
+    "title": "Restablecer contraseña",
+    "paste_token_hint": "Pega el token recibido por correo o abre el enlace desde el correo para autocompletar el token.",
+    "token": "Token",
+    "new_password": "Nueva contraseña",
+    "confirm_password": "Confirmar contraseña",
+    "change_password": "Cambiar contraseña",
+    "missing_token": "Falta el token",
+    "password_min": "La contraseña debe tener al menos 6 caracteres",
+    "password_mismatch": "Las contraseñas no coinciden"
+  },
+  "login": {
+    "hello_again": "¡Hola de nuevo!",
+    "subtitle": "Inicia sesión para continuar",
+    "email": "Correo electrónico",
+    "password": "Contraseña",
+    "remember_me": "Recordarme",
+    "forgot_password": "¿Olvidaste tu contraseña?",
+    "fill_all_fields": "Completa todos los campos"
+  },
+  "favorites": {
+    "title": "Mis Favoritos",
+    "empty": "No tienes productos favoritos."
+  },
+  "cart": {
+    "title": "Mi Carrito",
+    "empty": "Agrega productos a tu carrito"
+  },
+  "orders": {
+    "title": "Mis Pedidos",
+    "retry_hint": "Desliza para reintentar",
+    "empty_title": "No tienes pedidos",
+    "empty_subtitle": "¡Empieza a comprar ahora!"
+  },
+  "addresses": {
+    "title": "Mis direcciones",
+    "empty": "No tienes direcciones.\nAgrega una nueva.",
+    "default": "Predeterminada",
+    "neighborhood": "Barrio:",
+    "edit": "Editar",
+    "delete": "Eliminar",
+    "set_default": "Establecer como predeterminada",
+    "add_title": "Nueva dirección",
+    "edit_title": "Editar dirección",
+    "form_intro": "Completa los siguientes campos:",
+    "name": "Nombre",
+    "surname": "Apellido",
+    "phone": "Teléfono",
+    "address": "Dirección",
+    "postal_code": "Código postal",
+    "department": "Departamento",
+    "municipality": "Municipio",
+    "neighborhood_field": "Barrio",
+    "additional_instructions": "Indicaciones adicionales",
+    "required": "Requerido",
+    "select_department": "Seleccione un departamento",
+    "select_municipality": "Seleccione un municipio",
+    "select_neighborhood": "Seleccione un barrio",
+    "save": "Guardar dirección",
+    "update": "Actualizar dirección",
+    "shipping_title": "Dirección de envío",
+    "select_empty": "No tienes direcciones guardadas.\nAgrega una para continuar."
+  },
+  "notifications": {
+    "title": "Notificaciones",
+    "load_error": "Error al cargar notificaciones",
+    "empty_title": "No tienes notificaciones",
+    "empty_subtitle": "Cuando recibas notificaciones\naparecerán aquí"
+}
+}

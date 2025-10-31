@@ -10,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ale_beauty_art_app/styles/colors.dart';
 import 'package:ale_beauty_art_app/styles/text_styles.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class ProfileView extends StatelessWidget {
   const ProfileView({super.key});
@@ -40,9 +41,23 @@ class ProfileView extends StatelessWidget {
                   bottomRight: Radius.circular(24),
                 ),
               ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
+              child: Stack(
+                alignment: Alignment.center,
                 children: [
+                  // Botón de selección de idioma en esquina superior derecha
+                  SafeArea(
+                    child: Align(
+                      alignment: Alignment.topRight,
+                      child: Padding(
+                        padding: const EdgeInsets.only(top: 8, right: 8),
+                        child: _LanguageMenuButton(),
+                      ),
+                    ),
+                  ),
+                  // Contenido centrado del encabezado
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
                   // Avatar con borde blanco
                   Container(
                     padding: const EdgeInsets.all(4),
@@ -62,22 +77,24 @@ class ProfileView extends StatelessWidget {
                     builder: (context, state) {
                       if (state is AuthSuccess) {
                         return Text(
-                          '${state.user['nombre'] ?? 'Usuario'} ${state.user['apellido'] ?? ''}',
+                          '${state.user['nombre'] ?? 'profile.user'.tr()} ${state.user['apellido'] ?? ''}',
                           style: AppTextStyles.title.copyWith(
                             color: Colors.white,
                             fontSize: 22,
                           ),
                         );
                       }
-                      return const Text(
-                        'Invitado',
-                        style: TextStyle(
+                      return Text(
+                        'profile.guest'.tr(),
+                        style: const TextStyle(
                           color: Colors.white,
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
                         ),
                       );
                     },
+                  ),
+                    ],
                   ),
                 ],
               ),
@@ -99,9 +116,9 @@ class ProfileView extends StatelessWidget {
                           context.read<AuthBloc>().add(LogoutRequested());
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
-                              content: const Text(
-                                'Sesión cerrada',
-                                style: TextStyle(
+                              content: Text(
+                                'profile.logout_success'.tr(),
+                                style: const TextStyle(
                                   color: Colors.white,
                                   fontWeight: FontWeight.bold,
                                 ),
@@ -118,7 +135,7 @@ class ProfileView extends StatelessWidget {
                           );
                         },
                         icon: const Icon(Icons.logout, color: Colors.white),
-                        label: const Text('Cerrar Sesión', style: TextStyle(color: Colors.white)),
+                        label: Text('profile.logout'.tr(), style: const TextStyle(color: Colors.white)),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color.fromARGB(255, 235, 98, 98),
                           shape: RoundedRectangleBorder(
@@ -157,10 +174,10 @@ class ProfileView extends StatelessWidget {
                           ),
                           borderRadius: BorderRadius.circular(14),
                         ),
-                        child: const Center(
+                        child: Center(
                           child: Text(
-                            'Iniciar Sesión',
-                            style: TextStyle(
+                            'profile.login'.tr(),
+                            style: const TextStyle(
                               color: Colors.white,
                               fontWeight: FontWeight.bold,
                             ),
@@ -183,7 +200,7 @@ class ProfileView extends StatelessWidget {
                   _buildOptionTile(
                     context,
                     icon: Icons.shopping_bag,
-                    title: 'Mis pedidos',
+                    title: 'profile.my_orders'.tr(),
                     onTap: () async {
                       final authState = context.read<AuthBloc>().state;
                       if (authState is! AuthSuccess) {
@@ -204,7 +221,7 @@ class ProfileView extends StatelessWidget {
                   _buildOptionTile(
                     context,
                     icon: Icons.favorite,
-                    title: 'Favoritos',
+                    title: 'profile.favorites'.tr(),
                     onTap: () async {
                       final authState = context.read<AuthBloc>().state;
                       if (authState is! AuthSuccess) {
@@ -223,7 +240,7 @@ class ProfileView extends StatelessWidget {
                   _buildOptionTile(
                     context,
                     icon: Icons.location_on,
-                    title: 'Mis direcciones',
+                    title: 'profile.my_addresses'.tr(),
                     onTap: () async {
                       final authState = context.read<AuthBloc>().state;
                       if (authState is! AuthSuccess) {
@@ -286,6 +303,48 @@ class ProfileView extends StatelessWidget {
         trailing: const Icon(Icons.arrow_forward_ios, size: 16, color: AppColors.textSecondary),
         onTap: onTap,
       ),
+    );
+  }
+}
+
+class _LanguageMenuButton extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final currentCode = context.locale.languageCode;
+    return PopupMenuButton<Locale>(
+      tooltip: 'common.select_language'.tr(),
+      elevation: 6,
+      offset: const Offset(0, 12),
+      color: Colors.white,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      icon: const Icon(Icons.language_outlined, color: Colors.white),
+      onSelected: (locale) {
+        context.setLocale(locale);
+      },
+      itemBuilder: (context) => [
+        PopupMenuItem<Locale>(
+          value: const Locale('es'),
+          child: Row(
+            children: [
+              const Text('🇪🇸'),
+              const SizedBox(width: 8),
+              Expanded(child: Text('common.spanish'.tr())),
+              if (currentCode == 'es') const Icon(Icons.check, size: 16),
+            ],
+          ),
+        ),
+        PopupMenuItem<Locale>(
+          value: const Locale('en'),
+          child: Row(
+            children: [
+              const Text('🇺🇸'),
+              const SizedBox(width: 8),
+              Expanded(child: Text('common.english'.tr())),
+              if (currentCode == 'en') const Icon(Icons.check, size: 16),
+            ],
+          ),
+        ),
+      ],
     );
   }
 }

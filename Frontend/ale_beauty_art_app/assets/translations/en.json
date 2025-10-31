@@ -1,0 +1,152 @@
+{
+  "app_name": "Ale Beauty Art",
+  "common": {
+    "ok": "OK",
+    "cancel": "Cancel",
+    "error": "Error",
+    "select_language": "Select language",
+    "english": "English",
+    "spanish": "Spanish",
+    "see_more": "See more"
+  },
+  "categories": {
+    "products_not_available": "Products not available yet"
+  },
+  "profile": {
+    "guest": "Guest",
+    "user": "User",
+    "logout": "Log out",
+    "logout_success": "Logged out",
+    "login": "Log in",
+    "my_orders": "My orders",
+    "favorites": "Favorites",
+    "my_addresses": "My addresses"
+  },
+  "nav": {
+    "home": "Home",
+    "products": "Products",
+    "categories": "Categories",
+    "cart": "Cart",
+    "profile": "Profile"
+  },
+  "products": {
+    "filters": "Filters",
+    "sort": "Sort",
+    "empty_title": "No products",
+    "empty_subtitle": "No products found\nin this category"
+  },
+  "home": {
+    "popular_products": "Popular products"
+  },
+  "auth": {
+    "no_account": "Don't have an account? ",
+    "register": "Sign up"
+  },
+  "register": {
+    "title": "Create account",
+    "success_login": "Registration successful and signed in",
+    "join_header": "Join Ale Beauty Art!",
+    "name": "First name",
+    "lastname": "Last name",
+    "email": "Email",
+    "email_required": "Please enter an email",
+    "email_invalid": "Enter a valid email",
+    "phone_optional": "Phone (optional)",
+    "password": "Password",
+    "password_min": "Password must be at least 6 characters",
+    "confirm_password": "Confirm password",
+    "password_mismatch": "Passwords do not match",
+    "submit": "Sign up"
+  },
+  "product_detail": {
+    "add": "Add",
+    "add_tooltip": "Add to cart",
+    "buy": "Buy",
+    "buy_tooltip": "Buy now",
+    "added_snackbar": "Product added",
+    "favorite_add": "Add to favorites",
+    "favorite_remove": "Remove from favorites"
+  },
+  "forgot_password": {
+    "title": "Recover password",
+    "description": "Enter the email associated with your account and we will send you a link to reset your password.",
+    "email_label": "Email",
+    "email_hint": "example@email.com",
+    "email_required": "Enter an email",
+    "email_invalid": "Invalid email",
+    "send_link": "Send link",
+    "back_to_login": "Back to login",
+    "info": "If you don't receive the email, check your spam folder or try again later.",
+    "link_sent_title": "Link sent",
+    "error_title": "Error"
+  },
+  "reset_password": {
+    "title": "Reset password",
+    "paste_token_hint": "Paste the token received by email or open the link from the email to autocomplete the token.",
+    "token": "Token",
+    "new_password": "New password",
+    "confirm_password": "Confirm password",
+    "change_password": "Change password",
+    "missing_token": "Token is missing",
+    "password_min": "Password must be at least 6 characters",
+    "password_mismatch": "Passwords do not match"
+  },
+  "login": {
+    "hello_again": "Welcome back!",
+    "subtitle": "Sign in to continue",
+    "email": "Email",
+    "password": "Password",
+    "remember_me": "Remember me",
+    "forgot_password": "Forgot your password?",
+    "fill_all_fields": "Please complete all fields"
+  },
+  "favorites": {
+    "title": "My Favorites",
+    "empty": "You don't have favorite products."
+  },
+  "cart": {
+    "title": "My Cart",
+    "empty": "Add products to your cart"
+  },
+  "orders": {
+    "title": "My Orders",
+    "retry_hint": "Pull to retry",
+    "empty_title": "You have no orders",
+    "empty_subtitle": "Start shopping now!"
+  },
+  "addresses": {
+    "title": "My addresses",
+    "empty": "You don't have addresses yet.\nAdd a new one.",
+    "default": "Default",
+    "neighborhood": "Neighborhood:",
+    "edit": "Edit",
+    "delete": "Delete",
+    "set_default": "Set as default",
+    "add_title": "New address",
+    "edit_title": "Edit address",
+    "form_intro": "Fill out the following fields:",
+    "name": "Name",
+    "surname": "Last name",
+    "phone": "Phone",
+    "address": "Address",
+    "postal_code": "Postal code",
+    "department": "Department",
+    "municipality": "Municipality",
+    "neighborhood_field": "Neighborhood",
+    "additional_instructions": "Additional instructions",
+    "required": "Required",
+    "select_department": "Select a department",
+    "select_municipality": "Select a municipality",
+    "select_neighborhood": "Select a neighborhood",
+    "save": "Save address",
+    "update": "Update address",
+    "shipping_title": "Shipping address",
+    "select_empty": "You have no saved addresses.\nAdd one to continue."
+  },
+  "notifications": {
+    "title": "Notifications",
+    "load_error": "Error loading notifications",
+    "empty_title": "You have no notifications",
+    "empty_subtitle": "When you receive notifications\nthey will appear here"
+  }
+}

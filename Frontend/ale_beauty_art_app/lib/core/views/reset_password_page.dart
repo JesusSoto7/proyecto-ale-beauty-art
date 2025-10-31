@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:ale_beauty_art_app/features/auth/bloc/auth_bloc.dart';
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:uni_links3/uni_links.dart';
 
@@ -68,17 +69,17 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
 
     if (token.isEmpty) {
       ScaffoldMessenger.of(context)
-          .showSnackBar(const SnackBar(content: Text('Falta el token')));
+          .showSnackBar(SnackBar(content: Text('reset_password.missing_token'.tr())));
       return;
     }
     if (password.length < 6) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-          content: Text('La contraseña debe tener al menos 6 caracteres')));
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text('reset_password.password_min'.tr())));
       return;
     }
     if (password != confirm) {
       ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Las contraseñas no coinciden')));
+          SnackBar(content: Text('reset_password.password_mismatch'.tr())));
       return;
     }
 
@@ -92,7 +93,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Restablecer contraseña')),
+      appBar: AppBar(title: Text('reset_password.title'.tr())),
       body: BlocListener<AuthBloc, AuthState>(
         listener: (context, state) {
           if (state is AuthInProgress)
@@ -114,30 +115,29 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
           child: SingleChildScrollView(
             child: Column(
               children: [
-                const Text(
-                    'Pega el token recibido por correo o abre el enlace desde el correo para autocompletar el token.'),
+        Text('reset_password.paste_token_hint'.tr()),
                 const SizedBox(height: 12),
-                TextField(
-                    controller: _tokenController,
-                    decoration: const InputDecoration(hintText: 'Token')),
+        TextField(
+          controller: _tokenController,
+          decoration: InputDecoration(hintText: 'reset_password.token'.tr())),
                 const SizedBox(height: 8),
-                TextField(
-                    controller: _passwordController,
-                    decoration:
-                        const InputDecoration(hintText: 'Nueva contraseña'),
-                    obscureText: true),
+        TextField(
+          controller: _passwordController,
+          decoration:
+            InputDecoration(hintText: 'reset_password.new_password'.tr()),
+          obscureText: true),
                 const SizedBox(height: 8),
-                TextField(
-                    controller: _passwordConfirmController,
-                    decoration:
-                        const InputDecoration(hintText: 'Confirmar contraseña'),
-                    obscureText: true),
+        TextField(
+          controller: _passwordConfirmController,
+          decoration:
+            InputDecoration(hintText: 'reset_password.confirm_password'.tr()),
+          obscureText: true),
                 const SizedBox(height: 12),
-                ElevatedButton(
-                    onPressed: _loading ? null : _submit,
-                    child: _loading
-                        ? const CircularProgressIndicator()
-                        : const Text('Cambiar contraseña')),
+        ElevatedButton(
+          onPressed: _loading ? null : _submit,
+          child: _loading
+            ? const CircularProgressIndicator()
+            : Text('reset_password.change_password'.tr())),
               ],
             ),
           ),

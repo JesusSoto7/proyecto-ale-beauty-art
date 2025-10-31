@@ -4,6 +4,7 @@ import 'package:ale_beauty_art_app/features/auth/bloc/auth_bloc.dart';
 import 'package:ale_beauty_art_app/features/orders/presentation/cubit/order_detail_cubit.dart';
 import 'package:ale_beauty_art_app/features/orders/presentation/views/order_detail_page_view.dart';
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/services.dart';
 import 'package:ale_beauty_art_app/features/orders/presentation/bloc/order_bloc.dart';
@@ -137,9 +138,9 @@ class _OrderPageViewState extends State<OrderPageView> {
               ),
               onPressed: () => Navigator.pop(context),
             ),
-            title: const Text(
-              'Mis Pedidos',
-              style: TextStyle(
+            title: Text(
+              'orders.title'.tr(),
+              style: const TextStyle(
                 color: Colors.black87,
                 fontSize: 18,
                 fontWeight: FontWeight.w600,
@@ -183,7 +184,7 @@ class _OrderPageViewState extends State<OrderPageView> {
                   const SizedBox(height: 8),
                   Center(
                     child: Text(
-                      'Desliza para reintentar',
+                      'orders.retry_hint'.tr(),
                       style: TextStyle(
                         fontSize: 14,
                         color: Colors.grey[600],
@@ -218,10 +219,10 @@ class _OrderPageViewState extends State<OrderPageView> {
                       ),
                     ),
                     const SizedBox(height: 24),
-                    const Center(
+                    Center(
                       child: Text(
-                        'No tienes pedidos',
-                        style: TextStyle(
+                        'orders.empty_title'.tr(),
+                        style: const TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.w600,
                           color: Colors.black87,
@@ -231,7 +232,7 @@ class _OrderPageViewState extends State<OrderPageView> {
                     const SizedBox(height: 8),
                     Center(
                       child: Text(
-                        '¡Empieza a comprar ahora!',
+                        'orders.empty_subtitle'.tr(),
                         style: TextStyle(
                           fontSize: 14,
                           color: Colors.grey[600],

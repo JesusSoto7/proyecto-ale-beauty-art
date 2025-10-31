@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:easy_localization/easy_localization.dart';
 import '../bloc/shipping_address_bloc.dart';
 import '../bloc/shipping_address_event.dart';
 
@@ -150,8 +151,8 @@ class _ShippingAddressFormPageState extends State<ShippingAddressAdd> {
 
       Navigator.pop(context);
     } catch (e) {
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text('Error: $e')));
+    ScaffoldMessenger.of(context)
+      .showSnackBar(SnackBar(content: Text('${'common.error'.tr()}: $e')));
     }
   }
 
@@ -195,7 +196,7 @@ class _ShippingAddressFormPageState extends State<ShippingAddressAdd> {
             elevation: 0,
             centerTitle: true,
             title: Text(
-              isEditing ? 'Editar dirección' : 'Nueva dirección',
+              isEditing ? 'addresses.edit_title'.tr() : 'addresses.add_title'.tr(),
               style: const TextStyle(
                 color: Colors.black,
                 fontSize: 17,
@@ -236,9 +237,9 @@ class _ShippingAddressFormPageState extends State<ShippingAddressAdd> {
               key: _formKey,
               child: Column(
                 children: [
-                  const Text(
-                    'Completa los siguientes campos:',
-                    style: TextStyle(
+                  Text(
+                    'addresses.form_intro'.tr(),
+                    style: const TextStyle(
                       color: Colors.black87,
                       fontSize: 15,
                       fontWeight: FontWeight.w500,
@@ -247,34 +248,34 @@ class _ShippingAddressFormPageState extends State<ShippingAddressAdd> {
                   const SizedBox(height: 20),
 
                   // --- Campos del formulario ---
-                  TextFormField(
+          TextFormField(
                       controller: nombreController,
-                      decoration: _inputDecoration('Nombre'),
-                      validator: (v) => v!.isEmpty ? 'Requerido' : null),
+            decoration: _inputDecoration('addresses.name'.tr()),
+            validator: (v) => v!.isEmpty ? 'addresses.required'.tr() : null),
                   const SizedBox(height: 14),
-                  TextFormField(
+          TextFormField(
                       controller: apellidoController,
-                      decoration: _inputDecoration('Apellido'),
-                      validator: (v) => v!.isEmpty ? 'Requerido' : null),
+            decoration: _inputDecoration('addresses.surname'.tr()),
+            validator: (v) => v!.isEmpty ? 'addresses.required'.tr() : null),
                   const SizedBox(height: 14),
-                  TextFormField(
+          TextFormField(
                       controller: telefonoController,
-                      decoration: _inputDecoration('Teléfono'),
-                      validator: (v) => v!.isEmpty ? 'Requerido' : null),
+            decoration: _inputDecoration('addresses.phone'.tr()),
+            validator: (v) => v!.isEmpty ? 'addresses.required'.tr() : null),
                   const SizedBox(height: 14),
-                  TextFormField(
+          TextFormField(
                       controller: direccionController,
-                      decoration: _inputDecoration('Dirección'),
-                      validator: (v) => v!.isEmpty ? 'Requerido' : null),
+            decoration: _inputDecoration('addresses.address'.tr()),
+            validator: (v) => v!.isEmpty ? 'addresses.required'.tr() : null),
                   const SizedBox(height: 14),
                   TextFormField(
                     controller: codigoPostalController,
-                    decoration: _inputDecoration('Código postal'),
+          decoration: _inputDecoration('addresses.postal_code'.tr()),
                   ),
                   const SizedBox(height: 14),
                   DropdownButtonFormField<String>(
                     value: departmentId,
-                    decoration: _inputDecoration('Departamento'),
+          decoration: _inputDecoration('addresses.department'.tr()),
                     items: departments
                         .map((d) => DropdownMenuItem(
                             value: d['id'].toString(),
@@ -290,13 +291,13 @@ class _ShippingAddressFormPageState extends State<ShippingAddressAdd> {
                       });
                       if (val != null) _fetchMunicipalities(val);
                     },
-                    validator: (v) =>
-                        v == null ? 'Seleccione un departamento' : null,
+          validator: (v) =>
+            v == null ? 'addresses.select_department'.tr() : null,
                   ),
                   const SizedBox(height: 14),
                   DropdownButtonFormField<String>(
                     value: municipalityId,
-                    decoration: _inputDecoration('Municipio'),
+          decoration: _inputDecoration('addresses.municipality'.tr()),
                     items: municipalities
                         .map((m) => DropdownMenuItem(
                             value: m['id'].toString(),
@@ -311,24 +312,24 @@ class _ShippingAddressFormPageState extends State<ShippingAddressAdd> {
                       if (val != null) _fetchNeighborhoods(val);
                     },
                     validator: (v) =>
-                        v == null ? 'Seleccione un municipio' : null,
+                        v == null ? 'addresses.select_municipality'.tr() : null,
                   ),
                   const SizedBox(height: 14),
                   DropdownButtonFormField<String>(
                     value: neighborhoodId,
-                    decoration: _inputDecoration('Barrio'),
+                    decoration: _inputDecoration('addresses.neighborhood_field'.tr()),
                     items: neighborhoods
                         .map((n) => DropdownMenuItem(
                             value: n['id'].toString(),
                             child: Text(n['nombre'])))
                         .toList(),
                     onChanged: (val) => setState(() => neighborhoodId = val),
-                    validator: (v) => v == null ? 'Seleccione un barrio' : null,
+                    validator: (v) => v == null ? 'addresses.select_neighborhood'.tr() : null,
                   ),
                   const SizedBox(height: 14),
                   TextFormField(
                     controller: indicacionesController,
-                    decoration: _inputDecoration('Indicaciones adicionales'),
+                    decoration: _inputDecoration('addresses.additional_instructions'.tr()),
                     maxLines: 3,
                   ),
                   const SizedBox(height: 28),
@@ -356,8 +357,8 @@ class _ShippingAddressFormPageState extends State<ShippingAddressAdd> {
                       ),
                       child: Text(
                         isEditing
-                            ? 'Actualizar dirección'
-                            : 'Guardar dirección',
+                            ? 'addresses.update'.tr()
+                            : 'addresses.save'.tr(),
                         style: const TextStyle(
                           color: Colors.white,
                           fontSize: 16,

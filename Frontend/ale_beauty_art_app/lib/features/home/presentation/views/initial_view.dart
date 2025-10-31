@@ -5,6 +5,7 @@ import 'package:ale_beauty_art_app/features/home/presentation/widgets/notificati
 import 'package:ale_beauty_art_app/features/notifications/presentation/bloc/notification_bloc.dart';
 import 'package:ale_beauty_art_app/features/products/presentation/bloc/product_bloc.dart';
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:ale_beauty_art_app/features/navigation/bloc/navigation_bloc.dart';
@@ -22,6 +23,8 @@ class InitialView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Depend on locale changes to rebuild this screen immediately when language switches
+    final currentLocale = context.locale;
     final authState = context.read<AuthBloc>().state;
     if (authState is AuthSuccess) {
       context.read<NotificationBloc>().add(
@@ -67,17 +70,17 @@ class InitialView extends StatelessWidget {
                     int index = 0;
                     if (state is NavigationUpdated) index = state.selectedIndex;
 
-                    if (index == 1) return const ProductsPageView();
-                    if (index == 2) return const CategoriesPageView();
-                    if (index == 3) return const CartPageView();
-                    if (index == 4) return const ProfileView();
+                    if (index == 1) return ProductsPageView();
+                    if (index == 2) return CategoriesPageView();
+                    if (index == 3) return CartPageView();
+                    if (index == 4) return ProfileView();
 
                     return _homeContent(context);
                   },
                 ),
               ),
             ),
-            bottomNavigationBar: _buildBottomNav(context),
+            bottomNavigationBar: _buildBottomNav(context, currentLocale),
           ),
 // Reemplaza el FloatingActionButton completo con esto:
 
@@ -185,7 +188,7 @@ class InitialView extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _sectionHeader("Productos populares", () {}),
+                  _sectionHeader("home.popular_products".tr(), () {}),
                   const SizedBox(height: 20),
                   const SizedBox(height: 280, child: ProductsCarousel()),
                 ],
@@ -214,9 +217,9 @@ class InitialView extends StatelessWidget {
             shaderCallback: (bounds) => const LinearGradient(
               colors: [Color(0xFFD95D85), Color(0xFFE58BB1)],
             ).createShader(bounds),
-            child: const Text(
-              'Ver más',
-              style: TextStyle(
+            child: Text(
+              'common.see_more'.tr(),
+              style: const TextStyle(
                 fontWeight: FontWeight.bold,
                 color: Colors.white,
               ),
@@ -227,7 +230,7 @@ class InitialView extends StatelessWidget {
     );
   }
 
-  Widget _buildBottomNav(BuildContext context) {
+  Widget _buildBottomNav(BuildContext context, Locale locale) {
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
@@ -277,12 +280,12 @@ class InitialView extends StatelessWidget {
                 context.read<NavigationBloc>().add(NavigationTabChanged(index));
               }
             },
-            tabs: const [
-              GButton(icon: Icons.home_rounded, text: 'Inicio'),
-              GButton(icon: Icons.grid_view_rounded, text: 'Productos'),
-              GButton(icon: Icons.category_rounded, text: 'Categorías'),
-              GButton(icon: Icons.shopping_cart_rounded, text: 'Carrito'),
-              GButton(icon: Icons.person, text: 'Perfil'),
+            tabs: [
+              GButton(icon: Icons.home_rounded, text: 'nav.home'.tr()),
+              GButton(icon: Icons.grid_view_rounded, text: 'nav.products'.tr()),
+              GButton(icon: Icons.category_rounded, text: 'nav.categories'.tr()),
+              GButton(icon: Icons.shopping_cart_rounded, text: 'nav.cart'.tr()),
+              GButton(icon: Icons.person, text: 'nav.profile'.tr()),
             ],
           ),
         ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/services.dart';
 import '../../../../models/product.dart';
 import '../widgets/info_product_widget.dart';
@@ -118,8 +119,8 @@ class ProductsByCategoryView extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 24),
-          const Text(
-            'No hay productos',
+          Text(
+            'products.empty_title'.tr(),
             style: TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.w600,
@@ -128,7 +129,7 @@ class ProductsByCategoryView extends StatelessWidget {
           ),
           const SizedBox(height: 8),
           Text(
-            'No se encontraron productos\nen esta categoría',
+            'products.empty_subtitle'.tr(),
             textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: 14,
@@ -160,7 +161,7 @@ class ProductsByCategoryView extends StatelessWidget {
           Expanded(
             child: _filterButton(
               icon: Icons.tune_rounded,
-              label: 'Filtros',
+              label: 'products.filters'.tr(),
               onTap: () {
                 // TODO: Abrir panel de filtros
               },
@@ -172,7 +173,7 @@ class ProductsByCategoryView extends StatelessWidget {
           Expanded(
             child: _filterButton(
               icon: Icons.swap_vert_rounded,
-              label: 'Ordenar',
+              label: 'products.sort'.tr(),
               onTap: () {
                 // TODO: Abrir opciones de ordenamiento
               },

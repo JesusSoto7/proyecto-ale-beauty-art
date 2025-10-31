@@ -2,6 +2,7 @@ import 'package:ale_beauty_art_app/features/auth/bloc/auth_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:easy_localization/easy_localization.dart';
 import '../bloc/shipping_address_bloc.dart';
 import '../bloc/shipping_address_event.dart';
 import '../bloc/shipping_address_state.dart';
@@ -33,9 +34,9 @@ class ShippingAddressPage extends StatelessWidget {
             backgroundColor: Colors.white,
             elevation: 0,
             centerTitle: true,
-            title: const Text(
-              'Mis direcciones',
-              style: TextStyle(
+            title: Text(
+              'addresses.title'.tr(),
+              style: const TextStyle(
                 color: Colors.black,
                 fontSize: 17,
                 fontWeight: FontWeight.w600,
@@ -61,7 +62,7 @@ class ShippingAddressPage extends StatelessWidget {
             if (state.addresses.isEmpty) {
               return Center(
                 child: Text(
-                  'No tienes direcciones.\nAgrega una nueva.',
+                  'addresses.empty'.tr(),
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 16,
@@ -123,9 +124,9 @@ class ShippingAddressPage extends StatelessWidget {
                                   ),
                                   borderRadius: BorderRadius.circular(10),
                                 ),
-                                child: const Text(
-                                  'Predeterminada',
-                                  style: TextStyle(
+                                child: Text(
+                                  'addresses.default'.tr(),
+                                  style: const TextStyle(
                                     color: Colors.white,
                                     fontWeight: FontWeight.w600,
                                     fontSize: 12,
@@ -144,7 +145,7 @@ class ShippingAddressPage extends StatelessWidget {
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          'Barrio: ${a.neighborhood?['nombre'] ?? "-"}',
+                          '${'addresses.neighborhood'.tr()} ${a.neighborhood?['nombre'] ?? "-"}',
                           style: TextStyle(
                             fontSize: 13,
                             color: Colors.grey[600],
@@ -156,7 +157,7 @@ class ShippingAddressPage extends StatelessWidget {
                           children: [
                             _actionIcon(
                               icon: Icons.edit,
-                              tooltip: 'Editar',
+                              tooltip: 'addresses.edit'.tr(),
                               gradient: const LinearGradient(
                                 colors: [Color(0xFFD95D85), Color(0xFFE58BB1)],
                               ),
@@ -179,7 +180,7 @@ class ShippingAddressPage extends StatelessWidget {
                             const SizedBox(width: 12),
                             _actionIcon(
                               icon: Icons.delete,
-                              tooltip: 'Eliminar',
+                              tooltip: 'addresses.delete'.tr(),
                               gradient: const LinearGradient(
                                 colors: [Color(0xFFFF6B6B), Color(0xFFF44336)],
                               ),
@@ -192,7 +193,7 @@ class ShippingAddressPage extends StatelessWidget {
                             const SizedBox(width: 12),
                             _actionIcon(
                               icon: Icons.star_rounded,
-                              tooltip: 'Establecer como predeterminada',
+                              tooltip: 'addresses.set_default'.tr(),
                               gradient: LinearGradient(
                                 colors: a.predeterminada
                                     ? [
@@ -221,7 +222,7 @@ class ShippingAddressPage extends StatelessWidget {
           } else if (state is ShippingAddressError) {
             return Center(
               child: Text(
-                'Error: ${state.message}',
+                '${'common.error'.tr()}: ${state.message}',
                 style: const TextStyle(color: Colors.red),
               ),
             );

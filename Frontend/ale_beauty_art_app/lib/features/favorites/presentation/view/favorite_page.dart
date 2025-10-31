@@ -6,6 +6,7 @@ import 'package:ale_beauty_art_app/models/product.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:ale_beauty_art_app/features/favorites/presentation/bloc/favorite_bloc.dart';
 import 'package:ale_beauty_art_app/features/auth/bloc/auth_bloc.dart';
 
@@ -39,9 +40,9 @@ class FavoritePage extends StatelessWidget {
             backgroundColor: Colors.white,
             elevation: 0,
             centerTitle: true,
-            title: const Text(
-              'Mis Favoritos',
-              style: TextStyle(
+            title: Text(
+              'favorites.title'.tr(),
+              style: const TextStyle(
                 color: Color.fromARGB(255, 0, 0, 0),
                 fontSize: 18,
                 fontWeight: FontWeight.w600,
@@ -71,10 +72,10 @@ class FavoritePage extends StatelessWidget {
           if (state is FavoriteSuccess) {
             final favorites = state.favorites;
             if (favorites.isEmpty) {
-              return const Center(
+              return Center(
                 child: Text(
-                  "No tienes productos favoritos.",
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                  'favorites.empty'.tr(),
+                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
                 ),
               );
             }

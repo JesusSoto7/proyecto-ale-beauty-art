@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:ale_beauty_art_app/features/notifications/presentation/bloc/notification_bloc.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class NotificationsPageView extends StatelessWidget {
   const NotificationsPageView({super.key});
@@ -35,7 +36,7 @@ class NotificationsPageView extends StatelessWidget {
                     ),
                     SizedBox(width: 10),
                     Text(
-                      'Notificaciones',
+                      'notifications.title'.tr(),
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 24,
@@ -78,7 +79,7 @@ class NotificationsPageView extends StatelessWidget {
                                 ),
                                 SizedBox(height: 16),
                                 Text(
-                                  'Error al cargar notificaciones',
+                                  'notifications.load_error'.tr(),
                                   style: TextStyle(
                                     fontSize: 16,
                                     color: Colors.grey[600],
@@ -130,7 +131,7 @@ class NotificationsPageView extends StatelessWidget {
                                   ),
                                   SizedBox(height: 16),
                                   Text(
-                                    'No tienes notificaciones',
+                                    'notifications.empty_title'.tr(),
                                     style: TextStyle(
                                       fontSize: 18,
                                       color: Colors.grey[600],
@@ -138,7 +139,7 @@ class NotificationsPageView extends StatelessWidget {
                                   ),
                                   SizedBox(height: 8),
                                   Text(
-                                    'Cuando recibas notificaciones\naparecerán aquí',
+                                    'notifications.empty_subtitle'.tr(),
                                     textAlign: TextAlign.center,
                                     style: TextStyle(
                                       fontSize: 14,
