@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/services.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:ale_beauty_art_app/features/products/presentation/views/product_detail_loader.dart';
 
 class OrderDetailPageView extends StatefulWidget {
   final int orderId;
@@ -543,6 +544,7 @@ class _ProductsCard extends StatelessWidget {
           final p = entry.value;
           final mp = p as Map<String, dynamic>;
           final nombre = mp['nombre_producto'] ?? mp['name'] ?? 'cart.unnamed_product'.tr();
+          final descripcion = (mp['descripcion'] ?? mp['description'] ?? mp['product']?['descripcion'] ?? mp['product']?['description'])?.toString() ?? '';
           final cantidad = int.tryParse(mp['cantidad']?.toString() ?? '1') ?? 1;
 
           // 💰 USAR LOS CAMPOS CORRECTOS
@@ -585,11 +587,10 @@ class _ProductsCard extends StatelessWidget {
                     );
                     return;
                   }
-
-                  Product product;
                   final rawProd = mp['product'];
-
                   if (rawProd is Map<String, dynamic>) {
+                    // Si viene el producto completo, construimos y navegamos directo
+                    Product product;
                     try {
                       product = Product.fromJson(rawProd);
                     } catch (_) {
@@ -615,33 +616,21 @@ class _ProductsCard extends StatelessWidget {
                         imagenUrl: rawProd['imagen_url'] ?? imagen?.toString(),
                       );
                     }
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => ProductDetailView(product: product),
+                      ),
+                    );
                   } else {
-                    final subCat = mp['sub_category'] as Map<String, dynamic>?;
-                    final cat = subCat?['category'] ??
-                        mp['category'] as Map<String, dynamic>?;
-
-                    product = Product(
-                      id: productId,
-                      nombreProducto: nombre,
-                      precioProducto: precioOriginal.round(),
-                      descripcion: mp['descripcion']?.toString() ?? '',
-                      subCategoryId: subCat?['id'] ?? 0,
-                      stock: int.tryParse(mp['stock']?.toString() ?? '') ??
-                          cantidad,
-                      nombreSubCategoria: subCat?['nombre']?.toString() ?? '',
-                      categoryId: cat?['id'] ?? 0,
-                      nombreCategoria:
-                          cat?['nombre_categoria']?.toString() ?? '',
-                      imagenUrl: imagen?.toString(),
+                    // Si no hay producto completo, cargar por ID
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => ProductDetailLoader(productId: productId),
+                      ),
                     );
                   }
-
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => ProductDetailView(product: product),
-                    ),
-                  );
                 },
                 child: Row(
                   children: [
@@ -734,6 +723,18 @@ class _ProductsCard extends StatelessWidget {
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
                           ),
+                          if (descripcion.isNotEmpty) ...[
+                            const SizedBox(height: 4),
+                            Text(
+                              descripcion,
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: Colors.grey[700],
+                              ),
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ],
                           const SizedBox(height: 6),
                           Container(
                             padding: const EdgeInsets.symmetric(
