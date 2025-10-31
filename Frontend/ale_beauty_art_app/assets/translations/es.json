@@ -122,7 +122,26 @@
     "title": "Mis Pedidos",
     "retry_hint": "Desliza para reintentar",
     "empty_title": "No tienes pedidos",
-    "empty_subtitle": "¡Empieza a comprar ahora!"
+    "empty_subtitle": "¡Empieza a comprar ahora!",
+    "detail": {
+      "title": "Detalle del Pedido",
+      "order": "Orden",
+      "section_info": "Información del Pedido",
+      "payment_date": "Fecha de pago",
+      "shipping_address": "Dirección de envío",
+      "payment_method": "Método de pago",
+      "payment_unavailable": "Pago no disponible",
+      "not_available": "No disponible",
+      "products_title": "Productos ({count})",
+      "quantity": "Cantidad: {count}",
+      "per_unit": "c/u",
+      "summary_title": "Resumen de Pago",
+      "subtotal": "Subtotal",
+      "discounts": "Descuentos",
+      "shipping": "Envío",
+      "total_paid": "Total Pagado",
+      "product_detail_missing": "Producto sin información de detalle"
+    }
   },
   "addresses": {
     "title": "Mis direcciones",

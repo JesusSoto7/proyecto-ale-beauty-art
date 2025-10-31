@@ -122,7 +122,26 @@
     "title": "My Orders",
     "retry_hint": "Pull to retry",
     "empty_title": "You have no orders",
-    "empty_subtitle": "Start shopping now!"
+    "empty_subtitle": "Start shopping now!",
+    "detail": {
+      "title": "Order details",
+      "order": "Order",
+      "section_info": "Order information",
+      "payment_date": "Payment date",
+      "shipping_address": "Shipping address",
+      "payment_method": "Payment method",
+      "payment_unavailable": "Payment not available",
+      "not_available": "Not available",
+      "products_title": "Products ({count})",
+      "quantity": "Quantity: {count}",
+      "per_unit": "each",
+      "summary_title": "Payment summary",
+      "subtotal": "Subtotal",
+      "discounts": "Discounts",
+      "shipping": "Shipping",
+      "total_paid": "Total paid",
+      "product_detail_missing": "Product detail not available"
+    }
   },
   "addresses": {
     "title": "My addresses",
