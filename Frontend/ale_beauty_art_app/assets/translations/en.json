@@ -39,6 +39,9 @@
   "home": {
     "popular_products": "Popular products"
   },
+  "search": {
+    "placeholder": "Search products"
+  },
   "auth": {
     "no_account": "Don't have an account? ",
     "register": "Sign up"
