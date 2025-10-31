@@ -28,8 +28,26 @@ function Register() {
 
     // palabras betadas
     const badWords = [
-      "tonto", "idiota", "imbecil", "estupido", "pendejo",
-      "mierda", "puta", "perra", "cabron", "malparido"
+        // Insultos comunes
+        "tonto", "idiota", "imbecil", "estupido", "pendejo", "baboso",
+        "mamón", "gilipollas", "cretino", "tarado", "subnormal", "mongol",
+        "ignorante", "inutil", "payaso", "majadero", "cabeza de chorlito",
+
+        // Palabras muy ofensivas/sexuales
+        "mierda", "puta", "perra", "cabron", "malparido", "chingada", "coño",
+        "verga", "pito", "culo", "joder", "polla", "zorra", "guarra",
+        "marica", "maricón", "culero", "chúpamela", "p*to", "put*s",
+        "coger", "follar", "felación", "mamada", "paja", "semen", "vagina",
+        "mierdoso", "putazo", "reputa", "maldito", "ch*nga", "penetracion",
+        "nazi", "fascista", "racista", "terrorista", "pedofilo", "violador",
+
+        // Variaciones y diminutivos
+        "tontito", "imbecilucho", "pendejada", "mierdecilla", "putilla",
+        "cabronazo", "estupidez", "estupidoz", "gilipollez",
+
+        // Términos para evitar (ej. nombres de usuario)
+        "admin", "administrador", "moderador", "root", "sistema", "soporte",
+        "webmaster", "oficial", "cuentaoficial"
     ];
 
     if (!nombre.trim()) {

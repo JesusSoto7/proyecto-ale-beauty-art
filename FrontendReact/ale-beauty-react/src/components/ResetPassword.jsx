@@ -5,6 +5,7 @@ import { resetPassword } from "../services/authService";
 import ale_logo from "../assets/images/ale_logo.jpg";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
+import { useAlert } from "../components/AlertProvider.jsx";
 
 function ResetPassword() {
   const [password, setPassword] = useState("");
@@ -17,15 +18,24 @@ function ResetPassword() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const { lang } = useParams();
+  const { addAlert } = useAlert();
   const { t } = useTranslation();
-
-  
 
   const resetToken =
     searchParams.get("reset_password_token") || searchParams.get("token");
-
-  console.log('ResetPassword mounted, token=', resetToken, 'searchParams=', Object.fromEntries(searchParams.entries()))
   const emailFromQuery = searchParams.get("email") || "";
+
+  // Validación de contraseña
+  const validatePassword = (pwd) => {
+    const errors = [];
+    if (pwd.length < 6)
+      errors.push("La contraseña debe tener al menos 6 caracteres.");
+    if (!/[0-9]/.test(pwd))
+      errors.push("Debe contener al menos un número.");
+    if (/\s/.test(pwd))
+      errors.push("No puede contener espacios.");
+    return errors;
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -33,13 +43,24 @@ function ResetPassword() {
     setLoading(true);
 
     if (!resetToken) {
-      setError(t("resetPassword.missingToken") || "Token missing");
+      // setError("Token de restablecimiento no encontrado.");
+      addAlert("Token de restablecimiento no encontrado.", "warning", 6000);
+      setLoading(false);
+      return;
+    }
+
+    // Validar reglas de contraseña
+    const passwordErrors = validatePassword(password);
+    if (passwordErrors.length > 0) {
+      // setError(passwordErrors.join(" "));
+      addAlert(passwordErrors.join(" "), "warning", 6000);
       setLoading(false);
       return;
     }
 
     if (password !== passwordConfirmation) {
-      setError(t("resetPassword.passwordMismatch"));
+      // setError("Las contraseñas no coinciden.");
+      addAlert("Las contraseñas no coinciden.", "warning", 6000);
       setLoading(false);
       return;
     }
@@ -49,17 +70,19 @@ function ResetPassword() {
         reset_password_token: resetToken,
         password,
         password_confirmation: passwordConfirmation,
-        email: emailFromQuery || undefined
+        email: emailFromQuery || undefined,
       });
       setSuccess(true);
-      // Redirect to login after 3 seconds
       setTimeout(() => {
         navigate(`/${lang || ""}/login`);
       }, 3000);
     } catch (err) {
-      // Maneja respuestas del backend que devuelvan JSON con errors
-      const message = err?.message || (err?.errors && err.errors.join(", ")) || "Error";
-      setError(message);
+      const message =
+        err?.message ||
+        (err?.errors && err.errors.join(", ")) ||
+        "Error al restablecer la contraseña.";
+      // setError(message);
+      addAlert(message, "error", 6000);
     } finally {
       setLoading(false);
     }
@@ -91,87 +114,72 @@ function ResetPassword() {
           </div>
         ) : (
           <>
-            {/* Si no hay token mostramos mensaje útil */}
             {!resetToken ? (
-              <div>
-                <div className="alert alert-warning" role="alert">
-                  {t("resetPassword.missingToken") ||
-                    "No se encontró el token de restablecimiento en la URL. Asegúrate de abrir el enlace recibido por correo."}
-                </div>
-                <p className="text-secondary small">
-                  {t("resetPassword.ifNotWork") ||
-                    "Si el enlace no funciona, copia manualmente el token del correo y pégalo en la URL como ?reset_password_token=..."}
-                </p>
+              <div className="alert alert-warning" role="alert">
+                {t("resetPassword.missingToken") ||
+                  "No se encontró el token de restablecimiento en la URL."}
               </div>
             ) : (
-              <>
-                {/* Formulario */}
-                <form onSubmit={handleSubmit} className="mb-4">
-                  <div className="mb-3 position-relative">
-                    <input
-                      type={showPassword ? "text" : "password"}
-                      className="login-input pe-5"
-                      placeholder={t("resetPassword.newPasswordPlaceholder")}
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      required
-                      minLength={6}
-                    />
-                    <button
-                      type="button"
-                      className="btn position-absolute top-50 end-0 translate-middle-y border-0 bg-transparent"
-                      onClick={() => setShowPassword(!showPassword)}
-                    >
-                      {showPassword ? (
-                        <VisibilityOff style={{ color: "#ccc" }} />
-                      ) : (
-                        <Visibility style={{ color: "#ccc" }} />
-                      )}
-                    </button>
-                  </div>
-
-                  <div className="mb-3 position-relative">
-                    <input
-                      type={
-                        showPasswordConfirmation ? "text" : "password"
-                      }
-                      className="login-input pe-5"
-                      placeholder={t(
-                        "resetPassword.confirmPasswordPlaceholder"
-                      )}
-                      value={passwordConfirmation}
-                      onChange={(e) =>
-                        setPasswordConfirmation(e.target.value)
-                      }
-                      required
-                      minLength={6}
-                    />
-                    <button
-                      type="button"
-                      className="btn position-absolute top-50 end-0 translate-middle-y border-0 bg-transparent"
-                      onClick={() =>
-                        setShowPasswordConfirmation(!showPasswordConfirmation)
-                      }
-                    >
-                      {showPasswordConfirmation ? (
-                        <VisibilityOff style={{ color: "#ccc" }} />
-                      ) : (
-                        <Visibility style={{ color: "#ccc" }} />
-                      )}
-                    </button>
-                  </div>
-
-                  {error && <p className="text-danger small">{error}</p>}
-
+              <form onSubmit={handleSubmit} className="mb-4">
+                <div className="mb-3 position-relative">
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    className="login-input pe-5"
+                    placeholder={t("resetPassword.newPasswordPlaceholder")}
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                  />
                   <button
-                    type="submit"
-                    className="rosa-fondo btn-light w-100 login-btn"
-                    disabled={loading}
+                    type="button"
+                    className="btn position-absolute top-50 end-0 translate-middle-y border-0 bg-transparent"
+                    onClick={() => setShowPassword(!showPassword)}
                   >
-                    {loading ? "..." : t("resetPassword.resetButton")}
+                    {showPassword ? (
+                      <VisibilityOff style={{ color: "#ccc" }} />
+                    ) : (
+                      <Visibility style={{ color: "#ccc" }} />
+                    )}
                   </button>
-                </form>
-              </>
+                </div>
+
+                <div className="mb-3 position-relative">
+                  <input
+                    type={showPasswordConfirmation ? "text" : "password"}
+                    className="login-input pe-5"
+                    placeholder={t("resetPassword.confirmPasswordPlaceholder")}
+                    value={passwordConfirmation}
+                    onChange={(e) => setPasswordConfirmation(e.target.value)}
+                  />
+                  <button
+                    type="button"
+                    className="btn position-absolute top-50 end-0 translate-middle-y border-0 bg-transparent"
+                    onClick={() =>
+                      setShowPasswordConfirmation(!showPasswordConfirmation)
+                    }
+                  >
+                    {showPasswordConfirmation ? (
+                      <VisibilityOff style={{ color: "#ccc" }} />
+                    ) : (
+                      <Visibility style={{ color: "#ccc" }} />
+                    )}
+                  </button>
+                </div>
+
+                {/* Recuadro de errores */}
+                {error && (
+                  <div className="alert alert-danger small" role="alert">
+                    {error}
+                  </div>
+                )}
+
+                <button
+                  type="submit"
+                  className="rosa-fondo btn-light w-100 login-btn"
+                  disabled={loading}
+                >
+                  {loading ? "..." : t("resetPassword.resetButton")}
+                </button>
+              </form>
             )}
           </>
         )}
