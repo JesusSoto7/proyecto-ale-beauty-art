@@ -7,7 +7,8 @@
     "select_language": "Select language",
     "english": "English",
     "spanish": "Spanish",
-    "see_more": "See more"
+    "see_more": "See more",
+    "continue": "Continue"
   },
   "categories": {
     "products_not_available": "Products not available yet"
@@ -106,7 +107,16 @@
   },
   "cart": {
     "title": "My Cart",
-    "empty": "Add products to your cart"
+    "empty": "Add products to your cart",
+    "subtotal": "Subtotal",
+    "discounts": "Discounts",
+    "shipping_cost": "Shipping cost",
+    "total": "Total",
+    "complete_purchase": "Complete purchase",
+    "confirm_delete_title": "Remove product",
+    "confirm_delete_message": "Do you want to remove \"{name}\" from the cart?",
+    "delete": "Delete",
+    "unnamed_product": "Unnamed product"
   },
   "orders": {
     "title": "My Orders",
@@ -141,7 +151,59 @@
     "save": "Save address",
     "update": "Update address",
     "shipping_title": "Shipping address",
-    "select_empty": "You have no saved addresses.\nAdd one to continue."
+    "select_empty": "You have no saved addresses.\nAdd one to continue.",
+    "select_required": "You must select an address"
+  },
+  "payment": {
+    "title": "Pay",
+    "processing": "Processing payment...",
+    "summary": {
+      "total_to_pay": "Total to pay",
+      "secure_payment": "Secure payment"
+    },
+    "security_text": "100% secure and encrypted payment",
+    "sections": {
+      "card_data": "Card details",
+      "personal_info": "Personal information"
+    },
+    "fields": {
+      "card_number": "Card number",
+      "month": "Month (MM)",
+      "year": "Year (YY)",
+      "cvv": "CVV",
+      "cardholder_name": "Cardholder name",
+      "doc_type": "Doc. type",
+      "doc_number": "Document number",
+      "email": "Email"
+    },
+    "validators": {
+      "required": "Required",
+      "invalid_number": "Invalid number",
+      "invalid": "Invalid",
+      "invalid_email": "Invalid email"
+    },
+    "errors": {
+      "complete_fields": "Please complete all fields correctly",
+      "tokenize_failed": "Failed to tokenize the card",
+      "invalid_card": "No valid card detected. Try another."
+    },
+    "status_message": "Payment {status}: {detail}",
+    "try_again": "Try again"
+  },
+  "payment_success": {
+    "title": "Payment approved",
+    "header": "Payment approved!",
+    "labels": {
+      "method": "Method",
+      "type": "Type",
+      "card": "Card",
+      "holder": "Holder",
+      "email": "Email"
+    },
+    "type": {
+      "credit_card": "Credit card",
+      "debit_card": "Debit card"
+    }
   },
   "notifications": {
     "title": "Notifications",

@@ -138,8 +138,8 @@ class _CartPageViewState extends State<CartPageView> {
                   itemCount: state.products.length,
                   itemBuilder: (context, index) {
                     final product = state.products[index];
-                    final nombre =
-                        product['nombre_producto'] ?? 'Producto sin nombre';
+          final nombre =
+            product['nombre_producto'] ?? 'cart.unnamed_product'.tr();
                     final imageUrl = product['imagen_url'] ?? '';
                     final cantidad = product['cantidad'] ?? 1;
 
@@ -446,13 +446,13 @@ class _CartPageViewState extends State<CartPageView> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    _priceRow('Subtotal', subtotal),
+                    _priceRow('cart.subtotal'.tr(), subtotal),
                     if (totalDescuentos > 0)
-                      _priceRow('Descuentos', -totalDescuentos,
+                      _priceRow('cart.discounts'.tr(), -totalDescuentos,
                           isDiscount: true),
-                    _priceRow('Costo de envío', shippingCost),
+                    _priceRow('cart.shipping_cost'.tr(), shippingCost),
                     const Divider(height: 20),
-                    _priceRow('Total', total, isBold: true),
+                    _priceRow('cart.total'.tr(), total, isBold: true),
                     const SizedBox(height: 18),
 
                     // 🛒 Botón de compra
@@ -503,9 +503,9 @@ class _CartPageViewState extends State<CartPageView> {
                             borderRadius: BorderRadius.circular(14),
                           ),
                         ),
-                        child: const Text(
-                          'Completar compra',
-                          style: TextStyle(
+                        child: Text(
+                          'cart.complete_purchase'.tr(),
+                          style: const TextStyle(
                             color: Colors.white,
                             fontSize: 17,
                             fontWeight: FontWeight.w600,
@@ -568,15 +568,15 @@ class _CartPageViewState extends State<CartPageView> {
         titlePadding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
         contentPadding: const EdgeInsets.fromLTRB(20, 12, 20, 0),
         actionsPadding: const EdgeInsets.fromLTRB(12, 8, 12, 12),
-        title: const Row(
+        title: Row(
           children: [
-            Icon(Icons.delete_forever_rounded, color: Color(0xFFD95D85)),
-            SizedBox(width: 8),
-            Text('Eliminar producto'),
+            const Icon(Icons.delete_forever_rounded, color: Color(0xFFD95D85)),
+            const SizedBox(width: 8),
+            Text('cart.confirm_delete_title'.tr()),
           ],
         ),
         content: Text(
-          '¿Deseas eliminar "$nombre" del carrito?',
+          'cart.confirm_delete_message'.tr(namedArgs: {"name": nombre}),
           style: const TextStyle(color: Colors.black87),
         ),
         actions: [
@@ -586,7 +586,7 @@ class _CartPageViewState extends State<CartPageView> {
               foregroundColor: Colors.black87,
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
             ),
-            child: const Text('Cancelar'),
+            child: Text('common.cancel'.tr()),
           ),
           ElevatedButton(
             onPressed: () => Navigator.pop(context, true),
@@ -597,10 +597,9 @@ class _CartPageViewState extends State<CartPageView> {
                   borderRadius: BorderRadius.circular(10)),
               elevation: 0,
             ),
-            child: const Text(
-              'Eliminar',
-              style:
-                  TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
+            child: Text(
+              'cart.delete'.tr(),
+              style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
             ),
           ),
         ],

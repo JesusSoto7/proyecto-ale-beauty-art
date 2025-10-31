@@ -7,7 +7,8 @@
     "select_language": "Seleccionar idioma",
     "english": "Inglés",
     "spanish": "Español",
-    "see_more": "Ver más"
+    "see_more": "Ver más",
+    "continue": "Continuar"
   },
   "categories": {
     "products_not_available": "Productos no disponibles todavía"
@@ -106,7 +107,16 @@
   },
   "cart": {
     "title": "Mi Carrito",
-    "empty": "Agrega productos a tu carrito"
+    "empty": "Agrega productos a tu carrito",
+    "subtotal": "Subtotal",
+    "discounts": "Descuentos",
+    "shipping_cost": "Costo de envío",
+    "total": "Total",
+    "complete_purchase": "Completar compra",
+    "confirm_delete_title": "Eliminar producto",
+    "confirm_delete_message": "¿Deseas eliminar \"{name}\" del carrito?",
+    "delete": "Eliminar",
+    "unnamed_product": "Producto sin nombre"
   },
   "orders": {
     "title": "Mis Pedidos",
@@ -141,7 +151,59 @@
     "save": "Guardar dirección",
     "update": "Actualizar dirección",
     "shipping_title": "Dirección de envío",
-    "select_empty": "No tienes direcciones guardadas.\nAgrega una para continuar."
+    "select_empty": "No tienes direcciones guardadas.\nAgrega una para continuar.",
+    "select_required": "Debes seleccionar una dirección"
+  },
+  "payment": {
+    "title": "Pagar",
+    "processing": "Procesando pago...",
+    "summary": {
+      "total_to_pay": "Total a pagar",
+      "secure_payment": "Pago seguro"
+    },
+    "security_text": "Pago 100% seguro y encriptado",
+    "sections": {
+      "card_data": "Datos de la tarjeta",
+      "personal_info": "Información personal"
+    },
+    "fields": {
+      "card_number": "Número de tarjeta",
+      "month": "Mes (MM)",
+      "year": "Año (YY)",
+      "cvv": "CVV",
+      "cardholder_name": "Nombre del titular",
+      "doc_type": "Tipo doc.",
+      "doc_number": "Número documento",
+      "email": "Correo electrónico"
+    },
+    "validators": {
+      "required": "Requerido",
+      "invalid_number": "Número inválido",
+      "invalid": "Inválido",
+      "invalid_email": "Email inválido"
+    },
+    "errors": {
+      "complete_fields": "Por favor completa todos los campos correctamente",
+      "tokenize_failed": "Error al tokenizar la tarjeta",
+      "invalid_card": "No se detectó una tarjeta válida. Intenta otra."
+    },
+    "status_message": "Pago {status}: {detail}",
+    "try_again": "Intenta nuevamente"
+  },
+  "payment_success": {
+    "title": "Pago aprobado",
+    "header": "¡Pago aprobado!",
+    "labels": {
+      "method": "Método",
+      "type": "Tipo",
+      "card": "Tarjeta",
+      "holder": "Titular",
+      "email": "Email"
+    },
+    "type": {
+      "credit_card": "Tarjeta de crédito",
+      "debit_card": "Tarjeta débito"
+    }
   },
   "notifications": {
     "title": "Notificaciones",

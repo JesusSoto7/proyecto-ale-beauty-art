@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ale_beauty_art_app/features/checkout/payment/presentation/view/payment_success_page.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class PaymentPage extends StatefulWidget {
   final int orderId;
@@ -103,8 +104,7 @@ class _PaymentPageState extends State<PaymentPage> {
 
   Future<void> _processPayment() async {
     if (!_formKey.currentState!.validate()) {
-      _showMessage("Por favor completa todos los campos correctamente",
-          isError: true);
+      _showMessage('payment.errors.complete_fields'.tr(), isError: true);
       return;
     }
 
@@ -124,7 +124,7 @@ class _PaymentPageState extends State<PaymentPage> {
     );
 
     if (token == null) {
-      _showMessage("Error al tokenizar la tarjeta", isError: true);
+      _showMessage('payment.errors.tokenize_failed'.tr(), isError: true);
       setState(() => _loading = false);
       return;
     }
@@ -136,8 +136,7 @@ class _PaymentPageState extends State<PaymentPage> {
     if (paymentMethod == null ||
         (paymentMethod["payment_type_id"] != "credit_card" &&
             paymentMethod["payment_type_id"] != "debit_card")) {
-      _showMessage("No se detectó una tarjeta válida. Intenta otra.",
-          isError: true);
+      _showMessage('payment.errors.invalid_card'.tr(), isError: true);
       setState(() => _loading = false);
       return;
     }
@@ -193,9 +192,11 @@ class _PaymentPageState extends State<PaymentPage> {
         ),
       );
     } else {
+      final detail = response["detail"] ?? 'payment.try_again'.tr();
       _showMessage(
-          "Pago $status: ${response["detail"] ?? 'Intenta nuevamente'}",
-          isError: true);
+        'payment.status_message'.tr(namedArgs: {"status": status.toString(), "detail": detail.toString()}),
+        isError: true,
+      );
     }
 
     setState(() => _loading = false);
@@ -289,8 +290,8 @@ class _PaymentPageState extends State<PaymentPage> {
             backgroundColor: Colors.white,
             elevation: 0,
             centerTitle: true,
-            title: const Text(
-              'Pagar',
+            title: Text(
+              'payment.title'.tr(),
               style: TextStyle(
                 color: Colors.black87,
                 fontSize: 18,
@@ -320,7 +321,7 @@ class _PaymentPageState extends State<PaymentPage> {
                   ),
                   const SizedBox(height: 20),
                   Text(
-                    'Procesando pago...',
+                    'payment.processing'.tr(),
                     style: TextStyle(
                       fontSize: 16,
                       color: Colors.grey[700],
@@ -360,9 +361,9 @@ class _PaymentPageState extends State<PaymentPage> {
                       ),
                       child: Column(
                         children: [
-                          const Text(
-                            'Total a pagar',
-                            style: TextStyle(
+                          Text(
+                            'payment.summary.total_to_pay'.tr(),
+                            style: const TextStyle(
                               color: Colors.white70,
                               fontSize: 14,
                               fontWeight: FontWeight.w500,
@@ -398,7 +399,7 @@ class _PaymentPageState extends State<PaymentPage> {
                                 ),
                                 const SizedBox(width: 6),
                                 Text(
-                                  'Pago seguro',
+                                  'payment.summary.secure_payment'.tr(),
                                   style: TextStyle(
                                     color: Colors.white.withOpacity(0.9),
                                     fontSize: 12,
@@ -447,9 +448,9 @@ class _PaymentPageState extends State<PaymentPage> {
                                 ),
                               ),
                               const SizedBox(width: 12),
-                              const Text(
-                                'Datos de la tarjeta',
-                                style: TextStyle(
+                              Text(
+                                'payment.sections.card_data'.tr(),
+                                style: const TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.w700,
                                   color: Colors.black87,
@@ -465,7 +466,7 @@ class _PaymentPageState extends State<PaymentPage> {
                             controller: _cardNumber,
                             keyboardType: TextInputType.number,
                             decoration: _inputDecoration(
-                              "Número de tarjeta",
+                              'payment.fields.card_number'.tr(),
                               icon: Icons.credit_card_rounded,
                             ),
                             inputFormatters: [
@@ -474,10 +475,10 @@ class _PaymentPageState extends State<PaymentPage> {
                             ],
                             validator: (value) {
                               if (value == null || value.isEmpty) {
-                                return 'Requerido';
+                                return 'payment.validators.required'.tr();
                               }
                               if (value.length < 13) {
-                                return 'Número inválido';
+                                return 'payment.validators.invalid_number'.tr();
                               }
                               return null;
                             },
@@ -492,20 +493,20 @@ class _PaymentPageState extends State<PaymentPage> {
                                 child: TextFormField(
                                   controller: _expiryMonth,
                                   keyboardType: TextInputType.number,
-                                  decoration: _inputDecoration("Mes (MM)"),
+                                  decoration: _inputDecoration('payment.fields.month'.tr()),
                                   inputFormatters: [
                                     FilteringTextInputFormatter.digitsOnly,
                                     LengthLimitingTextInputFormatter(2),
                                   ],
                                   validator: (value) {
                                     if (value == null || value.isEmpty) {
-                                      return 'Requerido';
+                                      return 'payment.validators.required'.tr();
                                     }
                                     final month = int.tryParse(value);
                                     if (month == null ||
                                         month < 1 ||
                                         month > 12) {
-                                      return 'Inválido';
+                                      return 'payment.validators.invalid'.tr();
                                     }
                                     return null;
                                   },
@@ -516,14 +517,14 @@ class _PaymentPageState extends State<PaymentPage> {
                                 child: TextFormField(
                                   controller: _expiryYear,
                                   keyboardType: TextInputType.number,
-                                  decoration: _inputDecoration("Año (YY)"),
+                                  decoration: _inputDecoration('payment.fields.year'.tr()),
                                   inputFormatters: [
                                     FilteringTextInputFormatter.digitsOnly,
                                     LengthLimitingTextInputFormatter(2),
                                   ],
                                   validator: (value) {
                                     if (value == null || value.isEmpty) {
-                                      return 'Requerido';
+                                      return 'payment.validators.required'.tr();
                                     }
                                     return null;
                                   },
@@ -534,17 +535,17 @@ class _PaymentPageState extends State<PaymentPage> {
                                 child: TextFormField(
                                   controller: _cvv,
                                   keyboardType: TextInputType.number,
-                                  decoration: _inputDecoration("CVV"),
+                                  decoration: _inputDecoration('payment.fields.cvv'.tr()),
                                   inputFormatters: [
                                     FilteringTextInputFormatter.digitsOnly,
                                     LengthLimitingTextInputFormatter(4),
                                   ],
                                   validator: (value) {
                                     if (value == null || value.isEmpty) {
-                                      return 'Requerido';
+                                      return 'payment.validators.required'.tr();
                                     }
                                     if (value.length < 3) {
-                                      return 'Inválido';
+                                      return 'payment.validators.invalid'.tr();
                                     }
                                     return null;
                                   },
@@ -559,13 +560,13 @@ class _PaymentPageState extends State<PaymentPage> {
                           TextFormField(
                             controller: _name,
                             decoration: _inputDecoration(
-                              "Nombre del titular",
+                              'payment.fields.cardholder_name'.tr(),
                               icon: Icons.person_outline_rounded,
                             ),
                             textCapitalization: TextCapitalization.words,
                             validator: (value) {
                               if (value == null || value.isEmpty) {
-                                return 'Requerido';
+                                return 'payment.validators.required'.tr();
                               }
                               return null;
                             },
@@ -609,9 +610,9 @@ class _PaymentPageState extends State<PaymentPage> {
                                 ),
                               ),
                               const SizedBox(width: 12),
-                              const Text(
-                                'Información personal',
-                                style: TextStyle(
+                              Text(
+                                'payment.sections.personal_info'.tr(),
+                                style: const TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.w700,
                                   color: Colors.black87,
@@ -629,7 +630,7 @@ class _PaymentPageState extends State<PaymentPage> {
                                 flex: 1,
                                 child: DropdownButtonFormField<String>(
                                   value: _selectedDocType,
-                                  decoration: _inputDecoration("Tipo doc."),
+                                  decoration: _inputDecoration('payment.fields.doc_type'.tr()),
                                   items: _docTypes.map((type) {
                                     return DropdownMenuItem(
                                       value: type,
@@ -648,13 +649,13 @@ class _PaymentPageState extends State<PaymentPage> {
                                   controller: _docNumber,
                                   keyboardType: TextInputType.number,
                                   decoration:
-                                      _inputDecoration("Número documento"),
+                                      _inputDecoration('payment.fields.doc_number'.tr()),
                                   inputFormatters: [
                                     FilteringTextInputFormatter.digitsOnly,
                                   ],
                                   validator: (value) {
                                     if (value == null || value.isEmpty) {
-                                      return 'Requerido';
+                                      return 'payment.validators.required'.tr();
                                     }
                                     return null;
                                   },
@@ -670,15 +671,15 @@ class _PaymentPageState extends State<PaymentPage> {
                             controller: _email,
                             keyboardType: TextInputType.emailAddress,
                             decoration: _inputDecoration(
-                              "Correo electrónico",
+                              'payment.fields.email'.tr(),
                               icon: Icons.email_outlined,
                             ),
                             validator: (value) {
                               if (value == null || value.isEmpty) {
-                                return 'Requerido';
+                                return 'payment.validators.required'.tr();
                               }
                               if (!value.contains('@')) {
-                                return 'Email inválido';
+                                return 'payment.validators.invalid_email'.tr();
                               }
                               return null;
                             },
@@ -727,7 +728,7 @@ class _PaymentPageState extends State<PaymentPage> {
                                 ),
                                 const SizedBox(width: 12),
                                 Text(
-                                  'Pagar ${formatPriceCOP(widget.amount.toInt())}',
+                                  '${'payment.title'.tr()} ${formatPriceCOP(widget.amount.toInt())}',
                                   style: const TextStyle(
                                     color: Colors.white,
                                     fontSize: 17,
@@ -755,7 +756,7 @@ class _PaymentPageState extends State<PaymentPage> {
                         ),
                         const SizedBox(width: 6),
                         Text(
-                          'Pago 100% seguro y encriptado',
+                          'payment.security_text'.tr(),
                           style: TextStyle(
                             fontSize: 12,
                             color: Colors.grey[600],

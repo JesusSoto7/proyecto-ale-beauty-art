@@ -212,9 +212,9 @@ class _SelectAddressPageState extends State<SelectAddressPage> {
                                             borderRadius:
                                                 BorderRadius.circular(12),
                                           ),
-                                          child: const Text(
-                                            'Predeterminada',
-                                            style: TextStyle(
+                                          child: Text(
+                                            'addresses.default'.tr(),
+                                            style: const TextStyle(
                                               color: Color(0xFFAD476B),
                                               fontSize: 12,
                                               fontWeight: FontWeight.w600,
@@ -275,8 +275,8 @@ class _SelectAddressPageState extends State<SelectAddressPage> {
                         Navigator.pop(context, selectedAddress!.id);
                       } else {
                         ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                              content: Text('Debes seleccionar una dirección')),
+                          SnackBar(
+                              content: Text('addresses.select_required'.tr())),
                         );
                       }
                     },
@@ -301,10 +301,10 @@ class _SelectAddressPageState extends State<SelectAddressPage> {
                           ),
                         ],
                       ),
-                      child: const Center(
+                      child: Center(
                         child: Text(
-                          'Continuar',
-                          style: TextStyle(
+                          'common.continue'.tr(),
+                          style: const TextStyle(
                             color: Colors.white,
                             fontSize: 17,
                             fontWeight: FontWeight.w600,
