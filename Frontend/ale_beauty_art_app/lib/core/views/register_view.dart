@@ -2,6 +2,7 @@ import 'package:ale_beauty_art_app/features/auth/bloc/auth_bloc.dart';
 import 'package:ale_beauty_art_app/styles/colors.dart';
 import 'package:ale_beauty_art_app/styles/text_styles.dart';
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class RegisterPage extends StatefulWidget {
@@ -62,7 +63,7 @@ class _RegisterPageState extends State<RegisterPage> {
           tooltip: '',
           onPressed: () => Navigator.pop(context),
         ),
-        title: const Text('Crear cuenta', style: TextStyle(color: Colors.white)),
+  title: Text('register.title'.tr(), style: const TextStyle(color: Colors.white)),
         centerTitle: true,
       ),
       body: BlocConsumer<AuthBloc, AuthState>(
@@ -70,9 +71,9 @@ class _RegisterPageState extends State<RegisterPage> {
           if (state is AuthSuccess) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: const Text(
-                'Registro exitoso e inicio de sesión',
-                style: TextStyle(
+              content: Text(
+                'register.success_login'.tr(),
+                style: const TextStyle(
                   color: Colors.white, // Texto blanco
                   fontWeight: FontWeight.bold,
                 ),
@@ -121,7 +122,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     children: [
                       const SizedBox(height: 8),
                       Text(
-                        '¡Únete a Ale Beauty Art!',
+                        'register.join_header'.tr(),
                         style: AppTextStyles.title.copyWith(
                           color: AppColors.textPrimary,
                           fontSize: 24,
@@ -133,7 +134,7 @@ class _RegisterPageState extends State<RegisterPage> {
                         controller: _nameController,
                         decoration: InputDecoration(
                           prefixIcon: const Icon(Icons.person_outline),
-                          hintText: 'Nombre',
+                          hintText: 'register.name'.tr(),
                           filled: true,
                           fillColor: Colors.grey.shade100,
                           border: OutlineInputBorder(
@@ -141,8 +142,8 @@ class _RegisterPageState extends State<RegisterPage> {
                             borderSide: BorderSide.none,
                           ),
                         ),
-                        validator: (value) => (value == null || value.isEmpty)
-                            ? 'Por favor ingresa tu nombre'
+            validator: (value) => (value == null || value.isEmpty)
+              ? 'register.name'.tr()
                             : null,
                       ),
                       const SizedBox(height: 12),
@@ -151,7 +152,7 @@ class _RegisterPageState extends State<RegisterPage> {
                         controller: _lastNameController,
                         decoration: InputDecoration(
                           prefixIcon: const Icon(Icons.person),
-                          hintText: 'Apellido',
+                          hintText: 'register.lastname'.tr(),
                           filled: true,
                           fillColor: Colors.grey.shade100,
                           border: OutlineInputBorder(
@@ -159,8 +160,8 @@ class _RegisterPageState extends State<RegisterPage> {
                             borderSide: BorderSide.none,
                           ),
                         ),
-                        validator: (value) => (value == null || value.isEmpty)
-                            ? 'Por favor ingresa tu apellido'
+            validator: (value) => (value == null || value.isEmpty)
+              ? 'register.lastname'.tr()
                             : null,
                       ),
                       const SizedBox(height: 12),
@@ -170,7 +171,7 @@ class _RegisterPageState extends State<RegisterPage> {
                         keyboardType: TextInputType.emailAddress,
                         decoration: InputDecoration(
                           prefixIcon: const Icon(Icons.alternate_email),
-                          hintText: 'Correo electrónico',
+                          hintText: 'register.email'.tr(),
                           filled: true,
                           fillColor: Colors.grey.shade100,
                           border: OutlineInputBorder(
@@ -180,9 +181,9 @@ class _RegisterPageState extends State<RegisterPage> {
                         ),
                         validator: (value) {
                           if (value == null || value.isEmpty) {
-                            return 'Por favor ingresa un correo';
+                            return 'register.email_required'.tr();
                           } else if (!value.contains('@')) {
-                            return 'Ingresa un correo válido';
+                            return 'register.email_invalid'.tr();
                           }
                           return null;
                         },
@@ -194,7 +195,7 @@ class _RegisterPageState extends State<RegisterPage> {
                         keyboardType: TextInputType.phone,
                         decoration: InputDecoration(
                           prefixIcon: const Icon(Icons.phone_iphone),
-                          hintText: 'Teléfono (opcional)',
+                          hintText: 'register.phone_optional'.tr(),
                           filled: true,
                           fillColor: Colors.grey.shade100,
                           border: OutlineInputBorder(
@@ -210,7 +211,7 @@ class _RegisterPageState extends State<RegisterPage> {
                         obscureText: true,
                         decoration: InputDecoration(
                           prefixIcon: const Icon(Icons.lock_outline_rounded),
-                          hintText: 'Contraseña',
+                          hintText: 'register.password'.tr(),
                           filled: true,
                           fillColor: Colors.grey.shade100,
                           border: OutlineInputBorder(
@@ -218,8 +219,8 @@ class _RegisterPageState extends State<RegisterPage> {
                             borderSide: BorderSide.none,
                           ),
                         ),
-                        validator: (value) => (value == null || value.length < 6)
-                            ? 'La contraseña debe tener al menos 6 caracteres'
+            validator: (value) => (value == null || value.length < 6)
+              ? 'register.password_min'.tr()
                             : null,
                       ),
                       const SizedBox(height: 12),
@@ -229,7 +230,7 @@ class _RegisterPageState extends State<RegisterPage> {
                         obscureText: true,
                         decoration: InputDecoration(
                           prefixIcon: const Icon(Icons.lock),
-                          hintText: 'Confirmar contraseña',
+                          hintText: 'register.confirm_password'.tr(),
                           filled: true,
                           fillColor: Colors.grey.shade100,
                           border: OutlineInputBorder(
@@ -237,10 +238,10 @@ class _RegisterPageState extends State<RegisterPage> {
                             borderSide: BorderSide.none,
                           ),
                         ),
-                        validator: (value) =>
-                            (value != _passwordController.text)
-                                ? 'Las contraseñas no coinciden'
-                                : null,
+            validator: (value) =>
+              (value != _passwordController.text)
+                ? 'register.password_mismatch'.tr()
+                : null,
                       ),
                       const SizedBox(height: 18),
                       // Botón gradiente
@@ -266,10 +267,10 @@ class _RegisterPageState extends State<RegisterPage> {
                               ),
                               borderRadius: BorderRadius.circular(14),
                             ),
-                            child: const Center(
+                            child: Center(
                               child: Text(
-                                'Registrarse',
-                                style: TextStyle(fontSize: 16, color: Colors.white, fontWeight: FontWeight.bold),
+                                'register.submit'.tr(),
+                                style: const TextStyle(fontSize: 16, color: Colors.white, fontWeight: FontWeight.bold),
                               ),
                             ),
                           ),

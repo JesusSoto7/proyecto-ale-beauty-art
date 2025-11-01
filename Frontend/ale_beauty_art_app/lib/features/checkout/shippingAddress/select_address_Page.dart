@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:ale_beauty_art_app/features/shipping_address/presentation/bloc/shipping_address_bloc.dart';
 import 'package:ale_beauty_art_app/features/shipping_address/presentation/bloc/shipping_address_event.dart';
 import 'package:ale_beauty_art_app/features/shipping_address/presentation/bloc/shipping_address_state.dart';
@@ -61,9 +62,9 @@ class _SelectAddressPageState extends State<SelectAddressPage> {
             backgroundColor: Colors.white,
             elevation: 0,
             centerTitle: true,
-            title: const Text(
-              'Dirección de envío',
-              style: TextStyle(
+            title: Text(
+              'addresses.shipping_title'.tr(),
+              style: const TextStyle(
                 color: Colors.black,
                 fontSize: 17,
                 fontWeight: FontWeight.w500,
@@ -94,7 +95,7 @@ class _SelectAddressPageState extends State<SelectAddressPage> {
             if (addresses.isEmpty) {
               return Center(
                 child: Text(
-                  'No tienes direcciones guardadas.\nAgrega una para continuar.',
+                  'addresses.select_empty'.tr(),
                   style: AppTextStyles.subtitle,
                   textAlign: TextAlign.center,
                 ),
@@ -211,9 +212,9 @@ class _SelectAddressPageState extends State<SelectAddressPage> {
                                             borderRadius:
                                                 BorderRadius.circular(12),
                                           ),
-                                          child: const Text(
-                                            'Predeterminada',
-                                            style: TextStyle(
+                                          child: Text(
+                                            'addresses.default'.tr(),
+                                            style: const TextStyle(
                                               color: Color(0xFFAD476B),
                                               fontSize: 12,
                                               fontWeight: FontWeight.w600,
@@ -274,8 +275,8 @@ class _SelectAddressPageState extends State<SelectAddressPage> {
                         Navigator.pop(context, selectedAddress!.id);
                       } else {
                         ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                              content: Text('Debes seleccionar una dirección')),
+                          SnackBar(
+                              content: Text('addresses.select_required'.tr())),
                         );
                       }
                     },
@@ -300,10 +301,10 @@ class _SelectAddressPageState extends State<SelectAddressPage> {
                           ),
                         ],
                       ),
-                      child: const Center(
+                      child: Center(
                         child: Text(
-                          'Continuar',
-                          style: TextStyle(
+                          'common.continue'.tr(),
+                          style: const TextStyle(
                             color: Colors.white,
                             fontSize: 17,
                             fontWeight: FontWeight.w600,

@@ -5,6 +5,8 @@ import 'package:ale_beauty_art_app/models/product.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/services.dart';
+import 'package:easy_localization/easy_localization.dart';
+import 'package:ale_beauty_art_app/features/products/presentation/views/product_detail_loader.dart';
 
 class OrderDetailPageView extends StatefulWidget {
   final int orderId;
@@ -129,9 +131,9 @@ class _OrderDetailPageViewState extends State<OrderDetailPageView> {
               ),
               onPressed: () => Navigator.pop(context),
             ),
-            title: const Text(
-              'Detalle del Pedido',
-              style: TextStyle(
+            title: Text(
+              'orders.detail.title'.tr(),
+              style: const TextStyle(
                 color: Colors.black87,
                 fontSize: 18,
                 fontWeight: FontWeight.w600,
@@ -175,7 +177,7 @@ class _OrderDetailPageViewState extends State<OrderDetailPageView> {
                   const SizedBox(height: 8),
                   Center(
                     child: Text(
-                      'Desliza para reintentar',
+                      'orders.retry_hint'.tr(),
                       style: TextStyle(
                         fontSize: 14,
                         color: Colors.grey[600],
@@ -198,9 +200,9 @@ class _OrderDetailPageViewState extends State<OrderDetailPageView> {
                 o['created_at'] ??
                 o['updated_at'];
             final fecha = _date(fechaRaw);
-            final direccion = _text(
-                o['direccion_envio'] ?? o['shipping_address'],
-                fallback: 'No disponible');
+      final direccion = _text(
+        o['direccion_envio'] ?? o['shipping_address'],
+        fallback: 'orders.detail.not_available'.tr());
             final cardType =
                 _text(o['tarjeta_tipo'] ?? o['card_type'], fallback: '');
             final last4 =
@@ -257,12 +259,12 @@ class _OrderDetailPageViewState extends State<OrderDetailPageView> {
 
                   // 📋 Información general
                   _CardContainer(
-                    title: 'Información del Pedido',
+                    title: 'orders.detail.section_info'.tr(),
                     child: Column(
                       children: [
                         _InfoRow(
                           icon: Icons.calendar_today_rounded,
-                          title: 'Fecha de pago',
+                          title: 'orders.detail.payment_date'.tr(),
                           value: fecha != null
                               ? '${fecha.day.toString().padLeft(2, '0')}/${fecha.month.toString().padLeft(2, '0')}/${fecha.year}'
                               : '—',
@@ -270,16 +272,16 @@ class _OrderDetailPageViewState extends State<OrderDetailPageView> {
                         const SizedBox(height: 16),
                         _InfoRow(
                           icon: Icons.location_on_rounded,
-                          title: 'Dirección de envío',
+                          title: 'orders.detail.shipping_address'.tr(),
                           value: direccion,
                         ),
                         const SizedBox(height: 16),
                         _InfoRow(
                           icon: Icons.credit_card_rounded,
-                          title: 'Método de pago',
+                          title: 'orders.detail.payment_method'.tr(),
                           value: (cardType.isNotEmpty || last4.isNotEmpty)
                               ? '${cardType.toUpperCase()} •••• $last4'
-                              : 'Pago no disponible',
+                              : 'orders.detail.payment_unavailable'.tr(),
                         ),
                       ],
                     ),
@@ -357,9 +359,9 @@ class _StatusCard extends StatelessWidget {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
-                  'Orden',
-                  style: TextStyle(
+                Text(
+                  'orders.detail.order'.tr(),
+                  style: const TextStyle(
                     color: Colors.white70,
                     fontSize: 14,
                     fontWeight: FontWeight.w500,
@@ -535,13 +537,14 @@ class _ProductsCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return _CardContainer(
-      title: 'Productos (${productos.length})',
+      title: 'orders.detail.products_title'.tr(namedArgs: {"count": productos.length.toString()}),
       child: Column(
         children: productos.asMap().entries.map((entry) {
           final index = entry.key;
           final p = entry.value;
           final mp = p as Map<String, dynamic>;
-          final nombre = mp['nombre_producto'] ?? mp['name'] ?? 'Producto';
+          final nombre = mp['nombre_producto'] ?? mp['name'] ?? 'cart.unnamed_product'.tr();
+          final descripcion = (mp['descripcion'] ?? mp['description'] ?? mp['product']?['descripcion'] ?? mp['product']?['description'])?.toString() ?? '';
           final cantidad = int.tryParse(mp['cantidad']?.toString() ?? '1') ?? 1;
 
           // 💰 USAR LOS CAMPOS CORRECTOS
@@ -577,18 +580,17 @@ class _ProductsCard extends StatelessWidget {
                 onTap: () {
                   if (productId <= 0) {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Producto sin información de detalle'),
-                        backgroundColor: Color(0xFFD95D85),
+                      SnackBar(
+                        content: Text('orders.detail.product_detail_missing'.tr()),
+                        backgroundColor: const Color(0xFFD95D85),
                       ),
                     );
                     return;
                   }
-
-                  Product product;
                   final rawProd = mp['product'];
-
                   if (rawProd is Map<String, dynamic>) {
+                    // Si viene el producto completo, construimos y navegamos directo
+                    Product product;
                     try {
                       product = Product.fromJson(rawProd);
                     } catch (_) {
@@ -614,33 +616,21 @@ class _ProductsCard extends StatelessWidget {
                         imagenUrl: rawProd['imagen_url'] ?? imagen?.toString(),
                       );
                     }
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => ProductDetailView(product: product),
+                      ),
+                    );
                   } else {
-                    final subCat = mp['sub_category'] as Map<String, dynamic>?;
-                    final cat = subCat?['category'] ??
-                        mp['category'] as Map<String, dynamic>?;
-
-                    product = Product(
-                      id: productId,
-                      nombreProducto: nombre,
-                      precioProducto: precioOriginal.round(),
-                      descripcion: mp['descripcion']?.toString() ?? '',
-                      subCategoryId: subCat?['id'] ?? 0,
-                      stock: int.tryParse(mp['stock']?.toString() ?? '') ??
-                          cantidad,
-                      nombreSubCategoria: subCat?['nombre']?.toString() ?? '',
-                      categoryId: cat?['id'] ?? 0,
-                      nombreCategoria:
-                          cat?['nombre_categoria']?.toString() ?? '',
-                      imagenUrl: imagen?.toString(),
+                    // Si no hay producto completo, cargar por ID
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => ProductDetailLoader(productId: productId),
+                      ),
                     );
                   }
-
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => ProductDetailView(product: product),
-                    ),
-                  );
                 },
                 child: Row(
                   children: [
@@ -733,6 +723,18 @@ class _ProductsCard extends StatelessWidget {
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
                           ),
+                          if (descripcion.isNotEmpty) ...[
+                            const SizedBox(height: 4),
+                            Text(
+                              descripcion,
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: Colors.grey[700],
+                              ),
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ],
                           const SizedBox(height: 6),
                           Container(
                             padding: const EdgeInsets.symmetric(
@@ -744,7 +746,7 @@ class _ProductsCard extends StatelessWidget {
                               borderRadius: BorderRadius.circular(6),
                             ),
                             child: Text(
-                              'Cantidad: $cantidad',
+                              'orders.detail.quantity'.tr(namedArgs: {"count": cantidad.toString()}),
                               style: const TextStyle(
                                 color: Color(0xFFD95D85),
                                 fontSize: 12,
@@ -787,7 +789,7 @@ class _ProductsCard extends StatelessWidget {
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          'c/u',
+                          'orders.detail.per_unit'.tr(),
                           style: TextStyle(
                             fontSize: 11,
                             color: Colors.grey[600],
@@ -823,24 +825,24 @@ class _TotalsCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return _CardContainer(
-      title: 'Resumen de Pago',
+      title: 'orders.detail.summary_title'.tr(),
       child: Column(
         children: [
           _TotalRow(
-            label: 'Subtotal',
+            label: 'orders.detail.subtotal'.tr(),
             value: formatPriceCOP(subtotal.toInt()),
           ),
           if (descuentos > 0) ...[
             const SizedBox(height: 12),
             _TotalRow(
-              label: 'Descuentos',
+              label: 'orders.detail.discounts'.tr(),
               value: '-${formatPriceCOP(descuentos.toInt())}',
               isDiscount: true,
             ),
           ],
           const SizedBox(height: 12),
           _TotalRow(
-            label: 'Envío',
+            label: 'orders.detail.shipping'.tr(),
             value: formatPriceCOP(envio.toInt()),
           ),
           const SizedBox(height: 16),
@@ -855,9 +857,9 @@ class _TotalsCard extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text(
-                  'Total Pagado',
-                  style: TextStyle(
+                Text(
+                  'orders.detail.total_paid'.tr(),
+                  style: const TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
                     color: Colors.black87,

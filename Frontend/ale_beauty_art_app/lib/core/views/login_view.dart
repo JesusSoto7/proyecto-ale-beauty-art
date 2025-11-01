@@ -3,6 +3,7 @@ import 'package:ale_beauty_art_app/core/views/register_view.dart';
 import 'package:ale_beauty_art_app/features/auth/bloc/auth_bloc.dart';
 import 'package:ale_beauty_art_app/styles/colors.dart';
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class LoginPage extends StatefulWidget {
@@ -26,7 +27,7 @@ class _LoginPageState extends State<LoginPage> {
       context.read<AuthBloc>().add(LoginSubmitted(email, password));
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Completa todos los campos')),
+        SnackBar(content: Text('login.fill_all_fields'.tr())),
       );
     }
   }
@@ -113,20 +114,20 @@ class _LoginPageState extends State<LoginPage> {
                       children: [
                         Center(
                           child: Column(
-                            children: const [
+                            children: [
                               Text(
-                                "¡Hola de nuevo!",
-                                style: TextStyle(
+                                "login.hello_again".tr(),
+                                style: const TextStyle(
                                   fontSize: 26,
                                   fontWeight: FontWeight.w800,
                                   color: AppColors.textPrimary,
                                   letterSpacing: 0.3,
                                 ),
                               ),
-                              SizedBox(height: 6),
+                              const SizedBox(height: 6),
                               Text(
-                                "Inicia sesión para continuar",
-                                style: TextStyle(
+                                "login.subtitle".tr(),
+                                style: const TextStyle(
                                   fontSize: 14,
                                   color: AppColors.textSecondary,
                                 ),
@@ -142,7 +143,7 @@ class _LoginPageState extends State<LoginPage> {
                           decoration: InputDecoration(
                             prefixIcon: const Icon(Icons.alternate_email,
                                 color: AppColors.textSecondary),
-                            hintText: "Correo electrónico",
+                            hintText: "login.email".tr(),
                             filled: true,
                             fillColor: Colors.grey.shade100,
                             contentPadding: const EdgeInsets.symmetric(
@@ -161,7 +162,7 @@ class _LoginPageState extends State<LoginPage> {
                           decoration: InputDecoration(
                             prefixIcon: const Icon(Icons.lock_outline_rounded,
                                 color: AppColors.textSecondary),
-                            hintText: "Contraseña",
+                            hintText: "login.password".tr(),
                             suffixIcon: IconButton(
                               icon: Icon(
                                 obscurePassword
@@ -193,7 +194,7 @@ class _LoginPageState extends State<LoginPage> {
                                   onChanged: (value) => setState(
                                       () => rememberMe = value ?? false),
                                 ),
-                                const Text("Recordarme"),
+                                Text("login.remember_me".tr()),
                               ],
                             ),
                             TextButton(
@@ -204,7 +205,7 @@ class _LoginPageState extends State<LoginPage> {
                                         builder: (_) =>
                                             const ForgotPasswordPage()));
                               },
-                              child: const Text("¿Olvidaste tu contraseña?"),
+                              child: Text("login.forgot_password".tr()),
                             ),
                           ],
                         ),
@@ -247,9 +248,9 @@ class _LoginPageState extends State<LoginPage> {
                                             strokeWidth: 2,
                                             color: Colors.white),
                                       )
-                                    : const Text(
-                                        "Iniciar Sesión",
-                                        style: TextStyle(
+                                    : Text(
+                                        "profile.login".tr(),
+                                        style: const TextStyle(
                                           fontSize: 16,
                                           fontWeight: FontWeight.bold,
                                           color: Colors.white,
@@ -264,16 +265,16 @@ class _LoginPageState extends State<LoginPage> {
                           child: Wrap(
                             crossAxisAlignment: WrapCrossAlignment.center,
                             children: [
-                              const Text("¿No tienes una cuenta? "),
+                              Text("auth.no_account".tr()),
                               GestureDetector(
                                 onTap: () => Navigator.push(
                                   context,
                                   MaterialPageRoute(
                                       builder: (_) => const RegisterPage()),
                                 ),
-                                child: const Text(
-                                  "Regístrate",
-                                  style: TextStyle(
+                                child: Text(
+                                  "auth.register".tr(),
+                                  style: const TextStyle(
                                     color: AppColors.textSecondary,
                                     fontWeight: FontWeight.bold,
                                   ),

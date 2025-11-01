@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:ale_beauty_art_app/core/utils/formatters.dart';
 import 'package:ale_beauty_art_app/features/cart/presentation/view/cart_page_view.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class PaymentSuccessPage extends StatelessWidget {
   final double amount;
@@ -40,9 +41,9 @@ class PaymentSuccessPage extends StatelessWidget {
   String _typeLabel(String? typeId) {
     switch (typeId) {
       case 'credit_card':
-        return 'Tarjeta de crédito';
+        return 'payment_success.type.credit_card'.tr();
       case 'debit_card':
-        return 'Tarjeta débito';
+        return 'payment_success.type.debit_card'.tr();
       default:
         return '-';
     }
@@ -57,9 +58,9 @@ class PaymentSuccessPage extends StatelessWidget {
         elevation: 0,
         centerTitle: true,
          automaticallyImplyLeading: false,
-        title: const Text(
-          'Pago aprobado',
-          style: TextStyle(
+        title: Text(
+          'payment_success.title'.tr(),
+          style: const TextStyle(
             color: Colors.black87,
             fontSize: 18,
             fontWeight: FontWeight.w600,
@@ -93,9 +94,9 @@ class PaymentSuccessPage extends StatelessWidget {
                 children: [
                   const Icon(Icons.check_circle_rounded, size: 56, color: Colors.white),
                   const SizedBox(height: 10),
-                  const Text(
-                    '¡Pago aprobado!',
-                    style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w800),
+                  Text(
+                    'payment_success.header'.tr(),
+                    style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w800),
                   ),
                   const SizedBox(height: 8),
                   Text(
@@ -126,17 +127,17 @@ class PaymentSuccessPage extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _detailRow('Método', _brandLabel(paymentMethodId)),
+                  _detailRow('payment_success.labels.method'.tr(), _brandLabel(paymentMethodId)),
                   const Divider(height: 20),
-                  _detailRow('Tipo', _typeLabel(paymentTypeId)),
+                  _detailRow('payment_success.labels.type'.tr(), _typeLabel(paymentTypeId)),
                   const Divider(height: 20),
-                  _detailRow('Tarjeta', cardLastFour != null && cardLastFour!.isNotEmpty
+                  _detailRow('payment_success.labels.card'.tr(), cardLastFour != null && cardLastFour!.isNotEmpty
                       ? '•••• $cardLastFour'
                       : '••••'),
                   const Divider(height: 20),
-                  _detailRow('Titular', cardholderName ?? '-'),
+                  _detailRow('payment_success.labels.holder'.tr(), cardholderName ?? '-'),
                   const Divider(height: 20),
-                  _detailRow('Email', email ?? '-'),
+                  _detailRow('payment_success.labels.email'.tr(), email ?? '-'),
                 ],
               ),
             ),
@@ -159,9 +160,9 @@ class PaymentSuccessPage extends StatelessWidget {
                     MaterialPageRoute(builder: (_) => const CartPageView()),
                   );
                 },
-                child: const Text(
-                  'Continuar',
-                  style: TextStyle(color: Colors.white, fontWeight: FontWeight.w700),
+                child: Text(
+                  'common.continue'.tr(),
+                  style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w700),
                 ),
               ),
             ),
