@@ -3,6 +3,7 @@ import { Link, useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { forgotPassword } from "../services/authService";
 import ale_logo from "../assets/images/ale_logo.jpg";
+import { useAlert } from "../components/AlertProvider.jsx";
 
 function ForgotPassword() {
   const [email, setEmail] = useState("");
@@ -11,17 +12,46 @@ function ForgotPassword() {
   const [loading, setLoading] = useState(false);
   const { lang } = useParams();
   const { t } = useTranslation();
+  const { addAlert } = useAlert();
+
+  const validateEmail = () => {
+    if (!email.trim()) {
+      addAlert("El correo es obligatorio.", "warning", 6000);
+      return false;
+    }
+
+    // Solo minúsculas, sin acentos ni mayúsculas
+    if (/[A-ZÁÉÍÓÚÜÑáéíóúüñ]/.test(email)) {
+      addAlert("El correo no debe contener mayúsculas ni acentos.", "warning", 6000);
+      return false;
+    }
+
+    // Formato de correo válido
+    if (!/^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/.test(email)) {
+      addAlert("El correo no tiene un formato válido.", "warning", 6000);
+      return false;
+    }
+
+    return true;
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
     setLoading(true);
 
+    if (!validateEmail()) {
+      setLoading(false);
+      return;
+    }
+
     try {
       await forgotPassword({ email });
       setSuccess(true);
+      addAlert("Se han enviado las instrucciones a tu correo.", "success", 6000);
     } catch (err) {
       setError(err.message);
+      addAlert(err.message || "No se pudo enviar el correo.", "error", 6000);
     } finally {
       setLoading(false);
     }
@@ -47,8 +77,8 @@ function ForgotPassword() {
             <div className="alert alert-success" role="alert">
               {t("forgotPassword.success")}
             </div>
-            <Link 
-              to={`/${lang}/login`} 
+            <Link
+              to={`/${lang}/login`}
               className="rosa-fondo btn-light w-100 login-btn text-center d-block text-decoration-none"
             >
               {t("forgotPassword.backToLogin")}
@@ -67,14 +97,13 @@ function ForgotPassword() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   autoComplete="email"
-                  required
                 />
               </div>
 
               {error && <p className="text-danger small">{error}</p>}
 
-              <button 
-                type="submit" 
+              <button
+                type="submit"
                 className="rosa-fondo btn-light w-100 login-btn"
                 disabled={loading}
               >

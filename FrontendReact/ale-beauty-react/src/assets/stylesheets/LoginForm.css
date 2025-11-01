@@ -233,6 +233,10 @@
   text-align: end !important;
 }
 
+.is-invalid {
+  border: 1px solid #dc3545 !important;
+}
+
 /* ======== RESPONSIVE ======== */
 @media (max-width: 576px) {
   .login-card {
