@@ -1,0 +1,190 @@
+.upload-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  font-family: "Inter", sans-serif;
+}
+
+.dropzoneBox{
+    display: flex;
+    gap: 20px;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-top: 15%;
+    background-color: #fff;
+    border: solid 1px #f0f0f0;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.06);
+}
+
+/* Caja Drag & Drop */
+.dropzone {
+  width: 420px;
+  min-height: 180px;
+  border: 2px dashed #c4b5fd;
+  border-radius: 20px;
+  background: #fff;
+  text-align: center;
+  padding: 24px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  
+}
+
+.dropzone.active {
+  background: #a78bfa;
+  color: #fff;
+  border: 2px dashed #fff;
+}
+
+.dropzone .icon {
+  font-size: 40px;
+  margin-bottom: 12px;
+}
+
+.dropzone p {
+    font-weight: bold;
+    font-size: 14px;
+    color: #444;
+    margin: 4px 0;
+}
+
+.dropzone p span {
+  color: #7e6bfb;
+  font-weight: 600;
+}
+
+.dropzone .browse span {
+  color: #6366f1;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+/* Preview del archivo */
+.file-preview {
+  margin: 16px 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  justify-content: center;
+}
+
+.file-preview img {
+  max-width: 150px;
+  max-height: 100px;
+  border-radius: 12px;
+  object-fit: cover;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+.file-preview p {
+  font-size: 14px;
+  color: #333;
+}
+
+.file-preview .remove {
+  background: transparent;
+  border: none;
+  font-size: 18px;
+  color: #ef4444;
+  cursor: pointer;
+}
+
+/* Botón Upload */
+.upload-btn {
+  background: #7e6bfb;
+  color: white;
+  border: none;
+  border-radius: 30px;
+  padding: 12px 28px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+
+.upload-btn:hover {
+  background: #6d28d9;
+}
+
+/* Lista de banners */
+.banners-list {
+  width: 100%;
+  max-width: 700px;
+  margin-top: 30px;
+}
+
+.banners-list h3 {
+  font-size: 18px;
+  margin-bottom: 12px;
+}
+
+.banners-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.banner-card {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  padding: 8px;
+  text-align: center;
+  width: 150px;
+}
+
+.banner-card img {
+  width: 100%;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-bottom: 6px;
+}
+
+.banner-card button {
+  background: #ef4444;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 4px 10px;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.banner-card button:hover {
+  background: #dc2626;
+}
+
+.success-message {
+  margin-top: 16px;
+  padding: 12px 20px;
+  background: #f0f9ff;
+  border: 1px solid #7e6bfb;
+  border-radius: 12px;
+  color: #333;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  animation: fadeIn 0.3s ease;
+}
+
+.success-message .check {
+  color: #7e6bfb;
+  font-size: 20px;
+  font-weight: bold;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+

@@ -1,0 +1,353 @@
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #f0f0f0;
+}
+
+.bannerProducts-loading {
+  width: 75%;
+  height: 400px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  justify-self: center;
+  background-color: #2c2c2c;
+  border-radius: 10px;
+  color: white;
+  font-size: 1.5rem;
+}
+
+.banner-info{
+  width: 699px;
+  display: flex;
+  flex-direction: column;
+}
+
+.banner {
+  position: relative;
+  border-radius: 10px;
+  width: 75%;
+  height: 400px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: #ffffff;
+  background: #2c2c2c; /* negro base */
+  margin: 0 auto;
+}
+
+/* --- Zona morada con curva --- */
+.banner::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  min-width: 600px;
+  width: 100%;
+  height: 100%;
+  background: #df6897ff;
+  clip-path: path("M0,0 C1000,0 300,150 1000,400 L0,400 Z");
+  z-index: 1;
+}
+
+/* Contenido del texto */
+.content {
+  position: relative;
+  z-index: 2;
+  padding-left: 60px;
+  max-width: 45%;
+}
+
+.content h1 {
+  font-size: 45px;
+  margin: 0;
+  font-weight: 700;
+}
+
+.content h2 {
+  font-size: 22px;
+  /* margin-top: 10px; */
+  color: #5a1451;
+  text-align: start;
+}
+
+.content p {
+  margin-top: 15px;
+  font-size: 14px;
+  line-height: 1.5;
+  color: #fff;
+}
+
+/* Botón */
+.btn-banner {
+  width: 100%;
+  padding: 10px;
+  border-radius: 8px;
+  border: none;
+  background-color: #fff;
+  color: #df6897ff;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.btn-banner:hover {
+  background-color: #e3e3e3;
+}
+
+/* Imagen circular */
+.image-area {
+  position: relative;
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2;
+}
+
+.circle-image {
+  width: 320px;
+  height: 320px;
+  border-radius: 50%;
+  object-fit: contain;
+  background-color: #fff;
+  border: 4px solid #6c757d;
+}
+
+
+.loader {
+  width: 50px;
+  aspect-ratio: 1;
+  color:#ffffff;
+  background:
+   radial-gradient(circle at 60% 65%, currentColor 62%, #0000 65%) top left,
+   radial-gradient(circle at 40% 65%, currentColor 62%, #0000 65%) top right,
+   linear-gradient(to bottom left, currentColor 42%,#0000 43%) bottom left ,
+   linear-gradient(to bottom right,currentColor 42%,#0000 43%) bottom right;
+  background-size: 50% 50%;
+  background-repeat: no-repeat;
+  position: relative;
+}
+.loader:after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: inherit;
+  opacity: 0.4;
+  animation: l3 1s infinite;
+}
+@keyframes l3 {
+  to {transform:scale(1.8);opacity:0}
+}
+
+#desc{
+    overflow-y: auto;
+    scrollbar-color: #fff transparent;
+  }
+
+
+/* texto animado */
+
+.text-strip {
+  width: 40px;
+  height: 500px;
+  overflow: hidden;
+  margin-right: 15px;
+  /* border-radius: 10px; */
+  background: #2c2c2c;
+  border: solid 2px white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+
+
+.text-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  animation: scrollText 13s linear infinite;
+}
+
+.text-content span {
+  writing-mode: vertical-rl;
+  text-orientation: upright;
+  font-size: 18px;
+  font-weight: bold;
+  color: white;
+  letter-spacing: 2px;
+  height: 500px; /* cada texto ocupa toda la tira */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+@keyframes scrollText {
+  0% {
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(-2000px); /* altura total de 4 spans x 500px */
+  }
+}
+
+/* tira horizontal */
+
+:root {
+  --H-width: 500px;          /* ancho de la tira visible */
+  --H-height: 40px;          /* alto de la tira */
+  --H-bg-color: #2c2c2c;     /* color de fondo */
+  --H-text-color: #fff;      /* color del texto */
+  --H-font-size: 18px;       /* tamaño de fuente */
+  --H-speed: 10s;            /* duración de la animación */
+  --H-gap: 40px;             /* separación entre palabras */
+}
+
+.text-strip-H {
+  width: var(--H-width);
+  height: var(--H-height);
+  overflow: hidden;
+  border:  solid 2px #fff;
+  background: var(--H-bg-color);
+  display: flex;
+  align-items: center;
+  position: relative;
+  display: none;
+}
+
+.text-content-H {
+  display: flex;
+  white-space: nowrap;
+  animation: scrollTextH var(--H-speed) linear infinite;
+}
+
+.text-content-H span {
+  font-size: var(--H-font-size);
+  font-weight: bold;
+  color: var(--H-text-color);
+  margin-right: var(--H-gap);
+  letter-spacing: 2px;
+}
+
+@keyframes scrollTextH {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+
+
+/* vista portatil */
+@media (max-width: 1272px) {
+  .banner {
+    width: 90%;
+    flex-direction: row;
+    /* height: fit-content; */
+  }
+
+  .banner::before {
+    height: 400px;
+    /* background: transparent; */
+    z-index: 1;
+  }
+
+  .bannerProduct-image-container {
+    width: 100%;
+    border-radius: 0;
+  }
+
+  .section-DataBanner{
+    justify-content: end;
+  }
+  
+  .banner-info{
+    width: 90%;
+  }
+}
+
+
+/* vista portatil */
+@media (max-width: 1145px) {
+  .bannerProducts {
+    flex-direction: column;
+    height: fit-content;
+  }
+
+  .bannerProduct-image-container {
+    height: 100%;
+    width: 100%;
+    border-radius: 0;
+  }
+
+  .banner-title {
+    font-size: 50px;
+  }
+
+  .section-DataBanner{
+    justify-content: end;
+  }
+
+  .banner-info{
+    width: 90%;
+  }
+}
+
+
+/* vista movil */
+@media (max-width: 1070px) {
+  .banner {
+    flex-direction: column-reverse;
+    height: fit-content;
+    border: solid 1px #c9c9c9;
+  }
+
+  .banner::before{
+    background: transparent;
+  }
+
+  .image-area{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .text-strip-H{
+    width: 100%;
+    display: block;
+  }
+
+  .text-content-H span{
+    margin-top: 7px;
+  }
+  .text-strip{
+    display: none;
+    
+  }
+
+  .circle-image {
+    width: 100%;
+    height: 320px;
+    border-radius: 0;
+    object-fit: contain;
+    background-color: #fff;
+    border: none;
+  }
+
+  .content {
+    padding-left: 0px;
+    max-width: 100%;
+    padding: 10px;
+  }
+
+  .section-DataBanner{
+    width: 100%;
+  }
+  #desc{
+    width: 100%;
+  }
+}

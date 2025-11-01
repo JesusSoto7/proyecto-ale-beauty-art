@@ -48,5 +48,21 @@ services:
     depends_on:
       - backend
 
+  dashboard:
+      build:
+        context: ./Dashboard/ale-beauty-dashboard
+        dockerfile: Dockerfile.dev
+      container_name: dashboard_app
+      command: npm run dev -- --host
+      volumes:
+        - ./Dashboard/ale-beauty-dashboard:/app
+        - /app/node_modules
+      ports:
+        - "5173:5173"
+      stdin_open: true
+      tty: true
+      depends_on:
+        - backend
+
 volumes:
   db_data:
