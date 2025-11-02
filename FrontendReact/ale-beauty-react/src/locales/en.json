@@ -40,7 +40,10 @@
     "shippingAddressStep": "Shipping Address",
     "paymentStep": "Payment",
     "backButton": "Back",
-    "continueButton": "Continue"
+    "continueButton": "Continue",
+    "choosePaymentMethod": "Choose a payment method",
+    "cardPaymentTitle": "Pay with card",
+    "email": "E-mail"
   },
   "common": {
     "cancel": "Cancel"

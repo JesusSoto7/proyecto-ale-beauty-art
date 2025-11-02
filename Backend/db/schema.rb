@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_10_19_032737) do
+ActiveRecord::Schema[8.0].define(version: 2025_11_01_182459) do
   create_table "active_storage_attachments", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
@@ -157,6 +157,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_19_032737) do
     t.boolean "activo", default: true
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "codigo"
+    t.index ["codigo"], name: "index_payment_methods_on_codigo", unique: true
     t.index ["nombre_metodo"], name: "index_payment_methods_on_nombre_metodo", unique: true
   end
 
@@ -223,16 +225,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_19_032737) do
     t.index ["slug"], name: "index_sub_categories_on_slug", unique: true
   end
 
-  create_table "subcategory_discounts", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
-    t.bigint "sub_category_id", null: false
-    t.bigint "discount_id", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["discount_id"], name: "index_subcategory_discounts_on_discount_id"
-    t.index ["sub_category_id", "discount_id"], name: "index_subcategory_discounts_on_subcategory_and_discount", unique: true
-    t.index ["sub_category_id"], name: "index_subcategory_discounts_on_sub_category_id"
-  end
-
   create_table "user_notifications", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.bigint "user_id", null: false
     t.bigint "notification_message_id", null: false
@@ -288,8 +280,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_19_032737) do
   add_foreign_key "shipping_addresses", "neighborhoods"
   add_foreign_key "shipping_addresses", "users"
   add_foreign_key "sub_categories", "categories"
-  add_foreign_key "subcategory_discounts", "discounts"
-  add_foreign_key "subcategory_discounts", "sub_categories"
   add_foreign_key "user_notifications", "notification_messages"
   add_foreign_key "user_notifications", "users"
 end

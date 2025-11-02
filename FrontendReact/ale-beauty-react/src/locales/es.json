@@ -40,8 +40,10 @@
     "shippingAddressStep": "Dirección de envío",
     "paymentStep": "Pago",
     "backButton": "Atrás",
-    "continueButton": "Continuar"
- 
+    "continueButton": "Continuar",
+    "choosePaymentMethod": "Elige un método de pago",
+    "cardPaymentTitle": "Pago con tarjeta",
+    "email": "E-mail"
   },
   "common": {
     "cancel": "Cancelar"

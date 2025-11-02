@@ -21,12 +21,16 @@ class Api::V1::PaymentsController < Api::V1::BaseController
       }
     }
 
-
-
     payment_response = sdk.payment.create(payment_data)
     payment = payment_response[:response]
 
     order = Order.find(params[:order_id])
+
+    if order.payment_method.blank?
+      if (pm = PaymentMethod.find_by(codigo: 'mercadopago', activo: true))
+        order.update(payment_method: pm)
+      end
+    end
 
     if payment["status"] == "approved"
       order.update(
@@ -45,7 +49,6 @@ class Api::V1::PaymentsController < Api::V1::BaseController
       }, status: :ok
     else
       order.update(status: :cancelada)
-
       render json: {
         error: "Pago rechazado",
         redirect_url: "#{ENV['FRONTEND_URL']}/#{params[:lang]}/checkout/failure/#{payment['id']}"
