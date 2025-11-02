@@ -165,4 +165,31 @@ class MercadoPagoService {
 
     return null;
   }
+
+  Future<void> setOrderPaymentMethod({
+    required String jwt,
+    required int orderId,
+    String? codigo, // p.ej. "mercadopago"
+    int? paymentMethodId,
+  }) async {
+    if (codigo == null && paymentMethodId == null) {
+      throw ArgumentError('Debes enviar codigo o paymentMethodId');
+    }
+    final uri = Uri.parse('$backendUrl/orders/$orderId/set_payment_method');
+    final res = await http.patch(
+      uri,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $jwt',
+      },
+      body: jsonEncode({
+        if (codigo != null) 'payment_method_codigo': codigo,
+        if (paymentMethodId != null) 'payment_method_id': paymentMethodId,
+      }),
+    );
+    if (res.statusCode != 200) {
+      throw Exception(
+          'No se pudo asignar método (${res.statusCode}): ${res.body}');
+    }
+  }
 }

@@ -26,8 +26,9 @@ class Api::V1::PaymentsController < Api::V1::BaseController
 
     order = Order.find(params[:order_id])
 
+    # Asegurar que la orden tenga el método de pago
     if order.payment_method.blank?
-      if (pm = PaymentMethod.find_by(codigo: 'mercadopago', activo: true))
+      if (pm = find_pm_from_params || PaymentMethod.find_by(codigo: 'mercadopago', activo: true))
         order.update(payment_method: pm)
       end
     end
@@ -86,14 +87,21 @@ class Api::V1::PaymentsController < Api::V1::BaseController
       }
     }
 
-  
-    puts "🔹 payment_data: #{payment_data.inspect}"
+    Rails.logger.info "🔹 payment_data: #{payment_data.inspect}"
 
     payment_response = sdk.payment.create(payment_data)
     payment = payment_response[:response]
 
-    puts "🔹 MercadoPago Response: #{payment_response.inspect}"
+    Rails.logger.info "🔹 MercadoPago Response: #{payment_response.inspect}"
     order = Order.find(params[:order_id])
+
+    # Establecer/actualizar el método de pago de la orden
+    begin
+      pm = find_pm_from_params || PaymentMethod.find_by(codigo: 'mercadopago', activo: true)
+      order.update(payment_method: pm) if pm && order.payment_method_id != pm.id
+    rescue => e
+      Rails.logger.warn "No se pudo asociar PaymentMethod a la orden: #{e.message}"
+    end
 
     if payment["status"] == "approved"
       order.update(
@@ -104,7 +112,7 @@ class Api::V1::PaymentsController < Api::V1::BaseController
         card_last4: payment.dig("card", "last_four_digits")
       )
       order.user.cart.cart_products.destroy_all if order.user&.cart
-      #InvoiceMailer.enviar_factura(order).deliver_later
+      # InvoiceMailer.enviar_factura(order).deliver_later
 
       render json: {
         status: payment["status"],
@@ -121,7 +129,16 @@ class Api::V1::PaymentsController < Api::V1::BaseController
         error: "Pago rechazado"
       }, status: :unprocessable_entity
     end
-
   end
 
+  private
+
+  # Reutilizable: resuelve el método de pago desde los params
+  def find_pm_from_params
+    if params[:payment_method_codigo].present?
+      PaymentMethod.find_by(codigo: params[:payment_method_codigo], activo: true)
+    elsif params[:payment_method_id].present?
+      PaymentMethod.find_by(id: params[:payment_method_id], activo: true)
+    end
+  end
 end
