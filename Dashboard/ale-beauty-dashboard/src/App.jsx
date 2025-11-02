@@ -25,6 +25,7 @@ import Notificationes from './page/home/Notifications';
 import CreateDiscount from './page/home/CreateDiscount';
 import UserProfile from "./components/dashComponents/userPerfil.jsx";
 import { isAuthenticated, isAdmin } from './services/authService';
+import AuthGate from './components/auth/AuthGate.jsx';
 
 function Wrapper() {
   const { lang } = useParams();
@@ -61,6 +62,7 @@ function App() {
   return (
     <AlertProvider>
       <Router>
+         <AuthGate /> 
         <Routes>
           {/* Redirige / al idioma por defecto */}
           <Route

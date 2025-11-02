@@ -1,19 +1,16 @@
-import { Navigate, useParams } from "react-router-dom";
+import React from 'react';
+import { Navigate, useParams, useLocation } from 'react-router-dom';
+import { isAuthenticated, isAdmin } from '../../services/authService';
 
-export default function ProtectedRoute({ children, requiredRole }) {
-    const token = localStorage.getItem("token");
-    const roles = JSON.parse(localStorage.getItem("roles")) || [];
-    const { lang } = useParams();
+export default function ProtectedRoute({ requiredRole, children }) {
+  const { lang } = useParams();
+  const location = useLocation();
 
-    // Si no hay token, redirigir al login
-    if (!token) {
-        return <Navigate to={`/${lang}/login`} replace />;
-    }
-
-    // Si no tiene el rol requerido, redirigir a 403
-    if (requiredRole && !roles.includes(requiredRole)) {
-        return <Navigate to={`/${lang}/403`} replace />;
-    }
-
-    return children;
+  if (!isAuthenticated()) {
+    return <Navigate to={`/${lang || 'es'}/login`} replace state={{ from: location }} />;
+  }
+  if (requiredRole === 'admin' && !isAdmin()) {
+    return <Navigate to={`/${lang || 'es'}/403`} replace />;
+  }
+  return children;
 }

@@ -1,48 +1,50 @@
-// API Configuration
-const API_BASE_URL = 'https://localhost:4000/api/v1';
+import { parseJwt } from './jwt';
 
-export async function login({ email, password }) {
-  const response = await fetch(`${API_BASE_URL}/auth/sign_in`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Accept': 'application/json'
-    },
-    body: JSON.stringify({ email, password }),
-  });
-
-  if (!response.ok) {
-    const errorData = await response.json();
-    throw new Error(errorData.message || 'Error al iniciar sesión');
-  }
-
-  const data = await response.json();
-  return data;
+export function getToken() {
+  return localStorage.getItem('token');
 }
 
-export async function logout() {
-  const token = localStorage.getItem('token');
+export function getRoles() {
   try {
-    await fetch(`${API_BASE_URL}/auth/sign_out`, {
-      method: 'DELETE',
-      headers: { Authorization: `Bearer ${token}` },
-    });
-  } catch (err) {
-    console.warn('Error cerrando sesión:', err);
+    return JSON.parse(localStorage.getItem('roles') || '[]');
+  } catch {
+    return [];
   }
-  localStorage.removeItem('token');
-  localStorage.removeItem('roles');
+}
+
+export function getTokenPayload(token = getToken()) {
+  if (!token) return null;
+  return parseJwt(token);
+}
+
+export function getTokenExpMs(token = getToken()) {
+  const payload = getTokenPayload(token);
+  const expSec = payload?.exp;
+  return typeof expSec === 'number' ? expSec * 1000 : null;
+}
+
+export function isTokenExpired(token = getToken()) {
+  const expMs = getTokenExpMs(token);
+  if (!expMs) return true; // si no hay exp, lo tratamos como inválido/expirado
+  return Date.now() >= expMs;
+}
+
+export function msUntilExpiry(token = getToken()) {
+  const expMs = getTokenExpMs(token);
+  if (!expMs) return 0;
+  return Math.max(0, expMs - Date.now());
 }
 
 export function isAuthenticated() {
-  return !!localStorage.getItem('token');
-}
-
-export function hasRole(role) {
-  const roles = JSON.parse(localStorage.getItem('roles')) || [];
-  return roles.includes(role);
+  const token = getToken();
+  return Boolean(token) && !isTokenExpired(token);
 }
 
 export function isAdmin() {
-  return hasRole('admin');
+  return getRoles().includes('admin');
+}
+
+export function logout() {
+  localStorage.removeItem('token');
+  localStorage.removeItem('roles');
 }

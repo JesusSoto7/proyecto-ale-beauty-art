@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import { formatCOP } from "../../services/currency";
 import "../../assets/stylesheets/DetallePedido.css";
 import noImage from "../../assets/images/no_image.png";
+import CircularProgress from "@mui/material/CircularProgress";
 
 export default function DetallePedido() {
   const { id, lang } = useParams();
@@ -32,10 +33,19 @@ export default function DetallePedido() {
       .finally(() => setLoading(false));
   }, [id, t]);
 
-  if (loading) return <p className="text-gray-500">{t("orderDetail.loading")}</p>;
+  // Mostrar SOLO el spinner durante la carga
+  if (loading) {
+    return (
+      <div className="p-4 max-w-4xl mx-auto">
+        <div className="text-center py-16 flex items-center justify-center">
+          <CircularProgress style={{ color: "#ff4d94" }} aria-label={t("orderDetail.loading")} />
+        </div>
+      </div>
+    );
+  }
+
   if (error) return <p className="text-red-500">{error}</p>;
   if (!pedido) return <p className="text-red-500">{t("orderDetail.notFound")}</p>;
-
 
   const subTotal = (pedido.productos || []).reduce((acc, p) => {
     const cantidad = Number(p.cantidad || 0);

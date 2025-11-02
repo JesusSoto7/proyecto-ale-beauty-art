@@ -13,8 +13,7 @@ import StatCard from './StatCard';
 import { formatCOP } from '../../services/currency';
 import ChartProductsByCategory from './ChartProductsByCategory';
 import { useTranslation } from "react-i18next";
-
-
+import { apiGet } from '../../services/api';
 
 export default function MainGrid() {
   const [token, setToken] = React.useState(null);
@@ -27,127 +26,72 @@ export default function MainGrid() {
   const { t } = useTranslation();
 
   React.useEffect(() => {
-
     const savedToken = localStorage.getItem("token");
-    if (savedToken) {
-      setToken(savedToken);
-    } else {
-      alert("no esta atenticado");
-    }
+    if (savedToken) setToken(savedToken);
   }, []);
 
   React.useEffect(() => {
     if (!token) return;
 
-    fetch("https://localhost:4000/api/v1/total_sales", {
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        const total = formatCOP(data.total_sales);
-        setTotalSales(total);
-      })
-      .catch((err) => console.error(err));
+    apiGet('/api/v1/total_sales', token)
+      .then((data) => setTotalSales(formatCOP(data?.total_sales ?? 0)))
+      .catch(console.error);
 
-    fetch("https://localhost:4000/api/v1/total_sales_per_day", {
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
-    })
-      .then((res) => res.json())
+    apiGet('/api/v1/total_sales_per_day', token)
       .then((data) => {
-        const labels = Object.keys(data).map(dateStr => {
+        const labels = Object.keys(data || {}).map(dateStr => {
           const bogotaDate = new Date(
             new Date(dateStr).toLocaleString("en-US", { timeZone: "America/Bogota" })
           );
-          return bogotaDate.toLocaleDateString("en-US", {
-            month: "short",
-            day: "numeric"
-          });
+          return bogotaDate.toLocaleDateString("en-US", { month: "short", day: "numeric" });
         });
-
-        const values = Object.values(data).map(v => Number(v));
+        const values = Object.values(data || {}).map((v) => Number(v) || 0);
         setTotalSalesCharData({ labels, values });
       })
+      .catch(console.error);
   }, [token]);
 
   React.useEffect(() => {
     if (!token) return;
 
-    fetch("https://localhost:4000/api/v1/completed_orders_count", {
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        setCompletedOrders(data.count);
-      })
-      .catch((err) => console.error(err));
+    apiGet('/api/v1/completed_orders_count', token)
+      .then((data) => setCompletedOrders(Number(data?.count ?? 0)))
+      .catch(console.error);
 
-    fetch("https://localhost:4000/api/v1/orders_completed_per_day", {
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
-    })
-      .then((res) => res.json())
+    apiGet('/api/v1/orders_completed_per_day', token)
       .then((data) => {
-        const labels = Object.keys(data).map(dateStr => {
+        const labels = Object.keys(data || {}).map(dateStr => {
           const bogotaDate = new Date(
             new Date(dateStr).toLocaleString("en-US", { timeZone: "America/Bogota" })
           );
-          return bogotaDate.toLocaleDateString("en-US", {
-            month: "short",
-            day: "numeric"
-          });
+          return bogotaDate.toLocaleDateString("en-US", { month: "short", day: "numeric" });
         });
-
-        const values = Object.values(data).map(v => Number(v));
+        const values = Object.values(data || {}).map((v) => Number(v) || 0);
         setOrderCharData({ labels, values });
       })
-      .catch((err) => console.error(err))
-  }, [token])
+      .catch(console.error);
+  }, [token]);
 
   React.useEffect(() => {
     if (!token) return;
-    fetch("https://localhost:4000/api/v1/count", {
-      headers: {
-        Authorization: `Bearer ${token}`
-      },
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        setUserCount(data.count);
-      })
-      .catch((err) => console.error(err));
 
-    fetch("https://localhost:4000/api/v1/registrations_per_day", {
-      headers: {
-        Authorization: `Bearer ${token}`
-      },
-    })
-      .then((res) => res.json())
+    apiGet('/api/v1/count', token)
+      .then((data) => setUserCount(Number(data?.count ?? 0)))
+      .catch(console.error);
+
+    apiGet('/api/v1/registrations_per_day', token)
       .then((data) => {
-        const labels = Object.keys(data).map(dateStr => {
+        const labels = Object.keys(data || {}).map(dateStr => {
           const bogotaDate = new Date(
             new Date(dateStr).toLocaleString("en-US", { timeZone: "America/Bogota" })
           );
-          return bogotaDate.toLocaleDateString("en-US", {
-            month: "short",
-            day: "numeric"
-          });
+          return bogotaDate.toLocaleDateString("en-US", { month: "short", day: "numeric" });
         });
-
-        const values = Object.values(data).map(v => Number(v));
+        const values = Object.values(data || {}).map((v) => Number(v) || 0);
         setUserChartData({ labels, values });
       })
-
-      .catch((err) => console.error(err));
-
+      .catch(console.error);
   }, [token]);
-
 
   const data = [
     {
@@ -176,28 +120,12 @@ export default function MainGrid() {
     },
   ];
 
-
-
   return (
-    <Box sx={{ 
-      width: '100%', 
-      maxWidth: 'none',
-      overflow: 'hidden' // Prevenir scroll horizontal
-    }}>
-      {/* cards */}
+    <Box sx={{ width: '100%', maxWidth: 'none', overflow: 'hidden' }}>
       <Typography component="h2" variant="h6" sx={{ mb: 2 }}>
         {t("overview")}
       </Typography>
-      <Grid
-        container
-        spacing={2}
-        columns={12}
-        sx={{ 
-          mb: (theme) => theme.spacing(2),
-          width: '100%',
-          margin: 0 // Quitar margen negativo que puede causar scroll
-        }}
-      >
+      <Grid container spacing={2} columns={12} sx={{ mb: (theme) => theme.spacing(2), width: '100%', margin: 0 }}>
         {data.map((card, index) => (
           <Grid key={index} size={{ xs: 12, sm: 6, lg: 3 }}>
             <StatCard {...card} />
@@ -216,15 +144,7 @@ export default function MainGrid() {
       <Typography component="h2" variant="h6" sx={{ mb: 2 }}>
         {t("details")}
       </Typography>
-      <Grid 
-        container 
-        spacing={2} 
-        columns={12}
-        sx={{ 
-          width: '100%',
-          margin: 0 // Quitar margen negativo
-        }}
-      >
+      <Grid container spacing={2} columns={12} sx={{ width: '100%', margin: 0 }}>
         <Grid size={{ xs: 12, lg: 9 }}>
           <CustomizedDataGrid />
         </Grid>
