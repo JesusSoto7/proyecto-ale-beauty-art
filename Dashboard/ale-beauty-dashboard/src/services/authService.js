@@ -1,4 +1,20 @@
 import { parseJwt } from './jwt';
+import { apiPost } from './api.js';
+
+const LOGIN_PATH = import.meta.env.VITE_AUTH_LOGIN_PATH ?? '/api/v1/auth/sign_in';
+
+export async function login({ email, password }) {
+  const payload = { email, password };
+  const data = await apiPost(LOGIN_PATH, payload);
+
+  if (!data?.token) {
+    throw new Error(data?.error || data?.message || 'Respuesta de login inválida');
+  }
+  if (!data.user) data.user = {};
+  if (!Array.isArray(data.user.roles)) data.user.roles = [];
+
+  return data;
+}
 
 export function getToken() {
   return localStorage.getItem('token');
@@ -25,7 +41,7 @@ export function getTokenExpMs(token = getToken()) {
 
 export function isTokenExpired(token = getToken()) {
   const expMs = getTokenExpMs(token);
-  if (!expMs) return true; // si no hay exp, lo tratamos como inválido/expirado
+  if (!expMs) return true; 
   return Date.now() >= expMs;
 }
 

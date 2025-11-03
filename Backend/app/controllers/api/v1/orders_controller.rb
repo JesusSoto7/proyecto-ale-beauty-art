@@ -60,9 +60,12 @@ class Api::V1::OrdersController < Api::V1::BaseController
   end
 
   def ordenes
+
+    visible_statuses = [:pagada, :preparando, :enviado, :entregado]
+
     orders = current_user.orders
-                       .where(status: :pagada)
-                       .order(created_at: :desc)
+                        .where(status: visible_statuses)
+                        .order(created_at: :desc)
 
     render json: orders.map { |o|
       {
@@ -70,6 +73,7 @@ class Api::V1::OrdersController < Api::V1::BaseController
         numero_de_orden: o.numero_de_orden,
         status: o.status,
         pago_total: o.pago_total,
+        # fecha_pago puede ser nil si se creó mal; usa created_at como respaldo en el front
         fecha_pago: o.fecha_pago,
         clientes: o.user ? "#{o.user.nombre} #{o.user.apellido}" : "N/A",
         email: o.user&.email || "N/A",
@@ -79,63 +83,73 @@ class Api::V1::OrdersController < Api::V1::BaseController
   end
   
   def create
+    # 1) Limpia pendientes antiguas del usuario (sin columnas nuevas)
+    current_user.orders.pendientes_antiguas(30).update_all(status: Order.statuses[:cancelada], updated_at: Time.current)
+
     correo_cliente   = current_user.email
     shipping_address = current_user.shipping_addresses.find_by(predeterminada: true)
-
-    # Permite traer costo desde el front; si no viene, usa 10_000 como default
     costo_envio = (params[:costo_de_envio].presence || params.dig(:order, :costo_de_envio) || 10_000).to_f
 
-    order = current_user.orders.build(
+    # 2) Reutiliza una pendiente reciente sin pago; si no hay, crea nueva
+    reusable = current_user.orders
+                           .pendientes_recientes(30)
+                           .where(payment_id: [nil, ""])
+                           .order(created_at: :desc)
+                           .first
+
+    order = reusable || current_user.orders.build(
       correo_cliente: correo_cliente,
       status: :pendiente,
       pago_total: 0,
       shipping_address: shipping_address,
-      costo_de_envio: costo_envio # <- guardar en la orden
+      costo_de_envio: costo_envio
     )
 
-    # Si el cliente ya eligió el método, guárdalo en la orden
-    if (pm = find_payment_method_from_params)
-      order.payment_method = pm
-    end
+    # Mantén actualizados correo y dirección por si cambian
+    order.correo_cliente   = correo_cliente
+    order.shipping_address = shipping_address
+    order.costo_de_envio   = costo_envio
 
-    if order.save
-      if params[:order] && params[:order][:products]
-        params[:order][:products].each do |product_params|
-          product = Product.find(product_params[:product_id])
-          cantidad = (product_params[:quantity] || product_params[:cantidad]).to_i
-          precio_final = product.precio_con_mejor_descuento
+    # 3) Si se reutiliza, resetea detalles antes de rearmarlos
+    order.order_details.destroy_all if order.persisted?
 
-          order.order_details.create!(
-            product: product,
-            cantidad: cantidad,
-            precio_unitario: precio_final
-          )
-        end
-      else
-        current_cart.cart_products.includes(:product).each do |item|
-          precio_final = item.product.precio_con_mejor_descuento
+    # 4) Arma los detalles (igual que ya haces)
+    if params[:order] && params[:order][:products]
+      params[:order][:products].each do |product_params|
+        product = Product.find(product_params[:product_id])
+        cantidad = (product_params[:quantity] || product_params[:cantidad]).to_i
+        precio_final = product.precio_con_mejor_descuento
 
-          order.order_details.create!(
-            product: item.product,
-            cantidad: item.cantidad,
-            precio_unitario: precio_final
-          )
-        end
+        order.order_details.build(
+          product: product,
+          cantidad: cantidad,
+          precio_unitario: precio_final
+        )
       end
-
-      subtotal = order.order_details.sum("cantidad * precio_unitario")
-      order.update!(pago_total: subtotal + order.costo_de_envio.to_f) # <- usar el costo guardado
-
-      render json: {
-        message: "Orden creada correctamente",
-        order: order.as_json(include: { order_details: { include: :product } })
-      }, status: :created
     else
-      render json: {
-        error: "Hubo un error al procesar la orden",
-        details: order.errors.full_messages
-      }, status: :unprocessable_entity
+      current_cart.cart_products.includes(:product).each do |item|
+        precio_final = item.product.precio_con_mejor_descuento
+        order.order_details.build(
+          product: item.product,
+          cantidad: item.cantidad,
+          precio_unitario: precio_final
+        )
+      end
     end
+
+    # 5) Recalcula totales y guarda
+    subtotal = order.order_details.sum { |od| od.cantidad.to_i * od.precio_unitario.to_f }
+    order.pago_total = subtotal + order.costo_de_envio.to_f
+    order.save!
+
+    render json: {
+      message: reusable ? "Orden pendiente reutilizada" : "Orden creada correctamente",
+      order: order.as_json(include: { order_details: { include: :product } })
+    }, status: reusable ? :ok : :created
+  rescue ActiveRecord::RecordInvalid => e
+    render json: { error: "Error creando orden", details: e.record.errors.full_messages }, status: :unprocessable_entity
+  rescue => e
+    render json: { error: "Error creando orden", details: e.message }, status: :unprocessable_entity
   end
 
   def set_payment_method

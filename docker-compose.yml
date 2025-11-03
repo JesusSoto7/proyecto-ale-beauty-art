@@ -13,6 +13,12 @@ services:
       - ./Backend/db/init.sql:/docker-entrypoint-initdb.d/init.sql
     ports:
       - "3307:3306"
+    deploy:
+      resources:
+        limits:
+          memory: 2g   # súbelo si tienes RAM
+        reservations:
+          memory: 1g
 
   backend:
     build:
@@ -30,7 +36,12 @@ services:
       DATABASE_NAME: tienda_maquillaje_db_development
     depends_on:
       - db
-
+    deploy:
+      resources:
+        limits:
+          memory: 2g   # súbelo si tienes RAM
+        reservations:
+          memory: 1g
 
   frontend:
     build:
@@ -47,6 +58,12 @@ services:
     tty: true
     depends_on:
       - backend
+    deploy:
+      resources:
+        limits:
+          memory: 2g   # súbelo si tienes RAM
+        reservations:
+          memory: 1g
 
   dashboard:
       build:
@@ -63,6 +80,12 @@ services:
       tty: true
       depends_on:
         - backend
+      deploy:
+        resources:
+          limits:
+            memory: 2g   # súbelo si tienes RAM
+          reservations:
+            memory: 1g
 
 volumes:
   db_data:

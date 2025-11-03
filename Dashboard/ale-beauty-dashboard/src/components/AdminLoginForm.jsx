@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { login } from "../services/authService";
+import { login } from "../services/authService.js";
 import { useAlert } from "./AlertProvider.jsx";
 import {
   Box,

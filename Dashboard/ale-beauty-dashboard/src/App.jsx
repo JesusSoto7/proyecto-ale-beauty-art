@@ -26,6 +26,7 @@ import CreateDiscount from './page/home/CreateDiscount';
 import UserProfile from "./components/dashComponents/userPerfil.jsx";
 import { isAuthenticated, isAdmin } from './services/authService';
 import AuthGate from './components/auth/AuthGate.jsx';
+import Orders from './page/home/Orders.jsx';
 
 function Wrapper() {
   const { lang } = useParams();
@@ -106,6 +107,7 @@ function App() {
               <Route path="notificaciones" element={<Notificationes />} />
               <Route path="crear_descuento" element={<CreateDiscount />} />
               <Route path="user-profile" element={<UserProfile />} />
+              <Route path="orders" element={<Orders />} />
             </Route>
           </Route>
 

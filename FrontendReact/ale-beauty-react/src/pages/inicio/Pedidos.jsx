@@ -34,14 +34,18 @@ function Pedidos() {
       .finally(() => setLoading(false));
   }, [token, t]);
 
-  const formatDate = (dateString) => {
-    const date = new Date(dateString);
+  const formatDate = (dateString, fallbackDateString) => {
+    const raw = dateString || fallbackDateString;
+    if (!raw) return "—";
+    const date = new Date(raw);
+    if (isNaN(date)) return "—";
     return date.toLocaleDateString(lang === 'en' ? "en-US" : "es-CO", {
       day: "2-digit",
       month: "2-digit",
       year: "numeric",
     });
   };
+
 
   // Mostrar SOLO el spinner durante la carga
   if (loading) {
@@ -90,7 +94,9 @@ function Pedidos() {
 
               <div className="pedido-row">
                 <span className="label">{t('orders.paymentDate')}:</span>
-                <span className="value muted">{formatDate(order.fecha_pago)}</span>
+                <span className="value muted">
+                  {formatDate(order.fecha_pago, order.created_at)}
+                </span>
               </div>
 
               <button

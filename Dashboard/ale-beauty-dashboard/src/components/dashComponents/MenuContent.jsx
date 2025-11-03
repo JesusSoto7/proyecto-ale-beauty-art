@@ -20,6 +20,8 @@ import SettingsRoundedIcon from '@mui/icons-material/SettingsRounded';
 import CircleNotificationsIcon from '@mui/icons-material/CircleNotifications';
 import { TbCategory2 } from "react-icons/tb";
 import { BiSolidDiscount } from "react-icons/bi";
+import { TfiReceipt } from "react-icons/tfi";
+
 
 export default function MenuContent() {
   const { lang } = useParams();
@@ -31,6 +33,7 @@ export default function MenuContent() {
     { text: 'Categorias', icon: <TbCategory2 />, path: `/${lang}/home/categories` },
     { text: 'Carousel', icon: <AssignmentRoundedIcon />, path: `/${lang}/home/carousel` },
     { text: 'Usuarios', icon: <PeopleRoundedIcon />, path: `/${lang}/home/usuarios` },
+    { text: 'Ordenes', icon: <TfiReceipt />, path: `/${lang}/home/orders` },
     { text: 'Notificaciones', icon: <CircleNotificationsIcon />, path: `/${lang}/home/notificaciones` },
   ];
 

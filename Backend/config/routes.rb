@@ -99,6 +99,14 @@ Rails.application.routes.draw do
           post :mobile_create
         end
       end
+
+      namespace :admin do
+        resources :orders, only: [:index, :show] do
+          member do
+            patch :status, to: 'orders#update_status'
+          end
+        end
+      end
       resources :users, only: [:index, :update, :destroy]
       get "/me", to: "users#me"
       patch 'me', to: 'users#update' 
