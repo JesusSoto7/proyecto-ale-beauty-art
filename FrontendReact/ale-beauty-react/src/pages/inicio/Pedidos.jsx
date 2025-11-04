@@ -29,13 +29,16 @@ function Pedidos() {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then((res) => res.json())
-      .then((data) => setOrders(data))
+      .then((data) => setOrders(Array.isArray(data) ? data : (data.orders || [])))
       .catch((err) => console.error(t('orders.loadError'), err))
       .finally(() => setLoading(false));
   }, [token, t]);
 
-  const formatDate = (dateString) => {
-    const date = new Date(dateString);
+  const formatDate = (dateString, fallbackDateString) => {
+    const raw = dateString || fallbackDateString;
+    if (!raw) return "—";
+    const date = new Date(raw);
+    if (isNaN(date)) return "—";
     return date.toLocaleDateString(lang === 'en' ? "en-US" : "es-CO", {
       day: "2-digit",
       month: "2-digit",
@@ -43,16 +46,33 @@ function Pedidos() {
     });
   };
 
+
+  // Mostrar SOLO el spinner durante la carga
+  if (loading) {
+    return (
+      <div className="p-4 max-w-4xl mx-auto">
+        <div className="text-center py-10">
+          <CircularProgress style={{ color: "#ff4d94" }} />
+          <p className="text-pink-500 mt-2" style={{ color: "#ff4d94" }}>
+            {t('orders.loading', { defaultValue: 'Cargando...' })}
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  // Ya cargó: mostrar título y, según haya o no pedidos, el contenido correspondiente
   return (
     <div className="p-4 max-w-4xl mx-auto">
       <h2 className="text-xl font-semibold mb-4 text-pink-600">
         {t('orders.myOrders')}
       </h2>
 
-      {loading || orders.length === 0 ? (
+      {orders.length === 0 ? (
         <div className="text-center py-10">
-          <CircularProgress style={{ color: "#ff4d94" }} />
-          <p className="text-pink-500 mt-2" style={{color:"#ff4d94"}}>Cargando...</p>
+          <p className="text-gray-500">
+            {t('orders.empty', { defaultValue: 'Aún no tienes pedidos.' })}
+          </p>
         </div>
       ) : (
         <div className="grid gap-4 md:grid-cols-2">
@@ -74,7 +94,9 @@ function Pedidos() {
 
               <div className="pedido-row">
                 <span className="label">{t('orders.paymentDate')}:</span>
-                <span className="value muted">{formatDate(order.fecha_pago)}</span>
+                <span className="value muted">
+                  {formatDate(order.fecha_pago, order.created_at)}
+                </span>
               </div>
 
               <button
@@ -82,11 +104,11 @@ function Pedidos() {
                 className="pedido-btn"
                 onMouseEnter={(e) => {
                   const card = e.currentTarget.closest(".pedido-card");
-                  card.style.setProperty("--glow", "1");
+                  if (card) card.style.setProperty("--glow", "1");
                 }}
                 onMouseLeave={(e) => {
                   const card = e.currentTarget.closest(".pedido-card");
-                  card.style.setProperty("--glow", "0");
+                  if (card) card.style.setProperty("--glow", "0");
                 }}
               >
                 {t('orders.viewDetails')}

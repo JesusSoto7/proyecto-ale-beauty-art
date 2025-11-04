@@ -13,7 +13,8 @@ class Api::V1::OrdersController < Api::V1::BaseController
       direccion_envio: order.direccion_envio,
       tarjeta_tipo: order.tarjeta_tipo,
       tarjeta_ultimos4: order.tarjeta_ultimos4,
-      envio: 10000,
+      payment_method: order.payment_method&.as_json(only: [:id, :nombre_metodo, :codigo]),
+      envio: order.costo_de_envio.to_f, # <- ahora sale de la BD
       productos: order.order_details.map do |od|
         product = od.product
         precio_original = product.precio_producto
@@ -29,7 +30,6 @@ class Api::V1::OrdersController < Api::V1::BaseController
           precio_descuento: precio_con_descuento.to_f,
           precio_unitario: precio_con_descuento.to_f,
           imagen_url: product.imagen.attached? ? url_for(product.imagen) : nil,
-          # 🆕 Información adicional del descuento
           tiene_descuento: precio_con_descuento < precio_original,
           porcentaje_descuento: precio_con_descuento < precio_original ? 
             (((precio_original - precio_con_descuento) / precio_original) * 100).round : 0,
@@ -60,9 +60,12 @@ class Api::V1::OrdersController < Api::V1::BaseController
   end
 
   def ordenes
+
+    visible_statuses = [:pagada, :preparando, :enviado, :entregado]
+
     orders = current_user.orders
-                       .where(status: :pagada)
-                       .order(created_at: :desc)
+                        .where(status: visible_statuses)
+                        .order(created_at: :desc)
 
     render json: orders.map { |o|
       {
@@ -70,6 +73,7 @@ class Api::V1::OrdersController < Api::V1::BaseController
         numero_de_orden: o.numero_de_orden,
         status: o.status,
         pago_total: o.pago_total,
+        # fecha_pago puede ser nil si se creó mal; usa created_at como respaldo en el front
         fecha_pago: o.fecha_pago,
         clientes: o.user ? "#{o.user.nombre} #{o.user.apellido}" : "N/A",
         email: o.user&.email || "N/A",
@@ -77,59 +81,103 @@ class Api::V1::OrdersController < Api::V1::BaseController
       }
     }
   end
-
+  
   def create
-    correo_cliente = current_user.email
-    shipping_address = current_user.shipping_addresses.find_by(predeterminada: true)
+    # 1) Limpia pendientes antiguas del usuario (sin columnas nuevas)
+    current_user.orders.pendientes_antiguas(30).update_all(status: Order.statuses[:cancelada], updated_at: Time.current)
 
-    order = current_user.orders.build(
+    correo_cliente   = current_user.email
+    shipping_address = current_user.shipping_addresses.find_by(predeterminada: true)
+    costo_envio = (params[:costo_de_envio].presence || params.dig(:order, :costo_de_envio) || 10_000).to_f
+
+    # 2) Reutiliza una pendiente reciente sin pago; si no hay, crea nueva
+    reusable = current_user.orders
+                           .pendientes_recientes(30)
+                           .where(payment_id: [nil, ""])
+                           .order(created_at: :desc)
+                           .first
+
+    order = reusable || current_user.orders.build(
       correo_cliente: correo_cliente,
       status: :pendiente,
       pago_total: 0,
-      shipping_address: shipping_address
+      shipping_address: shipping_address,
+      costo_de_envio: costo_envio
     )
 
-    if order.save
-      if params[:order] && params[:order][:products]
-        params[:order][:products].each do |product_params|
-          product = Product.find(product_params[:product_id])
-          cantidad = (product_params[:quantity] || product_params[:cantidad]).to_i
-          # 🔥 Usar el método del modelo para obtener precio con descuento
-          precio_final = product.precio_con_mejor_descuento
-          
-          order.order_details.create!(
-            product: product,
-            cantidad: cantidad,
-            precio_unitario: precio_final
-          )
-        end
-      else
-        current_cart.cart_products.includes(:product).each do |item|
-          # 🔥 Usar el método del modelo para obtener precio con descuento
-          precio_final = item.product.precio_con_mejor_descuento
-          
-          order.order_details.create!(
-            product: item.product,
-            cantidad: item.cantidad,
-            precio_unitario: precio_final
-          )
-        end
+    # Mantén actualizados correo y dirección por si cambian
+    order.correo_cliente   = correo_cliente
+    order.shipping_address = shipping_address
+    order.costo_de_envio   = costo_envio
+
+    # 3) Si se reutiliza, resetea detalles antes de rearmarlos
+    order.order_details.destroy_all if order.persisted?
+
+    # 4) Arma los detalles (igual que ya haces)
+    if params[:order] && params[:order][:products]
+      params[:order][:products].each do |product_params|
+        product = Product.find(product_params[:product_id])
+        cantidad = (product_params[:quantity] || product_params[:cantidad]).to_i
+        precio_final = product.precio_con_mejor_descuento
+
+        order.order_details.build(
+          product: product,
+          cantidad: cantidad,
+          precio_unitario: precio_final
+        )
       end
-
-      total = order.order_details.sum("cantidad * precio_unitario")
-      order.update!(pago_total: total + 10_000)
-
-      render json: {
-        message: "Orden creada correctamente",
-        order: order.as_json(include: { order_details: { include: :product } })
-      }, status: :created
     else
-      render json: {
-        error: "Hubo un error al procesar la orden",
-        details: order.errors.full_messages
-      }, status: :unprocessable_entity
+      current_cart.cart_products.includes(:product).each do |item|
+        precio_final = item.product.precio_con_mejor_descuento
+        order.order_details.build(
+          product: item.product,
+          cantidad: item.cantidad,
+          precio_unitario: precio_final
+        )
+      end
     end
+
+    # 5) Recalcula totales y guarda
+    subtotal = order.order_details.sum { |od| od.cantidad.to_i * od.precio_unitario.to_f }
+    order.pago_total = subtotal + order.costo_de_envio.to_f
+    order.save!
+
+    render json: {
+      message: reusable ? "Orden pendiente reutilizada" : "Orden creada correctamente",
+      order: order.as_json(include: { order_details: { include: :product } })
+    }, status: reusable ? :ok : :created
+  rescue ActiveRecord::RecordInvalid => e
+    render json: { error: "Error creando orden", details: e.record.errors.full_messages }, status: :unprocessable_entity
+  rescue => e
+    render json: { error: "Error creando orden", details: e.message }, status: :unprocessable_entity
   end
+
+  def set_payment_method
+    order = current_user.orders.find(params[:id])
+
+    unless order.pendiente?
+      return render json: { error: "Solo puedes cambiar el método de pago si la orden está pendiente" }, status: :unprocessable_entity
+    end
+
+    pm = if params[:payment_method_codigo].present?
+           PaymentMethod.find_by(codigo: params[:payment_method_codigo], activo: true)
+         elsif params[:payment_method_id].present?
+           PaymentMethod.find_by(id: params[:payment_method_id], activo: true)
+         end
+
+    return render json: { error: "Método de pago no encontrado o inactivo" }, status: :not_found unless pm
+
+    order.update!(payment_method: pm)
+    render json: {
+      id: order.id,
+      numero_de_orden: order.numero_de_orden,
+      status: order.status,
+      payment_method: order.payment_method.as_json(only: [:id, :nombre_metodo, :codigo])
+    }
+  rescue ActiveRecord::RecordNotFound
+    render json: { error: "Orden no encontrada" }, status: :not_found
+  end
+
 
   def count_completed
     completed_orders = Order.where(status: :pagada).count
@@ -207,6 +255,7 @@ class Api::V1::OrdersController < Api::V1::BaseController
           direccion_envio: order.direccion_envio,
           tarjeta_tipo: order.card_type,
           tarjeta_ultimos4: order.card_last4,
+          envio: order.costo_de_envio.to_f, # <- devolver también lo guardado
           productos: order.order_details.map do |od|
             product = od.product
             {
@@ -232,6 +281,14 @@ class Api::V1::OrdersController < Api::V1::BaseController
   def calcular_monto_actual
     current_cart.cart_products.includes(:product).sum do |item|
       item.product.precio_con_mejor_descuento * item.cantidad
+    end
+  end
+
+  def find_payment_method_from_params
+    if params[:payment_method_codigo].present?
+      PaymentMethod.find_by(codigo: params[:payment_method_codigo], activo: true)
+    elsif params[:payment_method_id].present?
+      PaymentMethod.find_by(id: params[:payment_method_id], activo: true)
     end
   end
 end

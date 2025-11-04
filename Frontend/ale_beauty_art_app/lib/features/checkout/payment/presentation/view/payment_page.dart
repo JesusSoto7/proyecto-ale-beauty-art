@@ -141,6 +141,18 @@ class _PaymentPageState extends State<PaymentPage> {
       return;
     }
 
+    try {
+      await _mpService.setOrderPaymentMethod(
+        jwt: widget.token,
+        orderId: widget.orderId,
+        codigo:
+            'mercadopago', // o envía un ID si manejas varios métodos en la app
+      );
+    } catch (e) {
+      // No abortes el pago; el backend igual hace fallback a mercadopago.
+      debugPrint('No se pudo marcar payment_method en orden: $e');
+    }
+
     final response = await _mpService.payWithBackend(
       token: token,
       transaction_amount: widget.amount,
@@ -159,11 +171,18 @@ class _PaymentPageState extends State<PaymentPage> {
       final payment = response["payment"] ?? response;
       final paymentId = (payment["id"] ?? payment["payment_id"])?.toString();
       // Prefer the detected values from MP search; fallback to backend response
-      final resolvedPaymentMethodId = (paymentMethodId ?? (payment["payment_method_id"] ?? payment["method_id"]))?.toString();
-      final resolvedPaymentTypeId = (paymentTypeId ?? payment["payment_type_id"])?.toString();
-      final cardLastFour = (payment["card"]?['last_four_digits'] ?? payment['last_four_digits'])?.toString();
-      final installments = payment['installments'] is int ? payment['installments'] as int : 1;
-      final approvedAt = (payment['date_approved'] ?? payment['approved_at'])?.toString();
+      final resolvedPaymentMethodId = (paymentMethodId ??
+              (payment["payment_method_id"] ?? payment["method_id"]))
+          ?.toString();
+      final resolvedPaymentTypeId =
+          (paymentTypeId ?? payment["payment_type_id"])?.toString();
+      final cardLastFour =
+          (payment["card"]?['last_four_digits'] ?? payment['last_four_digits'])
+              ?.toString();
+      final installments =
+          payment['installments'] is int ? payment['installments'] as int : 1;
+      final approvedAt =
+          (payment['date_approved'] ?? payment['approved_at'])?.toString();
 
       // Si esta compra vino desde "Comprar" (compra rápida), restaurar carrito previo
       if (widget.restoreCartAfterPayment) {
@@ -183,7 +202,10 @@ class _PaymentPageState extends State<PaymentPage> {
             status: status,
             paymentMethodId: resolvedPaymentMethodId,
             paymentTypeId: resolvedPaymentTypeId,
-            cardLastFour: cardLastFour ?? _cardNumber.text.replaceAll(' ', '').substring(_cardNumber.text.replaceAll(' ', '').length - 4),
+            cardLastFour: cardLastFour ??
+                _cardNumber.text
+                    .replaceAll(' ', '')
+                    .substring(_cardNumber.text.replaceAll(' ', '').length - 4),
             cardholderName: _name.text,
             email: _email.text,
             installments: installments,
@@ -194,7 +216,10 @@ class _PaymentPageState extends State<PaymentPage> {
     } else {
       final detail = response["detail"] ?? 'payment.try_again'.tr();
       _showMessage(
-        'payment.status_message'.tr(namedArgs: {"status": status.toString(), "detail": detail.toString()}),
+        'payment.status_message'.tr(namedArgs: {
+          "status": status.toString(),
+          "detail": detail.toString()
+        }),
         isError: true,
       );
     }
@@ -493,7 +518,8 @@ class _PaymentPageState extends State<PaymentPage> {
                                 child: TextFormField(
                                   controller: _expiryMonth,
                                   keyboardType: TextInputType.number,
-                                  decoration: _inputDecoration('payment.fields.month'.tr()),
+                                  decoration: _inputDecoration(
+                                      'payment.fields.month'.tr()),
                                   inputFormatters: [
                                     FilteringTextInputFormatter.digitsOnly,
                                     LengthLimitingTextInputFormatter(2),
@@ -517,7 +543,8 @@ class _PaymentPageState extends State<PaymentPage> {
                                 child: TextFormField(
                                   controller: _expiryYear,
                                   keyboardType: TextInputType.number,
-                                  decoration: _inputDecoration('payment.fields.year'.tr()),
+                                  decoration: _inputDecoration(
+                                      'payment.fields.year'.tr()),
                                   inputFormatters: [
                                     FilteringTextInputFormatter.digitsOnly,
                                     LengthLimitingTextInputFormatter(2),
@@ -535,7 +562,8 @@ class _PaymentPageState extends State<PaymentPage> {
                                 child: TextFormField(
                                   controller: _cvv,
                                   keyboardType: TextInputType.number,
-                                  decoration: _inputDecoration('payment.fields.cvv'.tr()),
+                                  decoration: _inputDecoration(
+                                      'payment.fields.cvv'.tr()),
                                   inputFormatters: [
                                     FilteringTextInputFormatter.digitsOnly,
                                     LengthLimitingTextInputFormatter(4),
@@ -630,7 +658,8 @@ class _PaymentPageState extends State<PaymentPage> {
                                 flex: 1,
                                 child: DropdownButtonFormField<String>(
                                   value: _selectedDocType,
-                                  decoration: _inputDecoration('payment.fields.doc_type'.tr()),
+                                  decoration: _inputDecoration(
+                                      'payment.fields.doc_type'.tr()),
                                   items: _docTypes.map((type) {
                                     return DropdownMenuItem(
                                       value: type,
@@ -648,8 +677,8 @@ class _PaymentPageState extends State<PaymentPage> {
                                 child: TextFormField(
                                   controller: _docNumber,
                                   keyboardType: TextInputType.number,
-                                  decoration:
-                                      _inputDecoration('payment.fields.doc_number'.tr()),
+                                  decoration: _inputDecoration(
+                                      'payment.fields.doc_number'.tr()),
                                   inputFormatters: [
                                     FilteringTextInputFormatter.digitsOnly,
                                   ],

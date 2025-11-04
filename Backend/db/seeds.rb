@@ -27,3 +27,5 @@ Neighborhood.create!(nombre: "Ciudadela Metropolitana", municipality: soledad)
 Neighborhood.create!(nombre: "Villa Katanga", municipality: soledad)
 Neighborhood.create!(nombre: "Los Almendros", municipality: soledad)
 Neighborhood.create!(nombre: "Centro", municipality: soledad)
+
+PaymentMethod.find_or_create_by!(nombre_metodo: 'Mercado Pago', codigo: 'mercadopago', activo: true)

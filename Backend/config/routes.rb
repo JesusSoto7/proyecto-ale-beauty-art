@@ -74,9 +74,14 @@ Rails.application.routes.draw do
         end
       end
 
+      resources :payment_methods, only: [:index]
+
       resources :orders, only: [:create, :index] do
         collection do
           get 'by_payment/:payment_id', to: 'orders#by_payment'
+        end
+        member do
+          patch :set_payment_method
         end
       end
       get "/my_orders", to: "orders#ordenes"
@@ -85,10 +90,21 @@ Rails.application.routes.draw do
       get 'analytics/product_funnel_per_day', to: 'analytics#product_funnel_per_day'
       get 'analytics/top_3_products', to: 'analytics#top_3_products'
 
+      get  "mercadopago/payment_methods", to: "mercadopago#payment_methods"
+      get  "mercadopago/pse_banks",       to: "mercadopago#pse_banks"
+
       resources :payments, only: [:create] do
         collection do
           post :create_preference   # POST /api/v1/payments/create_preference
-          post :mobile_create 
+          post :mobile_create
+        end
+      end
+
+      namespace :admin do
+        resources :orders, only: [:index, :show] do
+          member do
+            patch :status, to: 'orders#update_status'
+          end
         end
       end
       resources :users, only: [:index, :update, :destroy]
