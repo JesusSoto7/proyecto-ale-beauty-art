@@ -74,6 +74,8 @@ Rails.application.routes.draw do
         end
       end
 
+      resources :guest_orders, only: [:create]
+      
       resources :payment_methods, only: [:index]
 
       resources :orders, only: [:create, :index] do

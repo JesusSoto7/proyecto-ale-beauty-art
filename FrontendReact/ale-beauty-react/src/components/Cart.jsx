@@ -250,25 +250,23 @@ function Cart() {
     }
   };
 
-  const handleCheckout = () => {
-    if (mode === "guest") {
-      // Deja preparado para un checkout invitado
-      navigate(`/${lang}/checkout`, {
-        state: {
-          mode: "guest",
-          guestCart: cart, // { products: [...] }
-        },
-      });
-      return;
-    }
-
-    fetch(`${API_BASE}/api/v1/orders`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
+    const handleCheckout = () => {
+      if (mode === "guest") {
+        navigate(`/${lang}/guest-checkout`, {
+          state: {
+            mode: "guest",
+            guestCart: cart, // { id:null, products:[...] }
+          },
+        });
+        return;
       }
-    })
+      fetch(`${API_BASE}/api/v1/orders`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        }
+      })
       .then((res) => {
         if (!res.ok) throw new Error("Checkout failed");
         return res.json();
@@ -286,7 +284,7 @@ function Cart() {
         }
       })
       .catch(() => setError(t("cart.orderError")));
-  };
+    };
 
   const handleProductClick = (productId) => {
     navigate(`/${lang}/producto/${productId}`);

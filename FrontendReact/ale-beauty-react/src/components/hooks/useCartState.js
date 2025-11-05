@@ -1,64 +1,63 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { getGuestCart } from '../../utils/guestCart';
 
+const normalizeToken = (raw) => (raw && raw !== 'null' && raw !== 'undefined' ? raw : null);
+
+const mapGuestToCart = () => {
+  const guest = getGuestCart();
+  const items = guest?.items || [];
+  return {
+    id: null,
+    products: items.map(i => ({
+      product_id: i.id,
+      nombre_producto: i.name,
+      precio_producto: Number(i.price || 0),
+      precio_con_mejor_descuento: Number(i.price || 0),
+      cantidad: Number(i.quantity || 1),
+      imagen_url: i.image || null,
+    })),
+  };
+};
+
 export const useCartState = (token, t) => {
-  const [cart, setCart] = useState([]);
+  const [cart, setCart] = useState({ products: [] });
   const [optimisticCount, setOptimisticCount] = useState(0);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   
   const isFetchingRef = useRef(false);
 
-  const mapGuestToCart = () => {
-    const guest = getGuestCart();
-    const items = guest?.items || [];
-    return {
-      id: null,
-      products: items.map(i => ({
-        product_id: i.id,
-        nombre_producto: i.name,
-        precio_producto: Number(i.price || 0),
-        precio_con_mejor_descuento: Number(i.price || 0),
-        cantidad: Number(i.quantity || 1),
-        imagen_url: i.image || null,
-      })),
-    };
-  };
-
-  const guestCount = () => {
-    const items = getGuestCart()?.items || [];
-    return items.reduce((a, i) => a + Number(i.quantity || 1), 0);
-  };
-
   const fetchCart = useCallback(() => {
-    // Modo invitado: no golpees el backend ni agregues Authorization
-    if (!token) {
+    const tok = normalizeToken(localStorage.getItem('token') || token);
+
+    // Invitado: no golpees el backend
+    if (!tok) {
       setLoading(true);
       setError(null);
       isFetchingRef.current = true;
-      const mapped = mapGuestToCart();
-      setCart(mapped);
-      // En guest, el “optimisticCount” no es necesario si ya reaccionamos a guestCartUpdated,
-      // pero lo reseteamos para evitar arrastres
+      setCart(mapGuestToCart());
       setOptimisticCount(0);
       isFetchingRef.current = false;
       setLoading(false);
       return;
     }
 
-    // Modo autenticado
+    // Autenticado
     setLoading(true);
     setError(null);
     isFetchingRef.current = true;
+
     fetch("https://localhost:4000/api/v1/cart", {
-      headers: { Authorization: `Bearer ${token}` },
+      headers: { Authorization: `Bearer ${tok}` },
     })
-      .then((res) => {
+      .then(async (res) => {
         if (!res.ok) throw new Error("Failed to fetch cart");
-        return res.json();
+        const text = await res.text();
+        if (!text) return null;
+        try { return JSON.parse(text); } catch { return null; }
       })
       .then((data) => {
-        setCart(data?.cart || data);
+        if (data) setCart(data?.cart || data);
         setTimeout(() => {
           setOptimisticCount(0);
           isFetchingRef.current = false;
@@ -76,14 +75,10 @@ export const useCartState = (token, t) => {
     fetchCart();
 
     const handleOptimisticUpdate = () => {
-      if (!isFetchingRef.current) {
-        // Suma optimista tanto en auth como en guest
-        setOptimisticCount(prev => prev + 1);
-      }
+      if (!isFetchingRef.current) setOptimisticCount(prev => prev + 1);
     };
 
     const handleRealUpdate = () => {
-      // Auth: refresca desde backend; Guest: refresca desde localStorage
       fetchCart();
     };
 
@@ -93,9 +88,8 @@ export const useCartState = (token, t) => {
     };
 
     const handleGuestUpdated = () => {
-      if (!token) {
-        setCart(mapGuestToCart());
-      }
+      const tok = normalizeToken(localStorage.getItem('token') || token);
+      if (!tok) setCart(mapGuestToCart());
     };
 
     window.addEventListener("cartUpdatedOptimistic", handleOptimisticUpdate);
@@ -111,7 +105,6 @@ export const useCartState = (token, t) => {
     };
   }, [fetchCart, token]);
 
-  // Calcular total de ítems mostrado (badge)
   const baseCount = Array.isArray(cart?.products)
     ? cart.products.reduce((acc, p) => acc + (Number(p.cantidad) || 1), 0)
     : 0;

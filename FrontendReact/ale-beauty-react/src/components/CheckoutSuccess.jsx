@@ -36,6 +36,15 @@ export default function CheckoutSuccess() {
     }
   }, [order, paymentId]);
 
+
+  useEffect(() => {
+    const tok = localStorage.getItem("token");
+    if (!tok) {
+      try { guestClearCart(); } catch {}
+      window.dispatchEvent(new CustomEvent("guestCartUpdated"));
+    }
+  }, []);
+
   useEffect(() => {
     if (!order || !order.productos || order.productos.length === 0) return;
 

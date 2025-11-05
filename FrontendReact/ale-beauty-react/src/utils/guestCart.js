@@ -11,7 +11,10 @@ export function getGuestCart() {
 
 function save(cart) {
   localStorage.setItem(KEY, JSON.stringify(cart));
+  // Notifica a todos los listeners de guest
   window.dispatchEvent(new CustomEvent("guestCartUpdated", { detail: cart }));
+  // Compatibilidad con otros listeners que refrescan a partir de este evento
+  window.dispatchEvent(new CustomEvent("cartUpdatedCustom", { bubbles: false }));
 }
 
 export function addItem(product, quantity = 1) {
@@ -20,9 +23,9 @@ export function addItem(product, quantity = 1) {
   const name = product?.nombre_producto ?? product?.name ?? "";
   const price = Number(
     product?.precio_con_mejor_descuento ??
-    product?.precio_producto ??
-    product?.price ??
-    0
+      product?.precio_producto ??
+      product?.price ??
+      0
   );
   const image = product?.imagen_url ?? product?.image ?? null;
 
@@ -53,5 +56,14 @@ export function removeItem(productId) {
 }
 
 export function clearCart() {
-  save({ items: [] });
+  try {
+    // Borra la key para evitar estados “fantasma”
+    localStorage.removeItem(KEY);
+  } catch {
+    // Fallback si algo falla
+    localStorage.setItem(KEY, JSON.stringify({ items: [] }));
+  }
+  // Notifica a todos
+  window.dispatchEvent(new CustomEvent("guestCartUpdated", { detail: { items: [] } }));
+  window.dispatchEvent(new CustomEvent("cartUpdatedCustom", { bubbles: false }));
 }

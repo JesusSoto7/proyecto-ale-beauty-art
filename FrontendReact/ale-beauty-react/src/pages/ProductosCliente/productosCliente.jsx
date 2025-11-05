@@ -9,6 +9,9 @@ import { useAlert } from "../../components/AlertProvider.jsx";
 import ProductCard from "../../components/ProductCard";
 import { addItem as addGuestItem } from "../../utils/guestCart.js";
 
+const API_BASE = import.meta.env.VITE_API_BASE_URL || "https://localhost:4000";
+const normalizeToken = (raw) => (raw && raw !== "null" && raw !== "undefined" ? raw : null);
+
 function ProductosCliente() {
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]); 
@@ -23,7 +26,7 @@ function ProductosCliente() {
   const [productRatings, setProductRatings] = useState({});
   const [selectedRatings, setSelectedRatings] = useState([]);
   const { addAlert } = useAlert();
-  const API_BASE = import.meta.env.VITE_API_BASE_URL || "https://localhost:4000";
+
   const [currentPage, setCurrentPage] = useState(1);
   const [productsPerPage] = useState(15);
 
@@ -31,8 +34,8 @@ function ProductosCliente() {
   const { t } = useTranslation();
 
   useEffect(() => {
-    // Mantener token actualizado si cambia en localStorage
-    const handler = () => setToken(localStorage.getItem("token"));
+    // Mantener token actualizado y normalizado si cambia en localStorage
+    const handler = () => setToken(normalizeToken(localStorage.getItem("token")));
     window.addEventListener("storage", handler);
     return () => window.removeEventListener("storage", handler);
   }, []);
@@ -250,45 +253,59 @@ const toggleFavorite = async (productId) => {
   };
 
   const addToCart = (item) => {
-    const product = typeof item === "object" ? item : products.find((p) => p.id === item);
+    const product = typeof item === "object" ? item : products.find((p) => String(p.id) === String(item));
+    const productId = product?.id ?? item;
 
-    if (!token) {
-      // Sube el contador inmediatamente
+    // Toma SIEMPRE el token más reciente y normalizado
+    const tok = normalizeToken(localStorage.getItem("token") || token);
+
+    // Invitado
+    if (!tok) {
       window.dispatchEvent(new CustomEvent("cartUpdatedOptimistic", { bubbles: false }));
       if (product) {
-        addGuestItem(product, 1); // esto emite guestCartUpdated internamente
+        addGuestItem(product, 1); // emite guestCartUpdated internamente
       }
-      // Opcionalmente, mantener por compatibilidad:
       window.dispatchEvent(new CustomEvent("cartUpdatedCustom", { bubbles: false }));
       addAlert(t("productDetails.addedToCart") || "Se agregó al carrito", "success", 3500);
       return;
     }
 
-    // Modo autenticado
+    // Autenticado
     window.dispatchEvent(new CustomEvent("cartUpdatedOptimistic", { 
       bubbles: false, 
-      detail: { productId: product?.id ?? item, action: 'add' } 
+      detail: { productId, action: 'add' } 
     }));
 
     fetch(`${API_BASE}/api/v1/cart/add_product`, {
       method: "POST",
-      headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-      body: JSON.stringify({ product_id: product?.id ?? item }),
+      headers: { 
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${tok}` 
+      },
+      body: JSON.stringify({ product_id: productId }),
     })
-      .then((res) => res.json())
+      .then(async (res) => {
+        // Si falla, forzamos la ruta de fallo (para que el contador revierta)
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        try { return await res.json(); } catch { return {}; }
+      })
       .then((data) => {
-        if (data.cart) {
-          setCart(data.cart);
+        const serverCart = data?.cart || data;
+        if (serverCart?.products) {
+          setCart(serverCart);
           window.dispatchEvent(new CustomEvent("cartUpdatedCustom", { bubbles: false }));
           addAlert("Se agregó al carrito", "success", 3500);
-        } else if (data.errors) {
-          addAlert((t('productDetails.error') || "Error: ") + data.errors.join(", "), "error", 3500);
-          window.dispatchEvent(new CustomEvent("cartUpdateFailed", { bubbles: false }));
+        } else {
+          // Si la API no trae el carrito como esperamos, al menos refresca
+          window.dispatchEvent(new CustomEvent("cartUpdatedCustom", { bubbles: false }));
         }
       })
       .catch(() => {
         addAlert(t('productDetails.cartAddError') || "No se pudo agregar al carrito", "error", 3500);
-        window.dispatchEvent(new CustomEvent("cartUpdateFailed", { bubbles: false }));
+        window.dispatchEvent(new CustomEvent("cartUpdateFailed", { 
+          bubbles: false,
+          detail: { productId, action: 'add' }
+        }));
       });
   };
 

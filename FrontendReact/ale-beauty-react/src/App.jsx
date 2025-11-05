@@ -48,6 +48,7 @@ import Notificationes from './pages/home/Notifications';
 import CreateDiscount from './pages/home/CreateDiscount';
 import OptionsMenu from "./components/dashComponents/OptionsMenu.jsx";
 import UserProfile from "./components/dashComponents/userPerfil.jsx";
+import GuestCheckout from './components/GuestCheckout/GuestCheckout.jsx';
 
 function Wrapper() {
   const { lang } = useParams();
@@ -104,6 +105,7 @@ function App() {
           <Route element={<CheckoutLayout />}>
             <Route path="checkout" element={<Checkout />} />
             <Route path="checkout/success/:paymentId" element={<CheckoutSuccess />} />
+            <Route path="guest-checkout" element={<GuestCheckout />} />
           </Route>
 
           <Route path="login" element={<LoginForm onLogin={() => setIsLoggedIn(true)} />} />

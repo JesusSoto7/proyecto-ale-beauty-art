@@ -1,9 +1,6 @@
 module Api
   module V1
     class CartController < Api::V1::BaseController
-      # Hacer pública la lectura del carrito
-      skip_before_action :authorize_request, only: [:show]
-
       def show
         # Si no hay usuario autenticado, devolver un carrito vacío para modo invitado
         unless current_user
