@@ -5,14 +5,16 @@ import CircularProgress from "@mui/material/CircularProgress";
 import Typography from "@mui/material/Typography";
 import "../assets/stylesheets/SubCateProds.css";
 import { useAlert } from "../components/AlertProvider.jsx";
-import ProductCard from "../components/ProductCard"; // ✅ IMPORTAR
+import ProductCard from "../components/ProductCard";
+import { addItem as addGuestItem } from "../utils/guestCart.js";
 
 export default function ProductsPageSubCategory() {
   const { categorySlug, subCategorySlug, lang } = useParams();
   const { t } = useTranslation();
   const { favoriteIds, loadFavorites } = useOutletContext();
+  const API_BASE = import.meta.env.VITE_API_BASE_URL || "https://localhost:4000";
+  const [token, setToken] = useState(() => localStorage.getItem("token"));
 
-  const [token, setToken] = useState(null);
   const [products, setProducts] = useState([]);
   const [cart, setCart] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -30,36 +32,36 @@ export default function ProductsPageSubCategory() {
 
   useEffect(() => {
     const savedToken = localStorage.getItem("token");
-    if (savedToken) setToken(savedToken);
+    setToken(savedToken || null);
+    const onStorage = () => setToken(localStorage.getItem("token"));
+    window.addEventListener("storage", onStorage);
+    return () => window.removeEventListener("storage", onStorage);
   }, []);
 
   useEffect(() => {
-    if (!token) return;
-
     async function fetchCategoryProducts() {
       try {
         setLoading(true);
         setError(null);
 
-        const res = await fetch(
-          `https://localhost:4000/api/v1/categories/${categorySlug}/sub_categories/${subCategorySlug}/products_by_sub`,
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
+        // Productos por subcategoría (público)
+        const res = await fetch(`${API_BASE}/api/v1/categories/${categorySlug}/sub_categories/${subCategorySlug}/products_by_sub`);
         if (!res.ok) throw new Error("Error al cargar los productos");
         const data = await res.json();
         const prods = data.products || [];
         setProducts(prods);
 
+        // Ratings: headers opcionales
+        const headers = token ? { Authorization: `Bearer ${token}` } : {};
         const ratingsObj = {};
         await Promise.all(
           prods.map(async (p) => {
             try {
-              const res = await fetch(`https://localhost:4000/api/v1/products/${p.slug}/reviews`, {
-                headers: { Authorization: `Bearer ${token}` },
-              });
-              const reviews = await res.json();
+              const r = await fetch(`${API_BASE}/api/v1/products/${p.slug}/reviews`, { headers });
+              if (r.status === 401) { ratingsObj[p.id] = { avg: 0, count: 0 }; return; }
+              const reviews = await r.json();
               if (Array.isArray(reviews) && reviews.length > 0) {
-                const avg = reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length;
+                const avg = reviews.reduce((sum, rr) => sum + rr.rating, 0) / reviews.length;
                 ratingsObj[p.id] = { avg, count: reviews.length };
               } else {
                 ratingsObj[p.id] = { avg: 0, count: 0 };
@@ -81,37 +83,41 @@ export default function ProductsPageSubCategory() {
   }, [token, categorySlug, subCategorySlug]);
 
   useEffect(() => {
-    if (!token) return;
     async function fetchSubCategory() {
       try {
-        const res = await fetch(
-          `https://localhost:4000/api/v1/categories/${categorySlug}/sub_categories/${subCategorySlug}`,
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
+        // Subcategoría (público)
+        const res = await fetch(`${API_BASE}/api/v1/categories/${categorySlug}/sub_categories/${subCategorySlug}`);
         if (!res.ok) throw new Error("Error al cargar la subcategoría");
         const data = await res.json();
         setSubCategory(data);
-      } catch (err) {
+      } catch {
         setSubCategory(null);
       }
     }
     fetchSubCategory();
-  }, [token, categorySlug, subCategorySlug]);
+  }, [categorySlug, subCategorySlug]);
 
-  // ✅ EFECTO PARA RESETEAR A PÁGINA 1 CUANDO CAMBIAN LOS FILTROS
+
   useEffect(() => {
     setCurrentPage(1);
   }, [sortOrder, priceRange, selectedRatings]);
 
-  let filteredProducts = products;
-  
+  let filteredProducts = [...products];
+
   if (priceRange.min || priceRange.max) {
     filteredProducts = filteredProducts.filter((p) => {
-      const price = p.precio_producto;
+      const price = Number(p.precio_producto ?? 0);
       return (
         (priceRange.min === "" || price >= parseFloat(priceRange.min)) &&
         (priceRange.max === "" || price <= parseFloat(priceRange.max))
       );
+    });
+  }
+
+  if (selectedRatings.length > 0) {
+    filteredProducts = filteredProducts.filter((p) => {
+      const productRating = Math.floor(productRatings[p.id]?.avg || 0);
+      return selectedRatings.includes(productRating);
     });
   }
   
@@ -143,19 +149,24 @@ export default function ProductsPageSubCategory() {
     if (currentPage > 1) setCurrentPage(currentPage - 1);
   };
 
-  const toggleFavorite = async (productId) => {
+const toggleFavorite = async (productId) => {
+    // 4) Evita llamadas sin token
+    if (!token) {
+      addAlert(t("productDetails.loginToFavorite") || "Inicia sesión para gestionar favoritos", "info", 3500);
+      return;
+    }
     try {
       if (favoriteIds.includes(productId)) {
-        const res = await fetch(`https://localhost:4000/api/v1/favorites/${productId}`, {
+        const res = await fetch(`${API_BASE}/api/v1/favorites/${productId}`, {
           method: "DELETE",
           headers: { Authorization: `Bearer ${token}` },
         });
         if (res.ok) {
-          await loadFavorites();
+          await loadFavorites?.();
           addAlert("Se eliminó de tus favoritos", "warning", 3500);
         }
       } else {
-        const res = await fetch("https://localhost:4000/api/v1/favorites", {
+        const res = await fetch(`${API_BASE}/api/v1/favorites`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -165,29 +176,40 @@ export default function ProductsPageSubCategory() {
         });
         const data = await res.json();
         if (data.success) {
-          await loadFavorites();
+          await loadFavorites?.();
           addAlert("Se agregó a tus favoritos", "success", 3500);
         }
       }
-    } catch (err) {
-      console.error("Error al cambiar favorito:", err);
+    } catch {
       addAlert("Algo salió mal", "error", 3500);
     }
   };
 
-  const addToCart = (productId) => {
-    // ✅ Optimistic update
+  const addToCart = (item) => {
+    const product = typeof item === "object" ? item : products.find((p) => p.id === item);
+    const productId = product?.id ?? item;
+
+    // Invitado: no llames backend, guarda en localStorage y actualiza contador
+    if (!token) {
+      window.dispatchEvent(new CustomEvent("cartUpdatedOptimistic", { bubbles: false }));
+      if (product) addGuestItem(product, 1); // emite guestCartUpdated
+      window.dispatchEvent(new CustomEvent("cartUpdatedCustom", { bubbles: false }));
+      addAlert("Se agregó al carrito", "success", 3500);
+      return;
+    }
+
+    // Autenticado: llamar backend con Authorization correcto
     window.dispatchEvent(new CustomEvent("cartUpdatedOptimistic", { 
       bubbles: false,
       detail: { productId, action: 'add' }
     }));
-    addAlert("Se agregó al carrito", "success", 3500);
 
-    fetch("https://localhost:4000/api/v1/cart/add_product", {
+    fetch(`${API_BASE}/api/v1/cart/add_product`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
+        // 2) Solo incluye Authorization cuando hay token
+        ...(token ? { Authorization: `Bearer ${token}` } : {})
       },
       body: JSON.stringify({ product_id: productId }),
     })
@@ -196,27 +218,24 @@ export default function ProductsPageSubCategory() {
         if (data.cart) {
           setCart(data.cart);
           window.dispatchEvent(new CustomEvent("cartUpdatedCustom", { bubbles: false }));
+          addAlert("Se agregó al carrito", "success", 3500);
         } else if (data.errors) {
-          addAlert(t('productDetails.error') + data.errors.join(", "), "error", 3500);
+          addAlert((t('productDetails.error') || "Error: ") + data.errors.join(", "), "error", 3500);
           window.dispatchEvent(new CustomEvent("cartUpdateFailed", { 
             bubbles: false,
             detail: { productId, action: 'add' }
           }));
         }
       })
-      .catch((err) => {
-        console.error(t("productDetails.cartAddError"), err);
-        addAlert(t("productDetails.cartAddError"), "error", 3500);
+      .catch(() => {
+        addAlert(t("productDetails.cartAddError") || "No se pudo agregar al carrito", "error", 3500);
         window.dispatchEvent(new CustomEvent("cartUpdateFailed", { 
           bubbles: false,
           detail: { productId, action: 'add' }
         }));
       });
   };
-
-  if (!token)
-    return <p className="text-center">{t("products.notAuthenticated")}</p>;
-
+  
   if (loading)
     return (
       <div className="loading-container">
