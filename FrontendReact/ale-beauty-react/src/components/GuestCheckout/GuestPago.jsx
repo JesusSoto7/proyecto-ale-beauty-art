@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import { clearCart as guestClearCart } from "../../utils/guestCart";
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL || "https://localhost:4000";
+const normalizeToken = (raw) => (raw && raw !== "null" && raw !== "undefined" ? raw : null);
 
 export default function GuestPago({ order, guestCart }) {
   const publicKey = import.meta.env.VITE_MERCADOPAGO_PUBLIC_KEY;
@@ -66,23 +67,23 @@ export default function GuestPago({ order, guestCart }) {
                   identification: cardFormData?.payer?.identification,
                 },
               };
-              const res = await fetch(`${API_BASE}/api/v1/payments/mobile_create`, {
+              // IMPORTANTE: usar la ruta REST (sin /create)
+              const res = await fetch(`${API_BASE}/api/v1/payments`, {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
+                headers: { "Content-Type": "application/json" }, // invitado no envía Authorization
                 body: JSON.stringify(payload),
               });
               const data = await res.json();
-              console.debug("mobile_create response:", data);
+              console.debug("payments#create response:", data);
 
               if (res.ok) {
-                // Limpia carrito en invitado: usa bandera o ausencia de token
-                const tok = localStorage.getItem("token");
+                const tok = normalizeToken(localStorage.getItem("token"));
                 if (data.clear_guest_cart || !tok) {
                   try { guestClearCart(); } catch {}
                 }
-                // Da un tick para que los listeners actualicen el header
                 setTimeout(() => {
-                  navigate(`/${lang}/checkout/success/${data.id}`, {
+                  const paymentId = data.id || data.payment_id || "";
+                  navigate(`/${lang}/checkout/success/${paymentId}`, {
                     state: { order: { id: order.id, pago_total: order.total, productos: guestCart?.products || [] } },
                   });
                 }, 0);
@@ -108,7 +109,6 @@ export default function GuestPago({ order, guestCart }) {
 
   return (
     <div>
-      <h2>{t("checkout.paymentStep")}</h2>
       <section style={{ marginBottom: 16, padding: 12, border: "1px solid #eee", borderRadius: 8 }}>
         <h3 style={{ marginTop: 0 }}>{t("checkout.cardPayment") || "Pago con tarjeta"}</h3>
         <div id="guestCardPayment_container" />

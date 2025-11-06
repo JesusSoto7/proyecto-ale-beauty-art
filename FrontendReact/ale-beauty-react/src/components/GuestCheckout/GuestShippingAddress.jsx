@@ -1,9 +1,14 @@
-import { useState, useMemo } from "react";
-import { TextField, Button, Box, Typography } from "@mui/material";
+import { useState, useMemo, useEffect } from "react";
+import { TextField, Button, Box, Typography, IconButton, Tooltip } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import { useTranslation } from "react-i18next";
 
-export default function GuestShippingAddress({ initialData, onComplete }) {
+export default function GuestShippingAddress({
+  initialData,
+  onComplete,
+  onEditingChange, // <- notifica si se está editando
+  creating = false
+}) {
   const { t } = useTranslation();
   const [isEditing, setIsEditing] = useState(true);
   const [form, setForm] = useState(() => ({
@@ -13,14 +18,18 @@ export default function GuestShippingAddress({ initialData, onComplete }) {
     address: initialData?.address || "",
   }));
 
+  useEffect(() => {
+    onEditingChange?.(isEditing);
+  }, [isEditing, onEditingChange]);
+
   const isValid = useMemo(() => {
     return form.name.trim() && form.email.trim() && form.address.trim();
   }, [form]);
 
   const handleSave = () => {
     if (!isValid) return;
-    setIsEditing(false);
-    onComplete?.(form);
+    onComplete?.(form);   // guarda en el padre
+    setIsEditing(false);  // muestra el resumen
   };
 
   return (
@@ -28,10 +37,19 @@ export default function GuestShippingAddress({ initialData, onComplete }) {
       <h2>{t("checkout.shippingAddressTitle")}</h2>
 
       {!isEditing ? (
-        <div className="address-info" style={{
-          display: "flex", justifyContent: "space-between", alignItems: "flex-start",
-          gap: 12, padding: 12, border: "1px solid #eee", borderRadius: 8
-        }}>
+        <Box
+          className="address-info"
+          sx={{
+            display: "grid",
+            gridTemplateColumns: "1fr auto",
+            alignItems: "start",
+            gap: 1.5,
+            p: 1.5,
+            border: "1px solid #eee",
+            borderRadius: 2,
+            wordBreak: "break-word",
+          }}
+        >
           <div>
             <strong>{form.name}</strong>
             <br />
@@ -39,22 +57,29 @@ export default function GuestShippingAddress({ initialData, onComplete }) {
             <br />
             {t("checkout.address")}: {form.address}
           </div>
-          <button
-            id="editBtn"
-            onClick={() => setIsEditing(true)}
-            style={{
-              display: "inline-flex", alignItems: "center", gap: 6,
-              padding: "6px 10px", borderRadius: 6, border: "1px solid #ddd", background: "white", cursor: "pointer"
-            }}
-          >
-            <EditIcon fontSize="small" />
-            {t("common.edit") || "Editar"}
-          </button>
-        </div>
+
+          <Tooltip title={t("common.edit")} arrow>
+            <IconButton
+              aria-label={t("common.edit")}
+              size="small"
+              onClick={() => setIsEditing(true)}
+              sx={{
+                // Mantenerlo visible y alineado dentro del contenedor
+                alignSelf: "start",
+                border: "1px solid #ddd",
+                backgroundColor: "#fff",
+                height: 32,
+                width: 32,
+              }}
+            >
+              <EditIcon fontSize="small" />
+            </IconButton>
+          </Tooltip>
+        </Box>
       ) : (
         <Box component="form" sx={{ display: "grid", gap: 2, mt: 1 }}>
           <TextField
-            label={t("common.name") || "Nombre"}
+            label={t("common.name")}
             size="small"
             value={form.name}
             onChange={(e) => setForm({ ...form, name: e.target.value })}
@@ -67,13 +92,13 @@ export default function GuestShippingAddress({ initialData, onComplete }) {
             onChange={(e) => setForm({ ...form, email: e.target.value })}
           />
           <TextField
-            label={t("common.phone") || "Teléfono"}
+            label={t("common.phone")}
             size="small"
             value={form.phone}
             onChange={(e) => setForm({ ...form, phone: e.target.value })}
           />
           <TextField
-            label={t("checkout.address") || "Dirección"}
+            label={t("checkout.address")}
             size="small"
             value={form.address}
             onChange={(e) => setForm({ ...form, address: e.target.value })}
@@ -83,7 +108,7 @@ export default function GuestShippingAddress({ initialData, onComplete }) {
 
           {!isValid && (
             <Typography variant="body2" color="error">
-              {t("checkout.fillAllFields") || "Completa los datos para continuar"}
+              {t("checkout.fillAllFields")}
             </Typography>
           )}
 
@@ -91,10 +116,10 @@ export default function GuestShippingAddress({ initialData, onComplete }) {
             <Button
               variant="contained"
               sx={{ bgcolor: "#ec407a", "&:hover": { bgcolor: "#d63384" } }}
-              disabled={!isValid}
+              disabled={!isValid || creating}
               onClick={handleSave}
             >
-              {t("checkout.continueButton")}
+              {creating ? (t("common.loading") || "Cargando...") : (t("shippingAddressForm.saveButton") || "Guardar dirección")}
             </Button>
           </Box>
         </Box>

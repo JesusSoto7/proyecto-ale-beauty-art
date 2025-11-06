@@ -43,10 +43,17 @@
     "continueButton": "Continue",
     "choosePaymentMethod": "Choose a payment method",
     "cardPaymentTitle": "Pay with card",
-    "email": "E-mail"
+    "email": "E-mail",
+    "address": "Address",
+    "fillAllFields": "Please fill in all required fields",
+    "orderCreationError": "Could not create the order"
   },
   "common": {
-    "cancel": "Cancel"
+    "cancel": "Cancel",
+    "name": "Name",
+    "phone": "Phone",
+    "edit": "Edit",
+    "loading": "Loading..."
   },
   "address": {
     "neighborhood": "Neighborhood",

@@ -9,12 +9,15 @@ export function getGuestCart() {
   }
 }
 
+function notify(cart) {
+  window.dispatchEvent(new CustomEvent("guestCartUpdated", { detail: cart }));
+  // Compatibilidad con otros listeners (header/badge)
+  window.dispatchEvent(new CustomEvent("cartUpdatedCustom", { bubbles: false }));
+}
+
 function save(cart) {
   localStorage.setItem(KEY, JSON.stringify(cart));
-  // Notifica a todos los listeners de guest
-  window.dispatchEvent(new CustomEvent("guestCartUpdated", { detail: cart }));
-  // Compatibilidad con otros listeners que refrescan a partir de este evento
-  window.dispatchEvent(new CustomEvent("cartUpdatedCustom", { bubbles: false }));
+  notify(cart);
 }
 
 export function addItem(product, quantity = 1) {
@@ -57,13 +60,9 @@ export function removeItem(productId) {
 
 export function clearCart() {
   try {
-    // Borra la key para evitar estados “fantasma”
     localStorage.removeItem(KEY);
   } catch {
-    // Fallback si algo falla
     localStorage.setItem(KEY, JSON.stringify({ items: [] }));
   }
-  // Notifica a todos
-  window.dispatchEvent(new CustomEvent("guestCartUpdated", { detail: { items: [] } }));
-  window.dispatchEvent(new CustomEvent("cartUpdatedCustom", { bubbles: false }));
+  notify({ items: [] });
 }

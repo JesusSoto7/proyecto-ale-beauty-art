@@ -1,9 +1,7 @@
 import { useMemo, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import {
-  Stepper, Step, StepLabel, Button, Box, Paper, Typography,
-} from "@mui/material";
+import { Stepper, Step, StepLabel, Button, Box, Paper, Typography } from "@mui/material";
 import GuestShippingAddress from "./GuestShippingAddress";
 import GuestPago from "./GuestPago";
 
@@ -18,19 +16,18 @@ export default function GuestCheckout() {
   const [address, setAddress] = useState(null);
   const [order, setOrder] = useState(null);
   const [creating, setCreating] = useState(false);
+  const [childEditing, setChildEditing] = useState(true); // trackea si el form está en modo edición
 
-  const steps = [
-    t("checkout.shippingAddressStep"),
-    t("checkout.paymentStep")
-  ];
+  const steps = [t("checkout.shippingAddressStep"), t("checkout.paymentStep")];
 
   const shipping = 10000;
   const total = useMemo(() => {
     const items = guestCart?.products || [];
     const sum = items.reduce((acc, p) => {
-      const price = p.precio_con_mejor_descuento && p.precio_con_mejor_descuento < p.precio_producto
-        ? p.precio_con_mejor_descuento
-        : p.precio_producto;
+      const price =
+        p.precio_con_mejor_descuento && p.precio_con_mejor_descuento < p.precio_producto
+          ? p.precio_con_mejor_descuento
+          : p.precio_producto;
       return acc + price * p.cantidad;
     }, 0);
     return sum + shipping;
@@ -50,27 +47,33 @@ export default function GuestCheckout() {
               phone: addr.phone,
               address: addr.address,
             },
-            products: (guestCart?.products || []).map(p => ({
+            products: (guestCart?.products || []).map((p) => ({
               product_id: p.product_id,
               quantity: p.cantidad,
             })),
           },
         }),
       });
-      if (!res.ok) throw new Error("No se pudo crear la orden");
       const data = await res.json();
+      if (!res.ok) {
+        console.error("guest_orders#create errors:", data);
+        alert(Array.isArray(data?.errors) ? data.errors.join("\n") : t("checkout.orderCreationError"));
+        return false;
+      }
       setOrder({ id: data.order.id, total: data.order.total || data.order.pago_total || total });
-      setActiveStep(1);
+      return true;
     } catch (e) {
-      alert(t("checkout.orderCreationError") || "No se pudo crear la orden");
+      alert(t("checkout.orderCreationError"));
+      return false;
     } finally {
       setCreating(false);
     }
   };
 
-  const handleNextFromAddress = async () => {
+  const handleContinue = async () => {
     if (!address) return;
-    await createGuestOrder(address);
+    const ok = await createGuestOrder(address);
+    if (ok) setActiveStep(1);
   };
 
   const handleBack = () => setActiveStep((prev) => prev - 1);
@@ -139,6 +142,8 @@ export default function GuestCheckout() {
             <GuestShippingAddress
               initialData={address}
               onComplete={(addr) => setAddress(addr)}
+              onEditingChange={setChildEditing}
+              creating={creating}
             />
           </div>
 
@@ -148,7 +153,7 @@ export default function GuestCheckout() {
           </div>
         </Box>
 
-        {/* Botones */}
+        {/* Botonera inferior */}
         <Box sx={{ display: "flex", justifyContent: "flex-end", mt: 4, gap: 2 }}>
           {activeStep > 0 && (
             <Button
@@ -167,14 +172,14 @@ export default function GuestCheckout() {
             </Button>
           )}
 
-          {activeStep === 0 && (
+          {activeStep === 0 && address && !childEditing && (
             <Button
-              onClick={handleNextFromAddress}
+              onClick={handleContinue}
               variant="contained"
-              disabled={!address || creating}
+              disabled={creating}
               sx={{ bgcolor: "#ec407a", "&:hover": { bgcolor: "#d63384" } }}
             >
-              {creating ? (t("common.loading") || "Creando...") : t("checkout.continueButton")}
+              {creating ? (t("common.loading") || "Cargando...") : t("checkout.continueButton")}
             </Button>
           )}
         </Box>
