@@ -2,7 +2,8 @@ import { useEffect, useState } from "react";
 import { useLocation, useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import CircularProgress from "@mui/material/CircularProgress";
-
+import { clearCart as guestClearCart } from "../utils/guestCart";
+const normalizeToken = (raw) => (raw && raw !== "null" && raw !== "undefined" ? raw : null);
 export default function CheckoutSuccess() {
   const publicKey = import.meta.env.VITE_MERCADOPAGO_PUBLIC_KEY;
   const location = useLocation();
@@ -35,6 +36,14 @@ export default function CheckoutSuccess() {
       setLoading(false);
     }
   }, [order, paymentId]);
+
+
+  useEffect(() => {
+    const tok = normalizeToken(localStorage.getItem("token"));
+    if (!tok) {
+      try { guestClearCart(); } catch {}
+    }
+  }, []);
 
   useEffect(() => {
     if (!order || !order.productos || order.productos.length === 0) return;

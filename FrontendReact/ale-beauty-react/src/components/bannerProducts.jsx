@@ -86,8 +86,8 @@ function BannerProduct({ products, productRatings }) {
           className="circle-image"
         />
 
-        <div class="text-strip-H">
-          <div class="text-content-H">
+        <div className="text-strip-H">
+          <div className="text-content-H">
             <span>OFERTAS</span>
             <span>DESCUENTOS</span>
             <span>NOVEDADES</span>
@@ -103,8 +103,8 @@ function BannerProduct({ products, productRatings }) {
       </div>
 
       
-      <div class="text-strip">
-        <div class="text-content">
+      <div className="text-strip">
+        <div className="text-content">
           <span>OFERTAS</span>
           <span>DESCUENTOS</span>
           <span>NOVEDADES</span>

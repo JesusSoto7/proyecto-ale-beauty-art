@@ -139,7 +139,7 @@ function Inicio() {
                   lang={lang}
                   isFavorite={isFavorite(prod.id)}
                   onToggleFavorite={toggleFavorite}
-                  onAddToCart={addToCart}
+                  onAddToCart={(item) => addToCart(item, memoizedNewProducts)}
                   productRating={productRatings[prod.id]}
                   t={t}
                 />
@@ -241,7 +241,7 @@ function Inicio() {
                   lang={lang}
                   isFavorite={isFavorite(prod.id)}
                   onToggleFavorite={toggleFavorite}
-                  onAddToCart={addToCart}
+                  onAddToCart={(item) => addToCart(item, memoizedProducts)}
                   productRating={productRatings[prod.id]}
                   t={t}
                 />

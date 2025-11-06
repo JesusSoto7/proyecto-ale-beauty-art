@@ -48,6 +48,7 @@ import Notificationes from './pages/home/Notifications';
 import CreateDiscount from './pages/home/CreateDiscount';
 import OptionsMenu from "./components/dashComponents/OptionsMenu.jsx";
 import UserProfile from "./components/dashComponents/userPerfil.jsx";
+import GuestCheckout from './components/GuestCheckout/GuestCheckout.jsx';
 
 function Wrapper() {
   const { lang } = useParams();
@@ -71,25 +72,22 @@ function App() {
   return (
     <Router>
       <Routes>
-        {/* redirige / al idioma por defecto */}
+        {/* redirige / al idioma por defecto, siempre al inicio (público) */}
         <Route
           path="/"
           element={
-            !!localStorage.getItem('token') 
-              ? <Navigate to={`/${(navigator.language || "es").startsWith("es") ? "es" : "en"}/inicio`} replace />
-              : <Navigate to={`/${(navigator.language || "es").startsWith("es") ? "es" : "en"}/login`} replace />
+            <Navigate
+              to={`/${(navigator.language || "es").startsWith("es") ? "es" : "en"}/inicio`}
+              replace
+            />
           }
         />
-
-
 
         {/* Rutas con idioma */}
         <Route path="/:lang" element={<Wrapper />}>
           <Route element={<LayoutInicio />}>
-            <Route
-              path="inicio"
-              element={isLoggedIn ? <Inicio /> : <Navigate to="../login" />}
-            />
+            {/* Inicio ahora es público */}
+            <Route path="inicio" element={<Inicio />} />
             <Route path="productos" element={<ProductosCliente />} />
             <Route path="producto/:slug" element={<ProductDetails />} />
             <Route path="direcciones" element={<ShippingAddress />} />
@@ -102,12 +100,12 @@ function App() {
             <Route path="about" element={<AboutUs />} />
             <Route path="terms" element={<TermsAndConditions />} />
             <Route path="/:lang/categoria/:categorySlug/:subCategorySlug/products" element={<SubCateProd />} />
-
           </Route>
 
           <Route element={<CheckoutLayout />}>
             <Route path="checkout" element={<Checkout />} />
             <Route path="checkout/success/:paymentId" element={<CheckoutSuccess />} />
+            <Route path="guest-checkout" element={<GuestCheckout />} />
           </Route>
 
           <Route path="login" element={<LoginForm onLogin={() => setIsLoggedIn(true)} />} />
@@ -120,7 +118,6 @@ function App() {
               <DashboardLayout />
             </ProtectedRoute>
           }>
-
               <Route index element={<Dashboard />} />
               <Route path="products" element={<ProductTable />} />
               <Route path="categories" element={<Categorias />} />
@@ -134,7 +131,6 @@ function App() {
           </Route>
         </Route>
         <Route path="/:lang/403" element={<Forbidden403 />} />
-
       </Routes>
     </Router>
   );

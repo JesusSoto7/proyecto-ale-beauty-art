@@ -7,11 +7,15 @@ import "../../assets/stylesheets/ProductosCliente.css";
 import { useOutletContext } from "react-router-dom";
 import { useAlert } from "../../components/AlertProvider.jsx";
 import ProductCard from "../../components/ProductCard";
+import { addItem as addGuestItem } from "../../utils/guestCart.js";
+
+const API_BASE = import.meta.env.VITE_API_BASE_URL || "https://localhost:4000";
+const normalizeToken = (raw) => (raw && raw !== "null" && raw !== "undefined" ? raw : null);
 
 function ProductosCliente() {
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]); 
-  const [token, setToken] = useState(null);
+  const [token, setToken] = useState(() => localStorage.getItem("token"));
   const [cart, setCart] = useState(null);
   const { favoriteIds, loadFavorites } = useOutletContext();
   const [selectedCategory, setSelectedCategory] = useState("Todos");
@@ -30,36 +34,29 @@ function ProductosCliente() {
   const { t } = useTranslation();
 
   useEffect(() => {
-    const savedToken = localStorage.getItem("token");
-    if (savedToken) setToken(savedToken);
+    // Mantener token actualizado y normalizado si cambia en localStorage
+    const handler = () => setToken(normalizeToken(localStorage.getItem("token")));
+    window.addEventListener("storage", handler);
+    return () => window.removeEventListener("storage", handler);
   }, []);
 
-  useEffect(() => {
-    if (!token) return;
-
+useEffect(() => {
     const loadData = async () => {
       try {
         setLoading(true);
-        const [productsResponse, categoriesResponse, cartResponse] = await Promise.all([
-          fetch("https://localhost:4000/api/v1/products", {
-            headers: { Authorization: `Bearer ${token}` }
-          }),
-          fetch("https://localhost:4000/api/v1/categories", {
-            headers: { Authorization: `Bearer ${token}` }
-          }),
-          fetch("https://localhost:4000/api/v1/cart", {
-            headers: { Authorization: `Bearer ${token}` }
-          })
+
+        // Endpoints públicos (SIN Authorization)
+        const [productsResponse, categoriesResponse] = await Promise.all([
+          fetch(`${API_BASE}/api/v1/products`),
+          fetch(`${API_BASE}/api/v1/categories`)
         ]);
 
         if (!productsResponse.ok) throw new Error('Error cargando productos');
         if (!categoriesResponse.ok) throw new Error('Error cargando categorías');
-        if (!cartResponse.ok) throw new Error('Error cargando carrito');
 
-        const [productsData, categoriesData, cartData] = await Promise.all([
+        const [productsData, categoriesData] = await Promise.all([
           productsResponse.json(),
-          categoriesResponse.json(),
-          cartResponse.json()
+          categoriesResponse.json()
         ]);
 
         const prods = Array.isArray(productsData) ? productsData : productsData.products || [];
@@ -68,12 +65,13 @@ function ProductosCliente() {
         const arr = Array.isArray(categoriesData) ? categoriesData : categoriesData.categories || [];
         setCategories(arr);
 
+        // Ratings: intentar con Authorization si hay token; si 401, tratar como vacío
+        const headers = token ? { Authorization: `Bearer ${token}` } : {};
         const ratingsObj = {};
         await Promise.all(prods.map(async (p) => {
           try {
-            const res = await fetch(`https://localhost:4000/api/v1/products/${p.slug}/reviews`, {
-              headers: { Authorization: `Bearer ${token}` }
-            });
+            const res = await fetch(`${API_BASE}/api/v1/products/${p.slug}/reviews`, { headers });
+            if (res.status === 401) { ratingsObj[p.id] = { avg: 0, count: 0 }; return; }
             const reviews = await res.json();
             if (Array.isArray(reviews) && reviews.length > 0) {
               const avg = reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length;
@@ -86,8 +84,21 @@ function ProductosCliente() {
           }
         }));
         setProductRatings(ratingsObj);
-        setCart(cartData.cart);
 
+        // Carrito (solo autenticado)
+        if (token) {
+          try {
+            const cartRes = await fetch(`${API_BASE}/api/v1/cart`, { headers: { Authorization: `Bearer ${token}` } });
+            if (cartRes.ok) {
+              const cartJson = await cartRes.json();
+              setCart(cartJson.cart || cartJson);
+            } else {
+              setCart(null);
+            }
+          } catch { setCart(null); }
+        } else {
+          setCart(null);
+        }
       } catch (err) {
         console.error("Error cargando datos", err);
       } finally {
@@ -204,22 +215,24 @@ function ProductosCliente() {
     );
   };
 
-  const toggleFavorite = async (productId) => {
+const toggleFavorite = async (productId) => {
+    // Evita 401: no llames a favoritos sin token
+    if (!token) {
+      addAlert(t("productDetails.loginToFavorite") || "Inicia sesión para gestionar favoritos", "info", 3500);
+      return;
+    }
     try {
       if (favoriteIds.includes(productId)) {
-        const res = await fetch(
-          `https://localhost:4000/api/v1/favorites/${productId}`,
-          {
-            method: "DELETE",
-            headers: { Authorization: `Bearer ${token}` },
-          }
-        );
+        const res = await fetch(`${API_BASE}/api/v1/favorites/${productId}`, {
+          method: "DELETE",
+          headers: { Authorization: `Bearer ${token}` },
+        });
         if (res.ok) {
-          await loadFavorites();
+          await loadFavorites?.();
           addAlert("Se eliminó de tus favoritos", "warning", 3500);
         }
       } else {
-        const res = await fetch("https://localhost:4000/api/v1/favorites", {
+        const res = await fetch(`${API_BASE}/api/v1/favorites`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -229,7 +242,7 @@ function ProductosCliente() {
         });
         const data = await res.json();
         if (data.success) {
-          await loadFavorites();
+          await loadFavorites?.();
           addAlert("Se agregó a tus favoritos", "success", 3500);
         }
       }
@@ -239,46 +252,62 @@ function ProductosCliente() {
     }
   };
 
-  const addToCart = (productId) => {
-    // ✅ Optimistic update
-    window.dispatchEvent(new CustomEvent("cartUpdatedOptimistic", { 
-      bubbles: false,
-      detail: { productId, action: 'add' }
-    }));
-    addAlert("Se agregó al carrito", "success", 3500);
+  const addToCart = (item) => {
+    const product = typeof item === "object" ? item : products.find((p) => String(p.id) === String(item));
+    const productId = product?.id ?? item;
 
-    fetch("https://localhost:4000/api/v1/cart/add_product", {
+    // Toma SIEMPRE el token más reciente y normalizado
+    const tok = normalizeToken(localStorage.getItem("token") || token);
+
+    // Invitado
+    if (!tok) {
+      window.dispatchEvent(new CustomEvent("cartUpdatedOptimistic", { bubbles: false }));
+      if (product) {
+        addGuestItem(product, 1); // emite guestCartUpdated internamente
+      }
+      window.dispatchEvent(new CustomEvent("cartUpdatedCustom", { bubbles: false }));
+      addAlert(t("productDetails.addedToCart") || "Se agregó al carrito", "success", 3500);
+      return;
+    }
+
+    // Autenticado
+    window.dispatchEvent(new CustomEvent("cartUpdatedOptimistic", { 
+      bubbles: false, 
+      detail: { productId, action: 'add' } 
+    }));
+
+    fetch(`${API_BASE}/api/v1/cart/add_product`, {
       method: "POST",
-      headers: {
+      headers: { 
         "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${tok}` 
       },
       body: JSON.stringify({ product_id: productId }),
     })
-      .then((res) => res.json())
+      .then(async (res) => {
+        // Si falla, forzamos la ruta de fallo (para que el contador revierta)
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        try { return await res.json(); } catch { return {}; }
+      })
       .then((data) => {
-        if (data.cart) {
-          setCart(data.cart);
+        const serverCart = data?.cart || data;
+        if (serverCart?.products) {
+          setCart(serverCart);
           window.dispatchEvent(new CustomEvent("cartUpdatedCustom", { bubbles: false }));
-        } else if (data.errors) {
-          addAlert(t('productDetails.error') + data.errors.join(", "), "error", 3500);
-          window.dispatchEvent(new CustomEvent("cartUpdateFailed", { 
-            bubbles: false,
-            detail: { productId, action: 'add' }
-          }));
+          addAlert("Se agregó al carrito", "success", 3500);
+        } else {
+          // Si la API no trae el carrito como esperamos, al menos refresca
+          window.dispatchEvent(new CustomEvent("cartUpdatedCustom", { bubbles: false }));
         }
       })
-      .catch((err) => {
-        console.error(t('productDetails.cartAddError'), err);
-        addAlert(t('productDetails.cartAddError'), "error", 3500);
+      .catch(() => {
+        addAlert(t('productDetails.cartAddError') || "No se pudo agregar al carrito", "error", 3500);
         window.dispatchEvent(new CustomEvent("cartUpdateFailed", { 
           bubbles: false,
           detail: { productId, action: 'add' }
         }));
       });
   };
-
-  if (!token) return <p>{t('products.notAuthenticated')}</p>;
 
   if (loading) {
     return (

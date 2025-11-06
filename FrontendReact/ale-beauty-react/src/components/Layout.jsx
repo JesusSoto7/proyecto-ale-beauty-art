@@ -7,14 +7,36 @@ export default function LayoutInicio() {
   const [favoriteIds, setFavoriteIds] = useState([]);
 
   const loadFavorites = async () => {
+    const token = localStorage.getItem("token");
+
+    // Si no hay token, no intentes llamar a la API
+    if (!token) {
+      setFavoriteIds([]);
+      return;
+    }
+
     try {
       const res = await fetch("https://localhost:4000/api/v1/favorites", {
-        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+        headers: { Authorization: `Bearer ${token}` },
       });
-      const data = await res.json();
-      setFavoriteIds(data.map(fav => fav.id));
-    } catch (err) {
-      console.error("Error cargando favoritos:", err);
+
+      // Manejo explícito de 401 sin loguear error en consola
+      if (res.status === 401) {
+        setFavoriteIds([]);
+        return;
+      }
+
+      if (!res.ok) {
+        setFavoriteIds([]);
+        return;
+      }
+
+      const data = await res.json().catch(() => []);
+      const list = Array.isArray(data) ? data : (Array.isArray(data?.favorites) ? data.favorites : []);
+      setFavoriteIds(list.map((fav) => fav.id));
+    } catch {
+      // Silencioso para no ensuciar consola cuando no hay sesión
+      setFavoriteIds([]);
     }
   };
 
@@ -24,14 +46,10 @@ export default function LayoutInicio() {
 
   return (
     <>
-      {/* ✅ Header puede cerrar modal y recargar favoritos */}
       <Header loadFavorites={loadFavorites} />
-
       <main>
-        {/* ✅ Outlet pasa favoritos y la función a las vistas hijas (Inicio, etc.) */}
         <Outlet context={{ favoriteIds, loadFavorites }} />
       </main>
-
       <Footer />
     </>
   );

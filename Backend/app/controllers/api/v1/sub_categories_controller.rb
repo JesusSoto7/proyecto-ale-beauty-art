@@ -2,8 +2,11 @@ class Api::V1::SubCategoriesController < Api::V1::BaseController
   include Rails.application.routes.url_helpers
 
   before_action :set_category, except: [:all]
-  before_action :set_sub_category, only: [:show, :update, :destroy, :products_by_sub]
-  skip_before_action :authorize_request, only: [:index, :show, :all]
+  # Antes: only: [:show, :update, :destroy, :products_by_sub]
+  before_action :set_sub_category, only: [:show, :update, :destroy, :products_by_sub, :products]
+
+  # Antes: skip solo [:index, :show, :all]
+  skip_before_action :authorize_request, only: [:index, :show, :all, :products, :products_by_sub]
 
   # GET /api/v1/categories/:category_slug/sub_categories
   def index
@@ -67,7 +70,7 @@ class Api::V1::SubCategoriesController < Api::V1::BaseController
     render json: { message: "SubCategoría eliminada" }, status: :ok
   end
 
-  def all
+ def all
     subcategories = SubCategory.includes(:category).with_attached_imagen
     render json: subcategories.as_json(
       only: [:id, :nombre, :category_id],
@@ -75,6 +78,7 @@ class Api::V1::SubCategoriesController < Api::V1::BaseController
       methods: [:slug, :imagen_url]
     ), status: :ok
   end
+
 
   def products
     products = @sub_category.products.with_attached_imagen
@@ -95,12 +99,10 @@ class Api::V1::SubCategoriesController < Api::V1::BaseController
   end
 
   private
-
   def set_category
     @category = Category.find_by(slug: params[:category_slug]) || Category.find_by(id: params[:category_slug])
     render json: { error: "Categoría no encontrada" }, status: :not_found unless @category
   end
-
 
   def set_sub_category
     @sub_category = @category.sub_categories.find_by(slug: params[:slug]) ||

@@ -2,6 +2,11 @@ module Api
   module V1
     class CartController < Api::V1::BaseController
       def show
+        # Si no hay usuario autenticado, devolver un carrito vacío para modo invitado
+        unless current_user
+          return render json: { id: nil, products: [] }
+        end
+
         cart = current_user.cart || current_user.create_cart
         render json: cart_json(cart)
       end
@@ -47,19 +52,14 @@ module Api
             product = cp.product
             mejor_descuento = product.mejor_descuento_para_precio(product.precio_producto)
             precio_con_descuento = product.precio_con_mejor_descuento(product.precio_producto)
-            
             {
               product_id: product.id,
               nombre_producto: product.nombre_producto,
               cantidad: cp.cantidad,
               precio_producto: product.precio_producto,
               imagen_url: product.imagen.attached? ? url_for(product.imagen) : nil,
-              
-              # ✅ (para web)
               precio_con_mejor_descuento: precio_con_descuento,
               mejor_descuento_para_precio: mejor_descuento,
-              
-              # (para móvil - más optimizados)
               precio_con_descuento: precio_con_descuento,
               tiene_descuento: mejor_descuento.present? && precio_con_descuento < product.precio_producto,
               porcentaje_descuento: if mejor_descuento.present?

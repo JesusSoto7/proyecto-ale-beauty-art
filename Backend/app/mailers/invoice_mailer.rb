@@ -1,28 +1,65 @@
 class InvoiceMailer < ApplicationMailer
   default from: ENV['GMAIL_USER']
 
-  def enviar_factura(order)
+  def enviar_factura(order, overrides = {})
     @order = order
-    
-    pdf_data = FacturaPdf.new(order).render
 
-    temp_file = Tempfile.new(["factura_#{order.id}", ".pdf"])
-    temp_file.binmode
-    temp_file.write(pdf_data)
-    temp_file.rewind
+    @numero      = @order.numero_de_orden.presence || @order.id
+    @buyer_email = @order.correo_cliente.presence || @order.user&.email
+    return if @buyer_email.blank?
 
-    order.invoice_pdf.attach(
-      io: temp_file,
-      filename: "Factura-#{order.numero_de_orden}.pdf",
-      content_type: "application/pdf"
-    )
+    @buyer_name =
+      overrides[:buyer_name].presence ||
+      [@order.user&.nombre, @order.user&.apellido].compact.join(" ").presence ||
+      "Cliente invitado"
 
-    temp_file.close
-    temp_file.unlink
-    
-    attachments["Factura-#{order.numero_de_orden}.pdf"] = pdf_data
+    @buyer_phone =
+      overrides[:buyer_phone].presence ||
+      safe_attr(@order.user, :telefono, :phone)
 
-    mail(to: order.correo_cliente, subject: "Tu factura de compra ##{order.numero_de_orden}")
+    @buyer_address =
+      overrides[:buyer_address].presence ||
+      safe_attr(@order&.shipping_address, :direccion) ||
+      safe_attr(@order.user, :address, :direccion)
+
+    # Total con fallback
+    subtotal = @order.order_details.to_a.sum { |od| od.cantidad.to_i * od.precio_unitario.to_f }
+    @total   = @order.pago_total.to_f.positive? ? @order.pago_total.to_f : (subtotal + @order.costo_de_envio.to_f)
+
+    # Generar PDF (si falla, enviamos sin adjunto)
+    pdf_data = nil
+    begin
+      pdf_data = FacturaPdf.new(@order).render
+    rescue => e
+      Rails.logger.warn "FacturaPdf falló para order #{@order.id}: #{e.message}"
+    end
+
+    attachments["Factura-#{@numero}.pdf"] = pdf_data if pdf_data
+    if pdf_data
+      begin
+        @order.invoice_pdf.attach(
+          io: StringIO.new(pdf_data),
+          filename: "Factura-#{@numero}.pdf",
+          content_type: "application/pdf"
+        )
+      rescue => e
+        Rails.logger.warn "No se pudo adjuntar invoice_pdf a la orden #{@order.id}: #{e.message}"
+      end
+    end
+
+    mail(to: @buyer_email, subject: "Tu factura de compra ##{@numero}")
   end
 
+  private
+
+  # Devuelve el primer atributo presente que el objeto soporte (evita NoMethodError)
+  def safe_attr(obj, *candidates)
+    return nil unless obj
+    candidates.each do |attr|
+      next unless obj.respond_to?(attr)
+      val = obj.public_send(attr)
+      return val if val.present?
+    end
+    nil
+  end
 end

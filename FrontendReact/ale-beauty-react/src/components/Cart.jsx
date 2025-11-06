@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import {
   Box,
@@ -26,10 +26,20 @@ import DeleteSweepIcon from "@mui/icons-material/DeleteSweep";
 import LocalShippingIcon from "@mui/icons-material/LocalShipping";
 import DiscountIcon from "@mui/icons-material/Discount";
 
+// Guest cart helpers
+import {
+  getGuestCart,
+  updateQty as guestUpdateQty,
+  removeItem as guestRemoveItem,
+  clearCart as guestClearCart,
+} from "../utils/guestCart";
+
 function Cart() {
   const navigate = useNavigate();
   const [cart, setCart] = useState(null);
+  const [mode, setMode] = useState("guest"); // 'guest' | 'auth'
   const [loading, setLoading] = useState(true);
+  const API_BASE = import.meta.env.VITE_API_BASE_URL || "https://localhost:4000";
   const [error, setError] = useState(null);
   const [updating, setUpdating] = useState(false);
   const token = localStorage.getItem("token");
@@ -38,41 +48,86 @@ function Cart() {
 
   // Cambiar idioma según URL
   useEffect(() => {
-    if (lang) {
-      i18n.changeLanguage(lang);
-    }
+    if (lang) i18n.changeLanguage(lang);
   }, [lang, i18n]);
 
-  useEffect(() => {
-    fetchCart();
-  }, [token]);
-
-  const fetchCart = () => {
-    setLoading(true);
-    setError(null);
-    fetch("https://localhost:4000/api/v1/cart", {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    })
-      .then((res) => {
-        if (!res.ok) throw new Error("Failed to fetch cart");
-        return res.json();
-      })
-      .then((data) => setCart(data))
-      .catch((err) => {
-        console.error("Error cargando cart: ", err);
-        setError(t("cart.loadingError"));
-      })
-      .finally(() => setLoading(false));
+  // Mapear guestCart->cart.products con la misma forma que el backend
+  const mapGuestToCart = (guest) => {
+    const items = guest?.items || [];
+    return {
+      id: null,
+      products: items.map((i) => ({
+        product_id: i.id,
+        nombre_producto: i.name,
+        precio_producto: Number(i.price || 0),
+        precio_con_mejor_descuento: Number(i.price || 0),
+        cantidad: Number(i.quantity || 1),
+        imagen_url: i.image || null,
+      })),
+    };
   };
 
-  const updateQuantity = (productId, increment = true) => {
-    setUpdating(true);
+  const loadCart = useCallback(async () => {
+    setLoading(true);
+    setError(null);
 
+    if (!token) {
+      setMode("guest");
+      const guest = getGuestCart();
+      setCart(mapGuestToCart(guest));
+      setLoading(false);
+      return;
+    }
+
+    try {
+      const res = await fetch(`${API_BASE}/api/v1/cart`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (!res.ok) throw new Error("Failed to fetch cart");
+      const data = await res.json();
+      // data puede ser { cart: {...} } o directamente el carrito
+      const serverCart = data?.cart || data;
+      setCart(serverCart);
+      setMode("auth");
+    } catch (err) {
+      // Fallback a modo invitado si falla
+      setMode("guest");
+      const guest = getGuestCart();
+      setCart(mapGuestToCart(guest));
+    } finally {
+      setLoading(false);
+    }
+  }, [API_BASE, token]);
+
+  useEffect(() => {
+    loadCart();
+  }, [loadCart]);
+
+  // Escuchar cambios del carrito invitado
+  useEffect(() => {
+    const onGuestUpdate = () => setCart(mapGuestToCart(getGuestCart()));
+    window.addEventListener("guestCartUpdated", onGuestUpdate);
+    return () => window.removeEventListener("guestCartUpdated", onGuestUpdate);
+  }, []);
+
+  const updateQuantity = async (productId, increment = true) => {
+    setUpdating(true);
+    setError(null);
+
+    if (mode === "guest") {
+      // Buscar cantidad actual
+      const current = cart?.products?.find((p) => p.product_id === productId);
+      const nextQty = Math.max(1, (current?.cantidad || 1) + (increment ? 1 : -1));
+      guestUpdateQty(productId, nextQty);
+      setCart(mapGuestToCart(getGuestCart()));
+      setUpdating(false);
+      return;
+    }
+
+    // Modo autenticado (backend)
     const url = increment
-      ? "https://localhost:4000/api/v1/cart/add_product"
-      : "https://localhost:4000/api/v1/cart/remove_product";
+      ? `${API_BASE}/api/v1/cart/add_product`
+      : `${API_BASE}/api/v1/cart/remove_product`;
 
     fetch(url, {
       method: increment ? "POST" : "DELETE",
@@ -90,12 +145,9 @@ function Cart() {
         if (data?.cart) {
           setCart(data.cart);
           window.dispatchEvent(new CustomEvent("cartUpdatedCustom", { bubbles: false }));
-          // ✅ Si es incremento, dispara el evento GA4
+          // Evento GA solo si incrementa
           if (increment && window.gtag) {
-            const product = data.cart.products.find(
-              (p) => p.product_id === productId
-            );
-
+            const product = data.cart.products.find((p) => p.product_id === productId);
             if (product) {
               window.gtag("event", "add_to_cart", {
                 currency: "COP",
@@ -109,8 +161,6 @@ function Cart() {
                   },
                 ],
               });
-
-              console.log("🛒 Evento GA4 enviado: add_to_cart", product);
             }
           }
         }
@@ -119,20 +169,24 @@ function Cart() {
       .finally(() => setUpdating(false));
   };
 
-  const removeAllQuantity = async (productId, productName, quantity) => {
+  const removeAllQuantity = async (productId) => {
     setUpdating(true);
-    
-    try {
-      // ✅ SOLUCIÓN: Hacer múltiples llamadas DELETE en paralelo para eliminar todas las unidades
-      const product = cart.products.find(p => p.product_id === productId);
-      
-      if (!product) {
-        throw new Error("Product not found in cart");
-      }
+    setError(null);
 
-      // Crear un array de promesas para eliminar todas las unidades
-      const removalPromises = Array.from({ length: quantity }, () =>
-        fetch("https://localhost:4000/api/v1/cart/remove_product", {
+    if (mode === "guest") {
+      guestRemoveItem(productId);
+      setCart(mapGuestToCart(getGuestCart()));
+      setUpdating(false);
+      return;
+    }
+
+    // Auth: eliminar todas las unidades (múltiples DELETE como tenías)
+    try {
+      const product = cart.products.find((p) => p.product_id === productId);
+      if (!product) throw new Error("Product not found in cart");
+
+      const removalPromises = Array.from({ length: product.cantidad }, () =>
+        fetch(`${API_BASE}/api/v1/cart/remove_product`, {
           method: "DELETE",
           headers: {
             "Content-Type": "application/json",
@@ -145,94 +199,74 @@ function Cart() {
         })
       );
 
-      // Ejecutar todas las eliminaciones en paralelo
       await Promise.all(removalPromises);
-      
-      // Recargar el carrito actualizado
-      fetchCart();
-      
-      // ✅ Disparar evento GA4 para la eliminación completa
-      if (window.gtag) {
-        window.gtag("event", "remove_from_cart", {
-          currency: "COP",
-          value: (product.precio_con_mejor_descuento && product.precio_con_mejor_descuento < product.precio_producto 
-            ? product.precio_con_mejor_descuento 
-            : product.precio_producto) * quantity,
-          items: [
-            {
-              item_id: productId,
-              item_name: productName,
-              quantity: quantity,
-            },
-          ],
-        });
-      }
-
+      await loadCart();
       window.dispatchEvent(new CustomEvent("cartUpdatedCustom", { bubbles: false }));
-      
-    } catch (error) {
-      console.error("Error removing all quantity:", error);
+    } catch {
       setError(t("cart.updatingError"));
-      // Recargar el carrito para mantener sincronización
-      fetchCart();
+      await loadCart();
     } finally {
       setUpdating(false);
     }
   };
 
-  const clearCart = () => {
+  const clearCart = async () => {
     setUpdating(true);
-    
-    // Crear un carrito vacío inmediatamente para forzar la actualización visual
-    const emptyCart = {
-      ...cart,
-      products: []
-    };
-    
-    // Actualizar el estado inmediatamente para que la UI se limpie
-    setCart(emptyCart);
-    
-    // Crear un array de promesas para eliminar todos los productos
-    const removalPromises = cart.products.flatMap(product => 
-      Array.from({ length: product.cantidad }, () => 
-        fetch("https://localhost:4000/api/v1/cart/remove_product", {
-          method: "DELETE",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({ product_id: product.product_id }),
-        }).then((res) => {
-          if (!res.ok) throw new Error("Remove failed");
-          return res.json();
-        })
-      )
-    );
+    setError(null);
 
-    Promise.all(removalPromises)
-      .then((results) => {
-        // Forzar una nueva carga del carrito para asegurar sincronización
-        fetchCart();
-        
-        // Notificar al Header para que se actualice
-        window.dispatchEvent(new CustomEvent("cartUpdatedCustom", { bubbles: false }));
-      })
-      .catch(() => {
-        setError(t("cart.updatingError"));
-        // En caso de error, igual forzar la actualización
-        fetchCart();
-      })
-      .finally(() => setUpdating(false));
+    if (mode === "guest") {
+      guestClearCart();
+      setCart({ id: null, products: [] });
+      setUpdating(false);
+      return;
+    }
+
+    // Auth: repetir remove sobre todos
+    try {
+      const removalPromises = cart.products.flatMap((product) =>
+        Array.from({ length: product.cantidad }, () =>
+          fetch(`${API_BASE}/api/v1/cart/remove_product`, {
+            method: "DELETE",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify({ product_id: product.product_id }),
+          }).then((res) => {
+            if (!res.ok) throw new Error("Remove failed");
+            return res.json();
+          })
+        )
+      );
+
+      await Promise.all(removalPromises);
+      await loadCart();
+      window.dispatchEvent(new CustomEvent("cartUpdatedCustom", { bubbles: false }));
+    } catch {
+      setError(t("cart.updatingError"));
+      await loadCart();
+    } finally {
+      setUpdating(false);
+    }
   };
 
-  const handleCheckout = () => {
-    fetch("https://localhost:4000/api/v1/orders", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
+    const handleCheckout = () => {
+      if (mode === "guest") {
+        navigate(`/${lang}/guest-checkout`, {
+          state: {
+            mode: "guest",
+            guestCart: cart, // { id:null, products:[...] }
+          },
+        });
+        return;
       }
-    })
+      fetch(`${API_BASE}/api/v1/orders`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        }
+      })
       .then((res) => {
         if (!res.ok) throw new Error("Checkout failed");
         return res.json();
@@ -250,12 +284,13 @@ function Cart() {
         }
       })
       .catch(() => setError(t("cart.orderError")));
-  };
+    };
 
   const handleProductClick = (productId) => {
     navigate(`/${lang}/producto/${productId}`);
   };
 
+  // Loading
   if (loading) {
     return (
       <Box sx={{ p: 3, maxWidth: 1200, mx: "auto" }}>
@@ -281,6 +316,7 @@ function Cart() {
     );
   }
 
+  // Error
   if (error) {
     return (
       <Box sx={{ p: 3, maxWidth: 1200, mx: "auto", textAlign: "center" }}>
@@ -292,13 +328,14 @@ function Cart() {
         >
           {error}
         </Alert>
-        <Button onClick={fetchCart} variant="outlined">
+        <Button onClick={loadCart} variant="outlined">
           {t("cart.retry")}
         </Button>
       </Box>
     );
   }
 
+  // Vacío
   if (!cart || !cart.products || cart.products.length === 0) {
     return (
       <Box sx={{ 
@@ -322,7 +359,6 @@ function Cart() {
         <Typography level="h4" sx={{ mb: 2 }}>
           {t("cart.empty")}
         </Typography>
-        
       </Box>
     );
   }
@@ -439,7 +475,6 @@ function Cart() {
                     {product.nombre_producto}
                   </Typography>
                   
-                  {/* PRECIO CON DESCUENTO */}
                   {product.precio_con_mejor_descuento && product.precio_con_mejor_descuento < product.precio_producto ? (
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap' }}>
                       <Typography level="h4" fontWeight="bold" color="#ff4d94">
@@ -474,11 +509,7 @@ function Cart() {
                   )}
                 </Box>
                 
-                <Box sx={{ 
-                  display: "flex", 
-                  alignItems: "center", 
-                  gap: 1.5 
-                }}>
+                <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
                   <IconButton 
                     variant="outlined" 
                     size="sm"
@@ -557,11 +588,7 @@ function Cart() {
                     transition: 'all 0.2s ease-in-out'
                   }}
                   disabled={updating}
-                  onClick={() => removeAllQuantity(
-                    product.product_id, 
-                    product.nombre_producto, 
-                    product.cantidad
-                  )}
+                  onClick={() => removeAllQuantity(product.product_id)}
                 >
                   <DeleteOutlineIcon />
                 </IconButton>
@@ -571,7 +598,7 @@ function Cart() {
         </Stack>
       </Sheet>
 
-      {/* Resumen del pedido - FIJADO */}
+      {/* Resumen del pedido */}
       <Sheet variant="outlined" sx={{ 
         width: { xs: "100%", lg: 400 }, 
         borderRadius: "md", 
@@ -620,7 +647,7 @@ function Cart() {
               </Typography>
             </Box>
             <Typography level="body1" fontWeight="bold" color="#ff4d94">
-              {formatCOP(shippingCost)}
+              {formatCOP(10000)}
             </Typography>
           </Box>
           
@@ -640,7 +667,7 @@ function Cart() {
               {t("cart.total")}
             </Typography>
             <Typography level="h4" fontWeight="bold" color="#ff4d94">
-              {formatCOP(total + shippingCost)}
+              {formatCOP(total + 10000)}
             </Typography>
           </Box>
         </Stack>
