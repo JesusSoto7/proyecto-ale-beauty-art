@@ -149,7 +149,9 @@ export default function GuestCheckout() {
 
           {/* Paso 2: Pago (guest) */}
           <div style={{ display: activeStep === 1 ? "block" : "none" }}>
-            <GuestPago order={order} guestCart={guestCart} />
+            <div style={{ display: activeStep === 1 ? "block" : "none" }}>
+              <GuestPago order={order} guestCart={guestCart} address={address} />
+            </div>
           </div>
         </Box>
 

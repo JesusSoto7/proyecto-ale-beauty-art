@@ -13,6 +13,13 @@ export default function UserMenu({
   t, 
   pinkTheme 
 }) {
+  // Helper: si no hay usuario, envía a login; si hay, va a la ruta authed
+  const go = (authedPath) => {
+    const target = user ? authedPath : `/${lang}/login`;
+    navigate(target);
+    onClose?.();
+  };
+
   return (
     <Menu
       anchorEl={anchorEl}
@@ -37,7 +44,7 @@ export default function UserMenu({
       </Box>
       
       <MenuItem 
-        onClick={() => { navigate(`/${lang}/perfil`); onClose(); }}
+        onClick={() => go(`/${lang}/perfil`)}
         sx={{ py: 1.5, display: 'flex', alignItems: 'center' }}
       >
         <BsPerson style={{ marginRight: '12px', color: pinkTheme.primary, fontSize: '18px' }} />
@@ -50,7 +57,7 @@ export default function UserMenu({
       </MenuItem>
       
       <MenuItem 
-        onClick={() => { navigate(`/${lang}/pedidos`); onClose(); }}
+        onClick={() => go(`/${lang}/pedidos`)}
         sx={{ py: 1.5, display: 'flex', alignItems: 'center' }}
       >
         <BsBag style={{ marginRight: '12px', color: pinkTheme.primary, fontSize: '18px' }} />
@@ -63,7 +70,7 @@ export default function UserMenu({
       </MenuItem>
       
       <MenuItem 
-        onClick={() => { navigate(`/${lang}/direcciones`); onClose(); }}
+        onClick={() => go(`/${lang}/direcciones`)}
         sx={{ py: 1.5, display: 'flex', alignItems: 'center' }}
       >
         <BsGeoAlt style={{ marginRight: '12px', color: pinkTheme.primary, fontSize: '18px' }} />
@@ -77,13 +84,14 @@ export default function UserMenu({
       
       <Box sx={{ borderBottom: `1px solid ${pinkTheme.light}`, my: 1 }} />
       
+      {/* Si no hay usuario, este item también podría llevar a login; lo dejamos como logout para usuarios autenticados */}
       <MenuItem 
-        onClick={onLogout}
+        onClick={user ? onLogout : () => go(`/${lang}/login`)}
         sx={{ py: 1.5, display: 'flex', alignItems: 'center' }}
       >
         <BsBoxArrowRight style={{ marginRight: '12px', color: pinkTheme.dark, fontSize: '18px' }} />
         <Typography variant="body1" sx={{ fontWeight: 500, color: pinkTheme.dark }}>
-          {t('header.logout')}
+          {user ? t('header.logout') : t('login.login')}
         </Typography>
       </MenuItem>
     </Menu>

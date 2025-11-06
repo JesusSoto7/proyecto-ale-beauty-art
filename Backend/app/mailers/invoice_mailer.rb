@@ -1,31 +1,26 @@
 class InvoiceMailer < ApplicationMailer
   default from: ENV['GMAIL_USER']
 
-  def enviar_factura(order)
+  def enviar_factura(order, overrides = {})
     @order = order
 
-    # Fallbacks visibles en la vista
     @numero      = @order.numero_de_orden.presence || @order.id
     @buyer_email = @order.correo_cliente.presence || @order.user&.email
     return if @buyer_email.blank?
 
     @buyer_name =
-      if @order.user&.nombre.present? || @order.user&.apellido.present?
-        [@order.user&.nombre, @order.user&.apellido].compact.join(" ")
-      else
-        "Cliente invitado"
-      end
+      overrides[:buyer_name].presence ||
+      [@order.user&.nombre, @order.user&.apellido].compact.join(" ").presence ||
+      "Cliente invitado"
 
-    addr = @order.shipping_address
-    @shipping_text =
-      if addr.present?
-        parts = []
-        parts << addr.direccion if addr.respond_to?(:direccion)
-        parts << addr.neighborhood&.nombre if addr.respond_to?(:neighborhood)
-        parts.compact.join(" — ").presence || "N/A"
-      else
-        "N/A"
-      end
+    @buyer_phone =
+      overrides[:buyer_phone].presence ||
+      safe_attr(@order.user, :telefono, :phone)
+
+    @buyer_address =
+      overrides[:buyer_address].presence ||
+      safe_attr(@order&.shipping_address, :direccion) ||
+      safe_attr(@order.user, :address, :direccion)
 
     # Total con fallback
     subtotal = @order.order_details.to_a.sum { |od| od.cantidad.to_i * od.precio_unitario.to_f }
@@ -40,7 +35,6 @@ class InvoiceMailer < ApplicationMailer
     end
 
     attachments["Factura-#{@numero}.pdf"] = pdf_data if pdf_data
-
     if pdf_data
       begin
         @order.invoice_pdf.attach(
@@ -54,5 +48,18 @@ class InvoiceMailer < ApplicationMailer
     end
 
     mail(to: @buyer_email, subject: "Tu factura de compra ##{@numero}")
+  end
+
+  private
+
+  # Devuelve el primer atributo presente que el objeto soporte (evita NoMethodError)
+  def safe_attr(obj, *candidates)
+    return nil unless obj
+    candidates.each do |attr|
+      next unless obj.respond_to?(attr)
+      val = obj.public_send(attr)
+      return val if val.present?
+    end
+    nil
   end
 end
