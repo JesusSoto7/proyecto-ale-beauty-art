@@ -311,16 +311,15 @@ class _LanguageMenuButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final currentCode = context.locale.languageCode;
+    final isEs = currentCode == 'es';
     return PopupMenuButton<Locale>(
       tooltip: 'common.select_language'.tr(),
-      elevation: 6,
-      offset: const Offset(0, 12),
+      elevation: 8,
+      offset: const Offset(0, 10),
       color: Colors.white,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      icon: const Icon(Icons.language_outlined, color: Colors.white),
-      onSelected: (locale) {
-        context.setLocale(locale);
-      },
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+      padding: EdgeInsets.zero,
+      onSelected: (locale) => context.setLocale(locale),
       itemBuilder: (context) => [
         PopupMenuItem<Locale>(
           value: const Locale('es'),
@@ -328,8 +327,14 @@ class _LanguageMenuButton extends StatelessWidget {
             children: [
               const Text('🇪🇸'),
               const SizedBox(width: 8),
-              Expanded(child: Text('common.spanish'.tr())),
-              if (currentCode == 'es') const Icon(Icons.check, size: 16),
+              Expanded(
+                child: Text(
+                  'common.spanish'.tr(),
+                  style: const TextStyle(fontWeight: FontWeight.w600),
+                ),
+              ),
+              if (isEs)
+                const Icon(Icons.check_circle, size: 18, color: AppColors.primaryPink),
             ],
           ),
         ),
@@ -339,12 +344,52 @@ class _LanguageMenuButton extends StatelessWidget {
             children: [
               const Text('🇺🇸'),
               const SizedBox(width: 8),
-              Expanded(child: Text('common.english'.tr())),
-              if (currentCode == 'en') const Icon(Icons.check, size: 16),
+              Expanded(
+                child: Text(
+                  'common.english'.tr(),
+                  style: const TextStyle(fontWeight: FontWeight.w600),
+                ),
+              ),
+              if (!isEs)
+                const Icon(Icons.check_circle, size: 18, color: AppColors.primaryPink),
             ],
           ),
         ),
       ],
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        decoration: BoxDecoration(
+          gradient: const LinearGradient(
+            colors: [Color(0xFFD95D85), Color(0xFFE58BB1)],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+          borderRadius: BorderRadius.circular(22),
+          border: Border.all(color: Colors.white.withOpacity(0.7), width: 1),
+          boxShadow: [
+            BoxShadow(
+              color: const Color(0xFFD95D85).withOpacity(0.35),
+              blurRadius: 10,
+              offset: const Offset(0, 3),
+            ),
+          ],
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Icon(Icons.language_outlined, color: Colors.white, size: 18),
+            const SizedBox(width: 6),
+            Text(
+              isEs ? 'common.spanish'.tr() : 'common.english'.tr(),
+              style: const TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+                fontSize: 12,
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
