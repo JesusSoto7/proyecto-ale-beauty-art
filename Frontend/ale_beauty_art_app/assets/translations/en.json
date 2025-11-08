@@ -232,5 +232,19 @@
     "load_error": "Error loading notifications",
     "empty_title": "You have no notifications",
     "empty_subtitle": "When you receive notifications\nthey will appear here"
+  },
+  "chat": {
+    "status_typing": "Typing...",
+    "status_online": "Online",
+    "input_hint": "Ask me anything...",
+    "empty_title": "Hi! I'm Amélie",
+    "empty_subtitle": "Your AI beauty assistant",
+    "thinking": "Amélie is thinking...",
+    "error_prefix": "An error occurred",
+    "suggestions": {
+      "products": "What products do you have?",
+      "recommend": "Recommend me a product",
+      "discounts": "Do you have discounts?"
+    }
   }
 }

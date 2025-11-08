@@ -232,5 +232,19 @@
     "load_error": "Error al cargar notificaciones",
     "empty_title": "No tienes notificaciones",
     "empty_subtitle": "Cuando recibas notificaciones\naparecerán aquí"
-}
+  },
+  "chat": {
+    "status_typing": "Escribiendo...",
+    "status_online": "En línea",
+    "input_hint": "Pregúntame lo que quieras...",
+    "empty_title": "¡Hola! Soy Amélie",
+    "empty_subtitle": "Tu asistente de belleza con IA",
+    "thinking": "Amélie está pensando...",
+    "error_prefix": "Ocurrió un error",
+    "suggestions": {
+      "products": "¿Qué productos tienes?",
+      "recommend": "Recomiéndame un producto",
+      "discounts": "¿Tienen descuentos?"
+    }
+  }
 }
