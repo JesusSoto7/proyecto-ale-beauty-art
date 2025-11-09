@@ -61,7 +61,7 @@ class _ProductsPageViewState extends State<ProductsPageView> {
                 _buildFilterHeader(context, state),
                 if (!_shouldHideChips(state.filter)) _ActiveFiltersBar(
                   filter: state.filter,
-                  products: state.products,
+                  products: context.read<ProductBloc>().allProducts,
                   onClear: (token) => _clearToken(token),
                 ),
                 Expanded(
@@ -141,7 +141,23 @@ class _ProductsPageViewState extends State<ProductsPageView> {
         int? selectedSubCategoryId = current.subCategoryId;
 
         return StatefulBuilder(builder: (context, setModalState) {
-          return Padding(
+          final theme = Theme.of(context);
+          final checkboxTheme = theme.checkboxTheme.copyWith(
+            shape: const CircleBorder(),
+            fillColor: MaterialStateProperty.resolveWith((states) {
+              if (states.contains(MaterialState.selected)) {
+                return const Color(0xFFD95D85);
+              }
+              return Colors.white;
+            }),
+            checkColor: const MaterialStatePropertyAll(Colors.white),
+            side: MaterialStateBorderSide.resolveWith(
+              (states) => const BorderSide(color: Color(0xFFD95D85)),
+            ),
+          );
+          return Theme(
+            data: theme.copyWith(checkboxTheme: checkboxTheme),
+            child: Padding(
           padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -161,12 +177,12 @@ class _ProductsPageViewState extends State<ProductsPageView> {
               Text('products.filters'.tr(), style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600)),
               const SizedBox(height: 12),
               if (sortedCats.isNotEmpty) ...[
-                Text('Categorías', style: const TextStyle(fontWeight: FontWeight.w600)),
+                Text('products.filter_panel.categories_title'.tr(), style: const TextStyle(fontWeight: FontWeight.w600)),
                 const SizedBox(height: 4),
                 CheckboxListTile(
                   dense: true,
                   contentPadding: EdgeInsets.zero,
-                  title: const Text('Mostrar todas'),
+                  title: Text('products.filter_panel.show_all'.tr()),
                   value: selectedCategoryId == null,
                   onChanged: (v) {
                     if (v == true) {
@@ -202,12 +218,12 @@ class _ProductsPageViewState extends State<ProductsPageView> {
                 const SizedBox(height: 8),
                 if (selectedCategoryId != null) ...[
                   const Divider(height: 8),
-                  Text('Subcategorías', style: const TextStyle(fontWeight: FontWeight.w600)),
+                  Text('products.filter_panel.subcategories_title'.tr(), style: const TextStyle(fontWeight: FontWeight.w600)),
                   const SizedBox(height: 4),
                   CheckboxListTile(
                     dense: true,
                     contentPadding: EdgeInsets.zero,
-                    title: const Text('Mostrar todas'),
+                    title: Text('products.filter_panel.show_all'.tr()),
                     value: selectedSubCategoryId == null,
                     onChanged: (v) {
                       if (v == true) {
@@ -244,14 +260,25 @@ class _ProductsPageViewState extends State<ProductsPageView> {
                 ],
               ],
 
-              SwitchListTile(
-                contentPadding: EdgeInsets.zero,
-                title: Text('Solo con descuento'),
-                value: onlyDiscounted,
-                onChanged: (v) => setModalState(() => onlyDiscounted = v),
+              Container(
+                decoration: BoxDecoration(
+                  color: const Color(0xFFFAFAFA),
+                  borderRadius: BorderRadius.circular(14),
+                  border: Border.all(color: const Color(0xFFD95D85).withOpacity(0.25)),
+                ),
+                child: SwitchListTile(
+                  dense: true,
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 12),
+                  secondary: const Icon(Icons.local_offer, color: Color(0xFFD95D85)),
+                  activeColor: const Color(0xFFD95D85),
+                  title: Text('products.filter_panel.discount_only'.tr(),
+                      style: const TextStyle(fontWeight: FontWeight.w600)),
+                  value: onlyDiscounted,
+                  onChanged: (v) => setModalState(() => onlyDiscounted = v),
+                ),
               ),
               const SizedBox(height: 8),
-              Text('Precio'),
+              Text('products.filter_panel.price_title'.tr()),
               const SizedBox(height: 6),
               _PriceInputs(
                 initialMin: current.minPrice,
@@ -300,7 +327,8 @@ class _ProductsPageViewState extends State<ProductsPageView> {
               ),
             ],
           ),
-        );
+        ),
+          );
         });
       },
     );
@@ -323,7 +351,7 @@ class _ProductsPageViewState extends State<ProductsPageView> {
             ),
             ListTile(
               leading: const Icon(Icons.arrow_upward, color: Color(0xFFD95D85)),
-              title: const Text('Precio: menor a mayor'),
+              title: Text('products.sort_options.price_asc'.tr()),
               onTap: () {
                 context.read<ProductBloc>().add(const ProductSortChanged(ProductSort.priceAsc));
                 Navigator.pop(ctx);
@@ -331,7 +359,7 @@ class _ProductsPageViewState extends State<ProductsPageView> {
             ),
             ListTile(
               leading: const Icon(Icons.arrow_downward, color: Color(0xFFD95D85)),
-              title: const Text('Precio: mayor a menor'),
+              title: Text('products.sort_options.price_desc'.tr()),
               onTap: () {
                 context.read<ProductBloc>().add(const ProductSortChanged(ProductSort.priceDesc));
                 Navigator.pop(ctx);
@@ -339,7 +367,7 @@ class _ProductsPageViewState extends State<ProductsPageView> {
             ),
             ListTile(
               leading: const Icon(Icons.local_offer, color: Color(0xFFD95D85)),
-              title: const Text('Mayor descuento'),
+              title: Text('products.sort_options.discount_desc'.tr()),
               onTap: () {
                 context.read<ProductBloc>().add(const ProductSortChanged(ProductSort.discountDesc));
                 Navigator.pop(ctx);
@@ -347,7 +375,7 @@ class _ProductsPageViewState extends State<ProductsPageView> {
             ),
             ListTile(
               leading: const Icon(Icons.clear, color: Color(0xFFD95D85)),
-              title: const Text('Quitar orden'),
+              title: Text('products.sort_options.clear'.tr()),
               onTap: () {
                 context.read<ProductBloc>().add(const ProductSortChanged(ProductSort.none));
                 Navigator.pop(ctx);
@@ -600,17 +628,20 @@ class _PriceInputsState extends State<_PriceInputs> {
 
   @override
   Widget build(BuildContext context) {
+    final pink = const Color(0xFFD95D85);
+    final baseDecoration = InputDecoration(
+      isDense: true,
+      border: OutlineInputBorder(borderRadius: BorderRadius.circular(14)),
+      focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(14), borderSide: BorderSide(color: pink, width: 1.4)),
+      contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+    );
     return Row(
       children: [
         Expanded(
           child: TextField(
             controller: _minCtrl,
             keyboardType: const TextInputType.numberWithOptions(decimal: false),
-            decoration: const InputDecoration(
-              labelText: 'Min',
-              isDense: true,
-              border: OutlineInputBorder(),
-            ),
+            decoration: baseDecoration.copyWith(labelText: 'products.filter_panel.price_min'.tr()),
             onChanged: (_) => _emit(),
           ),
         ),
@@ -619,11 +650,7 @@ class _PriceInputsState extends State<_PriceInputs> {
           child: TextField(
             controller: _maxCtrl,
             keyboardType: const TextInputType.numberWithOptions(decimal: false),
-            decoration: const InputDecoration(
-              labelText: 'Max',
-              isDense: true,
-              border: OutlineInputBorder(),
-            ),
+            decoration: baseDecoration.copyWith(labelText: 'products.filter_panel.price_max'.tr()),
             onChanged: (_) => _emit(),
           ),
         ),

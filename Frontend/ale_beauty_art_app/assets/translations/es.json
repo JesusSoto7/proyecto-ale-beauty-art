@@ -34,7 +34,23 @@
     "filters": "Filtros",
     "sort": "Ordenar",
     "empty_title": "No hay productos",
-    "empty_subtitle": "No se encontraron productos\nen esta categoría"
+    "empty_subtitle": "No se encontraron productos\nen esta categoría",
+    "sort_options": {
+      "price_asc": "Precio: menor a mayor",
+      "price_desc": "Precio: mayor a menor",
+      "discount_desc": "Mayor descuento",
+      "clear": "Quitar orden"
+    }
+  ,
+    "filter_panel": {
+      "categories_title": "Categorías",
+      "subcategories_title": "Subcategorías",
+      "show_all": "Mostrar todas",
+      "discount_only": "Solo con descuento",
+      "price_title": "Precio",
+      "price_min": "Mín",
+      "price_max": "Máx"
+    }
   },
   "home": {
     "popular_products": "Productos populares"
