@@ -86,17 +86,7 @@ class ProductsByCategoryView extends StatelessWidget {
       ),
       body: products.isEmpty
           ? _buildEmptyState()
-          : Column(
-              children: [
-                // 📊 Header con filtros (opcional)
-                _buildFilterHeader(),
-
-                // 📱 Grid de productos
-                Expanded(
-                  child: InfoProduct(products: products),
-                ),
-              ],
-            ),
+          : InfoProduct(products: products),
     );
   }
 
@@ -141,88 +131,4 @@ class ProductsByCategoryView extends StatelessWidget {
     );
   }
 
-  /// Header con filtros y ordenamiento
-  Widget _buildFilterHeader() {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.04),
-            blurRadius: 4,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Row(
-        children: [
-          // 🔽 Botón de filtros
-          Expanded(
-            child: _filterButton(
-              icon: Icons.tune_rounded,
-              label: 'products.filters'.tr(),
-              onTap: () {
-                // TODO: Abrir panel de filtros
-              },
-            ),
-          ),
-          const SizedBox(width: 12),
-
-          // 📊 Botón de ordenar
-          Expanded(
-            child: _filterButton(
-              icon: Icons.swap_vert_rounded,
-              label: 'products.sort'.tr(),
-              onTap: () {
-                // TODO: Abrir opciones de ordenamiento
-              },
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  /// Botón de filtro reutilizable
-  Widget _filterButton({
-    required IconData icon,
-    required String label,
-    required VoidCallback onTap,
-  }) {
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(12),
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 10),
-        decoration: BoxDecoration(
-          color: const Color(0xFFFAFAFA),
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            color: Colors.grey[300]!,
-            width: 1,
-          ),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              icon,
-              size: 18,
-              color: const Color(0xFFD95D85),
-            ),
-            const SizedBox(width: 6),
-            Text(
-              label,
-              style: const TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w500,
-                color: Colors.black87,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
 }
