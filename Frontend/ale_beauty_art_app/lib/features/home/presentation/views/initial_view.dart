@@ -251,46 +251,58 @@ class InitialView extends StatelessWidget {
       ),
       child: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 8),
-          child: GNav(
-            gap: 8,
-            backgroundColor: Colors.transparent,
-            color: Colors.grey[500],
-            activeColor: Colors.white,
-            tabBackgroundGradient: const LinearGradient(
-              colors: [Color(0xFFD95D85), Color(0xFFE58BB1)],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-            onTabChange: (index) async {
-              if (index == 3) {
-                final previousIndex =
-                    context.read<NavigationBloc>().state is NavigationUpdated
-                        ? (context.read<NavigationBloc>().state
-                                as NavigationUpdated)
-                            .selectedIndex
-                        : 0;
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+          child: BlocBuilder<NavigationBloc, NavigationState>(
+            builder: (context, navState) {
+              final selectedIndex = navState is NavigationUpdated ? navState.selectedIndex : 0;
 
-                await Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (_) => const CartPageView()),
-                );
+              // Mostrar texto solo en la pestaña seleccionada para evitar overflow en títulos largos.
+              final labels = <String>[
+                'nav.home'.tr(),
+                'nav.products'.tr(),
+                'nav.categories'.tr(),
+                'nav.cart'.tr(),
+                'nav.profile'.tr(),
+              ];
 
-                context
-                    .read<NavigationBloc>()
-                    .add(NavigationTabChanged(previousIndex));
-              } else {
-                context.read<NavigationBloc>().add(NavigationTabChanged(index));
-              }
+              return GNav(
+                gap: 6,
+                iconSize: 22,
+                backgroundColor: Colors.transparent,
+                color: Colors.grey[600],
+                activeColor: Colors.white,
+                tabBackgroundGradient: const LinearGradient(
+                  colors: [Color(0xFFD95D85), Color(0xFFE58BB1)],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                onTabChange: (index) async {
+                  if (index == 3) {
+                    final previousIndex =
+                        context.read<NavigationBloc>().state is NavigationUpdated
+                            ? (context.read<NavigationBloc>().state as NavigationUpdated).selectedIndex
+                            : 0;
+
+                    await Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => const CartPageView()),
+                    );
+
+                    context.read<NavigationBloc>().add(NavigationTabChanged(previousIndex));
+                  } else {
+                    context.read<NavigationBloc>().add(NavigationTabChanged(index));
+                  }
+                },
+                tabs: [
+                  GButton(icon: Icons.home_rounded, text: selectedIndex == 0 ? labels[0] : ''),
+                  GButton(icon: Icons.grid_view_rounded, text: selectedIndex == 1 ? labels[1] : ''),
+                  GButton(icon: Icons.category_rounded, text: selectedIndex == 2 ? labels[2] : ''),
+                  GButton(icon: Icons.shopping_cart_rounded, text: selectedIndex == 3 ? labels[3] : ''),
+                  GButton(icon: Icons.person, text: selectedIndex == 4 ? labels[4] : ''),
+                ],
+              );
             },
-            tabs: [
-              GButton(icon: Icons.home_rounded, text: 'nav.home'.tr()),
-              GButton(icon: Icons.grid_view_rounded, text: 'nav.products'.tr()),
-              GButton(icon: Icons.category_rounded, text: 'nav.categories'.tr()),
-              GButton(icon: Icons.shopping_cart_rounded, text: 'nav.cart'.tr()),
-              GButton(icon: Icons.person, text: 'nav.profile'.tr()),
-            ],
           ),
         ),
       ),
