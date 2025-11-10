@@ -16,6 +16,7 @@ import 'package:ale_beauty_art_app/features/profile/presentation/views/profile_v
 import 'package:ale_beauty_art_app/features/categories/presentation/views/categories_row.dart';
 import 'package:ale_beauty_art_app/styles/text_styles.dart';
 import 'package:ale_beauty_art_app/features/products/presentation/widgets/products_carousel.dart';
+import 'package:ale_beauty_art_app/features/favorites/presentation/bloc/favorite_bloc.dart';
 import '../widgets/buscador.dart';
 
 class InitialView extends StatelessWidget {
@@ -30,6 +31,9 @@ class InitialView extends StatelessWidget {
       context.read<NotificationBloc>().add(
             UpdateNotificationToken(authState.token),
           );
+      // Sincroniza también el token global de favoritos al iniciar
+      final favBloc = context.read<FavoriteBloc>();
+      favBloc.add(UpdateFavoriteToken(authState.token));
       final currentState = context.read<NotificationBloc>().state;
       if (currentState is NotificationInitial) {
         context.read<NotificationBloc>().add(NotificationFetched());

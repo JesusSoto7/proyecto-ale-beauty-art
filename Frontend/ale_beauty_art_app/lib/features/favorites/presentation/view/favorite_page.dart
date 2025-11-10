@@ -129,20 +129,7 @@ class FavoritePage extends StatelessWidget {
                         children: [
                           ClipRRect(
                             borderRadius: BorderRadius.circular(12),
-                            child: fav.imagenUrl != null
-                                ? Image.network(
-                                    fav.imagenUrl!,
-                                    width: 90,
-                                    height: 90,
-                                    fit: BoxFit.cover,
-                                  )
-                                : Container(
-                                    width: 90,
-                                    height: 90,
-                                    color: Colors.grey.shade200,
-                                    child: const Icon(Icons.image_not_supported,
-                                        color: Colors.grey, size: 40),
-                                  ),
+                            child: _favoriteImage(fav.imagenUrl),
                           ),
                           const SizedBox(width: 14),
                           Expanded(
@@ -344,5 +331,49 @@ class FavoritePage extends StatelessWidget {
       return const Text("Agotado",
           style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold));
     }
+  }
+
+  Widget _favoriteImage(String? url) {
+    if (url == null || url.isEmpty) {
+      return _placeholderBox();
+    }
+    return Image.network(
+      url,
+      width: 90,
+      height: 90,
+      fit: BoxFit.cover,
+      errorBuilder: (context, error, stack) => _placeholderBox(),
+      loadingBuilder: (context, child, progress) {
+        if (progress == null) return child;
+        return Container(
+          width: 90,
+          height: 90,
+          alignment: Alignment.center,
+          decoration: BoxDecoration(color: Colors.grey.shade200),
+          child: SizedBox(
+            width: 26,
+            height: 26,
+            child: CircularProgressIndicator(
+              strokeWidth: 2.4,
+              value: progress.expectedTotalBytes != null
+                  ? progress.cumulativeBytesLoaded /
+                      (progress.expectedTotalBytes ?? 1)
+                  : null,
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _placeholderBox() {
+    return Container(
+      width: 90,
+      height: 90,
+      decoration: BoxDecoration(
+        color: Colors.grey.shade200,
+      ),
+      child: const Icon(Icons.image_not_supported, color: Colors.grey, size: 40),
+    );
   }
 }

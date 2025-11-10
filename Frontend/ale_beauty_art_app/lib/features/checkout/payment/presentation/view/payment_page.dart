@@ -154,6 +154,7 @@ class _PaymentPageState extends State<PaymentPage> {
     }
 
     final response = await _mpService.payWithBackend(
+      jwt: widget.token,
       token: token,
       transaction_amount: widget.amount,
       paymentMethodId: paymentMethodId,
