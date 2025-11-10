@@ -240,11 +240,15 @@ class _ProductDetailViewState extends State<ProductDetailView> {
       // Botones
       bottomNavigationBar: SafeArea(
         minimum: const EdgeInsets.symmetric(horizontal: 24, vertical: 22),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            // Botón con texto: Agregar al carrito
-            _buildPillButton(
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            // Siempre mostrar los dos botones lado a lado. Ajustar estilo si el ancho es reducido.
+            final double totalWidth = constraints.maxWidth;
+            final double gap = 12;
+            final double perButton = (totalWidth - gap) / 2;
+            final bool dense = perButton < 160; // umbral para activar modo compacto
+
+            final addButton = _buildPillButton(
               icon: Icons.add_shopping_cart,
               label: 'product_detail.add'.tr(),
               tooltip: 'product_detail.add_tooltip'.tr(),
@@ -253,6 +257,7 @@ class _ProductDetailViewState extends State<ProductDetailView> {
                 end: Alignment.bottomRight,
                 colors: [Color(0xFFD95D85), Color(0xFFE58BB1)],
               ),
+              dense: dense,
               onTap: () async {
                   final authState = context.read<AuthBloc>().state;
 
@@ -326,10 +331,8 @@ class _ProductDetailViewState extends State<ProductDetailView> {
                     );
                   }
               },
-            ),
-            const SizedBox(width: 12),
-            // Botón con texto: Comprar
-            _buildPillButton(
+            );
+            final buyButton = _buildPillButton(
               icon: Icons.attach_money_rounded,
               label: 'product_detail.buy'.tr(),
               tooltip: 'product_detail.buy_tooltip'.tr(),
@@ -338,6 +341,7 @@ class _ProductDetailViewState extends State<ProductDetailView> {
                 end: Alignment.bottomRight,
                 colors: [Color(0xFFD95D85), Color(0xFFE58BB1)],
               ),
+              dense: dense,
               onTap: () async {
                 // Quick Buy: pide login si no hay sesión, luego selecciona dirección y crea checkout con SOLO este producto
                 final authState = context.read<AuthBloc>().state;
@@ -402,8 +406,16 @@ class _ProductDetailViewState extends State<ProductDetailView> {
                   await proceedWithToken(authState.token);
                 }
               },
-            ),
-          ],
+            );
+
+            return Row(
+              children: [
+                Expanded(child: addButton),
+                const SizedBox(width: 12),
+                Expanded(child: buyButton),
+              ],
+            );
+          },
         ),
       ),
     );
@@ -416,44 +428,50 @@ extension on _ProductDetailViewState {
     required String label,
     required LinearGradient gradient,
     required VoidCallback onTap,
+    bool dense = false,
     String? tooltip,
   }) {
-    return ConstrainedBox(
-      constraints: const BoxConstraints(minWidth: 170),
-      child: Container(
-        decoration: BoxDecoration(
-          gradient: gradient,
-          borderRadius: BorderRadius.circular(28),
-          boxShadow: [
-            BoxShadow(
-              color: const Color(0xFFD95D85).withOpacity(0.25),
-              blurRadius: 10,
-              offset: const Offset(0, 4),
-            ),
-          ],
-        ),
-        child: Material(
-          color: Colors.transparent,
-          child: InkWell(
-            borderRadius: BorderRadius.circular(28),
-            onTap: onTap,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 20),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(icon, color: Colors.white),
-                  const SizedBox(width: 8),
-                  Text(
+    final double verticalPad = dense ? 10 : 14;
+    final double horizontalPad = dense ? 14 : 20;
+    final double fontSize = dense ? 14 : 15;
+    final double iconSize = dense ? 20 : 22;
+    return Container(
+      decoration: BoxDecoration(
+        gradient: gradient,
+        borderRadius: BorderRadius.circular(26),
+        boxShadow: [
+          BoxShadow(
+            color: const Color(0xFFD95D85).withOpacity(0.25),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          borderRadius: BorderRadius.circular(26),
+          onTap: onTap,
+          child: Padding(
+            padding: EdgeInsets.symmetric(vertical: verticalPad, horizontal: horizontalPad),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(icon, color: Colors.white, size: iconSize),
+                const SizedBox(width: 8),
+                Flexible(
+                  child: Text(
                     label,
-                    style: const TextStyle(
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
                       color: Colors.white,
-                      fontSize: 15,
+                      fontSize: fontSize,
                       fontWeight: FontWeight.w700,
                     ),
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
         ),
