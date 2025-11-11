@@ -20,7 +20,7 @@ const sample3 = "https://i.pinimg.com/736x/ed/c9/85/edc985cfe1938991bdf4e7957be0
 
 
 
-function UserProfile() {
+function UserFullProfile() {
     const [user, setUser] = useState(null);
     const [editMode, setEditMode] = useState(false);
     const [orders, setOrders] = useState([]);
@@ -156,7 +156,7 @@ function UserProfile() {
         ),
         },
         {
-        title: `Reviews escritas (${userReviews.length})`,
+        title: "Reviews escritas",
         content: (
             <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
             {userReviews.length > 0 ? (
@@ -166,7 +166,7 @@ function UserProfile() {
                     style={{
                     borderRadius: "8px",
                     padding: "10px 15px",
-                    background: "#ffffffff",
+                    background: "#161b22",
                     display: "flex",
                     justifyContent: "space-around",
                     alignItems: "center",
@@ -582,4 +582,4 @@ function UserProfile() {
   );
 }
 
-export default UserProfile;
+export default UserFullProfile;

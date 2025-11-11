@@ -177,7 +177,7 @@
 }
 
 .exp-card {
-  background: #242a32;
+  background: #ededed;
   padding: 1rem;
   border-radius: 10px;
   transition: background 0.3s;
@@ -185,20 +185,20 @@
 
 
 .exp-section {
-  background: #161b22;
+  background: #f5f6fa;
   padding: 1rem;
   border-radius: 10px;
   transition: background 0.3s;
 }
 
 .exp-card:hover {
-  background: #1f2630;
+  background: #e2e2e6;
 }
 
 .exp-card h3 {
   margin: 0;
   font-size: 1.1rem;
-  color: #fff;
+  color: #333b4d;
 }
 
 .exp-card p {

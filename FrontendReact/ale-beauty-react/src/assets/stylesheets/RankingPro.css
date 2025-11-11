@@ -42,7 +42,7 @@
 .ranking-image img {
   width: 100%; /* ✅ Ancho completo */
   height: 100%; /* ✅ Alto completo */
-  object-fit: cover; /* ✅ CAMBIADO: Cubre todo el espacio */
+  object-fit: contain; /* ✅ CAMBIADO: Cubre todo el espacio */
   object-position: center; /* ✅ Centrada */
   transition: transform 0.3s ease;
 }

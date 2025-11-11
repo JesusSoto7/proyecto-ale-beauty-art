@@ -15,13 +15,13 @@
 
 .accordion-header {
   width: 100%;
-  background-color: #161b22;
-  color: #fff;
+  background-color: #ededed;
+  color: #333b4d;
   font-weight: 600;
   padding: 15px;
   text-align: left;
   border: none;
-  border-bottom: 1px solid #212529;
+  border-bottom: 1px solid #d4d5d6;
   outline: none;
   cursor: pointer;
   display: flex;
@@ -31,7 +31,7 @@
 }
 
 .accordion-header:hover {
-  background-color: #1f2630;
+  background-color: #dfe1e4;
 }
 
 .accordion-header.active {
@@ -40,8 +40,8 @@
 }
 
 .accordion-content {
-  background: #242a32;
-  color: #fff;
+  background: #cfd2d5;
+  color: #333b4d;
   padding: 15px;
   /* border-top: 1px solid #ddd; */
   animation: fadeIn 0.3s ease;
