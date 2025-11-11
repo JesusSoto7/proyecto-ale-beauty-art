@@ -254,7 +254,7 @@ function Inicio() {
       </section>
 
       <FloatingChat />
-      <BannerProduct products={products} productRatings={productRatings}/>
+      {/* <BannerProduct products={products} productRatings={productRatings}/> */}
       <RotatingBanner />
       
       <h2 className="mb-4">Productos mejor valorados</h2>
