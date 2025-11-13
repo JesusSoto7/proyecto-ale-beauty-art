@@ -4,7 +4,7 @@ import 'package:ale_beauty_art_app/features/auth/bloc/auth_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:uni_links3/uni_links.dart';
+import 'package:app_links/app_links.dart';
 
 class ResetPasswordPage extends StatefulWidget {
   const ResetPasswordPage({Key? key}) : super(key: key);
@@ -19,6 +19,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
   final _passwordConfirmController = TextEditingController();
   bool _loading = false;
   StreamSubscription? _sub;
+  AppLinks? _appLinks;
 
   @override
   void initState() {
@@ -29,19 +30,21 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
 
   Future<void> _initUniLinks() async {
     try {
-      final initial = await getInitialLink();
-      if (initial != null) _handleIncomingLink(initial);
+      _appLinks = AppLinks();
+  final initialUri = await _appLinks!.getInitialLink();
+      if (initialUri != null) {
+        _handleIncomingUri(initialUri);
+      }
 
-      _sub = linkStream.listen((String? link) {
-        if (link != null) _handleIncomingLink(link);
+      _sub = _appLinks!.uriLinkStream.listen((Uri uri) {
+        _handleIncomingUri(uri);
       }, onError: (_) {});
     } catch (e) {
       // ignore
     }
   }
 
-  void _handleIncomingLink(String link) {
-    final uri = Uri.parse(link);
+  void _handleIncomingUri(Uri uri) {
     final token = uri.queryParameters['reset_password_token'] ??
         uri.queryParameters['token'];
 
@@ -56,6 +59,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
   @override
   void dispose() {
     _sub?.cancel();
+    _appLinks = null;
     _tokenController.dispose();
     _passwordController.dispose();
     _passwordConfirmController.dispose();

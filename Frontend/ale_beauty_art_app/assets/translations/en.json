@@ -34,7 +34,23 @@
     "filters": "Filters",
     "sort": "Sort",
     "empty_title": "No products",
-    "empty_subtitle": "No products found\nin this category"
+    "empty_subtitle": "No products found\nin this category",
+    "sort_options": {
+      "price_asc": "Price: low to high",
+      "price_desc": "Price: high to low",
+      "discount_desc": "Biggest discount",
+      "clear": "Clear sort"
+    }
+  ,
+    "filter_panel": {
+      "categories_title": "Categories",
+      "subcategories_title": "Subcategories",
+      "show_all": "Show all",
+      "discount_only": "Discount only",
+      "price_title": "Price",
+      "price_min": "Min",
+      "price_max": "Max"
+    }
   },
   "home": {
     "popular_products": "Popular products"
@@ -232,5 +248,27 @@
     "load_error": "Error loading notifications",
     "empty_title": "You have no notifications",
     "empty_subtitle": "When you receive notifications\nthey will appear here"
+  },
+  "chat": {
+    "status_typing": "Typing...",
+    "status_online": "Online",
+    "input_hint": "Ask me anything...",
+    "empty_title": "Hi! I'm Amélie",
+    "empty_subtitle": "Your AI beauty assistant",
+    "thinking": "Amélie is thinking...",
+    "error_prefix": "An error occurred",
+    "suggestions": {
+      "products": "What products do you have?",
+      "recommend": "Recommend me a product",
+      "discounts": "Do you have discounts?"
+    }
+  },
+  "failure": {
+    "title": "Oops! Something went wrong.",
+    "subtitle": "Please try again later."
+  },
+  "subcategories": {
+    "empty_title": "No subcategories",
+    "empty_subtitle": "There are no subcategories yet\nfor this category"
   }
 }
