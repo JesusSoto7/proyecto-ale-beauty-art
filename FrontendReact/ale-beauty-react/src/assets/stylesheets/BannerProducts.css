@@ -241,113 +241,592 @@ body {
 }
 
 
+/* === MEDIA QUERIES PARA RESPONSIVIDAD === */
 
-/* vista portatil */
-@media (max-width: 1272px) {
+/* === MEDIA QUERIES PARA RESPONSIVIDAD === */
+
+/* Televisores y monitores grandes (1440px+) */
+@media (min-width: 1440px) {
   .banner {
     width: 90%;
-    flex-direction: row;
-    /* height: fit-content; */
+    height: 450px;
+    max-width: 1800px;
   }
 
   .banner::before {
-    height: 400px;
-    /* background: transparent; */
-    z-index: 1;
-  }
-
-  .bannerProduct-image-container {
-    width: 100%;
-    border-radius: 0;
-  }
-
-  .section-DataBanner{
-    justify-content: end;
-  }
-  
-  .banner-info{
-    width: 90%;
-  }
-}
-
-
-/* vista portatil */
-@media (max-width: 1145px) {
-  .bannerProducts {
-    flex-direction: column;
-    height: fit-content;
-  }
-
-  .bannerProduct-image-container {
-    height: 100%;
-    width: 100%;
-    border-radius: 0;
-  }
-
-  .banner-title {
-    font-size: 50px;
-  }
-
-  .section-DataBanner{
-    justify-content: end;
-  }
-
-  .banner-info{
-    width: 90%;
-  }
-}
-
-
-/* vista movil */
-@media (max-width: 1070px) {
-  .banner {
-    flex-direction: column-reverse;
-    height: fit-content;
-    border: solid 1px #c9c9c9;
-  }
-
-  .banner::before{
-    background: transparent;
-  }
-
-  .image-area{
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-  }
-
-  .text-strip-H{
-    width: 100%;
-    display: block;
-  }
-
-  .text-content-H span{
-    margin-top: 7px;
-  }
-  .text-strip{
-    display: none;
-    
-  }
-
-  .circle-image {
-    width: 100%;
-    height: 320px;
-    border-radius: 0;
-    object-fit: contain;
-    background-color: #fff;
-    border: none;
+    min-width: 750px;
+    clip-path: path("M0,0 C1300,0 450,150 1300,450 L0,450 Z");
   }
 
   .content {
-    padding-left: 0px;
-    max-width: 100%;
-    padding: 10px;
+    padding-left: 80px;
+    max-width: 50%;
   }
 
-  .section-DataBanner{
-    width: 100%;
+  .content h1 {
+    font-size: 52px;
   }
-  #desc{
-    width: 100%;
+
+  .circle-image {
+    width: 360px;
+    height: 360px;
+  }
+
+  .text-strip-H {
+    display: flex;
+    --H-width: 550px;
+  }
+}
+
+/* Laptops grandes (1280px - 1439px) */
+@media (min-width: 1280px) and (max-width: 1439px) {
+  .banner {
+    width: 92%;
+    height: 420px;
+  }
+
+  .banner::before {
+    min-width: 680px;
+    clip-path: path("M0,0 C1150,0 380,140 1150,420 L0,420 Z");
+  }
+
+  .content {
+    padding-left: 70px;
+    max-width: 50%;
+  }
+
+  .content h1 {
+    font-size: 46px;
+  }
+
+  .circle-image {
+    width: 340px;
+    height: 340px;
+  }
+
+  .text-strip-H {
+    display: none;
+  }
+}
+
+/* Laptops pequeños (1024px - 1279px) */
+@media (min-width: 1024px) and (max-width: 1279px) {
+  .banner {
+    width: 94%;
+    height: 380px;
+  }
+
+  .banner::before {
+    min-width: 580px;
+    clip-path: path("M0,0 C950,0 320,120 950,380 L0,380 Z");
+  }
+
+  .content {
+    padding-left: 50px;
+    max-width: 50%;
+  }
+
+  .content h1 {
+    font-size: 40px;
+  }
+
+  .content h2 {
+    font-size: 20px;
+  }
+
+  .circle-image {
+    width: 300px;
+    height: 300px;
+  }
+
+  .text-strip {
+    width: 35px;
+    height: 380px;
+  }
+
+  .text-content span {
+    height: 380px;
+    font-size: 16px;
+  }
+
+  .text-strip-H {
+    display: none;
+  }
+}
+
+/* Tabletas grandes (768px - 1023px) */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .banner {
+    width: 96%;
+    height: 350px;
+  }
+
+  .banner::before {
+    min-width: 480px;
+    clip-path: path("M0,0 C750,0 280,100 750,350 L0,350 Z");
+  }
+
+  .content {
+    padding-left: 40px;
+    max-width: 52%;
+  }
+
+  .content h1 {
+    font-size: 34px;
+  }
+
+  .content h2 {
+    font-size: 18px;
+  }
+
+  .content p {
+    font-size: 13px;
+  }
+
+  .circle-image {
+    width: 260px;
+    height: 260px;
+  }
+
+  .text-strip {
+    width: 32px;
+    height: 350px;
+  }
+
+  .text-content span {
+    height: 350px;
+    font-size: 14px;
+  }
+
+  .text-strip-H {
+    display: none;
+  }
+
+  /* Botón y estrellas en columna para tabletas */
+  .section-DataBanner {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .btn-banner {
+    width: 180px;
+  }
+}
+
+/* Tabletas pequeñas (600px - 767px) */
+@media (min-width: 600px) and (max-width: 767px) {
+  .banner {
+    width: 97%;
+    height: 320px;
+  }
+
+  .banner::before {
+    min-width: 420px;
+    clip-path: path("M0,0 C650,0 250,80 650,320 L0,320 Z");
+  }
+
+  .content {
+    padding-left: 35px;
+    max-width: 55%;
+  }
+
+  .content h1 {
+    font-size: 30px;
+  }
+
+  .content h2 {
+    font-size: 16px;
+  }
+
+  .content p {
+    font-size: 12px;
+  }
+
+  .circle-image {
+    width: 220px;
+    height: 220px;
+  }
+
+  .text-strip {
+    width: 30px;
+    height: 320px;
+    margin-right: 10px;
+  }
+
+  .text-content span {
+    height: 320px;
+    font-size: 13px;
+  }
+
+  .text-strip-H {
+    display: none;
+  }
+
+  /* Botón y estrellas en columna */
+  .section-DataBanner {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .btn-banner {
+    width: 170px;
+    padding: 9px;
+  }
+}
+
+
+/* Teléfonos grandes (425px - 599px) */
+@media (min-width: 425px) and (max-width: 599px) {
+  .banner {
+    width: 97%;
+    height: 500px;
+    flex-direction: column;
+  }
+
+  .banner::before {
+    min-width: 100%;
+    height: 55%;
+    clip-path: path("M0,0 C700,0 350,70 700,280 L0,280 Z");
+  }
+
+  .content {
+    padding: 25px 25px 0;
+    max-width: 100%;
+    text-align: center;
+  }
+
+  .content h1 {
+    font-size: 28px;
+  }
+
+  .content h2 {
+    font-size: 16px;
+    text-align: center;
+  }
+
+  .content p {
+    font-size: 13px;
+    max-width: 85%;
+    margin: 12px auto;
+  }
+
+  .circle-image {
+    width: 200px;
+    height: 200px;
+    margin-top: 15px;
+  }
+
+  .text-strip {
+    display: none;
+  }
+
+  .text-strip-H {
+    display: flex;
+    --H-width: 380px;
+    --H-height: 32px;
+    --H-font-size: 14px;
+    margin: 20px auto;
+  }
+
+  /* Botón y estrellas en columna centrados */
+  .section-DataBanner {
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+    margin-top: 10px;
+  }
+
+  .btn-banner {
+    width: 200px;
+    margin: 0;
+  }
+
+  .bannerProducts-loading {
+    width: 97%;
+    height: 500px;
+  }
+}
+
+/* Teléfonos pequeños (375px - 424px) */
+@media (min-width: 375px) and (max-width: 424px) {
+  .banner {
+    width: 98%;
+    height: 315px;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    padding: 15px;
+  }
+
+  .banner::before {
+    height: 100%;
+    clip-path: path("M0,0 C200,0 200,70 500,380 L0,380 Z");
+    z-index: 2; /* Parte rosa por encima */
+  }
+
+  .content {
+    padding: 0 15px;
+    max-width: 55%;
+    text-align: left;
+    z-index: 3; /* Contenido por encima */
+    position: relative;
+  }
+
+  .content h1 {
+    font-size: 22px;
+  }
+
+  .content h2 {
+    font-size: 14px;
+    text-align: left;
+  }
+
+  .content p {
+    font-size: 11px;
+    max-width: 100%;
+    margin: 8px 0;
+  }
+
+  .circle-image {
+    width: 140px;
+    height: 140px;
+    margin-right: 10px;
+    z-index: 3; /* Imagen por encima */
+    position: relative;
+  }
+
+  /* TEXT-STRIP-H DETRÁS DE LA PARTE ROSA */
+  .text-strip-H {
+    width: 30%;
+    height: 100%;
+    overflow: hidden;
+    margin-left: 10px;
+    background: #2c2c2c;
+    border: solid 2px white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    z-index: 1; /* Detrás de la parte rosa */
+  }
+
+  .text-content-H {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    animation: scrollTextVertical 15s linear infinite;
+    margin-right: 10px;
+  }
+
+  .text-content-H span {
+    writing-mode: vertical-rl;
+    text-orientation: upright;
+    font-size: 12px;
+    font-weight: bold;
+    color: white;
+    letter-spacing: 3px;
+    height: 200px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-transform: uppercase;
+  }
+
+  @keyframes scrollTextVertical {
+    0% {
+      transform: translateY(0);
+    }
+    100% {
+      transform: translateY(-800px);
+    }
+  }
+
+  /* Botón sobre las estrellas en columna */
+  .section-DataBanner {
+    flex-direction: column;
+    align-items: right;
+    gap: 8px;
+    margin-top: 5px;
+    z-index: 3; /* Por encima */
+    position: relative;
+  }
+
+  .btn-banner {
+    width: 160px;
+    padding: 8px;
+    font-size: 12px;
+    order: -1;
+    margin-top: 2px;
+  }
+
+  #desc {
+    min-height: 80px;
+    max-height: 90px;
+    margin-bottom: 10px;
+  }
+}
+
+/* Teléfonos muy pequeños (320px - 374px) */
+@media (max-width: 374px) {
+  .banner {
+    width: 98%;
+    height: 460px;
+  }
+
+  .banner::before {
+    height: 50%;
+    clip-path: path("M0,0 C500,0 250,50 500,230 L0,230 Z");
+  }
+
+  .content {
+    padding: 18px 15px 0;
+  }
+
+  .content h1 {
+    font-size: 24px;
+  }
+
+  .content h2 {
+    font-size: 14px;
+  }
+
+  .content p {
+    font-size: 11px;
+    max-width: 95%;
+    line-height: 1.4;
+  }
+
+  .circle-image {
+    width: 160px;
+    height: 160px;
+    margin-top: 12px;
+  }
+
+  .text-strip-H {
+    --H-width: 300px;
+    --H-height: 28px;
+    --H-font-size: 12px;
+    --H-gap: 25px;
+    margin: 15px auto;
+  }
+
+  /* Botón y estrellas en columna */
+  .section-DataBanner {
+    gap: 10px;
+  }
+
+  .btn-banner {
+    width: 160px;
+    padding: 8px;
+    font-size: 14px;
+  }
+
+  .bannerProducts-loading {
+    width: 98%;
+    height: 460px;
+    font-size: 1.2rem;
+  }
+
+  #desc {
+    min-height: 100px;
+    max-height: 110px;
+  }
+}
+
+/* Dispositivos extremadamente pequeños (hasta 319px) */
+@media (max-width: 319px) {
+  .banner {
+    height: 440px;
+  }
+
+  .content h1 {
+    font-size: 22px;
+  }
+
+  .circle-image {
+    width: 140px;
+    height: 140px;
+  }
+
+  .text-strip-H {
+    --H-width: 280px;
+    --H-font-size: 11px;
+  }
+
+  .btn-banner {
+    width: 150px;
+  }
+}
+
+/* Orientación horizontal en móviles */
+@media (max-height: 500px) and (orientation: landscape) {
+  .banner {
+    height: 280px;
+    flex-direction: row;
+    width: 97%;
+  }
+
+  .banner::before {
+    height: 100%;
+    clip-path: path("M0,0 C600,0 250,70 600,280 L0,280 Z");
+  }
+
+  .content {
+    padding-left: 25px;
+    max-width: 55%;
+    text-align: left;
+  }
+
+  .content h1 {
+    font-size: 22px;
+  }
+
+  .content h2 {
+    font-size: 14px;
+    text-align: left;
+  }
+
+  .content p {
+    font-size: 11px;
+    max-width: 100%;
+    margin: 5px 0;
+  }
+
+  .circle-image {
+    width: 130px;
+    height: 130px;
+    margin-top: 0;
+  }
+
+  .text-strip-H {
+    display: none;
+  }
+
+  /* En landscape, mantener botón y estrellas en columna */
+  .section-DataBanner {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .btn-banner {
+    width: 150px;
+    padding: 6px;
+    font-size: 12px;
+  }
+
+  #desc {
+    min-height: 70px;
+    max-height: 80px;
+  }
+}
+
+/* Ajustes para alta densidad de píxeles */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  .circle-image {
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: crisp-edges;
   }
 }

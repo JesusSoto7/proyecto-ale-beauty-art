@@ -9,6 +9,7 @@ import FloatingChat from '../../components/FloatingChat';
 import BannerProduct from '../../components/bannerProducts';
 import "../../assets/stylesheets/RankingPro.css";
 import '../../assets/stylesheets/ProductCard.css';
+import '../../assets/stylesheets/Inicio.css';
 import RankingPro from '../../components/rankingPro.jsx';
 import { useAlert } from "../../components/AlertProvider.jsx";
 import { useHomeData } from './hooks/useHomeData';

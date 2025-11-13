@@ -507,3 +507,342 @@ section h2,
     right: 8px !important;
   }
 }
+/* Estilos Responsivos para Inicio */
+
+.home-container {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+/* Títulos de sección responsivos */
+.section-title {
+  font-size: 1.8rem;
+  font-weight: 600;
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+/* Contenedor del carrusel responsivo */
+.carousel-container {
+  position: relative;
+  width: 100%;
+  margin: 0 auto;
+  padding: 0 10px;
+}
+
+/* Items del carrusel responsivos */
+.carousel-items {
+  display: flex;
+  gap: 15px;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  padding: 10px 5px;
+  scroll-snap-type: x mandatory;
+}
+
+.carousel-items::-webkit-scrollbar {
+  display: none;
+}
+
+/* Botones del carrusel responsivos */
+.carousel-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(255, 255, 255, 0.9);
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  font-size: 1.2rem;
+  cursor: pointer;
+  z-index: 10;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+.carousel-btn:hover {
+  background: white;
+  box-shadow: 0 4px 12px rgba(95, 92, 93, 0.2);
+}
+
+.carousel-btn.prev {
+  left: 5px;
+}
+
+.carousel-btn.next {
+  right: 5px;
+}
+
+/* Banner principal responsivo */
+.banner-container {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+}
+
+.main-banner {
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+  display: block;
+  margin: 0;
+  padding: 0;
+}
+
+/* Banner ticker responsivo */
+.banner-ticker {
+  margin-top: 0;
+  background: #f8f9fa;
+  padding: 12px 0;
+  overflow: hidden;
+  position: relative;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.banner-track {
+  display: flex;
+  animation: scrollBanner 30s linear infinite;
+  white-space: nowrap;
+}
+
+.banner-item {
+  padding: 0 25px;
+  font-weight: 500;
+  color: #495057;
+  font-size: 0.9rem;
+  flex-shrink: 0;
+}
+
+/* Mensaje sin productos */
+.no-products-message {
+  text-align: center;
+  padding: 2rem;
+  color: #6c757d;
+  font-style: italic;
+}
+
+/* Tarjetas de skeleton */
+.skeleton-card {
+  flex: 0 0 auto;
+}
+
+/* Media Queries para dispositivos específicos */
+
+/* Teléfonos pequeños (hasta 480px) */
+@media (max-width: 480px) {
+  .section-title {
+    font-size: 1.4rem;
+    margin-bottom: 1rem;
+  }
+  
+  .carousel-container {
+    padding: 0 5px;
+  }
+  
+  .carousel-items {
+    gap: 10px;
+    padding: 5px;
+  }
+  
+  .carousel-btn {
+    width: 35px;
+    height: 35px;
+    font-size: 1rem;
+  }
+  
+  .carousel-btn.prev {
+    left: 2px;
+  }
+  
+  .carousel-btn.next {
+    right: 2px;
+  }
+  
+  .banner-item {
+    padding: 0 15px;
+    font-size: 0.8rem;
+  }
+  
+  .main-banner {
+    height: 200px;
+  }
+}
+
+/* Teléfonos grandes (481px - 767px) */
+@media (min-width: 481px) and (max-width: 767px) {
+  .section-title {
+    font-size: 1.5rem;
+  }
+  
+  .carousel-container {
+    padding: 0 8px;
+  }
+  
+  .carousel-items {
+    gap: 12px;
+  }
+  
+  .main-banner {
+    height: 250px;
+  }
+  
+  .banner-item {
+    font-size: 0.85rem;
+  }
+}
+
+/* Tabletas (768px - 1023px)👌 */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .section-title {
+    font-size: 1.7rem;
+  }
+  
+  .carousel-container {
+    padding: 0 15px;
+    max-width: 95%;
+  }
+  
+  .carousel-items {
+    gap: 20px;
+    padding: 15px 10px;
+  }
+  
+  .carousel-btn {
+    width: 45px;
+    height: 45px;
+    font-size: 1.3rem;
+  }
+  
+  .main-banner {
+    height: 300px;
+  }
+  
+  .banner-item {
+    font-size: 0.95rem;
+    padding: 0 30px;
+  }
+}
+
+/* Laptops pequeñas (1024px - 1279px) */
+@media (min-width: 1024px) and (max-width: 1279px) {
+  .carousel-container {
+    max-width: 90%;
+  }
+  
+  .carousel-items {
+    gap: 25px;
+  }
+  
+  .main-banner {
+    height: 320px;
+  }
+}
+
+/* Laptops grandes (1280px - 1439px) */
+@media (min-width: 1280px) and (max-width: 1439px) {
+  .carousel-container {
+    max-width: 85%;
+  }
+  
+  .carousel-items {
+    gap: 30px;
+  }
+  
+  .main-banner {
+    height: 350px;
+  }
+}
+
+/* PC Escritorio (1440px - 1919px) */
+@media (min-width: 1440px) and (max-width: 1919px) {
+  .carousel-container {
+    max-width: 80%;
+  }
+  
+  .section-title {
+    font-size: 2rem;
+  }
+  
+  .main-banner {
+    height: 400px;
+  }
+}
+
+/* Televisores y pantallas muy grandes (1920px+) */
+@media (min-width: 1920px) {
+  .carousel-container {
+    max-width: 70%;
+  }
+  
+  .section-title {
+    font-size: 2.2rem;
+  }
+  
+  .carousel-items {
+    gap: 35px;
+  }
+  
+  .main-banner {
+    height: 450px;
+  }
+  
+  .banner-item {
+    font-size: 1.1rem;
+    padding: 0 40px;
+  }
+}
+
+/* Modo landscape en móviles */
+@media (max-height: 500px) and (orientation: landscape) {
+  .main-banner {
+    height: 180px;
+  }
+  
+  .section-title {
+    font-size: 1.3rem;
+    margin-bottom: 0.8rem;
+  }
+}
+
+/* Animación del banner ticker */
+@keyframes scrollBanner {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+/* Mejoras de accesibilidad */
+@media (prefers-reduced-motion: reduce) {
+  .carousel-items {
+    scroll-behavior: auto;
+  }
+  
+  .banner-track {
+    animation: none;
+  }
+  
+  .carousel-btn {
+    transition: none;
+  }
+}
+
+/* Soporte para modo oscuro */
+@media (prefers-color-scheme: dark) {
+  .banner-ticker {
+    background: #e8277e;
+    border-bottom-color: #f3f4f5;
+  }
+  
+  .banner-item {
+    color: #e2e8f0;
+  }
+}
