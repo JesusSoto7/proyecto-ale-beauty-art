@@ -42,6 +42,51 @@ module Api
         end
       end
 
+      def show
+        user = User.includes(
+          cart: { cart_products: :product },
+          orders: { order_details: :product }, # 🔹 corregido aquí
+          favorites: :product,
+          reviews: :product
+        ).find(params[:id])
+
+        render json: user.as_json(
+          only: [:id, :email, :nombre, :apellido, :telefono],
+          include: {
+            cart: {
+              include: {
+                cart_products: {
+                  include: {
+                    product: { only: [:id, :nombre_producto, :precio_producto] }
+                  }
+                }
+              }
+            },
+            favorites: {
+              include: {
+                product: { only: [:id, :nombre_producto, :precio_producto] }
+              }
+            },
+            orders: {
+              include: {
+                order_details: { # 🔹 corregido aquí también
+                  include: {
+                    product: { only: [:id, :nombre_producto, :precio_producto] }
+                  }
+                }
+              }
+            },
+            reviews: {
+              include: {
+                product: { only: [:id, :nombre_producto] }
+              }
+            }
+          }
+        ).merge(roles: user.roles.pluck(:name))
+      end
+
+
+
       def count
         render json: { count: User.count }
       end

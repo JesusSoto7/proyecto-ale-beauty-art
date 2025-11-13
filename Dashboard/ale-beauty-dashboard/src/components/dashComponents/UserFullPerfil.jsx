@@ -60,7 +60,7 @@ function UserFullPerfil() {
         // Si no vino por state, o si queremos asegurarnos de tener la versión más fresca
         if (!user) {
             const token = localStorage.getItem("token");
-            fetch(`https://localhost:4000/api/v1/users/${id}`, { // Endpoint de ADMIN para ver cualquier usuario
+            fetch(`https://localhost:4000/api/v1/users/${id}`, {
                 headers: { Authorization: `Bearer ${token}` },
             })
                 .then((res) => {
@@ -85,37 +85,41 @@ function UserFullPerfil() {
         }
     }, [id, user]);
 
-    // 3. LÓGICA PARA CARGAR ÓRDENES, REVIEWS, ETC., DEL USUARIO (DEBERÁS ADAPTAR TUS ENDPOINTS DE ADMIN)
     useEffect(() => {
-        if (!id || !user) return; // Esperar a tener el ID y el objeto user (para el token)
-
+        if (!id) return;
         const token = localStorage.getItem("token");
+
         setLoading(true);
 
-        // A. Cargar Órdenes del usuario: DEBES TENER UN ENDPOINT DE ADMIN PARA ESTO
-        fetch(`https://localhost:4000/api/v1/admin/users/${id}/orders`, { 
+        fetch(`https://localhost:4000/api/v1/users/${id}`, {
             headers: { Authorization: `Bearer ${token}` },
         })
-            .then((res) => res.json())
-            .then((data) => setOrders(data || []))
-            .catch((err) => console.error("Error cargando órdenes:", err));
-        
-        // B. Cargar Reviews del usuario: DEBES TENER UN ENDPOINT DE ADMIN PARA ESTO
-        fetch(`https://localhost:4000/api/v1/admin/users/${id}/reviews`, { 
-            headers: { Authorization: `Bearer ${token}` },
-        })
-            .then((res) => res.json())
-            .then((data) => {
-                setUserReviews(data.reviews || []);
-                setReviewCount(data.total || 0);
+            .then((res) => {
+            if (!res.ok) throw new Error("No se pudo cargar el usuario.");
+            return res.json();
             })
-            .catch((err) => console.error("Error cargando reviews:", err))
+            .then((data) => {
+            setUser(data);
+            setOrders(data.orders || []);              // ✅ existe
+            setUserReviews(data.reviews || []);        // ✅ existe
+            setFavorites(data.favorites || []);        // ✅ corregido
+            setCart(data.cart || null);                // ✅ corregido (es un objeto, no array)
+
+            setReviewCount((data.reviews || []).length);
+            setFormData({
+                nombre: data.nombre || "",
+                apellido: data.apellido || "",
+                email: data.email || "",
+                telefono: data.telefono || "",
+                direccion: data.direccion || "",
+            });
+            })
+            .catch((err) => {
+            console.error("Error al cargar perfil:", err);
+            setError("Error al cargar el perfil del usuario.");
+            })
             .finally(() => setLoading(false));
-
-        // *NOTA*: Los endpoints de 'favorites' y 'cart' también deberían ser adaptados
-        // para buscar los datos del usuario con el ID, no del usuario logeado.
-
-    }, [id, user]);
+        }, [id]);
 
 
     // 4. MÉTODOS Y CONFIGURACIONES DE LA INTERFAZ (COPIADOS DE UserProfile)
@@ -312,19 +316,17 @@ function UserFullPerfil() {
                                     <div className="exp-card">
                                         <h3>reviews escritas</h3>
                                         <p>{reviewCount}</p>
-                                    </div>    
+                                    </div>
                                 </div>
                                 <div style={{display: "flex", flexDirection: "column", width: "100%", gap: "15px"}}>
                                     <div className="exp-card">
                                         <h3>Productos en favoritos</h3>
-                                        <p>N/A (Admin)</p> {/* Adaptar si es necesario */}
+                                        <p>{favorites?.length ?? 0}</p>
                                     </div>
                                     <div className="exp-card">
                                         <h3>Productos en carrito</h3>
-                                        <p>
-                                            N/A (Admin)
-                                        </p>
-                                    </div>    
+                                        <p>{cart?.cart_products?.length ?? 0}</p>
+                                    </div> 
                                 </div>
                                 
                             </div>
@@ -402,15 +404,18 @@ function UserFullPerfil() {
                                 <div>
                                     <h3>Tipo de usuario</h3>
                                     <p>Admin</p>
-                                    <span>Acceso total</span>  
+                                    <span>Acceso total</span>
                                 </div>
                                 <div style={{width: "80px", height: "80px", backgroundColor: "#a7ffa7ff", borderRadius: 10, display: "flex", alignItems: "center", justifyContent: "center"}}><h1>A</h1></div>
                             </div>
                         ) : (
-                            <div className="exp-card">
-                                <h3>Tipo de usuario</h3>
-                                <p>Regular User</p>
-                                <span>Acceso limitado</span>
+                            <div id="role-user" className="exp-card" style={{background: "linear-gradient(90deg, #ededed 35%, #e3e3e3 50%, #eb5e8c 100%)"}}>
+                                <div>
+                                    <h3>Tipo de usuario</h3>
+                                    <p>Regular User</p>
+                                    <span>Acceso limitado</span>
+                                </div>
+                                <div style={{width: "80px", height: "80px", backgroundColor: "#eb5e8c", borderRadius: 10, display: "flex", alignItems: "center", justifyContent: "center"}}><h1 style={{color: "#fff"}}>R</h1></div>
                             </div>
                         )}
                     </div>
