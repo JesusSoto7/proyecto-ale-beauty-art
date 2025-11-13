@@ -1,6 +1,6 @@
 .profile-container {
   width: 100%;
-  max-width: 100%;
+  max-width: 99%;
   margin: 0 auto;
 }
 
@@ -88,11 +88,13 @@
     height: 40px;
     background-color: transparent;
     border-radius: 10px;
-    color: #ffffff;
+    border: 1px solid #bec0c1;
+    color: #333b4d;
 }
 
 .edit-btn:hover{
-    background-color: #1f2630;
+    background-color: #b6b6b6;
+    border: 1px solid #bec0c1;
 }
 
 .input-edit {
@@ -132,7 +134,7 @@
 .recent-section h2 {
   font-size: 1.3rem;
   margin-bottom: 0.8rem;
-  color: #58a6ff;
+  color: #333b4d;
 }
 
 .h2-unic{
@@ -148,14 +150,14 @@
 }
 
 .about-details {
-  background: #161b22;
+  background: #ededed;
   padding: 1rem;
   border-radius: 10px;
   transition: background 0.3s;
   /* width: 333px; */
   height: 224px;
   width: 100%;
-  color: #ffffff;
+  color: #333b4d;
 }
 
 .about-details a {
@@ -177,7 +179,7 @@
 }
 
 .exp-card {
-  background: #242a32;
+  background: #ededed;
   padding: 1rem;
   border-radius: 10px;
   transition: background 0.3s;
@@ -185,20 +187,20 @@
 
 
 .exp-section {
-  background: #161b22;
+  background: #f5f6fa;
   padding: 1rem;
   border-radius: 10px;
   transition: background 0.3s;
 }
 
 .exp-card:hover {
-  background: #1f2630;
+  background: #e2e2e6;
 }
 
 .exp-card h3 {
   margin: 0;
   font-size: 1.1rem;
-  color: #fff;
+  color: #333b4d;
 }
 
 .exp-card p {
@@ -253,10 +255,12 @@
 
 #logout-button-2{
   display: none;
+  background-color: #eb5e8c;
 }
 
 #logout-button-1{
   display: block;
+  background-color: #eb5e8c;
 }
 
 @media (max-width: 1100px)  {

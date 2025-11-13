@@ -13,6 +13,7 @@ import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogActions from '@mui/material/DialogActions';
+import { useParams } from 'react-router-dom';
 import FormControl from '@mui/material/FormControl';
 import InputLabel from '@mui/material/InputLabel';
 import Select from '@mui/material/Select';
@@ -35,6 +36,9 @@ import Tooltip from '@mui/material/Tooltip';
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import PrintIcon from '@mui/icons-material/Print';
 import { styled } from '@mui/material/styles';
+
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import { useNavigate } from 'react-router-dom';
 
 
 function randomColor() {
@@ -215,11 +219,23 @@ export default function GestionUsuarios() {
   const [selectedRowForDelete, setSelectedRowForDelete] = React.useState(null);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
+  const { lang } = useParams();
+
 
   const handleRefresh = () => {
     setRefreshKey((prevKey) => prevKey + 1); // Incrementar la clave para forzar re-render
   };
 
+
+  const navigate = useNavigate();
+
+  const handleViewClick = (id) => () => {
+      const selectedUser = rows.find((row) => row.id === id);
+      if (selectedUser) {
+          // Usa la ruta completa, empezando desde la raíz /:lang/home/
+          navigate(`/${lang}/home/user-full-perfil/${selectedUser.id}`, { state: { user: selectedUser } });
+      }
+  };
 
 
   React.useEffect(() => {
@@ -372,6 +388,12 @@ export default function GestionUsuarios() {
       width: 300,
       getActions: ({ id }) => [
         <GridActionsCellItem
+          icon={<VisibilityIcon />}
+          label="Ver"
+          onClick={handleViewClick(id)}
+          color="primary"
+        />,
+        <GridActionsCellItem
           icon={<EditIcon />}
           label="Editar"
           onClick={handleEditClick(id)}
@@ -382,7 +404,7 @@ export default function GestionUsuarios() {
           label="Eliminar"
           onClick={handleDeleteClick(id)}
           color="error"
-        />
+        />,
       ],
     },
   ];
