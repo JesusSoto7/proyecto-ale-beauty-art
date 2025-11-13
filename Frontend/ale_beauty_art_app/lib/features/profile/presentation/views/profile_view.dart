@@ -28,14 +28,7 @@ class ProfileView extends StatelessWidget {
               height: 220,
               width: double.infinity,
               decoration: const BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [
-                    Color.fromRGBO(209, 112, 143, 1),
-                    Color.fromARGB(255, 235, 173, 198),
-                  ],
-                ),
+                color: Color.fromRGBO(209, 112, 143, 1),
                 borderRadius: BorderRadius.only(
                   bottomLeft: Radius.circular(24),
                   bottomRight: Radius.circular(24),

@@ -58,16 +58,7 @@ class InitialView extends StatelessWidget {
           Scaffold(
             backgroundColor: Colors.transparent,
             body: Container(
-              decoration: const BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [
-                    Color.fromRGBO(209, 112, 143, 1),
-                    Color.fromARGB(255, 245, 215, 227),
-                  ],
-                ),
-              ),
+              color: const Color.fromRGBO(209, 112, 143, 1),
               child: SafeArea(
                 child: BlocBuilder<NavigationBloc, NavigationState>(
                   builder: (context, state) {
