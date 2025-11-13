@@ -41,65 +41,59 @@ class InitialView extends StatelessWidget {
     }
 
     return WillPopScope(
-        onWillPop: () async {
-          final navBloc = context.read<NavigationBloc>();
-          final navState = navBloc.state;
-          int currentTab = 0;
-          if (navState is NavigationUpdated) {
-            currentTab = navState.selectedIndex;
-          }
-          if (currentTab != 0) {
-            navBloc.add(NavigationTabChanged(0));
-            return false;
-          }
-          return true;
-        },
-        child: Stack(children: [
+      onWillPop: () async {
+        final navBloc = context.read<NavigationBloc>();
+        final navState = navBloc.state;
+        int currentTab = navState is NavigationUpdated ? navState.selectedIndex : 0;
+        if (currentTab != 0) {
+          navBloc.add(NavigationTabChanged(0));
+          return false;
+        }
+        return true;
+      },
+      child: Stack(
+        children: [
           Scaffold(
-            backgroundColor: Colors.transparent,
-            body: Container(
-              color: const Color.fromRGBO(209, 112, 143, 1),
-              child: SafeArea(
-                child: BlocBuilder<NavigationBloc, NavigationState>(
-                  builder: (context, state) {
-                    int index = 0;
-                    if (state is NavigationUpdated) index = state.selectedIndex;
-
-                    if (index == 1) return ProductsPageView();
-                    if (index == 2) return CategoriesPageView();
-                    if (index == 3) return CartPageView();
-                    if (index == 4) return ProfileView();
-
-                    return _homeContent(context);
-                  },
-                ),
+            extendBody: true, // Permite pintar detrás del bottom nav
+            backgroundColor: const Color.fromRGBO(209, 112, 143, 1),
+            body: SafeArea(
+              top: true,
+              bottom: false,
+              child: BlocBuilder<NavigationBloc, NavigationState>(
+                builder: (context, state) {
+                  final index = state is NavigationUpdated ? state.selectedIndex : 0;
+                  if (index == 1) return ProductsPageView();
+                  if (index == 2) return CategoriesPageView();
+                  if (index == 3) return CartPageView();
+                  if (index == 4) return ProfileView();
+                  return _homeContent(context);
+                },
               ),
             ),
             bottomNavigationBar: _buildBottomNav(context, currentLocale),
           ),
-// Reemplaza el FloatingActionButton completo con esto:
-
           Positioned(
             bottom: 90,
             right: 24,
             child: FloatingActionButton(
-              backgroundColor: Color(0xFFD95D85),
-              child: Icon(Icons.chat, color: Colors.white),
+              backgroundColor: const Color(0xFFD95D85),
+              child: const Icon(Icons.chat, color: Colors.white),
               onPressed: () {
                 showModalBottomSheet(
                   context: context,
                   isScrollControlled: true,
                   backgroundColor: Colors.transparent,
-                  shape: RoundedRectangleBorder(
-                    borderRadius:
-                        BorderRadius.vertical(top: Radius.circular(24)),
+                  shape: const RoundedRectangleBorder(
+                    borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
                   ),
-                  builder: (context) => ChatIAWidget(),
+                  builder: (context) => const ChatIAWidget(),
                 );
               },
             ),
           ),
-        ]));
+        ],
+      ),
+    );
   }
 
   Widget _homeContent(BuildContext context) {
@@ -226,79 +220,78 @@ class InitialView extends StatelessWidget {
   }
 
   Widget _buildBottomNav(BuildContext context, Locale locale) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: const BorderRadius.only(
-          topLeft: Radius.circular(25),
-          topRight: Radius.circular(25),
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.08),
-            blurRadius: 8,
-          ),
-        ],
+    final labels = <String>[
+      'nav.home'.tr(),
+      'nav.products'.tr(),
+      'nav.categories'.tr(),
+      'nav.cart'.tr(),
+      'nav.profile'.tr(),
+    ];
+
+  return ClipRRect(
+      borderRadius: const BorderRadius.only(
+        topLeft: Radius.circular(25),
+        topRight: Radius.circular(25),
       ),
-      child: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-          child: BlocBuilder<NavigationBloc, NavigationState>(
-            builder: (context, navState) {
-              final selectedIndex = navState is NavigationUpdated ? navState.selectedIndex : 0;
+  child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.08),
+              blurRadius: 8,
+            ),
+          ],
+        ),
+  child: SafeArea(
+          top: false,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+            child: BlocBuilder<NavigationBloc, NavigationState>(
+              builder: (context, navState) {
+                final selectedIndex = navState is NavigationUpdated ? navState.selectedIndex : 0;
 
-              // Mostrar texto solo en la pestaña seleccionada para evitar overflow en títulos largos.
-              final labels = <String>[
-                'nav.home'.tr(),
-                'nav.products'.tr(),
-                'nav.categories'.tr(),
-                'nav.cart'.tr(),
-                'nav.profile'.tr(),
-              ];
+                return GNav(
+                  gap: 6,
+                  iconSize: 22,
+                  backgroundColor: Colors.transparent,
+                  color: Colors.grey[600],
+                  activeColor: Colors.white,
+                  tabBackgroundGradient: const LinearGradient(
+                    colors: [Color(0xFFD95D85), Color(0xFFE58BB1)],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                  onTabChange: (index) async {
+                    if (index == 3) {
+                      final previousIndex = context.read<NavigationBloc>().state is NavigationUpdated
+                          ? (context.read<NavigationBloc>().state as NavigationUpdated).selectedIndex
+                          : 0;
 
-              return GNav(
-                gap: 6,
-                iconSize: 22,
-                backgroundColor: Colors.transparent,
-                color: Colors.grey[600],
-                activeColor: Colors.white,
-                tabBackgroundGradient: const LinearGradient(
-                  colors: [Color(0xFFD95D85), Color(0xFFE58BB1)],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-                onTabChange: (index) async {
-                  if (index == 3) {
-                    final previousIndex =
-                        context.read<NavigationBloc>().state is NavigationUpdated
-                            ? (context.read<NavigationBloc>().state as NavigationUpdated).selectedIndex
-                            : 0;
+                      await Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (_) => const CartPageView()),
+                      );
 
-                    await Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (_) => const CartPageView()),
-                    );
-
-                    context.read<NavigationBloc>().add(NavigationTabChanged(previousIndex));
-                  } else {
-                    context.read<NavigationBloc>().add(NavigationTabChanged(index));
-                  }
-                },
-                tabs: [
-                  GButton(icon: Icons.home_rounded, text: selectedIndex == 0 ? labels[0] : ''),
-                  GButton(icon: Icons.grid_view_rounded, text: selectedIndex == 1 ? labels[1] : ''),
-                  GButton(icon: Icons.category_rounded, text: selectedIndex == 2 ? labels[2] : ''),
-                  GButton(icon: Icons.shopping_cart_rounded, text: selectedIndex == 3 ? labels[3] : ''),
-                  GButton(icon: Icons.person, text: selectedIndex == 4 ? labels[4] : ''),
-                ],
-              );
-            },
+                      context.read<NavigationBloc>().add(NavigationTabChanged(previousIndex));
+                    } else {
+                      context.read<NavigationBloc>().add(NavigationTabChanged(index));
+                    }
+                  },
+                  tabs: [
+                    GButton(icon: Icons.home_rounded, text: selectedIndex == 0 ? labels[0] : ''),
+                    GButton(icon: Icons.grid_view_rounded, text: selectedIndex == 1 ? labels[1] : ''),
+                    GButton(icon: Icons.category_rounded, text: selectedIndex == 2 ? labels[2] : ''),
+                    GButton(icon: Icons.shopping_cart_rounded, text: selectedIndex == 3 ? labels[3] : ''),
+                    GButton(icon: Icons.person, text: selectedIndex == 4 ? labels[4] : ''),
+                  ],
+                );
+              },
+            ),
           ),
         ),
       ),
     );
   }
 }
-
-// 🔔 Widget del icono de notificaciones con badge
