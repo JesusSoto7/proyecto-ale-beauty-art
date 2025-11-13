@@ -1,5 +1,6 @@
 import 'package:ale_beauty_art_app/styles/colors.dart';
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
   // Ajusta el path
 
 class FailureView extends StatelessWidget {
@@ -8,7 +9,8 @@ class FailureView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.background,
+      // Fondo blanco para alinear con Productos y Categorías
+      backgroundColor: Colors.white,
       body: Center(
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -20,7 +22,7 @@ class FailureView extends StatelessWidget {
             ),
             const SizedBox(height: 16),
             Text(
-              '¡Ups! Algo salió mal.',
+              'failure.title'.tr(),
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.w600,
@@ -30,7 +32,7 @@ class FailureView extends StatelessWidget {
             ),
             const SizedBox(height: 8),
             Text(
-              'Por favor, intenta nuevamente más tarde.',
+              'failure.subtitle'.tr(),
               style: TextStyle(
                 fontSize: 14,
                 color: AppColors.textSecondary,

@@ -262,5 +262,13 @@
       "recommend": "Recomiéndame un producto",
       "discounts": "¿Tienen descuentos?"
     }
+  },
+  "failure": {
+    "title": "¡Ups! Algo salió mal.",
+    "subtitle": "Por favor, intenta nuevamente más tarde."
+  },
+  "subcategories": {
+    "empty_title": "No hay subcategorías",
+    "empty_subtitle": "Aún no hay subcategorías disponibles\npara esta categoría"
   }
 }

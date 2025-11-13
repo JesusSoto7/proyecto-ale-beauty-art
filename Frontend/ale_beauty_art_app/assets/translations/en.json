@@ -262,5 +262,13 @@
       "recommend": "Recommend me a product",
       "discounts": "Do you have discounts?"
     }
+  },
+  "failure": {
+    "title": "Oops! Something went wrong.",
+    "subtitle": "Please try again later."
+  },
+  "subcategories": {
+    "empty_title": "No subcategories",
+    "empty_subtitle": "There are no subcategories yet\nfor this category"
   }
 }

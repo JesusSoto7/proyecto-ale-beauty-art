@@ -28,15 +28,48 @@ class _ProductsPageViewState extends State<ProductsPageView> {
 
   @override
   Widget build(BuildContext context) {
+    // Alinear con Categories: AppBar blanco con sombra y título centrado
+    final double topInset = MediaQuery.of(context).padding.top;
     return Scaffold(
-        appBar: AppBar(
-          title: Text('nav.products'.tr()),
-          centerTitle: true,
-          backgroundColor: Colors.white,
-          foregroundColor: Colors.black87,
-          elevation: 0,
-          actions: const [],
+        appBar: PreferredSize(
+          preferredSize: Size.fromHeight(topInset + kToolbarHeight),
+          child: Container(
+            padding: EdgeInsets.only(top: topInset),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.06),
+                  blurRadius: 8,
+                  offset: const Offset(0, 3),
+                ),
+              ],
+            ),
+            child: SizedBox(
+              height: kToolbarHeight,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Flexible(
+                    child: FittedBox(
+                      fit: BoxFit.scaleDown,
+                      child: Text(
+                        'nav.products'.tr(),
+                        style: const TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.black87,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
         ),
+        // Fondo gris claro como en Categorías
+        backgroundColor: const Color.fromARGB(255, 247, 246, 246),
         body: BlocBuilder<ProductBloc, ProductState>(
         builder: (context, state) {
           if (state is ProductInitial) {
@@ -105,6 +138,7 @@ class _ProductsPageViewState extends State<ProductsPageView> {
   void _openFilters(BuildContext context) {
     showModalBottomSheet(
       context: context,
+      backgroundColor: const Color(0xFFF8F8F8),
       isScrollControlled: true,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
@@ -337,6 +371,7 @@ class _ProductsPageViewState extends State<ProductsPageView> {
   void _openSort(BuildContext context) {
     showModalBottomSheet(
       context: context,
+      backgroundColor: const Color(0xFFF8F8F8),
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
@@ -420,15 +455,9 @@ class _ProductsPageViewState extends State<ProductsPageView> {
   Widget _buildFilterHeader(BuildContext context, ProductLoadSuccess state) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+      // Fondo más uniforme (mismo tono que los paneles) y sin sombra para integrarlo
       decoration: const BoxDecoration(
-        color: Colors.white,
-        boxShadow: [
-          BoxShadow(
-            color: Color.fromARGB(20, 0, 0, 0),
-            blurRadius: 6,
-            offset: Offset(0, 2),
-          ),
-        ],
+        color: Color(0xFFF8F8F8),
       ),
       child: Row(
         children: [
@@ -463,9 +492,10 @@ class _ProductsPageViewState extends State<ProductsPageView> {
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 10),
         decoration: BoxDecoration(
-          color: const Color(0xFFFAFAFA),
+          // Botones ligeramente más claros que el fondo para sutil contraste
+          color: Colors.white,
           borderRadius: BorderRadius.circular(14),
-          border: Border.all(color: Colors.grey[300]!, width: 1),
+          border: Border.all(color: const Color(0xFFEDEDED), width: 1),
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -526,14 +556,7 @@ class _ActiveFiltersBar extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: const BoxDecoration(
-        color: Colors.white,
-        boxShadow: [
-          BoxShadow(
-            color: Color.fromARGB(20, 0, 0, 0),
-            blurRadius: 6,
-            offset: Offset(0, 2),
-          ),
-        ],
+        color: Color(0xFFF8F8F8),
       ),
       child: Wrap(spacing: 8, runSpacing: 6, children: chips),
     );

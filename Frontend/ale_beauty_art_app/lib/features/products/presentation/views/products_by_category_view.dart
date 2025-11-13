@@ -57,30 +57,9 @@ class ProductsByCategoryView extends StatelessWidget {
                     fontSize: 18,
                   ),
                 ),
-                const SizedBox(height: 2),
-                Text(
-                  '${products.length} ${products.length == 1 ? 'producto' : 'productos'}',
-                  style: TextStyle(
-                    color: Colors.grey[600],
-                    fontSize: 12,
-                    fontWeight: FontWeight.w400,
-                  ),
-                ),
               ],
             ),
-            actions: [
-              // 🔍 Icono de búsqueda (opcional)
-              IconButton(
-                icon: const Icon(
-                  Icons.search_rounded,
-                  color: Color(0xFFD95D85),
-                  size: 24,
-                ),
-                onPressed: () {
-                  // TODO: Implementar búsqueda
-                },
-              ),
-            ],
+            actions: const [],
           ),
         ),
       ),
