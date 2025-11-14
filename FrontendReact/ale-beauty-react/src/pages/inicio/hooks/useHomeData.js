@@ -7,6 +7,7 @@ export const useHomeData = (token, addAlert) => {
   const [cart, setCart] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [carousel, setCarousel] = useState([]);
   
   // ✅ Usar ref para evitar re-fetch cuando solo cambia el cart
   const hasLoadedRef = useRef(false);
@@ -31,6 +32,7 @@ export const useHomeData = (token, addAlert) => {
 
       setProducts(inicioData.products || []);
       setCategories(inicioData.categories || []);
+      setCarousel(inicioData.carousel || []);
       setNewProducts(novedadesData || []);
       setCart(cartData.cart);
       
@@ -63,6 +65,7 @@ export const useHomeData = (token, addAlert) => {
     cart,
     setCart,
     loading,
+    carousel,
     error,
     reloadHomeData: loadHomeData
   };
