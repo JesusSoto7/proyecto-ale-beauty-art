@@ -481,24 +481,27 @@ body {
 @media (min-width: 425px) and (max-width: 599px) {
   .banner {
     width: 97%;
-    height: 500px;
+    height: 250px;
     flex-direction: column;
+    position: relative; /* Añadido para posicionamiento absoluto */
   }
 
   .banner::before {
     min-width: 100%;
-    height: 55%;
-    clip-path: path("M0,0 C700,0 350,70 700,280 L0,280 Z");
+    height: 100%;
+    clip-path: path("M0,0 C200,0 200,90 600,280 L0,280 Z");
   }
 
   .content {
     padding: 25px 25px 0;
     max-width: 100%;
-    text-align: center;
+    text-align: left;
+    margin-top: -30px;
   }
 
   .content h1 {
-    font-size: 28px;
+    font-size: 24px;
+    margin-top: 10px;
   }
 
   .content h2 {
@@ -513,33 +516,59 @@ body {
   }
 
   .circle-image {
-    width: 200px;
-    height: 200px;
-    margin-top: 15px;
+    width: 150px;
+    height: 150px;
+    margin-top: -280px;
+    margin-left: 200px;
   }
 
   .text-strip {
     display: none;
   }
 
-  .text-strip-H {
+
+
+  .text-content-H {
     display: flex;
-    --H-width: 380px;
-    --H-height: 32px;
-    --H-font-size: 14px;
-    margin: 20px auto;
+    flex-direction: column;
+    align-items: center;
+    animation: scrollTextVertical 15s linear infinite;
+  }
+
+  .text-content-H span {
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+    font-size: 12px;
+    font-weight: bold;
+    color: white;
+    letter-spacing: 2px;
+    height: auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-transform: uppercase;
+    white-space: nowrap;
+    margin: 8px 0;
+  }
+
+  @keyframes scrollTextVertical {
+    0% {
+      transform: translateY(0);
+    }
+    100% {
+      transform: translateY(-100%);
+    }
   }
 
   /* Botón y estrellas en columna centrados */
   .section-DataBanner {
     flex-direction: column;
-    align-items: center;
-    gap: 15px;
-    margin-top: 10px;
+    align-items: flex-start;
+    gap: 10px;
   }
 
   .btn-banner {
-    width: 200px;
+    width: 150px;
     margin: 0;
   }
 
@@ -550,19 +579,20 @@ body {
 }
 
 /* Teléfonos pequeños (375px - 424px) */
-@media (min-width: 375px) and (max-width: 424px) {
+@media (max-width: 424px) {
   .banner {
     width: 98%;
-    height: 315px;
+    height: 190px;
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
     padding: 15px;
+    position: relative; /* Añadir esto para contexto de z-index */
   }
 
   .banner::before {
     height: 100%;
-    clip-path: path("M0,0 C200,0 200,70 500,380 L0,380 Z");
+    clip-path: path("M0,0 C200,0 100,80 600,380 L0,380 Z");
     z-index: 2; /* Parte rosa por encima */
   }
 
@@ -575,12 +605,14 @@ body {
   }
 
   .content h1 {
-    font-size: 22px;
+    font-size: 16px; /* Reducido de 22px a 16px */
+    margin-bottom: 5px;
   }
 
   .content h2 {
-    font-size: 14px;
+    font-size: 12px; /* Reducido de 14px a 12px */
     text-align: left;
+    margin-bottom: 5px;
   }
 
   .content p {
@@ -593,23 +625,24 @@ body {
     width: 140px;
     height: 140px;
     margin-right: 10px;
-    z-index: 3; /* Imagen por encima */
+    z-index: 4; /* Imagen por encima de TODO - Cambiado a 4 */
     position: relative;
   }
 
-  /* TEXT-STRIP-H DETRÁS DE LA PARTE ROSA */
+  /* TEXT-STRIP-H DETRÁS DE ABSOLUTAMENTE TODO */
   .text-strip-H {
     width: 30%;
-    height: 100%;
+    height: 500px;
     overflow: hidden;
-    margin-left: 10px;
-    background: #2c2c2c;
-    border: solid 2px white;
+    margin-left: 150px;
+    background: #2c2c2c00;
     display: flex;
     justify-content: center;
     align-items: center;
-    position: relative;
-    z-index: 1; /* Detrás de la parte rosa */
+    position: absolute;
+    z-index: 1; /* Detrás de todo, incluyendo la parte rosa */
+    left: 0;
+    top: -90px;
   }
 
   .text-content-H {
@@ -617,7 +650,8 @@ body {
     flex-direction: column;
     align-items: center;
     animation: scrollTextVertical 15s linear infinite;
-    margin-right: 10px;
+    margin-left: 30px;
+    z-index: 1; /* Añadir esto */
   }
 
   .text-content-H span {
@@ -632,6 +666,7 @@ body {
     justify-content: center;
     align-items: center;
     text-transform: uppercase;
+    /* Eliminar z-index y position del span - no son necesarios */
   }
 
   @keyframes scrollTextVertical {
@@ -645,10 +680,10 @@ body {
 
   /* Botón sobre las estrellas en columna */
   .section-DataBanner {
-    flex-direction: column;
+    flex-direction: column !important;
     align-items: right;
     gap: 8px;
-    margin-top: 5px;
+    margin-top: -100px;
     z-index: 3; /* Por encima */
     position: relative;
   }
@@ -658,7 +693,6 @@ body {
     padding: 8px;
     font-size: 12px;
     order: -1;
-    margin-top: 2px;
   }
 
   #desc {
@@ -668,95 +702,90 @@ body {
   }
 }
 
-/* Teléfonos muy pequeños (320px - 374px) */
-@media (max-width: 374px) {
+@media (min-width: 375px) and (max-width: 390px) {
   .banner {
-    width: 98%;
-    height: 460px;
+    width: 99%;
+    height: 170px; /* Reducido de 180px */
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px; /* Reducido de 10px */
+    position: relative;
   }
 
   .banner::before {
-    height: 50%;
-    clip-path: path("M0,0 C500,0 250,50 500,230 L0,230 Z");
+    height: 100%;
+    clip-path: path("M0,0 C120,0 60,60 500,350 L0,350 Z"); /* Ajustado para pantalla más pequeña */
+    z-index: 2;
   }
 
   .content {
-    padding: 18px 15px 0;
+    padding: 0 8px; /* Reducido de 10px */
+    max-width: 57%; /* Reducido de 55% */
+    text-align: left;
+    z-index: 3;
+    position: relative;
   }
 
   .content h1 {
-    font-size: 24px;
+    font-size: 20px; /* Reducido de 15px */
+    margin-top: 5px; /* Reducido de 5px */
   }
 
   .content h2 {
-    font-size: 14px;
+    font-size: 10px; /* Reducido de 11px */
+    text-align: left;
+    margin-bottom: 4px; /* Reducido de 5px */
   }
 
   .content p {
-    font-size: 11px;
-    max-width: 95%;
-    line-height: 1.4;
+    font-size: 9px; /* Reducido de 10px */
+    max-width: 100%;
+    margin: 6px 0; /* Reducido de 8px */
+    line-height: 1.2; /* Añadido para mejor legibilidad */
   }
 
   .circle-image {
-    width: 160px;
-    height: 160px;
-    margin-top: 12px;
+    width: 110px; /* Reducido de 130px */
+    height: 110px; /* Reducido de 130px */
+    margin-right: 10px; /* Reducido de 8px */
+    z-index: 4;
+    position: relative;
   }
 
+  /* Ocultar text-strip-H en pantallas muy pequeñas */
   .text-strip-H {
-    --H-width: 300px;
-    --H-height: 28px;
-    --H-font-size: 12px;
-    --H-gap: 25px;
-    margin: 15px auto;
+    display: absolute;
+    margin-left: 200px ;
   }
 
-  /* Botón y estrellas en columna */
+  /* Botón sobre las estrellas en columna */
   .section-DataBanner {
-    gap: 10px;
+    flex-direction: column !important;
+    align-items: right;
+    gap: 6px; /* Reducido de 8px */
+    margin-top: -130px; /* Ajustado de -90px */
+    z-index: 3;
+    position: relative;
   }
 
   .btn-banner {
-    width: 160px;
-    padding: 8px;
-    font-size: 14px;
+    width: 120px; /* Reducido de 140px */
+    padding: 6px; /* Reducido de 7px */
+    font-size: 10px; /* Reducido de 11px */
+    order: -1;
   }
 
-  .bannerProducts-loading {
-    width: 98%;
-    height: 460px;
-    font-size: 1.2rem;
+  /* Estrellas más pequeñas */
+  .section-DataBanner .stars {
+    transform: scale(0.7); /* Más reducido para pantalla pequeña */
+    transform-origin: left center;
   }
 
   #desc {
-    min-height: 100px;
-    max-height: 110px;
-  }
-}
-
-/* Dispositivos extremadamente pequeños (hasta 319px) */
-@media (max-width: 319px) {
-  .banner {
-    height: 440px;
-  }
-
-  .content h1 {
-    font-size: 22px;
-  }
-
-  .circle-image {
-    width: 140px;
-    height: 140px;
-  }
-
-  .text-strip-H {
-    --H-width: 280px;
-    --H-font-size: 11px;
-  }
-
-  .btn-banner {
-    width: 150px;
+    min-height: 60px; /* Reducido de 70px */
+    max-height: 70px; /* Reducido de 80px */
+    margin-bottom: 6px; /* Reducido de 8px */
   }
 }
 
