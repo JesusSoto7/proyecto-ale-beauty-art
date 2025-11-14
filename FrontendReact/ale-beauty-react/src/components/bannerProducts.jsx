@@ -57,7 +57,7 @@ function BannerProduct({ products, productRatings }) {
         
 
         <section className="section-DataBanner" style={{    display: "flex", flexDirection: "row-reverse", justifyContent: "flex-end", gap: 20}}>
-          <div style={{ display: "flex", gap: 10, alignItems: "center", flexDirection: "row" }}>
+          <div class="stars" style={{ display: "flex", gap: 10, alignItems: "center", flexDirection: "row" }}>
             <Rating
               name={`product-rating-${product.id}`}
               value={ratingValue}
