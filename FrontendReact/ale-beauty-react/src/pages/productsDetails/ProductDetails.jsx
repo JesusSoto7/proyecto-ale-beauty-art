@@ -548,7 +548,7 @@ function ProductDetails() {
         display: "inline-block"
       }}
     >
-      {discount.nombre}
+      {discount?.nombre}
     </Typography>
   );
 
@@ -597,7 +597,7 @@ function ProductDetails() {
                   lineHeight: "1.3",
                   margin: "0",
                   textAlign: "left"
-                }}>{product.nombre_producto} <Tooltip
+                }}>{product.nombre_producto} {discount && (<Tooltip
                     title={tooltipContent}
                     placement="right"
                     componentsProps={{
@@ -618,7 +618,7 @@ function ProductDetails() {
                         marginLeft: "8px"
                       }}
                     />
-                  </Tooltip>
+                  </Tooltip>)}
                   </h2>
               </div>
 
