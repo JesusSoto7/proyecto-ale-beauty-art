@@ -23,6 +23,8 @@ import RateReviewIcon from '@mui/icons-material/RateReview';
 import "../../assets/stylesheets/ProductosCliente.css";
 import { useAlert } from "../../components/AlertProvider.jsx";
 import { addItem as addGuestItem } from "../../utils/guestCart";
+import DiscountIcon from '@mui/icons-material/Discount';
+import Tooltip from '@mui/material/Tooltip';
 
 function ProductDetails() {
   const API_BASE = import.meta.env.VITE_API_BASE_URL || "https://localhost:4000";
@@ -533,6 +535,23 @@ function ProductDetails() {
   const priceDiscount = product.precio_con_mejor_descuento;
   const discount = product.mejor_descuento_para_precio;
 
+  const tooltipContent = (
+    <Typography
+      sx={{
+        color: "#4caf50",
+        fontWeight: 600,
+        fontSize: "15px",
+        marginTop: "0",
+        backgroundColor: "#e8f5e8",
+        padding: "4px 12px",
+        borderRadius: "5px",
+        display: "inline-block"
+      }}
+    >
+      {discount.nombre}
+    </Typography>
+  );
+
   return (
     <div className="product-details-page" style={{
       marginTop: "60px",
@@ -561,10 +580,10 @@ function ProductDetails() {
               letterSpacing: "0.5px",
               marginBottom: "8px",
               textAlign: "left"
-            }}>{product.sub_category?.category?.nombre_categoria}</p>
+            }}>{product.sub_category?.category?.nombre_categoria} / {product.sub_category?.nombre}</p>
             <div style={{ 
               display: "flex", 
-              flexDirection: "row", 
+              flexDirection: "row",
               justifyContent: "space-between", 
               alignItems: "flex-start",
               marginBottom: "16px",
@@ -578,7 +597,29 @@ function ProductDetails() {
                   lineHeight: "1.3",
                   margin: "0",
                   textAlign: "left"
-                }}>{product.nombre_producto}</h2>
+                }}>{product.nombre_producto} <Tooltip
+                    title={tooltipContent}
+                    placement="right"
+                    componentsProps={{
+                      tooltip: {
+                        sx: {
+                          backgroundColor: 'transparent',
+                          boxShadow: 'none',
+                          padding: 0,
+                        },
+                      },
+                    }}
+                  >
+                    
+                    <DiscountIcon
+                      sx={{
+                        color: "#e91e63",
+                        fontSize: "20px",
+                        marginLeft: "8px"
+                      }}
+                    />
+                  </Tooltip>
+                  </h2>
               </div>
 
               <IconButton 
@@ -613,6 +654,15 @@ function ProductDetails() {
           <div style={{ marginBottom: "30px", textAlign: "left" }}>
             {priceDiscount && priceDiscount < priceOriginal ? (
               <>
+                <span style={{ 
+                  textDecoration: "line-through", 
+                  color: "#999", 
+                  marginLeft: "4px", 
+                  fontSize: "18px",
+                  fontWeight: "400"
+                }}>
+                  {formatCOP(priceOriginal)}
+                </span>
                 <p className="price" style={{ 
                   color: "#e91e63", 
                   fontWeight: "700", 
@@ -620,30 +670,23 @@ function ProductDetails() {
                   fontSize: "28px"
                 }}>
                   {formatCOP(priceDiscount)}
-                  <span style={{ 
-                    textDecoration: "line-through", 
-                    color: "#999", 
-                    marginLeft: "12px", 
-                    fontSize: "18px",
-                    fontWeight: "400"
-                  }}>
-                    {formatCOP(priceOriginal)}
-                  </span>
+                  
+                  
+                  {discount && discount.tipo === "porcentaje" && (
+                    <p style={{ 
+                      color: "#4caf50", 
+                      fontWeight: 600, 
+                      fontSize: "20px", 
+                      marginTop: "0",
+                      padding: "4px 12px",
+                      display: "inline-block"
+                    }}>
+                      {discount.valor}%
+                    </p>
+                  )}
+
                 </p>
-                {discount && discount.tipo === "porcentaje" && (
-                  <p style={{ 
-                    color: "#4caf50", 
-                    fontWeight: 600, 
-                    fontSize: "14px", 
-                    marginTop: "0",
-                    backgroundColor: "#e8f5e8",
-                    padding: "4px 12px",
-                    borderRadius: "12px",
-                    display: "inline-block"
-                  }}>
-                    🎉 {discount.valor}% DE DESCUENTO
-                  </p>
-                )}
+                
               </>
             ) : (
               <p className="price" style={{
