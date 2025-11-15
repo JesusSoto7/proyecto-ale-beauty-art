@@ -170,6 +170,7 @@ function Inicio() {
           alt={t('home.newsBannerAlt')}
           loading="lazy"
           decoding="async"
+          className="banner-novedades-img"
           style={{
             width: "100%",
             height: "350px",

@@ -241,42 +241,7 @@ body {
 }
 
 
-/* === MEDIA QUERIES PARA RESPONSIVIDAD === */
-
-/* === MEDIA QUERIES PARA RESPONSIVIDAD === */
-
-/* Televisores y monitores grandes (1440px+) */
-@media (min-width: 1440px) {
-  .banner {
-    width: 90%;
-    height: 450px;
-    max-width: 1800px;
-  }
-
-  .banner::before {
-    min-width: 750px;
-    clip-path: path("M0,0 C1300,0 450,150 1300,450 L0,450 Z");
-  }
-
-  .content {
-    padding-left: 80px;
-    max-width: 50%;
-  }
-
-  .content h1 {
-    font-size: 52px;
-  }
-
-  .circle-image {
-    width: 360px;
-    height: 360px;
-  }
-
-  .text-strip-H {
-    display: flex;
-    --H-width: 550px;
-  }
-}
+/* === MEDIA QUERIES PARA RESPONSIVIDAD === /*
 
 /* Laptops grandes (1280px - 1439px) */
 @media (min-width: 1280px) and (max-width: 1439px) {
