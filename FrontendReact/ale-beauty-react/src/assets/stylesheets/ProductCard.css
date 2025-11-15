@@ -241,106 +241,108 @@
 }
 
 /* === RESPONSIVE === */
-@media (max-width: 768px) {
+/* === RESPONSIVE DESIGN PARA PRODUCT CARD === */
+
+/* === RESPONSIVE DESIGN PARA PRODUCT CARD === */
+
+/* 💻 Laptops - mitad de pantalla (1280px - 1439px) */
+@media (min-width: 1280px) and (max-width: 1439px) {
   .product-card-v3 {
-    max-width: 100%;
-    min-width: 260px;
-    height: 460px;
+    min-width: 250px !important;
+    max-width: 250px !important;
+    height: 460px !important;
   }
 
   .product-image-container-v3 {
-    height: 260px;
+    height: 240px !important;
   }
 
-  .discount-badge-v3 {
-    top: 10px;
-    left: 10px;
-    padding: 5px 10px;
-    font-size: 0.8rem;
-  }
-
-  .favorite-btn-v3 {
-    top: 10px !important;
-    right: 10px !important;
-  }
-
-  .product-name-v3 {
-    font-size: 0.9rem;
-    height: 40px;
-  }
-
-  .price-current-v3 {
-    font-size: 1.15rem;
-  }
-
-  .price-original-v3 {
-    font-size: 0.85rem;
-  }
-
-  .add-to-cart-btn-v3 {
-    padding: 11px 16px;
-    font-size: 0.9rem;
-    height: 44px;
+  .product-image-v3 {
+    object-fit: contain !important;
   }
 }
 
-@media (max-width: 480px) {
+/* 📟 Tabletas (1024px - 1279px) */
+@media (min-width: 1024px) and (max-width: 1279px) {
   .product-card-v3 {
-    min-width: 240px;
-    height: 440px;
+    min-width: 230px !important;
+    max-width: 230px !important;
+    height: 440px !important;
   }
 
   .product-image-container-v3 {
-    height: 240px;
+    height: 220px !important;
   }
 
-  .product-info-v3 {
-    padding: 12px 14px 6px 14px;
-    gap: 5px;
+  .product-image-v3 {
+    object-fit: contain !important;
+  }
+}
+
+/* 📟 Tabletas pequeñas (768px - 1023px) */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .product-card-v3 {
+    min-width: 240px !important;
+    max-width: 240px !important;
+    height: 420px !important;
   }
 
-  .product-name-v3 {
-    font-size: 0.85rem;
-    height: 38px;
+  .product-image-container-v3 {
+    height: 200px !important;
   }
 
-  .rating-row-v3 {
-    height: 22px;
+  .product-image-v3 {
+    object-fit: contain !important;
+  }
+}
+
+/* 📱 Teléfonos grandes (481px - 767px) */
+@media (min-width: 481px) and (max-width: 767px) {
+  .product-card-v3 {
+    min-width: 260px !important;
+    max-width: 260px !important;
+    height: 400px !important;
   }
 
-  .rating-number-v3 {
-    font-size: 0.85rem;
+  .product-image-container-v3 {
+    height: 180px !important;
   }
 
-  .rating-count-v3 {
-    font-size: 0.75rem;
+  .product-image-v3 {
+    object-fit: contain !important;
+  }
+}
+
+/* 📱 Teléfonos pequeños (376px - 480px) */
+@media (min-width: 376px) and (max-width: 480px) {
+  .product-card-v3 {
+    min-width: 280px !important;
+    max-width: 280px !important;
+    height: 380px !important;
   }
 
-  .price-container-v3 {
-    height: 28px;
+  .product-image-container-v3 {
+    height: 170px !important;
   }
 
-  .price-current-v3 {
-    font-size: 1.1rem;
+  .product-image-v3 {
+    object-fit: contain !important;
+  }
+}
+
+/* 📱 Teléfonos muy pequeños (320px - 375px) */
+@media (max-width: 375px) {
+  .product-card-v3 {
+    min-width: 270px !important;
+    max-width: 270px !important;
+    height: 360px !important;
   }
 
-  .price-original-v3 {
-    font-size: 0.8rem;
+  .product-image-container-v3 {
+    height: 160px !important;
   }
 
-  .discount-label-v3 {
-    font-size: 0.7rem;
-    padding: 4px 8px;
-    height: 24px;
-  }
-
-  .card-footer-v3 {
-    padding: 0 14px 14px 14px;
-  }
-
-  .add-to-cart-btn-v3 {
-    padding: 10px 14px;
-    font-size: 0.85rem;
-    height: 42px;
+  .product-image-v3 {
+    object-fit: contain !important;
   }
 }
