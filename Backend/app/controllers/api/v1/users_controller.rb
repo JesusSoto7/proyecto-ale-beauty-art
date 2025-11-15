@@ -16,16 +16,21 @@ module Api
                                 .merge(roles: current_user.roles.pluck(:name))
       end
       
-      def update
-        # Si es admin y se pasa id, puede editar a cualquier usuario. Si es cliente, solo a sí mismo.
-        user = current_user.has_role?(:admin) && params[:id] ? User.find(params[:id]) : current_user
+    def update
+      # Si es admin, puede editar a cualquiera. Si es usuario normal, solo a sí mismo.
+      user = current_user.has_role?(:admin) && params[:id] ? User.find(params[:id]) : current_user
 
-        if user.update(user_params)
-          render json: user, only: [:id, :email, :nombre, :apellido, :telefono]
-        else
-          render json: { errors: user.errors.full_messages }, status: :unprocessable_entity
-        end
+      if user.update(user_params)
+        render json: user.as_json(
+          only: [:id, :email, :nombre, :apellido, :telefono, :direccion]
+        ).merge(
+          roles: user.roles.pluck(:name)
+        )
+      else
+        render json: { errors: user.errors.full_messages }, status: :unprocessable_entity
       end
+    end
+
 
       def destroy
         # Solo admin puede eliminar a cualquier usuario
@@ -41,6 +46,51 @@ module Api
           render json: { errors: user.errors.full_messages }, status: :unprocessable_entity
         end
       end
+
+      def show
+        user = User.includes(
+          cart: { cart_products: :product },
+          orders: { order_details: :product }, # 🔹 corregido aquí
+          favorites: :product,
+          reviews: :product
+        ).find(params[:id])
+
+        render json: user.as_json(
+          only: [:id, :email, :nombre, :apellido, :telefono],
+          include: {
+            cart: {
+              include: {
+                cart_products: {
+                  include: {
+                    product: { only: [:id, :nombre_producto, :precio_producto] }
+                  }
+                }
+              }
+            },
+            favorites: {
+              include: {
+                product: { only: [:id, :nombre_producto, :precio_producto] }
+              }
+            },
+            orders: {
+              include: {
+                order_details: { # 🔹 corregido aquí también
+                  include: {
+                    product: { only: [:id, :nombre_producto, :precio_producto] }
+                  }
+                }
+              }
+            },
+            reviews: {
+              include: {
+                product: { only: [:id, :nombre_producto] }
+              }
+            }
+          }
+        ).merge(roles: user.roles.pluck(:name))
+      end
+
+
 
       def count
         render json: { count: User.count }
