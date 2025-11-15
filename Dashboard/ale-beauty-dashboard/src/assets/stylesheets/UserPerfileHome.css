@@ -90,6 +90,7 @@
     border-radius: 10px;
     border: 1px solid #bec0c1;
     color: #333b4d;
+    transition: 90ms;
 }
 
 .edit-btn:hover{
@@ -263,6 +264,19 @@
   background-color: #eb5e8c;
 }
 
+#notiButton{
+  border-radius: 10px; 
+  background-color: #f5e9e9; 
+  height: 50px;
+  color: #333b4d;
+  transition: 90ms;
+}
+
+#notiButton:hover{
+  border: #b6b6b6 solid 1px;
+  background-color: #e2e2e6; 
+}
+
 @media (max-width: 1100px)  {
   .section-user-profile{
     flex-direction: column !important;
@@ -308,6 +322,12 @@
   #logout-button-2{
     display: block;
     height: 40px;
+    width: 40px;
+    padding: 0;
+  }
+
+  #notiButton{
+    height: 40px !important;
     width: 40px;
     padding: 0;
   }

@@ -8,10 +8,11 @@ import { FaStar } from "react-icons/fa";
 import SwipeableDrawer from "@mui/material/SwipeableDrawer";
 import Accordion from "./Accordion"; // Asegúrate de tener este componente
 import { DataGrid } from "@mui/x-data-grid";
-import { Box, Card, CardContent, Typography, Rating, Stack } from "@mui/material";
+import { Box, Card, CardContent, Typography, Rating, Stack, FormControl, InputLabel, OutlinedInput } from "@mui/material";
 import LogoutIcon from '@mui/icons-material/Logout';
 import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
 import { useTheme } from "@mui/material/styles";
+import NotificationAddIcon from '@mui/icons-material/NotificationAdd';
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 
@@ -35,8 +36,15 @@ function UserFullPerfil() {
     const [favorites, setFavorites] = useState([]);
     const [cart, setCart] = useState(null);
 
-    // Estados para el Drawer y la edición (solo para la apariencia,
-    // en un perfil de administrador NO se debería editar al usuario así)
+    // --- Modal para Enviar Notificación ---
+    const [openNotifModal, setOpenNotifModal] = useState(false);
+    const [notifTitle, setNotifTitle] = useState("");
+    const [notifMessage, setNotifMessage] = useState("");
+    const [sendingNotif, setSendingNotif] = useState(false);
+    const [notifError, setNotifError] = useState("");
+    const [notifSuccess, setNotifSuccess] = useState("");
+
+
     const [openDrawer, setOpenDrawer] = useState(false);
     const [formData, setFormData] = useState({
         nombre: "",
@@ -46,6 +54,18 @@ function UserFullPerfil() {
         direccion: "",
     });
 
+    const handleOpenNotif = () => {
+        setNotifTitle("");
+        setNotifMessage("");
+        setNotifError("");
+        setNotifSuccess("");
+        setOpenNotifModal(true);
+    };
+
+    const handleCloseNotif = () => {
+        setOpenNotifModal(false);
+    };
+
     const toggleDrawer = (open) => (event) => {
         if (event && event.type === "keydown" && (event.key === "Tab" || event.key === "Shift")) {
             return;
@@ -53,11 +73,54 @@ function UserFullPerfil() {
         setOpenDrawer(open);
     };
 
-    // 2. LÓGICA DE CARGA DE DATOS DEL USUARIO (USANDO EL ID)
+    const enviarNotificacionUsuario = async () => {
+        if (!notifTitle.trim() || !notifMessage.trim()) {
+            setNotifError("El título y el mensaje son obligatorios.");
+            return;
+        }
+
+        const token = localStorage.getItem("token");
+        if (!token) {
+            setNotifError("No estás autenticado.");
+            return;
+        }
+
+        setSendingNotif(true);
+        setNotifError("");
+        setNotifSuccess("");
+
+        try {
+            const res = await fetch("https://localhost:4000/api/v1/notifications", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify({
+                    user_id: id,   // ← EL USUARIO ACTUAL
+                    title: notifTitle,
+                    message: notifMessage,
+                }),
+            });
+
+            if (!res.ok) throw new Error("Error en el servidor");
+
+            setNotifSuccess("¡Notificación enviada!");
+            setTimeout(() => {
+                setOpenNotifModal(false);
+            }, 1200);
+
+        } catch (err) {
+            setNotifError("No se pudo enviar la notificación.");
+        } finally {
+            setSendingNotif(false);
+        }
+    };
+
+
     useEffect(() => {
         if (!id) return;
 
-        // Si no vino por state, o si queremos asegurarnos de tener la versión más fresca
         if (!user) {
             const token = localStorage.getItem("token");
             fetch(`https://localhost:4000/api/v1/users/${id}`, {
@@ -100,10 +163,10 @@ function UserFullPerfil() {
             })
             .then((data) => {
             setUser(data);
-            setOrders(data.orders || []);              // ✅ existe
-            setUserReviews(data.reviews || []);        // ✅ existe
-            setFavorites(data.favorites || []);        // ✅ corregido
-            setCart(data.cart || null);                // ✅ corregido (es un objeto, no array)
+            setOrders(data.orders || []);
+            setUserReviews(data.reviews || []);
+            setFavorites(data.favorites || []);
+            setCart(data.cart || null);
 
             setReviewCount((data.reviews || []).length);
             setFormData({
@@ -121,24 +184,9 @@ function UserFullPerfil() {
             .finally(() => setLoading(false));
         }, [id]);
 
-
-    // 4. MÉTODOS Y CONFIGURACIONES DE LA INTERFAZ (COPIADOS DE UserProfile)
-
-    const handleSave = () => {
-        // En esta vista de administrador, el botón de guardar podría estar deshabilitado o
-        // necesitaría un endpoint de PATCH diferente (`/api/v1/admin/users/${id}`)
-        console.log("Intento de guardar cambios:", formData);
-        setOpenDrawer(false);
-        // Lógica de guardado (solo de demostración, requiere endpoint de Admin)
-        // fetch(`https://localhost:4000/api/v1/admin/users/${id}`, { ... })
-    };
-
     const handleLogout = () => {
-        // La vista de perfil completo no debería tener la opción de logout del *usuario visto*,
-        // sino la opción de cerrar sesión del *administrador*.
         console.log("El administrador está cerrando sesión.");
         localStorage.removeItem('token');
-        // Usar la navegación correcta
         const lang = useParams().lang || 'es';
         window.location.href = `/${lang}/login`;
     };
@@ -149,7 +197,7 @@ function UserFullPerfil() {
         estado: order.status || "Pendiente",
         numero_de_orden: order.numero_de_orden || "No especificado",
         total: order.pago_total || 0,
-        cliente: order.clientes || user.nombre || "No especificado", // Usamos el nombre del usuario cargado
+        cliente: order.clientes || user.nombre || "No especificado",
         email_cliente: order.email || user.email || "No especificado",
         pdf_url: order.pdf_url || "No especificado",
     }));
@@ -258,18 +306,56 @@ function UserFullPerfil() {
             ),
         },
         {
-            title: "Productos Favoritos (Admin)",
+            title: "---",
             content: "Para cargar esta data, necesitas un endpoint de administrador que tome el ID del usuario.",
         },
     ];
 
-    // 5. RENDERIZADO
     if (!user) {
         return <div className="profile-loading">Cargando perfil de usuario ID: {id}...</div>;
     }
     if (error) {
         return <div className="profile-error">{error}</div>;
     }
+
+    const handleSaveUser = async () => {
+        const token = localStorage.getItem("token");
+
+        try {
+            const res = await fetch(`https://localhost:4000/api/v1/users/${user.id}`, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`,
+            },
+            body: JSON.stringify({
+                user: {
+                nombre: formData.nombre,
+                apellido: formData.apellido,
+                email: formData.email,
+                telefono: formData.telefono
+                }
+            }),
+            });
+
+            const data = await res.json();
+
+            if (!res.ok) {
+            console.error("Error al actualizar usuario:", data);
+            addAlert(data.errors?.join(", ") || "Error al actualizar usuario", "error");
+            return;
+            }
+
+            // Actualiza el estado del usuario en pantalla
+            setUser((prev) => ({ ...prev, ...data }));
+            addAlert("Datos actualizados correctamente", "success");
+
+        } catch (err) {
+            console.error("Error inesperado:", err);
+            addAlert("Error inesperado al actualizar", "error");
+        }
+        };
+
 
     return (
         <div className="profile-container">
@@ -297,6 +383,7 @@ function UserFullPerfil() {
                     
                     {/* Botón de Logout del ADMINISTRADOR */}
                     <div className="profile-actions">
+                        <button style={{borderRadius: 10, backgroundColor: "#f5e9e9", height: 50}} id="notiButton" onClick={handleOpenNotif} ><NotificationAddIcon fontSize="medium" /></button>
                         <button id="logout-button-1" className="btn btn-primary" onClick={handleLogout}>Logout Admin <LogoutIcon fontSize="small"/></button>
                         <button id="logout-button-2" className="btn btn-primary" onClick={handleLogout}><LogoutIcon fontSize="small" /></button>
                     </div>
@@ -349,12 +436,11 @@ function UserFullPerfil() {
                                 </div>
                                 <hr />
 
-                                {/* 🟢 Botón que abre el Drawer */}
+                                
                                 <button className="edit-btn" onClick={toggleDrawer(true)}>
                                     Editar perfil
                                 </button>
 
-                                {/* 🟣 Drawer deslizante (Mantengo la funcionalidad, pero requiere endpoint de Admin) */}
                                 <SwipeableDrawer
                                     id="SwipeableDrawer"
                                     anchor="right"
@@ -371,7 +457,7 @@ function UserFullPerfil() {
                                         <TextField label="Teléfono" variant="outlined" value={formData.telefono} onChange={(e) => setFormData({ ...formData, telefono: e.target.value })} fullWidth InputLabelProps={{ style: { color: "#8b949e" } }} InputProps={{ style: { color: "#a3a3a3" } }}/>
                                         <TextField label="Email" type="email" variant="outlined" value={formData.email} onChange={(e) => setFormData({ ...formData, email: e.target.value })} fullWidth InputLabelProps={{ style: { color: "#8b949e" } }} InputProps={{ style: { color: "#a3a3a3" } }}/>
                                         
-                                        <Button variant="contained" onClick={() => { handleSave(); toggleDrawer(false); }} sx={{ mt: 2, backgroundColor: "#202020", "&:hover": { backgroundColor: "#ed3c76", borderColor: "#ed3c76" }, color: "#fff", borderRadius: "8px" }}>
+                                        <Button variant="contained" onClick={() => { handleSaveUser(); toggleDrawer(false); }} sx={{ mt: 2, backgroundColor: "#202020", "&:hover": { backgroundColor: "#ed3c76", borderColor: "#ed3c76" }, color: "#fff", borderRadius: "8px" }}>
                                             Guardar cambios
                                         </Button>
                                     </Box>
@@ -422,6 +508,100 @@ function UserFullPerfil() {
                 </section>
 
                 <Accordion items={faqItems} />
+
+                {openNotifModal && (
+                    <Box
+                        sx={{
+                            position: "fixed",
+                            inset: 0,
+                            backgroundColor: "rgba(0,0,0,0.4)", 
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            zIndex: 9999,
+                        }}
+                    >
+                        {/* Contenedor del Modal */}
+                        <Box
+                            sx={{
+                                width: "90%",
+                                maxWidth: 480,
+                                bgcolor: "#fff",
+                                p: 3,
+                                borderRadius: 4,
+                                boxShadow: 24,
+                                backgroundColor: "#fcfcfc", 
+                            }}
+                        >
+                            {/* Título del Modal */}
+                            <Typography variant="h6" fontWeight={500} textAlign="center" mb={3}>
+                                Enviar notificación a {user.nombre} {user.apellido}
+                            </Typography>
+                            
+                            <TextField
+                                fullWidth
+                                label="Título"
+                                value={notifTitle}
+                                onChange={(e) => setNotifTitle(e.target.value)}
+                                sx={{ mb: 2 }}
+                            />
+
+                            <FormControl fullWidth>
+                                <InputLabel htmlFor="mensaje-notificacion">Mensaje</InputLabel>
+                                <OutlinedInput
+                                    id="mensaje-notificacion"
+                                    multiline
+                                    sx={{
+                                        minHeight: 250,
+                                        '& .MuiInputBase-inputMultiline': {
+                                            minHeight: 250,
+                                        },
+                                    }}
+                                    value={notifMessage}
+                                    onChange={(e) => setNotifMessage(e.target.value)}
+                                    label="Mensaje"
+                                />
+                            </FormControl>
+
+                            {notifError && (
+                                <Typography color="error" mt={2}>{notifError}</Typography>
+                            )}
+
+                            {notifSuccess && (
+                                <Typography color="green" mt={2}>{notifSuccess}</Typography>
+                            )}
+
+                            <Stack direction="row" spacing={2} mt={4} justifyContent="flex-end">
+                                <Button 
+                                    variant="outlined" 
+                                    onClick={handleCloseNotif}
+                                    sx={{
+                                        borderColor: '#e0e0e0',
+                                        color: '#444',
+                                    }}
+                                >
+                                    Cancelar
+                                </Button>
+
+                                <Button
+                                    variant="contained"
+                                    onClick={enviarNotificacionUsuario}
+                                    disabled={sendingNotif}
+                                    sx={{
+                                        backgroundColor: '#212121',
+                                        '&:hover': {
+                                            backgroundColor: '#424242',
+                                        },
+                                        color: 'white',
+                                    }}
+                                >
+                                    {sendingNotif ? "Enviando..." : "Enviar"}
+                                </Button>
+                            </Stack>
+                        </Box>
+                    </Box>
+                )}
+
             </div>
         </div>
     );

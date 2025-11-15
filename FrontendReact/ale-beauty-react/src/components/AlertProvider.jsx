@@ -13,12 +13,17 @@ export function AlertProvider({ children }) {
   const [alerts, setAlerts] = useState([]);
 
     const addAlert = (msg, type = "info", duration = 5000) => {
-        const id = Date.now();
-        setAlerts((prev) => [{ id, msg, type, duration, closing: false }, ...prev]);
+      const id = Date.now();
 
-        // Auto-remover luego del tiempo indicado
-        setTimeout(() => startClosing(id), duration);
+      setAlerts((prev) => {
+        const newAlerts = [{ id, msg, type, duration, closing: false }, ...prev];
+        return newAlerts.slice(0, 4);
+      });
+
+      // Auto-remover luego del tiempo indicado
+      setTimeout(() => startClosing(id), duration);
     };
+
 
     const startClosing = (id) => {
         setAlerts((prev) =>
