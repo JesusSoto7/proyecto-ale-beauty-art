@@ -13,6 +13,7 @@ import {
   datePickersCustomizations,
   treeViewCustomizations,
 } from '../../theme/customizations';
+import Header from "./Header";
 
 const xThemeComponents = {
   ...chartsCustomizations,
@@ -44,6 +45,7 @@ export default function DashboardLayout(props) {
             overflow: 'auto',
           })}
         >
+
           <Stack
             spacing={2}
             sx={{
@@ -55,6 +57,7 @@ export default function DashboardLayout(props) {
               maxWidth: 'none',
             }}
           >
+            <Header/>
             {/* Aquí se renderizan las rutas hijas */}
             <Outlet />
           </Stack>

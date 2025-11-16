@@ -1292,7 +1292,7 @@ function ProductDetails() {
                     borderRadius: "12px",
                     padding: "16px",
                     boxShadow: "0 2px 12px rgba(0,0,0,0.1)",
-                    width: "250px",       // <- antes 280px
+                    width: "250px",
                     flexShrink: 0
                   }}>
                   <div style={{ marginBottom: "12px" }}>

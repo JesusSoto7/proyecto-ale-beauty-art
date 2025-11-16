@@ -9,6 +9,7 @@ export const useProductColumns = ({ isDark }) => {
         accessorKey: "id",
         header: "ID",
         enableEditing: false,
+        backgroundColor:  "background.paper",
         size: 60,
       },
       {
@@ -28,6 +29,7 @@ export const useProductColumns = ({ isDark }) => {
                   height: "60px",
                   objectFit: "cover",
                   borderRadius: "12px",
+                  backgroundColor:  "background.paper",
                   border: `2px solid ${isDark ? "#444" : "#e0e0e0"}`,
                   transition: "transform 0.2s ease",
                   cursor: "pointer",
@@ -49,7 +51,7 @@ export const useProductColumns = ({ isDark }) => {
         size: 200,
         Cell: ({ cell }) => {
           return (
-            <Typography sx={{ fontWeight: 600, color: isDark ? "#fff" : "#000" }}>
+            <Typography sx={{ fontWeight: 600, backgroundColor: "background.paper" }}>
               {cell.getValue()}
             </Typography>
           );
@@ -99,7 +101,7 @@ export const useProductColumns = ({ isDark }) => {
             <Chip
               label={cell.getValue() || "Sin categoría"}
               sx={{
-                background: isDark ? "#4a3f5f" : "#e6d5f5",
+                background:  "background.paper",
                 color: isDark ? "#eaa8f5" : "#a12c7f",
                 fontWeight: 600,
               }}

@@ -1,31 +1,15 @@
 import * as React from 'react';
-import MuiAvatar from '@mui/material/Avatar';
-import MuiListItemAvatar from '@mui/material/ListItemAvatar';
-import MenuItem from '@mui/material/MenuItem';
-import ListItemText from '@mui/material/ListItemText';
-import ListItemIcon from '@mui/material/ListItemIcon';
-import ListSubheader from '@mui/material/ListSubheader';
-import Select, { selectClasses } from '@mui/material/Select';
-import Divider from '@mui/material/Divider';
-import { styled } from '@mui/material/styles';
-import AddRoundedIcon from '@mui/icons-material/AddRounded';
-import DevicesRoundedIcon from '@mui/icons-material/DevicesRounded';
-import SmartphoneRoundedIcon from '@mui/icons-material/SmartphoneRounded';
-import ConstructionRoundedIcon from '@mui/icons-material/ConstructionRounded';
+import { Box, Typography, Avatar } from '@mui/material';
+import logo from '../../assets/images/logo8.jpeg';
 
-const Avatar = styled(MuiAvatar)(({ theme }) => ({
-  width: 28,
-  height: 28,
-  backgroundColor: (theme.vars || theme).palette.background.paper,
-  color: (theme.vars || theme).palette.text.secondary,
-  border: `1px solid ${(theme.vars || theme).palette.divider}`,
-}));
-
-const ListItemAvatar = styled(MuiListItemAvatar)({
-  minWidth: 0,
-  marginRight: 12,
-});
-
+const pinkTheme = {
+  primary: '#e91e63',
+  secondary: '#f8bbd0',
+  dark: '#ad1457',
+  light: '#fce4ec',
+  background: '#fff5f7'
+};
+const textColor = '#1f2937'; 
 export default function SelectContent() {
   const [company, setCompany] = React.useState('');
 
@@ -34,69 +18,78 @@ export default function SelectContent() {
   };
 
   return (
-    <Select
-      labelId="company-select"
-      id="company-simple-select"
-      value={company}
-      onChange={handleChange}
-      displayEmpty
-      inputProps={{ 'aria-label': 'Select company' }}
-      fullWidth
+    <Box
       sx={{
-        maxHeight: 56,
-        width: 215,
-        '&.MuiList-root': {
-          p: '8px',
-        },
-        [`& .${selectClasses.select}`]: {
-          display: 'flex',
-          alignItems: 'center',
-          gap: '2px',
-          pl: 1,
-        },
+        display: 'flex',
+        alignItems: 'center',
+        gap: 2,
+        py: 0.5,
       }}
     >
-      <ListSubheader sx={{ pt: 0 }}>Production</ListSubheader>
-      <MenuItem value="">
-        <ListItemAvatar>
-          <Avatar alt="Sitemark web">
-            <DevicesRoundedIcon sx={{ fontSize: '1rem' }} />
-          </Avatar>
-        </ListItemAvatar>
-        <ListItemText primary="Sitemark-web" secondary="Web app" />
-      </MenuItem>
-      <MenuItem value={10}>
-        <ListItemAvatar>
-          <Avatar alt="Sitemark App">
-            <SmartphoneRoundedIcon sx={{ fontSize: '1rem' }} />
-          </Avatar>
-        </ListItemAvatar>
-        <ListItemText primary="Sitemark-app" secondary="Mobile application" />
-      </MenuItem>
-      <MenuItem value={20}>
-        <ListItemAvatar>
-          <Avatar alt="Sitemark Store">
-            <DevicesRoundedIcon sx={{ fontSize: '1rem' }} />
-          </Avatar>
-        </ListItemAvatar>
-        <ListItemText primary="Sitemark-Store" secondary="Web app" />
-      </MenuItem>
-      <ListSubheader>Development</ListSubheader>
-      <MenuItem value={30}>
-        <ListItemAvatar>
-          <Avatar alt="Sitemark Store">
-            <ConstructionRoundedIcon sx={{ fontSize: '1rem' }} />
-          </Avatar>
-        </ListItemAvatar>
-        <ListItemText primary="Sitemark-Admin" secondary="Web app" />
-      </MenuItem>
-      <Divider sx={{ mx: -1 }} />
-      <MenuItem value={40}>
-        <ListItemIcon>
-          <AddRoundedIcon />
-        </ListItemIcon>
-        <ListItemText primary="Add product" secondary="Web app" />
-      </MenuItem>
-    </Select>
+
+      <Avatar
+        src={logo}
+        alt="Logo Ale Beauty Art"
+        imgProps={{
+          loading: 'lazy',
+          style: { objectFit: 'cover' }
+        }}
+        sx={{
+          width: { xs: 56, sm: 64, md: 80 },   // Tamaño responsivo
+          height: { xs: 56, sm: 64, md: 80 },
+          border: '3px solid #2727271b',
+          boxShadow: '0 4px 12px rgba(0, 0, 0, 0.61)',
+          backgroundColor: '#373753ff',
+        }}
+        onError={(e) => {
+          e.currentTarget.src =
+            'https://via.placeholder.com/150?text=Logo'; // fallback
+        }}
+      />
+
+      {/* Si prefieres <img>, descomenta esto y quita el Avatar arriba:
+      <img
+        src={logo}
+        alt="Logo Ale Beauty Art"
+        loading="lazy"
+        style={{
+          width: '72px',
+          height: '72px',
+          borderRadius: '50%',
+          objectFit: 'cover',
+          border: '3px solid #e91e63',
+          boxShadow: '0 4px 12px rgba(0,0,0,0.18)',
+          backgroundColor: '#fff'
+        }}
+        onError={(e) => {
+          e.currentTarget.src =
+            'https://via.placeholder.com/150?text=Logo';
+        }}
+      />
+      */}
+
+      <Typography
+        variant="h6"
+        component="span"
+        sx={{
+          fontWeight: 600,
+          fontSize: { xs: '1.25rem', sm: '1.5rem', md: '1.5rem' },
+          letterSpacing: '0.6px',
+          background: 'linear-gradient(90deg,#e91e63,#ad1457)',
+          WebkitBackgroundClip: 'text',
+          color: textColor,
+          userSelect: 'none',
+          whiteSpace: 'nowrap',
+          textShadow: '0 1px 2px rgba(0,0,0,0.15)',
+          transition: 'transform .25s, filter .25s',
+          '&:hover': {
+            transform: 'translateY(-2px)',
+            filter: 'brightness(1.1)'
+          }
+        }}
+      >
+        Ale Beauty Art
+      </Typography>
+    </Box>
   );
 }

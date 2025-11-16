@@ -10,8 +10,13 @@ import Typography from '@mui/material/Typography';
 import SelectContent from './SelectContent';
 import MenuContent from './MenuContent';
 import OptionsMenu from './OptionsMenu';
+import ListItemText from '@mui/material/ListItemText';
+import ListItemIcon, { listItemIconClasses } from '@mui/material/ListItemIcon';
+import LogoutRoundedIcon from '@mui/icons-material/LogoutRounded';
+import { ListItemButton } from '@mui/material';
 
-const drawerWidth = 240;
+
+const drawerWidth = 296;
 
 
 const Drawer = styled(MuiDrawer)({
@@ -40,6 +45,20 @@ export default function SideMenu() {
       .then(data => setUser(data))
       .catch(err => console.error(err));
   }, []);
+
+  async function handleLogout() {
+    const token = localStorage.getItem('token');
+    try {
+      await fetch('https://localhost:4000/api/v1/sign_out', {
+        method: 'DELETE',
+        headers: { Authorization: `Bearer ${token}` },
+      });
+    } catch (err) {
+      console.warn('Error cerrando sesión:', err);
+    }
+    localStorage.removeItem('token');
+    window.location.href = `/${lang || 'es'}/login`; // ✅ Redirección con idioma por defecto
+  }
 
   if (!user) return null;
 
@@ -83,18 +102,33 @@ export default function SideMenu() {
           borderColor: 'divider',
         }}
       >
-        <Avatar
+{/*         <Avatar
           sizes="small"
           alt={`${user.nombre?.charAt(0).toUpperCase()}`}
           src="/static/images/avatar/7.jpg"
           sx={{ width: 36, height: 36, backgroundColor: "#f896b8" }}
-        />
-        <Box sx={{ mr: 'auto' }}>
+        /> */}
+
+        <ListItemButton   sx={{
+            [`& .${listItemIconClasses.root}`]: {
+              ml: 'auto',
+              minWidth: 0,
+            },
+          }}
+          onClick={handleLogout}>
+          <ListItemIcon>
+            <LogoutRoundedIcon fontSize="small" />
+          </ListItemIcon>
+          <ListItemText >Logout</ListItemText>
+
+        </ListItemButton>
+
+{/*         <Box sx={{ mr: 'auto' }}>
           <Typography variant="caption" sx={{ color: 'text.secondary' }}>
             {user.email}
           </Typography>
-        </Box>
-        <OptionsMenu />
+        </Box> */}
+   {/*      <OptionsMenu /> */}
       </Stack>
     </Drawer>
   );

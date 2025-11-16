@@ -108,21 +108,21 @@ const ProductTable = () => {
         width: "100%",
         overflowX: "auto",
         overflowY: "auto",
-        backgroundColor: isDark ? "#0f0f1e" : "#f9fafb",
+        backgroundColor: "background.paper",
         borderRadius: "16px",
         "&::-webkit-scrollbar": {
           height: "12px",
           width: "12px",
         },
         "&::-webkit-scrollbar-track": {
-          background: isDark ? "#1a1a2e" : "#f1f1f1",
+          background: "background.paper",
           borderRadius: "10px",
         },
         "&::-webkit-scrollbar-thumb": {
-          background: isDark ? "#4a5568" : "#cbd5e0",
+          background: "background.paper",
           borderRadius: "10px",
           "&:hover": {
-            background: isDark ? "#5a6578" : "#a0aec0",
+            background: "background.paper",
           },
         },
       },
@@ -130,12 +130,10 @@ const ProductTable = () => {
     muiTablePaperProps: {
       sx: {
         width: "100%",
-        boxShadow: isDark
-          ? "0 10px 40px rgba(0, 0, 0, 0.3)"
-          : "0 10px 40px rgba(37, 99, 235, 0.08)",
+        boxShadow:  "background.paper",
         borderRadius: "16px",
         border: `1px solid ${isDark ? "#333" : "#e5e7eb"}`,
-        backgroundColor: isDark ? "#1a1a2e" : "#ffffff",
+        backgroundColor: "background.paper",
       },
     },
     muiTableProps: {
@@ -147,8 +145,7 @@ const ProductTable = () => {
           top: 0,
           zIndex: 2,
           "& th": {
-            color: isDark ? "#e0e0e0" : "#1f2937",
-            backgroundColor: isDark ? "#0f0f1e" : "#f3f4f6",
+            backgroundColor: "background.paper",
             borderBottom: `2px solid ${isDark ? "#333" : "#e5e7eb"}`,
             fontWeight: 800,
             fontSize: "0.95em",
@@ -163,12 +160,11 @@ const ProductTable = () => {
           "& tr": {
             transition: "all 0.3s ease",
             "&:hover": {
-              backgroundColor: isDark ? "#232439" : "#f0f9ff",
-              boxShadow: isDark ? "inset 0 0 0 1px #333" : "inset 0 0 0 1px #e0e7ff",
+              backgroundColor:  "background.paper",
+              boxShadow:  "background.paper",
             },
           },
           "& td": {
-            color: isDark ? "#d1d5db" : "#374151",
             borderBottom: `1px solid ${isDark ? "#2a2a3e" : "#f3f4f6"}`,
             padding: "16px 12px",
             fontSize: "0.95em",
@@ -185,7 +181,7 @@ const ProductTable = () => {
           sx: {
             position: "sticky",
             right: 0,
-            backgroundColor: isDark ? "#0f0f1e" : "#f3f4f6",
+            backgroundColor: "background.paper",
             boxShadow: "-2px 0 4px rgba(0,0,0,0.1)",
             zIndex: 1,
           },
@@ -194,7 +190,7 @@ const ProductTable = () => {
           sx: {
             position: "sticky",
             right: 0,
-            backgroundColor: isDark ? "#1a1a2e" : "#ffffff",
+            backgroundColor:  "background.paper",
             boxShadow: "-2px 0 4px rgba(0,0,0,0.05)",
             zIndex: 1,
           },
@@ -210,7 +206,7 @@ const ProductTable = () => {
             sx={{
               transition: "all 0.2s ease",
               "&:hover": {
-                backgroundColor: "#dbeafe",
+                backgroundColor:  "background.paper",
                 transform: "scale(1.1)",
               },
             }}
@@ -239,8 +235,7 @@ const ProductTable = () => {
       <Button
         variant="contained"
         sx={{
-          background: "linear-gradient(135deg, #3501f3ff 0%, #1eaf73ff 100%)",
-          color: "#fff",
+          background:  "background.paper",
           borderRadius: "10px",
           fontWeight: 700,
           fontSize: "0.95em",

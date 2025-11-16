@@ -187,10 +187,7 @@ const Categorias = () => {
       sx={{
         width: "100%",
         minHeight: "100vh",
-        background: isDark
-          ? "linear-gradient(135deg, #0f0f1e 0%, #1a1a2e 100%)"
-          : "linear-gradient(135deg, #ffffffff 0%, #ffffffff 100%)",
-        p: 3,
+        background: "background.paper"
       }}
     >
       <Box sx={{ maxWidth: "1600px", margin: "0 auto" }}>
@@ -463,7 +460,8 @@ const Categorias = () => {
           PaperProps={{
             sx: {
               borderRadius: "16px",
-              boxShadow: "0 20px 60px rgba(37, 99, 235, 0.15)",
+              boxShadow: "0 20px 60px rgba(0, 81, 255, 0.15)",
+              background: "background.paper"
             },
           }}
         >

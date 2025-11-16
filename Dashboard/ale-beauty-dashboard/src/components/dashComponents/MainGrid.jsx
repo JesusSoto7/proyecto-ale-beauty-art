@@ -132,7 +132,7 @@ export default function MainGrid() {
           </Grid>
         ))}
         <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
-          <HighlightedCard />
+    
         </Grid>
         <Grid size={{ xs: 12, md: 6 }}>
           <ProductsChart />
@@ -145,12 +145,11 @@ export default function MainGrid() {
         {t("details")}
       </Typography>
       <Grid container spacing={2} columns={12} sx={{ width: '100%', margin: 0 }}>
-        <Grid size={{ xs: 12, lg: 9 }}>
+{/*         <Grid size={{ xs: 12, lg: 9 }}>
           <CustomizedDataGrid />
-        </Grid>
+        </Grid> */}
         <Grid size={{ xs: 12, lg: 3 }}>
           <Stack gap={2} direction={{ xs: 'column', sm: 'row', lg: 'column' }}>
-            <CustomizedTreeView />
             <ChartProductsByCategory />
           </Stack>
         </Grid>

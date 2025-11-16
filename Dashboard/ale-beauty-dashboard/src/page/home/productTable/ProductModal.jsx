@@ -231,7 +231,7 @@ const ProductModal = ({
       PaperProps={{
         sx: {
           borderRadius: "16px",
-          background: isDark ? "#1e1e2e" : "#ffffff",
+          backgroundColor:   "background.paper",
           boxShadow: "0 20px 60px rgba(37, 99, 235, 0.15)",
         },
       }}
@@ -274,7 +274,6 @@ const ProductModal = ({
               sx={{
                 mb: 1,
                 fontWeight: 600,
-                color: isDark ? "#e0e0e0" : "#374151",
               }}
             >
               Descripción del Producto
@@ -293,8 +292,8 @@ const ProductModal = ({
                 fontSize: "0.95rem",
                 lineHeight: "1.6",
                 fontFamily: "'Inter', 'Roboto', 'Helvetica', 'Arial', sans-serif",
-                color: isDark ? "#e0e0e0" : "#374151",
-                background: isDark ? "#1a1a2e" : "#f9fafb",
+                
+                backgroundColor:  "background.paper",
                 border: `1px solid ${isDark ? "#3f3f5e" : "#d1d5db"}`,
                 borderRadius: "8px",
                 resize: "none",
@@ -305,15 +304,15 @@ const ProductModal = ({
                 whiteSpace: "pre-wrap",
                 overflow: "hidden",
                 "&::placeholder": {
-                  color: isDark ? "#6b7280" : "#9ca3af",
+                  color: isDark ? "#ffffffff" : "#f4f4f4ff",
                   opacity: 1,
                 },
                 "&:hover": {
-                  background: isDark ? "#232439" : "#f3f4f6",
+                  background:  "background.paper",
                   borderColor: isDark ? "#4f4f6e" : "#9ca3af",
                 },
                 "&:focus": {
-                  background: isDark ? "#2a2a3e" : "#ffffff",
+                  background:  "background.paper",
                   borderColor: modalColor,
                   borderWidth: "2px",
                   padding: "13px", // Ajuste para compensar el borde más grueso
@@ -325,7 +324,7 @@ const ProductModal = ({
               sx={{
                 mt: 0.5,
                 display: "block",
-                color: isDark ? "#9ca3af" : "#6b7280",
+              
                 textAlign: "right",
               }}
             >
