@@ -69,6 +69,7 @@
   width: 100%;
   height: 100%;
   object-fit: cover; /* Llena todo el espacio sin dejar blancos */
+  object-position: center; /* Igual que RankingPro */
   transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
   z-index: 1;
@@ -265,5 +266,30 @@
 @supports not (aspect-ratio: 1) {
   .product-image-container-v3 {
     height: var(--pc-image-max-h);
+  }
+}
+
+/* Solo responsiva de imagen (igual que RankingPro) */
+@media (max-width: 768px) {
+  .product-image-container-v3 {
+    height: 240px; /* igual a RankingPro, evita tarjeta demasiado alta */
+  }
+  .product-image-v3 {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .product-image-container-v3 {
+    height: 220px; /* igual a RankingPro, menos elongación */
+  }
+  .product-image-v3 {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
   }
 }
