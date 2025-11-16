@@ -7,7 +7,7 @@ class LoadingView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color.fromARGB(255, 247, 246, 246),
+      backgroundColor: const Color(0xFFF8F8F8),
       body: Center(
         child: Column(
           mainAxisSize: MainAxisSize.min, // Para que no ocupe toda la pantalla

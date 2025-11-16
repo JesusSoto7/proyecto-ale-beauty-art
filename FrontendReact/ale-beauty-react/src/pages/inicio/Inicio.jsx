@@ -17,6 +17,7 @@ import { useProductRatings } from './hooks/useProductsRating.js';
 import { useCartActions } from './hooks/useCartActions';
 import { useFavoriteActions } from './hooks/useFavoriteActions';
 import ProductCard from '../../components/ProductCard.jsx';
+import Carousel from 'react-bootstrap/Carousel';
 
 function Inicio() {
   const { lang } = useParams();
@@ -33,7 +34,8 @@ function Inicio() {
     newProducts, 
     cart, 
     setCart, 
-    loading 
+    loading,
+    carousel
   } = useHomeData(token, addAlert);
 
   const { 
@@ -98,6 +100,26 @@ function Inicio() {
 
   return (
     <div>
+
+      {/* banner */}
+      {loading ? (
+        <Skeleton sx={{ bgcolor: 'grey.800' }} variant="rectangular" width={"100%"} height={350} />
+      ) : carousel.length > 0 ? (
+        <Carousel interval={3000} className="mb-0">
+          {carousel.map((img, idx) => (
+            <Carousel.Item key={idx} sx={{ marginTop: "70px"}}>
+              <img
+                className="d-block w-100"
+                src={img}
+                alt={`${t('home.slide')} ${idx + 1}`}
+                style={{ height: "450px", objectFit: "cover" }}
+              />
+            </Carousel.Item>
+          ))}
+        </Carousel>
+
+      ) : console.log(carousel.length)}
+
       {/* Sección Novedades Maquillaje */}
       <section className="mt-5">
         <h2 className="mb-4">{t('home.newMakeup')}</h2>
@@ -256,7 +278,7 @@ function Inicio() {
       </section>
 
       <FloatingChat />
-      <BannerProduct products={products} productRatings={productRatings}/>
+      {/* <BannerProduct products={products} productRatings={productRatings}/> */}
       <RotatingBanner />
       
       <h2 className="mb-4">Productos mejor valorados</h2>

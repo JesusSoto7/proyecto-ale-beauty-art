@@ -1,6 +1,7 @@
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:ale_beauty_art_app/core/http/custom_http_client.dart';
 
 class MercadoPagoService {
   final String? publicKey = dotenv.env['MERCADOPAGO_PUBLIC_KEY'];
@@ -57,6 +58,7 @@ class MercadoPagoService {
   }
 
   Future<Map<String, dynamic>> payWithBackend({
+    required String jwt,
     required String token,
     required double transaction_amount,
     required String paymentMethodId,
@@ -76,9 +78,14 @@ class MercadoPagoService {
 
     final url = Uri.parse("$backendUrl/payments/mobile_create");
 
-    final response = await http.post(
+    // Usa el cliente unificado para tolerar certificados en dev y añadir headers coherentes
+    final client = await CustomHttpClient.client;
+    final response = await client.post(
       url,
-      headers: {"Content-Type": "application/json"},
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": 'Bearer $jwt',
+      },
       body: jsonEncode({
         "transaction_amount": transaction_amount.toInt(),
         "token": token,
@@ -176,7 +183,8 @@ class MercadoPagoService {
       throw ArgumentError('Debes enviar codigo o paymentMethodId');
     }
     final uri = Uri.parse('$backendUrl/orders/$orderId/set_payment_method');
-    final res = await http.patch(
+    final client = await CustomHttpClient.client;
+    final res = await client.patch(
       uri,
       headers: {
         'Content-Type': 'application/json',

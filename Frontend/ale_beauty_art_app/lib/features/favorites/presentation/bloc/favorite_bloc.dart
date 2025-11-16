@@ -3,7 +3,7 @@ import 'package:ale_beauty_art_app/models/favorite.dart';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:meta/meta.dart';
-import 'package:http/http.dart' as http;
+import 'package:ale_beauty_art_app/core/http/custom_http_client.dart';
 
 part 'favorite_event.dart';
 part 'favorite_state.dart';
@@ -25,7 +25,8 @@ class FavoriteBloc extends Bloc<FavoriteEvent, FavoriteState> {
       if (state is FavoriteSuccess) {
         final favorites = (state as FavoriteSuccess).favorites;
         for (var fav in favorites) {
-          await http.delete(
+          final client = await CustomHttpClient.client;
+          await client.delete(
             Uri.parse('$apiUrl/favorites/${fav.id}'),
             headers: {
               'Content-Type': 'application/json',
@@ -40,7 +41,8 @@ class FavoriteBloc extends Bloc<FavoriteEvent, FavoriteState> {
       if (state is FavoriteSuccess) {
         final favorites = (state as FavoriteSuccess).favorites;
         for (var fav in favorites) {
-          await http.post(
+          final client = await CustomHttpClient.client;
+          await client.post(
             Uri.parse('$apiUrl/cart/add_product'),
             headers: {
               'Content-Type': 'application/json',
@@ -57,7 +59,8 @@ class FavoriteBloc extends Bloc<FavoriteEvent, FavoriteState> {
       LoadFavorites event, Emitter<FavoriteState> emit) async {
     emit(FavoriteLoading());
     try {
-      final response = await http.get(
+      final client = await CustomHttpClient.client;
+      final response = await client.get(
         Uri.parse('$apiUrl/favorites'),
         headers: {
           'Content-Type': 'application/json',
@@ -79,7 +82,8 @@ class FavoriteBloc extends Bloc<FavoriteEvent, FavoriteState> {
   Future<void> _onAddFavorite(
       AddFavorite event, Emitter<FavoriteState> emit) async {
     try {
-      await http.post(
+      final client = await CustomHttpClient.client;
+      await client.post(
         Uri.parse('$apiUrl/favorites'),
         headers: {
           'Content-Type': 'application/json',
@@ -96,7 +100,8 @@ class FavoriteBloc extends Bloc<FavoriteEvent, FavoriteState> {
   Future<void> _onRemoveFavorite(
       RemoveFavorite event, Emitter<FavoriteState> emit) async {
     try {
-      await http.delete(
+      final client = await CustomHttpClient.client;
+      await client.delete(
         Uri.parse('$apiUrl/favorites/${event.productId}'),
         headers: {
           'Content-Type': 'application/json',

@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ale_beauty_art_app/features/chat_ia/bloc/chat_ia_bloc.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class ChatIAWidget extends StatefulWidget {
   const ChatIAWidget({super.key});
@@ -75,7 +76,9 @@ class _ChatIAWidgetState extends State<ChatIAWidget>
       }
     } catch (e) {
       if (mounted) {
-        context.read<ChatIaBloc>().add(AddAIMessage('Ocurrió un error: $e'));
+    context
+      .read<ChatIaBloc>()
+      .add(AddAIMessage('${'chat.error_prefix'.tr()}: $e'));
         setState(() => loading = false);
       }
     }
@@ -156,7 +159,9 @@ class _ChatIAWidgetState extends State<ChatIAWidget>
                               ),
                               const SizedBox(width: 6),
                               Text(
-                                loading ? 'Escribiendo...' : 'En línea',
+                                loading
+                                    ? 'chat.status_typing'.tr()
+                                    : 'chat.status_online'.tr(),
                                 style: TextStyle(
                                   color: Colors.white.withOpacity(0.9),
                                   fontSize: 12,
@@ -215,10 +220,10 @@ class _ChatIAWidgetState extends State<ChatIAWidget>
                       itemCount: messages.length + (loading ? 1 : 0),
                       itemBuilder: (context, idx) {
                         if (loading && idx == messages.length) {
-                          return const Align(
+                          return Align(
                             alignment: Alignment.centerLeft,
                             child: ChatBubble(
-                              text: "Amélie está pensando...",
+                              text: 'chat.thinking'.tr(),
                               fromUser: false,
                               isLoading: true,
                             ),
@@ -284,7 +289,7 @@ class _ChatIAWidgetState extends State<ChatIAWidget>
                             color: Colors.black87,
                           ),
                           decoration: InputDecoration(
-                            hintText: "Pregúntame lo que quieras...",
+                            hintText: 'chat.input_hint'.tr(),
                             hintStyle: TextStyle(
                               color: Colors.grey[500],
                               fontSize: 15,
@@ -389,9 +394,9 @@ class _ChatIAWidgetState extends State<ChatIAWidget>
             ),
           ),
           const SizedBox(height: 24),
-          const Text(
-            '¡Hola! Soy Amélie',
-            style: TextStyle(
+          Text(
+            'chat.empty_title'.tr(),
+            style: const TextStyle(
               fontSize: 24,
               fontWeight: FontWeight.bold,
               color: Colors.black87,
@@ -399,7 +404,7 @@ class _ChatIAWidgetState extends State<ChatIAWidget>
           ),
           const SizedBox(height: 12),
           Text(
-            'Tu asistente de belleza con IA',
+            'chat.empty_subtitle'.tr(),
             style: TextStyle(
               fontSize: 16,
               color: Colors.grey[600],
@@ -415,23 +420,23 @@ class _ChatIAWidgetState extends State<ChatIAWidget>
               alignment: WrapAlignment.center,
               children: [
                 _SuggestionChip(
-                  label: '¿Qué productos tienes?',
+                  label: 'chat.suggestions.products'.tr(),
                   onTap: () {
-                    _controller.text = '¿Qué productos tienes?';
+                    _controller.text = 'chat.suggestions.products'.tr();
                     enviarPregunta();
                   },
                 ),
                 _SuggestionChip(
-                  label: 'Recomiéndame un producto',
+                  label: 'chat.suggestions.recommend'.tr(),
                   onTap: () {
-                    _controller.text = 'Recomiéndame un producto';
+                    _controller.text = 'chat.suggestions.recommend'.tr();
                     enviarPregunta();
                   },
                 ),
                 _SuggestionChip(
-                  label: '¿Tienen descuentos?',
+                  label: 'chat.suggestions.discounts'.tr(),
                   onTap: () {
-                    _controller.text = '¿Tienen descuentos?';
+                    _controller.text = 'chat.suggestions.discounts'.tr();
                     enviarPregunta();
                   },
                 ),

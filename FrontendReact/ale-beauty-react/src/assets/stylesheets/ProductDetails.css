@@ -1,0 +1,19 @@
+.carousel-container .carousel-items{
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+
+@media (max-width: 760px) {
+    .product-container{
+        grid-template-columns: none !important;
+    }
+    .product-image {
+        /* width: 100% !important; */
+        max-width: none !important;
+    }
+    
+    .actions{
+        align-self: flex-start !important;
+    }
+}

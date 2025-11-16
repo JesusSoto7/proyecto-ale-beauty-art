@@ -26,6 +26,7 @@ import CreateDiscount from './page/home/CreateDiscount';
 import UserProfile from "./components/dashComponents/userPerfil.jsx";
 import { isAuthenticated, isAdmin } from './services/authService';
 import AuthGate from './components/auth/AuthGate.jsx';
+import UserFullPerfil from './components/dashComponents/UserFullPerfil';
 import Orders from './page/home/Orders.jsx';
 
 function Wrapper() {
@@ -104,6 +105,7 @@ function App() {
               <Route path="categories/:id" element={<CategoryProducts />} /> 
               <Route path="carousel" element={<Carousel />} />
               <Route path="usuarios" element={<GestionUsuarios />} />
+              <Route path="user-full-perfil/:id" element={<UserFullPerfil />} />
               <Route path="notificaciones" element={<Notificationes />} />
               <Route path="crear_descuento" element={<CreateDiscount />} />
               <Route path="user-profile" element={<UserProfile />} />

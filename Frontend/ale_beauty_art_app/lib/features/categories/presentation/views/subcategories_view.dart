@@ -1,12 +1,16 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:easy_localization/easy_localization.dart';
 import '../../../../models/product.dart';
 import '../../../../models/subcategory.dart';
 import '../../../../core/http/custom_http_client.dart';
-import '../../../products/presentation/views/products_by_category_view.dart';
+import '../../../../core/views/loading_view.dart';
+import '../../../../core/views/failure_view.dart';
+import '../../../../models/sub_category_item.dart';
+import '../widgets/sub_category_card.dart';
 
-class SubCategoriesView extends StatelessWidget {
+class SubCategoriesView extends StatefulWidget {
   final int categoryId;
   final String categoryName;
   final List<Product> allProductsInCategory;
@@ -19,9 +23,20 @@ class SubCategoriesView extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
-    final future = _fetchSubCategories(categoryId);
+  State<SubCategoriesView> createState() => _SubCategoriesViewState();
+}
 
+class _SubCategoriesViewState extends State<SubCategoriesView> {
+  late Future<List<SubCategory>> _future;
+
+  @override
+  void initState() {
+    super.initState();
+    _future = _fetchSubCategories(widget.categoryId);
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF8F8F8),
       appBar: PreferredSize(
@@ -54,26 +69,12 @@ class SubCategoriesView extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
-                  categoryName,
+                  widget.categoryName,
                   style: const TextStyle(
                     color: Colors.black87,
                     fontWeight: FontWeight.w600,
                     fontSize: 18,
                   ),
-                ),
-                const SizedBox(height: 2),
-                FutureBuilder<List<SubCategory>>(
-                  future: future,
-                  builder: (context, snap) {
-                    final count = (snap.data ?? []).length;
-                    final label = count == 0
-                        ? 'Sin subcategorías'
-                        : '$count ${count == 1 ? 'subcategoría' : 'subcategorías'}';
-                    return Text(
-                      label,
-                      style: TextStyle(color: Colors.grey[600], fontSize: 12),
-                    );
-                  },
                 ),
               ],
             ),
@@ -81,44 +82,17 @@ class SubCategoriesView extends StatelessWidget {
         ),
       ),
       body: FutureBuilder<List<SubCategory>>(
-        future: future,
+        future: _future,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
+            return const LoadingView();
           }
           if (snapshot.hasError) {
-            return _emptyState();
+            return const FailureView();
           }
+            
           final subs = snapshot.data ?? [];
-          // Mapear a items con conteo de productos y preview
-          final items = subs.map((sc) {
-            final products = allProductsInCategory
-                .where((p) => p.subCategoryId == sc.id)
-                .toList();
-            String previewImage = '';
-            if (sc.imagen.isNotEmpty) {
-              previewImage = sc.imagen;
-            } else if (products.any((p) => (p.subCategoryImagenUrl ?? '').isNotEmpty)) {
-              previewImage = products
-                      .firstWhere((p) => (p.subCategoryImagenUrl ?? '').isNotEmpty)
-                      .subCategoryImagenUrl ??
-                  '';
-            } else if (products.any((p) => (p.imagenUrl ?? '').isNotEmpty)) {
-              previewImage = products
-                      .firstWhere((p) => (p.imagenUrl ?? '').isNotEmpty)
-                      .imagenUrl ??
-                  '';
-            }
-
-            return _SubCategoryItem(
-              id: sc.id,
-              name: sc.nombre,
-              count: products.length,
-              previewImage: previewImage,
-              products: products,
-            );
-          }).toList()
-            ..sort((a, b) => a.name.toLowerCase().compareTo(b.name.toLowerCase()));
+          final items = _mapToItems(subs);
 
           if (items.isEmpty) return _emptyState();
 
@@ -135,13 +109,44 @@ class SubCategoriesView extends StatelessWidget {
               ),
               itemBuilder: (context, index) {
                 final item = items[index];
-                return _SubCategoryCard(item: item);
+                return SubCategoryCard(item: item);
               },
             ),
           );
         },
       ),
     );
+  }
+
+  List<SubCategoryItem> _mapToItems(List<SubCategory> subs) {
+    return subs.map((sc) {
+      final products = widget.allProductsInCategory
+          .where((p) => p.subCategoryId == sc.id)
+          .toList();
+      String previewImage = '';
+      if (sc.imagen.isNotEmpty) {
+        previewImage = sc.imagen;
+      } else if (products.any((p) => (p.subCategoryImagenUrl ?? '').isNotEmpty)) {
+        previewImage = products
+                .firstWhere((p) => (p.subCategoryImagenUrl ?? '').isNotEmpty)
+                .subCategoryImagenUrl ??
+            '';
+      } else if (products.any((p) => (p.imagenUrl ?? '').isNotEmpty)) {
+        previewImage = products
+                .firstWhere((p) => (p.imagenUrl ?? '').isNotEmpty)
+                .imagenUrl ??
+            '';
+      }
+
+      return SubCategoryItem(
+        id: sc.id,
+        name: sc.nombre,
+        count: products.length,
+        previewImage: previewImage,
+        products: products,
+      );
+    }).toList()
+      ..sort((a, b) => a.name.toLowerCase().compareTo(b.name.toLowerCase()));
   }
 
   Future<List<SubCategory>> _fetchSubCategories(int categoryId) async {
@@ -178,105 +183,17 @@ class SubCategoriesView extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 16),
-          const Text(
-            'No hay subcategorías',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+          Text(
+            'subcategories.empty_title'.tr(),
+            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
           ),
           const SizedBox(height: 8),
           Text(
-            'Aún no hay subcategorías disponibles\npara esta categoría',
+            'subcategories.empty_subtitle'.tr(),
             textAlign: TextAlign.center,
             style: TextStyle(color: Colors.grey[600]),
           ),
         ],
-      ),
-    );
-  }
-}
-
-class _SubCategoryItem {
-  final int id;
-  final String name;
-  final int count;
-  final String previewImage;
-  final List<Product> products;
-  _SubCategoryItem({
-    required this.id,
-    required this.name,
-    required this.count,
-    required this.previewImage,
-    required this.products,
-  });
-}
-
-class _SubCategoryCard extends StatelessWidget {
-  final _SubCategoryItem item;
-  const _SubCategoryCard({required this.item});
-
-  @override
-  Widget build(BuildContext context) {
-    return InkWell(
-      onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (_) => ProductsByCategoryView(
-              categoryId: item.id, // reutilizamos como id de subcategoría
-              categoryName: item.name,
-              products: item.products,
-            ),
-          ),
-        );
-      },
-      borderRadius: BorderRadius.circular(16),
-      child: Container(
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(16),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.06),
-              blurRadius: 10,
-              offset: const Offset(0, 4),
-            ),
-          ],
-        ),
-        padding: const EdgeInsets.all(12),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            CircleAvatar(
-              radius: 48,
-              backgroundColor: Colors.pink.shade50,
-              backgroundImage: item.previewImage.isNotEmpty
-                  ? NetworkImage(item.previewImage)
-                  : null,
-              child: item.previewImage.isEmpty
-                  ? const Text(
-                      '💄',
-                      style: TextStyle(fontSize: 30),
-                    )
-                  : null,
-            ),
-            const SizedBox(height: 10),
-            Text(
-              item.name,
-              textAlign: TextAlign.center,
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-              style: const TextStyle(
-                fontSize: 15,
-                fontWeight: FontWeight.w700,
-                color: Color(0xFF374151),
-              ),
-            ),
-            const SizedBox(height: 4),
-            Text(
-              '${item.count} ${item.count == 1 ? 'producto' : 'productos'}',
-              style: TextStyle(color: Colors.grey[600], fontSize: 12),
-            ),
-          ],
-        ),
       ),
     );
   }

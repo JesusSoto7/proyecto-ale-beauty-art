@@ -1,8 +1,9 @@
 import React from "react";
 import "../../assets/stylesheets/UserPerfileHome.css";
 import { useEffect, useState } from "react";
-import profilePic from "../../assets/images/user_default.svg";
+import profilePic from "../../assets/images/user_default.png";
 import EditIcon from '@mui/icons-material/Edit';
+import { FaStar } from "react-icons/fa";
 import SwipeableDrawer from "@mui/material/SwipeableDrawer";
 import Accordion from "./Accordion";
 import { DataGrid } from "@mui/x-data-grid";
@@ -156,33 +157,77 @@ function UserProfile() {
         ),
         },
         {
-        title: "Reviews escritas",
+        title: `Reviews escritas (${userReviews.length})`,
         content: (
-            <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
-            {userReviews.length > 0 ? (
-                userReviews.map((review) => (
-                <div
-                    key={review.id}
-                    style={{
-                    borderRadius: "8px",
-                    padding: "10px 15px",
-                    background: "#161b22",
-                    display: "flex",
-                    justifyContent: "space-around",
-                    alignItems: "center",
-                    }}
-                >
-                    <h4>{review.product.nombre_producto}</h4>
-                    <p style={{ margin: "5px 0" }}>{review.comentario}</p>
-                    <p style={{ fontSize: "0.9rem", color: "#777" }}>
-                    ⭐ {review.rating} —{" "}
-                    {new Date(review.created_at).toLocaleDateString()}
-                    </p>
-                </div>
-                ))
-            ) : (
-                <p>No has escrito reseñas aún.</p>
-            )}
+            <div style={{ display: "flex", flexDirection: "column", gap: "15px" }}>
+                {userReviews.length > 0 ? (
+                    userReviews.map((review) => (
+                    <div
+                        key={review.id}
+                        style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        background: "#fff",
+                        borderRadius: "10px",
+                        padding: "15px 20px",
+                        boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
+                        }}
+                    >
+                        {/* Encabezado con avatar, nombre y fecha */}
+                        <div
+                        style={{
+                            display: "flex",
+                            justifyContent: "space-between",
+                            alignItems: "center",
+                        }}
+                        >
+                        <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                            <div
+                            style={{
+                                width: "40px",
+                                height: "40px",
+                                borderRadius: "50%",
+                                background: "#ddd",
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                fontWeight: "bold",
+                                color: "#555",
+                            }}
+                            >
+                            {user?.nombre?.[0]?.toUpperCase() || "?"}
+                            </div>
+                            <div>
+                                <strong style={{ display: "flex", fontSize: "1rem", justifyContent: "start" }}>
+                                    {user?.nombre || "Usuario"}
+                                </strong>
+                                <span style={{ fontSize: "0.8rem", color: "#777" }}>
+                                    {new Date(review.created_at).toLocaleDateString("es-ES", {
+                                    day: "2-digit",
+                                    month: "long",
+                                    year: "numeric",
+                                    })}
+                                </span>
+                            </div>
+                        </div>
+
+                        {/* Estrellas */}
+                        <div style={{ display: "flex", color: "#e91e63" }}>
+                            {[...Array(5)].map((_, i) => (
+                            <FaStar key={i} size={18} color={i < review.rating ? "#e91e63" : "#ccc"} />
+                            ))}
+                        </div>
+                        </div>
+
+                        {/* Comentario */}
+                        <p style={{ marginTop: "10px", color: "#333", fontSize: "0.95rem" }}>
+                        {review.comentario}
+                        </p>
+                    </div>
+                    ))
+                ) : (
+                    <p>No has escrito reseñas aún.</p>
+                )}
             </div>
         ),
         },
@@ -437,9 +482,9 @@ function UserProfile() {
                         PaperProps={{
                         sx: {
                             // backgroundColor: "#161b22",
-                            color: "#c9d1d9",
+                            color: "#333b4d",
                             padding: "20px",
-                            background: "#161b22"
+                            background: "#ffffffff"
                         },
                         }}
                     >
@@ -461,7 +506,7 @@ function UserProfile() {
                             }
                             fullWidth
                             InputLabelProps={{ style: { color: "#8b949e" } }}
-                            InputProps={{ style: { color: "#c9d1d9" } }}
+                            InputProps={{ style: { color: "#a3a3a3" } }}
                         />
 
                         <TextField
@@ -473,7 +518,7 @@ function UserProfile() {
                             }
                             fullWidth
                             InputLabelProps={{ style: { color: "#8b949e" } }}
-                            InputProps={{ style: { color: "#c9d1d9" } }}
+                            InputProps={{ style: { color: "#a3a3a3" } }}
                         />
 
                         <TextField
@@ -485,7 +530,7 @@ function UserProfile() {
                             }
                             fullWidth
                             InputLabelProps={{ style: { color: "#8b949e" } }}
-                            InputProps={{ style: { color: "#c9d1d9" } }}
+                            InputProps={{ style: { color: "#a3a3a3" } }}
                         />
 
                         <TextField
@@ -498,7 +543,7 @@ function UserProfile() {
                             }
                             fullWidth
                             InputLabelProps={{ style: { color: "#8b949e" } }}
-                            InputProps={{ style: { color: "#c9d1d9" } }}
+                            InputProps={{ style: { color: "#a3a3a3" } }}
                         />
 
                         <Button
@@ -509,8 +554,8 @@ function UserProfile() {
                             }}
                             sx={{
                             mt: 2,
-                            backgroundColor: "#238636",
-                            "&:hover": { backgroundColor: "#2ea043" },
+                            backgroundColor: "#202020",
+                            "&:hover": { backgroundColor: "#ed3c76", borderColor: "#ed3c76" },
                             color: "#fff",
                             borderRadius: "8px",
                             }}
@@ -543,7 +588,7 @@ function UserProfile() {
               <span>Mar 2017 - Jan 2018</span>
             </div>
             {user.roles?.includes("admin") ? (
-                <div id="role-user" className="exp-card" style={{background: "linear-gradient(90deg,rgba(36, 42, 50, 1) 35%, rgba(56, 75, 68, 1) 50%, rgba(167, 255, 167, 1) 100%)"}}>
+                <div id="role-user" className="exp-card" style={{background: "linear-gradient(90deg, #ededed 35%, #e3e3e3 50%, rgba(167, 255, 167, 1) 100%)"}}>
                     <div>
                         <h3>Tipo de usuario</h3>
                         <p>Admin</p>

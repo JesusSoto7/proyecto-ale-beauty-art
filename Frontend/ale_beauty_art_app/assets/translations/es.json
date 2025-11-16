@@ -34,7 +34,23 @@
     "filters": "Filtros",
     "sort": "Ordenar",
     "empty_title": "No hay productos",
-    "empty_subtitle": "No se encontraron productos\nen esta categoría"
+    "empty_subtitle": "No se encontraron productos\nen esta categoría",
+    "sort_options": {
+      "price_asc": "Precio: menor a mayor",
+      "price_desc": "Precio: mayor a menor",
+      "discount_desc": "Mayor descuento",
+      "clear": "Quitar orden"
+    }
+  ,
+    "filter_panel": {
+      "categories_title": "Categorías",
+      "subcategories_title": "Subcategorías",
+      "show_all": "Mostrar todas",
+      "discount_only": "Solo con descuento",
+      "price_title": "Precio",
+      "price_min": "Mín",
+      "price_max": "Máx"
+    }
   },
   "home": {
     "popular_products": "Productos populares"
@@ -232,5 +248,27 @@
     "load_error": "Error al cargar notificaciones",
     "empty_title": "No tienes notificaciones",
     "empty_subtitle": "Cuando recibas notificaciones\naparecerán aquí"
-}
+  },
+  "chat": {
+    "status_typing": "Escribiendo...",
+    "status_online": "En línea",
+    "input_hint": "Pregúntame lo que quieras...",
+    "empty_title": "¡Hola! Soy Amélie",
+    "empty_subtitle": "Tu asistente de belleza con IA",
+    "thinking": "Amélie está pensando...",
+    "error_prefix": "Ocurrió un error",
+    "suggestions": {
+      "products": "¿Qué productos tienes?",
+      "recommend": "Recomiéndame un producto",
+      "discounts": "¿Tienen descuentos?"
+    }
+  },
+  "failure": {
+    "title": "¡Ups! Algo salió mal.",
+    "subtitle": "Por favor, intenta nuevamente más tarde."
+  },
+  "subcategories": {
+    "empty_title": "No hay subcategorías",
+    "empty_subtitle": "Aún no hay subcategorías disponibles\npara esta categoría"
+  }
 }

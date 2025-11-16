@@ -51,7 +51,7 @@ dependencies:
   flutter_dotenv: ^5.1.0
   flutter_secure_storage: ^9.0.0
   flutter_markdown: ^0.6.17
-  uni_links3: ^0.5.3
+  app_links: ^6.3.2
   
 flutter_native_splash:
   android: true

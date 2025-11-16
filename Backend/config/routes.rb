@@ -109,7 +109,7 @@ Rails.application.routes.draw do
           end
         end
       end
-      resources :users, only: [:index, :update, :destroy]
+      resources :users, only: [:index, :show, :update, :destroy]
       get "/me", to: "users#me"
       patch 'me', to: 'users#update' 
       get "/count", to: "users#count"

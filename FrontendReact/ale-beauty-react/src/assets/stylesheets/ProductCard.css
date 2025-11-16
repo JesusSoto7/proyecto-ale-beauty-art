@@ -68,8 +68,7 @@
 .product-image-v3 {
   width: 100%;
   height: 100%;
-  object-fit: cover; /* Llena todo el espacio sin dejar blancos */
-  object-position: center; /* Igual que RankingPro */
+  object-fit: cover;
   transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
   z-index: 1;

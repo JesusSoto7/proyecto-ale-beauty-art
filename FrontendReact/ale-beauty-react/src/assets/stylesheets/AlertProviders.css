@@ -6,15 +6,16 @@
   width: fit-content;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 0px;
+  min-height: 48px;
   z-index: 9999;
 }
 
 .alert-icon{ 
-    background-color: #4138382b;
+    /* background-color: #4138382b;
     width: 45px;
-    height: 45px;
-    border-radius: 5px;
+    height: 45px; */
+    /* border-radius: 5px; */
     margin-right: 10px;
     display: flex;
     justify-content: center;
