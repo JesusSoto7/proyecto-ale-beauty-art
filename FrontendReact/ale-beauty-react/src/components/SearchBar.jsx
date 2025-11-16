@@ -39,22 +39,30 @@ const Search = styled("div")(({ theme }) => ({
   },
   marginLeft: theme.spacing(2),
   transition: "all 0.3s ease",
-  width: "220px", // ✅ Más ancho por defecto (antes: 160px)
+  width: "min(220px, 100%)", // base limitado al contenedor
   [theme.breakpoints.up("sm")]: {
-    width: "280px", // ✅ Más ancho en tablets (antes: 200px)
+    width: "min(280px, 100%)",
   },
   [theme.breakpoints.up("md")]: {
-    width: "350px", // ✅ Más ancho en escritorio
+    width: "min(340px, 100%)",
   },
   "&:focus-within": {
-    width: "350px", // ✅ Más ancho al enfocarse (antes: 260px)
+    width: "min(300px, 100%)",
     borderColor: "#ff4d94",
     boxShadow: "0 0 0 2px rgba(255, 77, 148, 0.1)",
     [theme.breakpoints.up("sm")]: {
-      width: "420px", // ✅ Más ancho al enfocarse en tablet (antes: 320px)
+      width: "min(340px, 100%)",
     },
     [theme.breakpoints.up("md")]: {
-      width: "500px", // ✅ Más ancho al enfocarse en escritorio
+      width: "min(460px, 100%)",
+    },
+  },
+  // Prevent expansion on very small screens
+  [theme.breakpoints.down("sm")]: {
+    width: "200px",
+    "&:focus-within": {
+      width: "200px",
+      boxShadow: "0 0 0 2px rgba(255, 77, 148, 0.1)",
     },
   },
 }));
@@ -87,6 +95,9 @@ export default function SearchBar() {
   const [productRatings, setProductRatings] = useState({});
   const debounceRef = useRef(null);
   const containerRef = useRef(null);
+  const searchBoxRef = useRef(null);
+  const [searchWidth, setSearchWidth] = useState(0);
+  const [viewportW, setViewportW] = useState(typeof window !== 'undefined' ? window.innerWidth : 0);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -108,6 +119,27 @@ export default function SearchBar() {
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
       document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, []);
+
+  // Observa el ancho real de la barra de búsqueda para alinear el dropdown exactamente debajo y centrado
+  useEffect(() => {
+    const el = searchBoxRef.current;
+    if (!el) return;
+    const measure = () => {
+      setSearchWidth(el.getBoundingClientRect().width);
+      setViewportW(window.innerWidth);
+    };
+    // Medición inicial
+    measure();
+    // ResizeObserver para cambios de ancho (por breakpoints o focus-within)
+    const ro = new ResizeObserver(() => measure());
+    ro.observe(el);
+    // También escuchar cambios de viewport
+    window.addEventListener('resize', measure);
+    return () => {
+      ro.disconnect();
+      window.removeEventListener('resize', measure);
     };
   }, []);
 
@@ -202,6 +234,22 @@ export default function SearchBar() {
 
   const handleSearchSubmit = (e) => e.preventDefault();
 
+  // Calcular ancho del dropdown para asegurar múltiples columnas en sm/md
+  let minDropdown = 0;
+  if (viewportW >= 1200) {
+    minDropdown = 800; // permite varias columnas grandes
+  } else if (viewportW >= 900) {
+    minDropdown = 600; // 3-4 columnas medianas
+  } else if (viewportW >= 600) {
+    minDropdown = 360; // al menos 2-3 columnas en sm
+  } else {
+    minDropdown = Math.min(viewportW * 0.95, searchWidth || viewportW * 0.9);
+  }
+  const dropdownWidth = Math.min(
+    Math.max(searchWidth || 0, minDropdown),
+    Math.min(viewportW - 24, 1000)
+  );
+
   return (
     <Box
       component="form"
@@ -214,60 +262,57 @@ export default function SearchBar() {
       }}
       ref={containerRef}
     >
-      <Search>
-        <SearchIconWrapper>
-          <SearchIcon sx={{ fontSize: "1.3rem" }} /> {/* ✅ Icono ligeramente más grande */}
-        </SearchIconWrapper>
-        <StyledInputBase
-          placeholder={t("header.searchPlaceholder")}
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-        />
-      </Search>
+      {/* Wrapper relativo para alinear el dropdown al centro del input */}
+      <Box sx={{ position: "relative", display: "inline-block", width: "100%" }} ref={searchBoxRef}>
+        <Search>
+          <SearchIconWrapper>
+            <SearchIcon sx={{ fontSize: "1.3rem" }} /> {/* ✅ Icono ligeramente más grande */}
+          </SearchIconWrapper>
+          <StyledInputBase
+            placeholder={t("header.searchPlaceholder")}
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+        </Search>
 
-      {/* Dropdown resultados */}
-      {(results.length > 0 || loading) && (
-        <Box
-          sx={{
-            position: "absolute",
-            top: "100%",
-            left: "50%",
-            transform: "translateX(-50%)",
-            mt: 1,
-            bgcolor: "white",
-            boxShadow: 3,
-            borderRadius: 2,
-            zIndex: 1300,
-            width: "90vw",
-            maxWidth: {
-              xs: "95vw",
-              sm: "600px",
-              md: "800px",
-              lg: "1000px"
-            },
-            p: 1.5,
-            maxHeight: "70vh",
-            overflowY: "auto",
-            "&::-webkit-scrollbar": {
-              width: "8px",
-            },
-            "&::-webkit-scrollbar-track": {
-              background: "#f1f1f1",
-              borderRadius: "4px",
-            },
-            "&::-webkit-scrollbar-thumb": {
-              background: "#888",
-              borderRadius: "4px",
-              "&:hover": {
-                background: "#555",
+        {/* Dropdown resultados */}
+        {(results.length > 0 || loading) && (
+          <Box
+            sx={{
+              position: "absolute",
+              top: "100%",
+              left: "50%",
+              transform: "translateX(-50%)",
+              mt: 1,
+              bgcolor: "white",
+              boxShadow: 3,
+              borderRadius: 2,
+              zIndex: 1300,
+              width: dropdownWidth ? `${dropdownWidth}px` : "90vw",
+              maxWidth: "95vw",
+              p: 1.5,
+              maxHeight: "70vh",
+              overflowY: "auto",
+              "&::-webkit-scrollbar": {
+                width: "8px",
               },
-            },
-          }}
-        >
-          {loading && <Box sx={{ p: 1 }}>{t("header.searching")}</Box>}
+              "&::-webkit-scrollbar-track": {
+                background: "#f1f1f1",
+                borderRadius: "4px",
+              },
+              "&::-webkit-scrollbar-thumb": {
+                background: "#888",
+                borderRadius: "4px",
+                "&:hover": {
+                  background: "#555",
+                },
+              },
+            }}
+          >
+            {loading && <Box sx={{ p: 1 }}>{t("header.searching")}</Box>}
 
-          {!loading && results.length > 0 && (
-            <>
+            {!loading && results.length > 0 && (
+              <>
               {/* 💻 Escritorio */}
               <Box
                 sx={{
@@ -645,10 +690,11 @@ export default function SearchBar() {
                   );
                 })}
               </Box>
-            </>
-          )}
-        </Box>
-      )}
+              </>
+            )}
+          </Box>
+        )}
+      </Box>
     </Box>
   );
 }

@@ -1,4 +1,4 @@
-import React, { forwardRef } from 'react';
+import React, { forwardRef, useEffect, useRef, useCallback, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Box, Typography, Skeleton } from '@mui/material';
 import { MdKeyboardArrowRight } from 'react-icons/md';
@@ -13,9 +13,48 @@ const CategoryNav = forwardRef(({
   t, 
   pinkTheme 
 }, ref) => {
+  const containerRef = useRef(null);
+  const touchFlagRef = useRef(false); // evita doble disparo touch+click
+  const sameCategory = useCallback((cat) => {
+    if (!cat || !hoveredNavCategory) return false;
+    return (hoveredNavCategory.id && hoveredNavCategory.id === cat.id) ||
+           (hoveredNavCategory.slug && hoveredNavCategory.slug === cat.slug);
+  }, [hoveredNavCategory]);
+
+  const openCategory = useCallback((cat) => {
+    if (!cat) return;
+    setHoveredNavCategory(cat);
+  }, [setHoveredNavCategory]);
+
+  const closeCategory = useCallback(() => {
+    setHoveredNavCategory(null);
+  }, [setHoveredNavCategory]);
+
+  const toggleCategory = useCallback((cat) => {
+    if (!cat) return;
+    if (sameCategory(cat)) closeCategory(); else openCategory(cat);
+  }, [sameCategory, closeCategory, openCategory]);
+
+  // Cierre al click / tap fuera del dropdown y del contenedor
+  useEffect(() => {
+    function handleOutside(e) {
+      if (!hoveredNavCategory) return;
+      const dropdown = document.querySelector('.nav-category-dropdown');
+      if (dropdown && dropdown.contains(e.target)) return;
+      if (containerRef.current && containerRef.current.contains(e.target)) return;
+      closeCategory();
+    }
+    document.addEventListener('pointerdown', handleOutside, { passive: true });
+    document.addEventListener('click', handleOutside, { passive: true });
+    return () => {
+      document.removeEventListener('pointerdown', handleOutside);
+      document.removeEventListener('click', handleOutside);
+    };
+  }, [hoveredNavCategory, closeCategory]);
+
   return (
     <Box 
-      ref={ref}
+      ref={(node) => { containerRef.current = node; if (typeof ref === 'function') ref(node); else if (ref) ref.current = node; }}
       sx={{ 
         backgroundColor: '#df6897ff',
         color: 'white',
@@ -71,20 +110,39 @@ const CategoryNav = forwardRef(({
           {categories.map((category) => {
             const categoryName = category?.nombre_categoria || category?.name || 'Categoría';
             const hasSubcategories = category.sub_categories && category.sub_categories.length > 0;
-            
             return (
               <Box
                 key={category.id || category.slug}
                 sx={{ position: 'relative', cursor: 'pointer', flexShrink: 0 }}
-                onMouseEnter={() => setHoveredNavCategory(hasSubcategories ? category : null)}
+                onMouseEnter={() => { if (hasSubcategories) openCategory(category); }}
                 onMouseLeave={() => {
+                  // Si el puntero sale del nombre y no entra al dropdown, cerrar
                   setTimeout(() => {
-                    if (!document.querySelector('.nav-category-dropdown:hover')) {
-                      setHoveredNavCategory(null);
+                    const dropdownHovered = document.querySelector('.nav-category-dropdown:hover');
+                    // Cerramos sólo si seguimos en la misma categoría y no estamos sobre el dropdown
+                    if (!dropdownHovered && sameCategory(category)) {
+                      closeCategory();
                     }
-                  }, 100);
+                  }, 120);
                 }}
-                onClick={() => !hasSubcategories && goToCategory(category)}
+                onTouchStart={() => {
+                  touchFlagRef.current = true;
+                  if (hasSubcategories) toggleCategory(category); else goToCategory(category);
+                }}
+                onClick={() => {
+                  if (touchFlagRef.current) { touchFlagRef.current = false; return; }
+                  if (hasSubcategories) toggleCategory(category); else goToCategory(category);
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    if (hasSubcategories) toggleCategory(category); else goToCategory(category);
+                  }
+                }}
+                role="button"
+                tabIndex={0}
+                aria-haspopup={hasSubcategories ? 'true' : 'false'}
+                aria-expanded={hasSubcategories ? sameCategory(category) : undefined}
               >
                 <Typography 
                   sx={{ 
@@ -124,9 +182,10 @@ const CategoryNav = forwardRef(({
                      hoveredNavCategory.sub_categories.length <= 4 ? '600px' : '800px',
             maxWidth: '90vw',
             width: 'auto',
+            animation: 'fadeScale 160ms ease-out',
           }}
-          onMouseEnter={() => setHoveredNavCategory(hoveredNavCategory)}
-          onMouseLeave={() => setHoveredNavCategory(null)}
+          onMouseEnter={() => openCategory(hoveredNavCategory)}
+          onMouseLeave={() => closeCategory()}
         >
           <Box sx={{
             backgroundColor: '#fff',
@@ -227,5 +286,13 @@ const CategoryNav = forwardRef(({
 });
 
 CategoryNav.displayName = 'CategoryNav';
+
+// Añade animación si no existe aún (evita duplicados)
+if (typeof document !== 'undefined' && !document.getElementById('nav-dropdown-anim')) {
+  const style = document.createElement('style');
+  style.id = 'nav-dropdown-anim';
+  style.innerHTML = `@keyframes fadeScale {0% {opacity:0; transform:translateX(-50%) scale(.95);}100% {opacity:1; transform:translateX(-50%) scale(1);}}`;
+  document.head.appendChild(style);
+}
 
 export default CategoryNav;

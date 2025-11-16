@@ -2,16 +2,16 @@ import React, { useState, useRef } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import logo from '../assets/images/ale_logo.jpg';
-import { BsHeart, BsCart4, BsBell } from "react-icons/bs";
+import { BsHeart, BsCart4, BsBell, BsGlobe } from "react-icons/bs";
 import { IoPersonCircleSharp } from "react-icons/io5";
 
 import AppBar from '@mui/material/AppBar';
-import { Box, Badge, Select, MenuItem, FormControl } from '@mui/material';
+import { Box, Badge, Select, MenuItem, FormControl, useMediaQuery } from '@mui/material';
 import Toolbar from '@mui/material/Toolbar';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import Menu from '@mui/material/Menu';
-import MoreIcon from '@mui/icons-material/MoreVert';
+import MenuIcon from '@mui/icons-material/Menu';
 
 import Modal from '@mui/joy/Modal';
 import ModalDialog from '@mui/joy/ModalDialog';
@@ -44,6 +44,43 @@ export default function Header({ loadFavorites }) {
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
   const token = localStorage.getItem('token');
+  // Responsive width queries for overflow management
+  const isMidRange = useMediaQuery('(min-width:900px) and (max-width:1419px)');
+  const isLarge = useMediaQuery('(min-width:1420px)');
+  // Breakpoints progresivos para ir sacando ítems del menú hamburguesa en móviles
+  // Ajustados para evitar saturación entre 601 y 844
+  const showLanguage = useMediaQuery('(min-width:520px)');
+  const showProfileIcon = useMediaQuery('(min-width:560px)');
+  const showUserName = useMediaQuery('(min-width:650px)');
+  const showCart = useMediaQuery('(min-width:700px)');
+  const showFavorites = useMediaQuery('(min-width:760px)');
+  const showNotifications = useMediaQuery('(min-width:820px)');
+  const allPromoted = showLanguage && showProfileIcon && showUserName && showCart && showFavorites && showNotifications;
+  // Media queries para ajustar título y barra de búsqueda evitando que oculten íconos/hamburguesa
+  const isLt360 = useMediaQuery('(max-width:359px)');
+  const isLt480 = useMediaQuery('(max-width:479px)');
+  const isLt600 = useMediaQuery('(max-width:599px)');
+  const isLt720 = useMediaQuery('(max-width:719px)');
+  const isLt845 = useMediaQuery('(max-width:844px)');
+  const isLt760 = useMediaQuery('(max-width:759px)');
+  const isLt800 = useMediaQuery('(max-width:799px)');
+  const isMdUp = useMediaQuery('(min-width:768px)');
+  const is800to845 = useMediaQuery('(min-width:800px) and (max-width:845px)');
+  let titleFontSize = '1.9rem';
+  if (isLt845) titleFontSize = '1.45rem';
+  if (isLt800) titleFontSize = '1.35rem';
+  if (isLt720) titleFontSize = '1.3rem';
+  if (isLt600) titleFontSize = '1.2rem';
+  if (isLt480) titleFontSize = '1.1rem';
+  if (isLt360) titleFontSize = '1.0rem';
+  let searchBarMaxWidth = '600px';
+  if (isLt845) searchBarMaxWidth = '340px';
+  if (is800to845) searchBarMaxWidth = '280px';
+  if (isLt800) searchBarMaxWidth = '300px';
+  if (isLt720) searchBarMaxWidth = '270px';
+  if (isLt600) searchBarMaxWidth = '240px';
+  if (isLt480) searchBarMaxWidth = '205px';
+  if (isLt360) searchBarMaxWidth = '180px';
   
   // Estados locales
   const [anchorEl, setAnchorEl] = useState(null);
@@ -143,6 +180,101 @@ export default function Header({ loadFavorites }) {
     </IconButton>
   );
 
+  // Menú móvil
+  const mobileMenuId = 'primary-search-account-menu-mobile';
+  const renderMobileMenu = (
+    <Menu
+      anchorEl={mobileMoreAnchorEl}
+      anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+      id={mobileMenuId}
+      keepMounted
+      transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+      open={isMobileMenuOpen}
+      onClose={() => setMobileMoreAnchorEl(null)}
+      className="mobile-menu"
+    >
+      {/* Perfil (solo si no salió al header) */}
+      {!(showProfileIcon || showUserName) && (
+        <MenuItem
+          component={Link}
+          to={user ? `/${lang}/perfil` : `/${lang}/login`}
+          onClick={() => setMobileMoreAnchorEl(null)}
+          className="mobile-menu-item"
+        >
+          <IoPersonCircleSharp />
+          {user ? t('header.profile','Perfil') : t('header.signIn','Iniciar sesión')}
+        </MenuItem>
+      )}
+
+      {/* Carrito */}
+      {!showCart && (
+        <MenuItem 
+          component={Link} 
+          to={`/${lang}/carrito`}
+          onClick={() => setMobileMoreAnchorEl(null)}
+          className="mobile-menu-item"
+        >
+          <BsCart4 />
+          {t('header.cart','Carrito')}
+          <Badge badgeContent={cartCount} color="error" sx={{ marginLeft: 'auto' }} className="mobile-menu-badge" />
+        </MenuItem>
+      )}
+
+      {/* Favoritos */}
+      {!showFavorites && (
+        <MenuItem 
+          onClick={() => {
+            setOpenModal(true);
+            setMobileMoreAnchorEl(null);
+          }}
+          className="mobile-menu-item"
+        >
+          <BsHeart />
+          {t('header.favorites','Favoritos')}
+        </MenuItem>
+      )}
+
+      {/* Idioma */}
+      {!showLanguage && (
+        <MenuItem className="mobile-menu-item">
+          <BsGlobe />
+          <FormControl size="small" sx={{ minWidth: 80, ml: 1 }}>
+            <Select
+              value={lang || 'es'}
+              onChange={(e) => {
+                setMobileMoreAnchorEl(null);
+                handleLanguageChange(e);
+              }}
+              sx={{
+                fontSize: '14px',
+                '& .MuiOutlinedInput-notchedOutline': { borderColor: 'transparent' },
+                '&:hover .MuiOutlinedInput-notchedOutline': { borderColor: pinkTheme.primary },
+              }}
+            >
+              <MenuItem value="es">🇪🇸 ES</MenuItem>
+              <MenuItem value="en">🇺🇸 EN</MenuItem>
+            </Select>
+          </FormControl>
+        </MenuItem>
+      )}
+
+      {/* Notificaciones */}
+      {!showNotifications && (
+        <MenuItem 
+          onClick={(e) => {
+            handleOpenNotificationsMenu(e);
+            setMobileMoreAnchorEl(null);
+          }}
+          className="mobile-menu-item"
+        >
+          <BsBell />
+          {t('header.notifications','Notificaciones')}
+          <Badge badgeContent={noLeidas} color="error" sx={{ marginLeft: 'auto' }} className="mobile-menu-badge" />
+        </MenuItem>
+      )}
+    </Menu>
+  );
+
   return (
     <>
       <Box sx={{ flexGrow: 1 }}>
@@ -160,13 +292,14 @@ export default function Header({ loadFavorites }) {
                 component={Link} 
                 to={`/${lang}/inicio`}
                 sx={{
-                  display: { xs: 'none', sm: 'block' },
+                  display: { xs: 'none', sm: (isLt800 ? 'none' : 'block'), md: 'block' },
                   textDecoration: 'none',
                   color: '#df6eacff',
                   fontWeight: 'bold',
-                  fontSize: '1.9rem',
+                  fontSize: titleFontSize,
                   letterSpacing: '0.5px',
                   transition: 'color 0.2s',
+                  mr: 1.2,
                   '&:hover': {
                     color: pinkTheme.primary
                   }
@@ -175,57 +308,68 @@ export default function Header({ loadFavorites }) {
                 Ale Beauty Art
               </Typography>
             </Box>
-
             {/* Barra de búsqueda */}
-            <Box sx={{ 
-              flex: 1, 
-              maxWidth: '600px', 
-              mx: 3, 
-              display: 'flex', 
-              justifyContent: 'center' 
-            }}>
+            <Box
+              className="search-bar-container"
+              sx={{ 
+                flex: 1, 
+                maxWidth: searchBarMaxWidth,
+                mx: 3, 
+                minWidth: 0,
+                flexShrink: 1,
+                display: 'flex', 
+                justifyContent: 'center',
+                pr: isLt800 ? 0.5 : 1,
+                pl: isLt800 ? 0.5 : 1
+              }}
+            >
               <SearchBar />
             </Box>
 
             {/* Íconos */}
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+            {/* Desktop / Mid-range icons. Some items hidden on mid-range to prevent overflow. */}
+            <Box sx={{ display: { xs: 'none', md: 'flex' }, alignItems: 'center', gap: 2 }}>
               {/* Selector de idioma */}
-              <FormControl size="small" sx={{ minWidth: 80 }}>
-                <Select
-                  value={lang || 'es'}
-                  onChange={handleLanguageChange}
-                  sx={{
-                    fontSize: '14px',
-                    '& .MuiOutlinedInput-notchedOutline': { borderColor: 'transparent' },
-                    '&:hover .MuiOutlinedInput-notchedOutline': { borderColor: pinkTheme.primary },
-                    '&.Mui-focused .MuiOutlinedInput-notchedOutline': { borderColor: pinkTheme.primary }
-                  }}
-                >
-                  <MenuItem value="es">🇪🇸 ES</MenuItem>
-                  <MenuItem value="en">🇺🇸 EN</MenuItem>
-                </Select>
-              </FormControl>
+              {isLarge && (
+                <FormControl size="small" sx={{ minWidth: 80 }}>
+                  <Select
+                    value={lang || 'es'}
+                    onChange={handleLanguageChange}
+                    sx={{
+                      fontSize: '14px',
+                      '& .MuiOutlinedInput-notchedOutline': { borderColor: 'transparent' },
+                      '&:hover .MuiOutlinedInput-notchedOutline': { borderColor: pinkTheme.primary },
+                      '&.Mui-focused .MuiOutlinedInput-notchedOutline': { borderColor: pinkTheme.primary }
+                    }}
+                  >
+                    <MenuItem value="es">🇪🇸 ES</MenuItem>
+                    <MenuItem value="en">🇺🇸 EN</MenuItem>
+                  </Select>
+                </FormControl>
+              )}
 
               {/* Perfil */}
               {perfilIcon}
 
               {/* Nombre */}
-              <Typography 
-                component={Link} 
-                to={user ? `/${lang}/perfil` : `/${lang}/login`}
-                sx={{ 
-                  color: 'black',
-                  textDecoration: 'none',
-                  fontWeight: 'bold',
-                  fontSize: '14px',
-                  display: { xs: 'none', sm: 'block' },
-                  transition: 'color 0.2s',
-                  '&:hover': { color: pinkTheme.primary },
-                  minWidth: '80px'
-                }}
-              >
-                {user ? user.nombre : 'Sign In'}
-              </Typography>
+              {isLarge && (
+                <Typography 
+                  component={Link} 
+                  to={user ? `/${lang}/perfil` : `/${lang}/login`}
+                  sx={{ 
+                    color: 'black',
+                    textDecoration: 'none',
+                    fontWeight: 'bold',
+                    fontSize: '14px',
+                    display: { xs: 'none', sm: 'block' },
+                    transition: 'color 0.2s',
+                    '&:hover': { color: pinkTheme.primary },
+                    minWidth: '80px'
+                  }}
+                >
+                  {user ? user.nombre : 'Sign In'}
+                </Typography>
+              )}
 
               {/* Carrito con optimistic count */}
               <IconButton
@@ -254,17 +398,19 @@ export default function Header({ loadFavorites }) {
               </IconButton>
 
               {/* Favoritos */}
-              <IconButton
-                onClick={() => setOpenModal(true)}
-                sx={{ color: "black", "&:hover": { color: pinkTheme.primary } }}
-              >
-                <BsHeart size={22} />
-              </IconButton>
+              {isLarge && (
+                <IconButton
+                  onClick={() => setOpenModal(true)}
+                  sx={{ color: "black", "&:hover": { color: pinkTheme.primary } }}
+                >
+                  <BsHeart size={22} />
+                </IconButton>
+              )}
 
               {/* Notificaciones */}
               <IconButton
                 sx={{ color: "black", "&:hover": { color: pinkTheme.primary }}}
-                onClick={handleOpenNotificationsMenu}
+                onClick={(e) => handleOpenNotificationsMenu(e)}
               >
                 <Badge
                   badgeContent={noLeidas}
@@ -298,12 +444,144 @@ export default function Header({ loadFavorites }) {
               />
             </Box>
 
-            {/* Menú móvil */}
-            <Box sx={{ display: { xs: 'flex', md: 'none' } }}>
-              <IconButton onClick={(e) => setMobileMoreAnchorEl(e.currentTarget)}>
-                <MoreIcon />
-              </IconButton>
+            {/* Íconos progresivos (móviles y md) con hamburguesa única */}
+            <Box sx={{ display: { xs: 'flex', md: (!isLarge && !allPromoted) ? 'flex' : 'none' }, alignItems: 'center', gap: 0.7, flexShrink: 0 }}>
+              {showLanguage && (
+                <FormControl size="small" sx={{ minWidth: isLt760 ? 50 : 62, ml: isLt760 ? 0.4 : 0.8 }}>
+                  <Select
+                    value={lang || 'es'}
+                    onChange={handleLanguageChange}
+                    sx={{
+                      fontSize: isLt760 ? '10.5px' : '11.5px',
+                      '& .MuiSelect-select': { padding: isLt760 ? '3px 22px 3px 7px' : '5px 24px 5px 9px' },
+                      '& .MuiOutlinedInput-notchedOutline': { borderColor: 'transparent' },
+                      '&:hover .MuiOutlinedInput-notchedOutline': { borderColor: pinkTheme.primary },
+                      '&.Mui-focused .MuiOutlinedInput-notchedOutline': { borderColor: pinkTheme.primary }
+                    }}
+                  >
+                    <MenuItem value="es">ES</MenuItem>
+                    <MenuItem value="en">EN</MenuItem>
+                  </Select>
+                </FormControl>
+              )}
+              {showProfileIcon && perfilIcon}
+              {showUserName && (
+                <Typography 
+                  component={Link} 
+                  to={user ? `/${lang}/perfil` : `/${lang}/login`}
+                  sx={{ 
+                    color: 'black',
+                    textDecoration: 'none',
+                    fontWeight: 'bold',
+                    fontSize: '12px',
+                    transition: 'color 0.2s',
+                    '&:hover': { color: pinkTheme.primary },
+                    maxWidth: '60px',
+                    whiteSpace: 'nowrap',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis'
+                  }}
+                >
+                  {user ? user.nombre : 'Sign In'}
+                </Typography>
+              )}
+              {showCart && (
+                <IconButton
+                  component={Link}
+                  to={`/${lang}/carrito`}
+                  sx={{ color: 'black', '&:hover': { color: pinkTheme.primary } }}
+                  size="small"
+                >
+                  <Badge
+                    badgeContent={cartCount}
+                    color="error"
+                    overlap="circular"
+                    sx={{
+                      '& .MuiBadge-badge': {
+                        backgroundColor: pinkTheme.primary,
+                        border: 'solid 1px white',
+                        fontSize: '0.55rem',
+                        height: '14px',
+                        minWidth: '14px',
+                        top: 3,
+                        right: 3,
+                      },
+                    }}
+                  >
+                    <BsCart4 size={20} />
+                  </Badge>
+                </IconButton>
+              )}
+              {showFavorites && (
+                <IconButton
+                  onClick={() => setOpenModal(true)}
+                  sx={{ color: 'black', '&:hover': { color: pinkTheme.primary } }}
+                  size="small"
+                >
+                  <BsHeart size={18} />
+                </IconButton>
+              )}
+              {showNotifications && (
+                <IconButton
+                  sx={{ color: 'black', '&:hover': { color: pinkTheme.primary } }}
+                  onClick={(e) => handleOpenNotificationsMenu(e)}
+                  size="small"
+                >
+                  <Badge
+                    badgeContent={noLeidas}
+                    color="error"
+                    overlap="circular"
+                    sx={{
+                      '& .MuiBadge-badge': {
+                        backgroundColor: pinkTheme.primary,
+                        border: 'solid 1px white',
+                        fontSize: '0.55rem',
+                        height: '14px',
+                        minWidth: '14px',
+                        top: 3,
+                        right: 3,
+                      },
+                    }}
+                  >
+                    <BsBell size={18} />
+                  </Badge>
+                </IconButton>
+              )}
+              {/* Desde 768px, si aún no se promueven notificaciones, mostrar el icono en lugar de la hamburguesa */}
+              {isMdUp && !showNotifications && (
+                <IconButton
+                  sx={{ color: 'black', '&:hover': { color: pinkTheme.primary } }}
+                  onClick={(e) => handleOpenNotificationsMenu(e)}
+                  size="small"
+                >
+                  <Badge
+                    badgeContent={noLeidas}
+                    color="error"
+                    overlap="circular"
+                    sx={{
+                      '& .MuiBadge-badge': {
+                        backgroundColor: pinkTheme.primary,
+                        border: 'solid 1px white',
+                        fontSize: '0.55rem',
+                        height: '14px',
+                        minWidth: '14px',
+                        top: 3,
+                        right: 3,
+                      },
+                    }}
+                  >
+                    <BsBell size={18} />
+                  </Badge>
+                </IconButton>
+              )}
+              {/* Hamburguesa sólo si faltan ítems por promover */}
+              {!allPromoted && !isMdUp && (
+                <IconButton aria-label="menu" onClick={(e) => setMobileMoreAnchorEl(e.currentTarget)} size="small">
+                  <MenuIcon />
+                </IconButton>
+              )}
             </Box>
+
           </Toolbar>
 
           {/* Barra de categorías */}
@@ -319,6 +597,9 @@ export default function Header({ loadFavorites }) {
           />
         </AppBar>
 
+        {/* Menú móvil render */}
+        {renderMobileMenu}
+
         {/* Menú de usuario */}
         <UserMenu
           anchorEl={anchorEl}
@@ -332,19 +613,14 @@ export default function Header({ loadFavorites }) {
           pinkTheme={pinkTheme}
         />
 
-        {/* Modal de favoritos */}
-        <Modal open={openModal} onClose={() => setOpenModal(false)}>
-          <ModalDialog size="lg">
-            <ModalClose />
-            <FavoritesModal 
-              open={openModal} 
-              onClose={() => {
-                setOpenModal(false);
-                loadFavorites();
-              }} 
-            />
-          </ModalDialog>
-        </Modal>
+        {/* Modal de favoritos (single modal now handled inside component) */}
+        <FavoritesModal 
+          open={openModal} 
+          onClose={() => {
+            setOpenModal(false);
+            loadFavorites();
+          }} 
+        />
       </Box>
 
       <Box sx={{ height: '100px' }} />
