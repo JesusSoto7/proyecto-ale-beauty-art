@@ -284,6 +284,32 @@ section h2,
   border-radius: 0 !important;
 }
 
+/* === Responsive heights for main carousel === */
+@media (max-width: 360px) {
+  .main-carousel .carousel-item img { height: 180px !important; }
+}
+@media (min-width: 361px) and (max-width: 480px) {
+  .main-carousel .carousel-item img { height: 220px !important; }
+}
+@media (min-width: 481px) and (max-width: 767px) {
+  .main-carousel .carousel-item img { height: 280px !important; }
+}
+@media (min-width: 768px) and (max-width: 1023px) {
+  .main-carousel .carousel-item img { height: 360px !important; }
+}
+@media (min-width: 1024px) and (max-width: 1279px) {
+  .main-carousel .carousel-item img { height: 420px !important; }
+}
+@media (min-width: 1280px) and (max-width: 1439px) {
+  .main-carousel .carousel-item img { height: 460px !important; }
+}
+@media (min-width: 1440px) and (max-width: 1919px) {
+  .main-carousel .carousel-item img { height: 510px !important; }
+}
+@media (min-width: 1920px) {
+  .main-carousel .carousel-item img { height: 560px !important; }
+}
+
 .banner-ticker {
   width: 100%;
   overflow: hidden;
