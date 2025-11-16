@@ -37,6 +37,26 @@ body {
   margin: 0 auto;
 }
 
+/* Sección de botón y estrellas (desktop mantiene estilo PC) */
+.section-DataBanner {
+  display: flex;
+  flex-direction: row-reverse; /* botón a la izquierda, estrellas a la derecha como vista PC solicitada */
+  justify-content: flex-end;
+  align-items: center;
+  gap: 20px;
+}
+
+.section-DataBanner .stars {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-direction: row;
+}
+
+.section-DataBanner a { /* Link contenedor del botón */
+  width: 200px;
+}
+
 /* --- Zona morada con curva --- */
 .banner::before {
   content: "";
@@ -483,7 +503,7 @@ body {
   .circle-image {
     width: 150px;
     height: 150px;
-    margin-top: -280px;
+    margin-top: -260px;
     margin-left: 200px;
   }
 
@@ -766,6 +786,41 @@ body {
     position: relative;
   }
 
+  /* Orden vertical: botón encima de estrellas */
+  .section-DataBanner {
+    width: 100%;
+    flex-direction: column; /* apilar */
+    align-items: flex-start;
+    gap: 14px;
+  }
+  .section-DataBanner a { order: 0; width: 100%; }
+  .section-DataBanner .stars { order: 1; }
+
+  /* Fuente horizontal más pequeña y menor separación */
+  .text-content-H span {
+    font-size: 16px;
+    letter-spacing: 1.5px;
+  }
+  :root { --H-gap: 32px; }
+
+
+/* Pantallas medianas adicionales (<= 768px) */
+@media (max-width: 768px) {
+  .text-content-H span {
+    font-size: 14px;
+    letter-spacing: 1.2px;
+  }
+  :root { --H-gap: 28px; }
+}
+
+/* Pantallas pequeñas (<= 480px) */
+@media (max-width: 480px) {
+  .text-content-H span {
+    font-size: 12px;
+    letter-spacing: 1px;
+  }
+  :root { --H-gap: 22px; }
+}
   .banner::before {
     height: 100%;
     clip-path: path("M0,0 C100,0 50,50 400,300 L0,300 Z");
@@ -924,5 +979,19 @@ body {
   .circle-image {
     image-rendering: -webkit-optimize-contrast;
     image-rendering: crisp-edges;
+  }
+}
+
+/* Subir botón y estrellas dentro del banner entre 431px y 596px */
+@media (min-width: 431px) and (max-width: 596px) {
+  .section-DataBanner {
+    margin-top: -70px; /* subir la sección para que quede dentro del banner */
+  }
+}
+
+/* En <=419px ocultar los spans duplicados de la tira horizontal */
+@media (max-width: 419px) {
+  .text-content-H span:nth-child(n+5) {
+    display: none;
   }
 }
