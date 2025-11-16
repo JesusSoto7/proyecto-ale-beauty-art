@@ -57,7 +57,7 @@
   width: 100%;
   height: 300px; /* ✅ Aumentado de 260px a 300px */
   flex-shrink: 0; /* ✅ No permitir que se reduzca */
-  background: linear-gradient(135deg, #f5f7fa 0%, #f0f2f5 100%);
+  background: #ffffff; /* Fondo blanco para consistencia */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -68,7 +68,7 @@
 .product-image-v3 {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: cover; /* Llena todo el espacio sin dejar blancos */
   transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
   z-index: 1;
@@ -243,106 +243,27 @@
 /* === RESPONSIVE === */
 /* === RESPONSIVE DESIGN PARA PRODUCT CARD === */
 
-/* === RESPONSIVE DESIGN PARA PRODUCT CARD === */
-
-/* 💻 Laptops - mitad de pantalla (1280px - 1439px) */
-@media (min-width: 1280px) and (max-width: 1439px) {
-  .product-card-v3 {
-    min-width: 250px !important;
-    max-width: 250px !important;
-    height: 460px !important;
-  }
-
-  .product-image-container-v3 {
-    height: 240px !important;
-  }
-
-  .product-image-v3 {
-    object-fit: contain !important;
-  }
+/* === FLUID SCALING OVERRIDES (mantiene diseño, ajusta tamaño) === */
+:root {
+  --pc-card-max-w: clamp(220px, 24vw, 320px);
+  --pc-card-min-w: clamp(200px, 20vw, 280px);
+  --pc-image-max-h: clamp(180px, 22vw, 320px);
 }
 
-/* 📟 Tabletas (1024px - 1279px) */
-@media (min-width: 1024px) and (max-width: 1279px) {
-  .product-card-v3 {
-    min-width: 230px !important;
-    max-width: 230px !important;
-    height: 440px !important;
-  }
-
-  .product-image-container-v3 {
-    height: 220px !important;
-  }
-
-  .product-image-v3 {
-    object-fit: contain !important;
-  }
+.product-card-v3 {
+  max-width: var(--pc-card-max-w);
+  min-width: var(--pc-card-min-w);
+  height: auto; /* Ajuste fluido conservando layout interno fijo */
 }
 
-/* 📟 Tabletas pequeñas (768px - 1023px) */
-@media (min-width: 768px) and (max-width: 1023px) {
-  .product-card-v3 {
-    min-width: 240px !important;
-    max-width: 240px !important;
-    height: 420px !important;
-  }
-
-  .product-image-container-v3 {
-    height: 200px !important;
-  }
-
-  .product-image-v3 {
-    object-fit: contain !important;
-  }
+.product-image-container-v3 {
+  height: auto;
+  max-height: var(--pc-image-max-h);
+  aspect-ratio: 29 / 30;
 }
 
-/* 📱 Teléfonos grandes (481px - 767px) */
-@media (min-width: 481px) and (max-width: 767px) {
-  .product-card-v3 {
-    min-width: 260px !important;
-    max-width: 260px !important;
-    height: 400px !important;
-  }
-
+@supports not (aspect-ratio: 1) {
   .product-image-container-v3 {
-    height: 180px !important;
-  }
-
-  .product-image-v3 {
-    object-fit: contain !important;
-  }
-}
-
-/* 📱 Teléfonos pequeños (376px - 480px) */
-@media (min-width: 376px) and (max-width: 480px) {
-  .product-card-v3 {
-    min-width: 280px !important;
-    max-width: 280px !important;
-    height: 380px !important;
-  }
-
-  .product-image-container-v3 {
-    height: 170px !important;
-  }
-
-  .product-image-v3 {
-    object-fit: contain !important;
-  }
-}
-
-/* 📱 Teléfonos muy pequeños (320px - 375px) */
-@media (max-width: 375px) {
-  .product-card-v3 {
-    min-width: 270px !important;
-    max-width: 270px !important;
-    height: 360px !important;
-  }
-
-  .product-image-container-v3 {
-    height: 160px !important;
-  }
-
-  .product-image-v3 {
-    object-fit: contain !important;
+    height: var(--pc-image-max-h);
   }
 }
