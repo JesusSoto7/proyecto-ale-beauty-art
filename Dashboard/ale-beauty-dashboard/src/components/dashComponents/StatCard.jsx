@@ -9,22 +9,11 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import { SparkLineChart } from '@mui/x-charts/SparkLineChart';
 import { areaElementClasses } from '@mui/x-charts/LineChart';
-
-
-function getDaysInMonth(month, year) {
-  const date = new Date(year, month, 0);
-  const monthName = date.toLocaleDateString('en-US', {
-    month: 'short',
-  });
-  const daysInMonth = date.getDate();
-  const days = [];
-  let i = 1;
-  while (days.length < daysInMonth) {
-    days.push(`${monthName} ${i}`);
-    i += 1;
-  }
-  return days;
-}
+import ShoppingBagOutlinedIcon from '@mui/icons-material/ShoppingBagOutlined';
+import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
+import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
+import Avatar from '@mui/material/Avatar';
 
 function AreaGradient({ color, id }) {
   return (
@@ -42,19 +31,18 @@ AreaGradient.propTypes = {
   id: PropTypes.string.isRequired,
 };
 
-function StatCard({ title, value, interval, trend, data, labels }) {
+function StatCard({ title, value, interval, trend, data, labels, subtitle, percentText, deltaText, icon }) {
   const theme = useTheme();
-
 
   const trendColors = {
     up:
       theme.palette.mode === 'light'
         ? theme.palette.success.main
-        : theme.palette.success.dark,
+        : theme.palette.success.light,
     down:
       theme.palette.mode === 'light'
         ? theme.palette.error.main
-        : theme.palette.error.dark,
+        : theme.palette.error.light,
     neutral:
       theme.palette.mode === 'light'
         ? theme.palette.grey[400]
@@ -67,16 +55,47 @@ function StatCard({ title, value, interval, trend, data, labels }) {
     neutral: 'default',
   };
 
-  const color = labelColors[trend];
-  const chartColor = trendColors[trend];
+  const color = labelColors[trend] || 'default';
+  const chartColor = trendColors[trend] || trendColors.neutral;
   const trendValues = { up: '+25%', down: '-25%', neutral: '+5%' };
 
+  // safe id for gradient (no spaces or $)
+  const safeId = `area-gradient-${String(value).replace(/[^a-zA-Z0-9]/g, '-')}`;
+
+  // choose icon component: if prop icon exists use it, else fallback to ShoppingBagOutlinedIcon
+  const IconComponent = icon || ShoppingBagOutlinedIcon;
+
   return (
-    <Card variant="outlined" sx={{ height: '100%', flexGrow: 1 }}>
+    <Card
+      variant="outlined"
+      sx={{
+        height: '100%',
+        flexGrow: 1,
+        borderRadius: 2,
+        border: (theme) => `1px solid ${theme.palette.mode === 'light' ? 'rgba(0,0,0,0.08)' : 'rgba(255,255,255,0.06)'}`,
+        backgroundColor: (theme) => theme.palette.mode === 'light' ? theme.palette.background.paper : '#0f1113',
+      }}
+    >
       <CardContent>
-        <Typography component="h2" variant="subtitle2" gutterBottom>
-          {title}
-        </Typography>
+        <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ mb: 1 }}>
+          <Stack direction="row" spacing={1} alignItems="center">
+            <Avatar sx={{ bgcolor: (theme) => theme.palette.mode === 'light' ? theme.palette.grey[100] : theme.palette.grey[900], width: 40, height: 40 }}>
+              <IconComponent fontSize="small" />
+            </Avatar>
+            <Stack>
+              <Typography component="h2" variant="subtitle2" sx={{ color: (theme) => theme.palette.mode === 'light' ? 'text.primary' : '#fff' }}>
+                {title}
+              </Typography>
+              {subtitle ? (
+                <Typography variant="caption" sx={{ color: 'text.secondary' }}>
+                  {subtitle}
+                </Typography>
+              ) : null}
+            </Stack>
+          </Stack>
+          <ChevronRightIcon sx={{ color: 'text.secondary' }} />
+        </Stack>
+
         <Stack
           direction="column"
           sx={{ justifyContent: 'space-between', flexGrow: '1', gap: 1 }}
@@ -86,44 +105,65 @@ function StatCard({ title, value, interval, trend, data, labels }) {
               direction="row"
               sx={{ justifyContent: 'space-between', alignItems: 'center' }}
             >
-              <Typography variant="h4" component="p">
+              <Typography variant="h4" component="p" sx={{ color: (theme) => theme.palette.mode === 'light' ? 'text.primary' : '#fff' }}>
                 {value}
               </Typography>
-              <Chip size="small" color={color} label={trendValues[trend]} />
+              <Chip size="small" color={color} label={percentText || trendValues[trend]} />
             </Stack>
             <Typography variant="caption" sx={{ color: 'text.secondary' }}>
               {interval}
             </Typography>
           </Stack>
-          <Box sx={{ width: '100%', height: 50 }}>
+
+          <Box sx={{ width: '100%', height: 56 }}>
             <SparkLineChart
               color={chartColor}
-              data={data || []}  // 👈 si viene undefined, usa []
+              data={data || []}
               area
               showHighlight
               showTooltip
               xAxis={{
                 scaleType: 'band',
-                data: labels || [], // 👈 si viene undefined, usa []
+                data: labels || [],
               }}
               sx={{
                 [`& .${areaElementClasses.root}`]: {
-                  fill: `url(#area-gradient-${value})`,
-
+                  fill: `url(#${safeId})`,
+                },
+                '& svg': {
+                  width: '100%',
+                  height: '56px',
                 },
               }}
             >
-              <AreaGradient color={chartColor} id={`area-gradient-${value}`} />
+              <AreaGradient color={chartColor} id={safeId} />
             </SparkLineChart>
-
-
           </Box>
-          <Typography
-            variant="caption"
-            align="right"
-            sx={{ color: theme.palette.primary.main }}
-          >
-          </Typography>
+
+          <Stack direction="row" justifyContent="space-between" alignItems="center">
+            <Stack direction="row" spacing={1} alignItems="center">
+              {trend === 'up' ? (
+                <ArrowUpwardIcon fontSize="small" sx={{ color: chartColor }} />
+              ) : trend === 'down' ? (
+                <ArrowDownwardIcon fontSize="small" sx={{ color: chartColor }} />
+              ) : (
+                <Box sx={{ width: 20 }} />
+              )}
+              <Typography variant="body2" sx={{ color: (theme) => theme.palette.mode === 'light' ? 'text.primary' : '#fff', fontWeight: 600 }}>
+                {percentText || trendValues[trend]}
+              </Typography>
+              <Typography variant="caption" sx={{ color: 'text.secondary' }}>
+                {deltaText}
+              </Typography>
+            </Stack>
+
+            <Typography
+              variant="caption"
+              align="right"
+              sx={{ color: theme.palette.primary.main }}
+            >
+            </Typography>
+          </Stack>
         </Stack>
       </CardContent>
     </Card>
@@ -137,13 +177,19 @@ StatCard.propTypes = {
   title: PropTypes.string.isRequired,
   trend: PropTypes.oneOf(['down', 'neutral', 'up']).isRequired,
   value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+  subtitle: PropTypes.string,
+  percentText: PropTypes.string,
+  deltaText: PropTypes.string,
+  icon: PropTypes.oneOfType([PropTypes.func, PropTypes.object]),
 };
 
 StatCard.defaultProps = {
   data: [],
   labels: [],
+  subtitle: '',
+  percentText: '',
+  deltaText: '',
+  icon: null,
 };
-
-
 
 export default StatCard;

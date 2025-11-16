@@ -92,6 +92,10 @@ Rails.application.routes.draw do
       get 'analytics/product_funnel_per_day', to: 'analytics#product_funnel_per_day'
       get 'analytics/top_3_products', to: 'analytics#top_3_products'
 
+      post 'analytics/record_page_view', to: 'analytics#record_page_view'
+      get  'analytics/page_views_per_day', to: 'analytics#page_views_per_day'
+      get  'analytics/total_page_views', to: 'analytics#total_page_views'
+
       get  "mercadopago/payment_methods", to: "mercadopago#payment_methods"
       get  "mercadopago/pse_banks",       to: "mercadopago#pse_banks"
 

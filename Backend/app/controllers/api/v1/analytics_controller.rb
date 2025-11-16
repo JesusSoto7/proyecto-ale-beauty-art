@@ -60,6 +60,64 @@ class Api::V1::AnalyticsController < Api::V1::BaseController
     render json: { labels: labels, values: values }
   end
 
+  def record_page_view
+    date_key = Date.current.to_s # "2025-11-16"
+    path = params[:path].presence || "unknown"
+
+    # Key por día y por path (si quieres segmentar por ruta)
+    day_key = "page_views:day:#{date_key}"
+    path_day_key = "page_views:day:#{date_key}:path:#{path}"
+
+    # Incrementos atómicos
+    $redis.incr(day_key)
+    $redis.incr(path_day_key)
+    # Opcional: un contador total global
+    $redis.incr("page_views:total")
+
+    head :no_content
+  rescue => e
+    Rails.logger.error("record_page_view error: #{e.message}")
+    render json: { error: "Error recording view" }, status: :internal_server_error
+  end
+
+  # GET /api/v1/analytics/page_views_per_day
+  # Devuelve JSON con fechas (últimos 30 días por ejemplo) => conteo
+  def page_views_per_day
+    unless defined?($redis) && $redis
+      Rails.logger.error("analytics#page_views_per_day: $redis no está inicializado")
+      return render json: { error: "redis_unavailable", message: "$redis no inicializado" }, status: :service_unavailable
+    end
+
+    begin
+      days = params[:days].to_i > 0 ? params[:days].to_i : 30
+      result = {}
+      days.times do |i|
+        d = (Date.current - (days - 1 - i)).to_s
+        key = "page_views:day:#{d}"
+        count = ($redis.get(key) || 0).to_i
+        result[d] = count
+      end
+      render json: result
+    rescue => e
+      Rails.logger.error("analytics#page_views_per_day error: #{e.class} #{e.message}\n#{e.backtrace.join("\n")}")
+      render json: { error: e.class.to_s, message: e.message }, status: :internal_server_error
+    end
+  end
+
+  def total_page_views
+    unless defined?($redis) && $redis
+      Rails.logger.error("analytics#total_page_views: $redis no está inicializado")
+      return render json: { error: "redis_unavailable", message: "$redis no inicializado" }, status: :service_unavailable
+    end
+
+    begin
+      total = ($redis.get("page_views:total") || 0).to_i
+      render json: { total_page_views: total }
+    rescue => e
+      Rails.logger.error("analytics#total_page_views error: #{e.class} #{e.message}\n#{e.backtrace.join("\n")}")
+      render json: { error: e.class.to_s, message: e.message }, status: :internal_server_error
+    end
+  end
 =begin 
   def top_3_products
     property_id = "properties/508198956"

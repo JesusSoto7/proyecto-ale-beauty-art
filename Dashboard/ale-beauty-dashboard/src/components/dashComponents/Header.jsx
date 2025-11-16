@@ -77,16 +77,16 @@ export default function Header() {
         {/* Barra de búsqueda */}
         <Paper
           elevation={0}
-            sx={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: 1,
-              px: 2,
-              py: 0.75,
-              borderRadius: 5,
-              bgcolor: (theme) => theme.palette.mode === 'dark' ? 'grey.800' : '#f3f3f3',
-              minWidth: { sm: 260, md: 320 }
-            }}
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 1,
+            px: 2,
+            py: 0.75,
+            borderRadius: 5,
+            bgcolor: (theme) => theme.palette.mode === 'dark' ? 'grey.800' : '#f3f3f3',
+            minWidth: { sm: 260, md: 320 }
+          }}
         >
           <SearchIcon fontSize="small" sx={{ color: 'text.secondary' }} />
           <InputBase
@@ -96,13 +96,13 @@ export default function Header() {
           />
         </Paper>
 
-  
-          <CustomDatePicker />
+
+        <CustomDatePicker />
 
 
         {/* Selector de tema */}
 
-          <ColorModeIconDropdown />
+        <ColorModeIconDropdown />
 
 
         {/* Notificaciones */}
@@ -175,11 +175,13 @@ export default function Header() {
           <ExpandMoreIcon sx={{ fontSize: 18, color: 'text.secondary' }} />
         </Stack>
 
-        {/* Menú desplegable */}
+
         <Menu
           anchorEl={anchorEl}
           open={open}
           onClose={handleMenuClose}
+          keepMounted
+          ModalProps={{ disableScrollLock: true }}
           MenuListProps={{ 'aria-labelledby': 'profile-button' }}
           anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
           transformOrigin={{ vertical: 'top', horizontal: 'right' }}
