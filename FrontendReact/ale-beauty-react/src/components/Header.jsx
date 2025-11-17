@@ -2,7 +2,7 @@ import React, { useState, useRef } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import logo from '../assets/images/ale_logo.jpg';
-import { BsHeart, BsCart4, BsBell, BsGlobe } from "react-icons/bs";
+import { BsHeart, BsCart4, BsBell, BsGlobe, BsBag, BsGeoAlt } from "react-icons/bs";
 import { IoPersonCircleSharp } from "react-icons/io5";
 
 import AppBar from '@mui/material/AppBar';
@@ -215,6 +215,31 @@ export default function Header({ loadFavorites }) {
           <IoPersonCircleSharp />
           {user ? t('header.profile','Perfil') : t('header.signIn','Iniciar sesión')}
         </MenuItem>
+      )}
+
+      {/* Pedidos y Direcciones sólo cuando el perfil NO está fuera de la hamburguesa */}
+      {!(showProfileIcon || showUserName) && (
+        <>
+          <MenuItem
+            component={Link}
+            to={user ? `/${lang}/pedidos` : `/${lang}/login`}
+            onClick={() => setMobileMoreAnchorEl(null)}
+            className="mobile-menu-item"
+          >
+            <BsBag />
+            {t('header.myOrders','Mis Pedidos')}
+          </MenuItem>
+
+          <MenuItem
+            component={Link}
+            to={user ? `/${lang}/direcciones` : `/${lang}/login`}
+            onClick={() => setMobileMoreAnchorEl(null)}
+            className="mobile-menu-item"
+          >
+            <BsGeoAlt />
+            {t('header.myAddresses','Mis direcciones')}
+          </MenuItem>
+        </>
       )}
 
       {/* Carrito (en mid-span también va al menú) */}
