@@ -47,10 +47,12 @@ export default function Header({ loadFavorites }) {
   // Responsive width queries for overflow management
   const isMidRange = useMediaQuery('(min-width:900px) and (max-width:1419px)');
   const isLarge = useMediaQuery('(min-width:1420px)');
-  // Rango solicitado 915–1418px donde sólo deben mostrarse idioma y perfil, lo demás va al menú hamburguesa
-  const isDesktopMidSpan = useMediaQuery('(min-width:915px) and (max-width:1418px)');
+  // Rango ajustado 915–1279px: en 1280+ hay espacio para todos los íconos (sin hamburguesa)
+  const isDesktopMidSpan = useMediaQuery('(min-width:915px) and (max-width:1279px)');
   // Usado para controlar visibilidad de hamburguesa y comportamiento específico a partir de 768px
   const isMdUp = useMediaQuery('(min-width:768px)');
+  // Banda fina 900–930px (alrededor de 912px) para compactar espacios del nombre
+  const isNarrowDesktop = useMediaQuery('(min-width:900px) and (max-width:930px)');
   // Breakpoints progresivos para ir sacando ítems del menú hamburguesa en móviles
   // Ajustados para evitar saturación entre 601 y 844
   const showLanguage = useMediaQuery('(min-width:520px)');
@@ -378,8 +380,13 @@ export default function Header({ loadFavorites }) {
                     display: { xs: 'none', sm: 'block' },
                     transition: 'color 0.2s',
                     '&:hover': { color: pinkTheme.primary },
-                    minWidth: '80px',
-                    ml: 1
+                    // Evitar reservar ancho: quitar espacio extra a la derecha
+                    minWidth: 0,
+                    maxWidth: isNarrowDesktop ? '64px' : 'none',
+                    ml: isNarrowDesktop ? 0 : 1,
+                    whiteSpace: isNarrowDesktop ? 'nowrap' : undefined,
+                    overflow: isNarrowDesktop ? 'hidden' : undefined,
+                    textOverflow: isNarrowDesktop ? 'ellipsis' : undefined
                   }}
                 >
                   {user ? user.nombre : 'Sign In'}
