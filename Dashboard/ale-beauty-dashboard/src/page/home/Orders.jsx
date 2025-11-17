@@ -5,12 +5,12 @@ import InsertDriveFileIcon from "@mui/icons-material/InsertDriveFile";
 const STATUS = ["pendiente", "pagada", "preparando", "enviado", "entregado", "cancelada"];
 
 const STATUS_STYLES = {
-  pagada:      { bg: "#ecfdf5", color: "#065f46" },
-  pendiente:   { bg: "#f3f4f6", color: "#374151" },
-  preparando:  { bg: "#eff6ff", color: "#1d4ed8" },
-  enviado:     { bg: "#f5f3ff", color: "#6d28d9" },
-  entregado:   { bg: "#ecfeff", color: "#0f766e" },
-  cancelada:   { bg: "#fef2f2", color: "#991b1b" },
+  pagada: { bg: "#ecfdf5", color: "#065f46" },
+  pendiente: { bg: "#f3f4f6", color: "#374151" },
+  preparando: { bg: "#eff6ff", color: "#1d4ed8" },
+  enviado: { bg: "#f5f3ff", color: "#6d28d9" },
+  entregado: { bg: "#ecfeff", color: "#0f766e" },
+  cancelada: { bg: "#fef2f2", color: "#991b1b" },
 };
 
 export default function Orders() {
@@ -174,7 +174,7 @@ export default function Orders() {
       <div style={{ overflowX: "auto" }}>
         <table style={{ width: "100%", borderCollapse: "collapse" }}>
           <thead>
-            <tr style={{ background: "#fafafa" }}>
+            <tr style={{ backgroundColor: "background.paper" }}>
               <th style={{ textAlign: "left", padding: 8, borderBottom: "1px solid #eee" }}>Fecha</th>
               <th style={{ textAlign: "left", padding: 8, borderBottom: "1px solid #eee" }}>Numero Orden</th>
               <th style={{ textAlign: "left", padding: 8, borderBottom: "1px solid #eee" }}>Cliente</th>

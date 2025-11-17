@@ -167,7 +167,7 @@ export default function Notificaciones() {
       },
       body: JSON.stringify(payload),
     });
-    return { ok: res.ok, status: res.status, json: res.ok ? await res.json().catch(()=>null) : null };
+    return { ok: res.ok, status: res.status, json: res.ok ? await res.json().catch(() => null) : null };
   };
 
   const handleSubmit = async (e) => {
@@ -224,7 +224,7 @@ export default function Notificaciones() {
           }
         }
       } else {
- 
+
         let attempt = await tryPost({ user_ids: selectedUsers, title, message });
         if (!attempt.ok) {
           // fallback: try single per user
@@ -234,12 +234,12 @@ export default function Notificaciones() {
         }
       }
 
-  
+
       let nombreDestinatario = broadcast
         ? "Todos los usuarios"
         : selectedUsers.length === 1
-        ? (usuarios.find((u) => u.id === selectedUsers[0])?.email || usuarios.find((u) => u.id === selectedUsers[0])?.name || "Usuario")
-        : `${selectedUsers.length} usuarios`;
+          ? (usuarios.find((u) => u.id === selectedUsers[0])?.email || usuarios.find((u) => u.id === selectedUsers[0])?.name || "Usuario")
+          : `${selectedUsers.length} usuarios`;
 
       const nuevaNotificacion = {
         id: Date.now(),
@@ -259,7 +259,7 @@ export default function Notificaciones() {
       })
         .then((res) => res.json())
         .then((data) => setStats(data))
-        .catch(() => {});
+        .catch(() => { });
 
       // reset form
       setTitle("");
@@ -300,7 +300,7 @@ export default function Notificaciones() {
           body::-webkit-scrollbar { display: none; }
         `}</style>
 
-      <Box sx={{ position: "fixed", top: 0, left: 0, width: "100vw", height: "100vh", background: "linear-gradient(135deg, #b3bad6ff 0%, #d16fa073 100%)", backgroundAttachment: "fixed", p: 0, m: 0, overflow: "hidden", display: "flex", flexDirection: "column" }}>
+      <Box sx={{ position: "fixed", top: 30, left: 0, width: "100vw", height: "100vh", background: "background.paper", backgroundAttachment: "fixed", p: 0, m: 0, overflow: "hidden", display: "flex", flexDirection: "column" }}>
         <Box sx={{ flex: 1, p: 4, overflow: "auto", display: "flex", flexDirection: "column" }}>
           <Box sx={{ maxWidth: "1400px", margin: "0 auto", width: "100%", flexShrink: 0 }}>
             {/* Header */}
@@ -308,11 +308,11 @@ export default function Notificaciones() {
               <Box sx={{ mb: 4, textAlign: "center" }}>
                 <Box sx={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 2, mb: 1 }}>
                   <NotificationsIcon sx={{ fontSize: 45, color: "#fff" }} />
-                  <Typography variant="h3" fontWeight="800" sx={{ color: "#fff", textShadow: "0 2px 10px rgba(0,0,0,0.2)" }}>
+                  <Typography variant="h3" fontWeight="800" sx={{ textShadow: "0 2px 10px rgba(0,0,0,0.2)" }}>
                     Panel de Notificaciones
                   </Typography>
                 </Box>
-                <Typography variant="body1" sx={{ color: "rgba(255,255,255,0.9)", fontSize: "1.1rem" }}>
+                <Typography variant="body1" sx={{ fontSize: "1.1rem" }}>
                   Administra y envía notificaciones a tus usuarios de forma centralizada
                 </Typography>
               </Box>
@@ -328,8 +328,8 @@ export default function Notificaciones() {
                         <PeopleIcon sx={{ color: "#fff", fontSize: 32 }} />
                       </Avatar>
                       <Box>
-                        <Typography variant="h4" fontWeight="bold" color="#fff">{stats.total_usuarios}</Typography>
-                        <Typography variant="body2" sx={{ color: "rgba(255,255,255,0.9)" }}>Usuarios Totales</Typography>
+                        <Typography variant="h4" fontWeight="bold">{stats.total_usuarios}</Typography>
+                        <Typography variant="body2" sx={{}}>Usuarios Totales</Typography>
                       </Box>
                     </Box>
                   </Paper>
@@ -341,11 +341,11 @@ export default function Notificaciones() {
                   <Paper elevation={0} sx={{ p: 3, borderRadius: 3, background: "linear-gradient(135deg, rgba(240,147,251,0.9) 0%, rgba(240,147,251,0.7) 100%)", backdropFilter: "blur(20px)", border: "1px solid rgba(255,255,255,0.4)" }}>
                     <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
                       <Avatar sx={{ bgcolor: "rgba(255,255,255,0.3)", width: 60, height: 60 }}>
-                        <SendIcon sx={{ color: "#fff", fontSize: 32 }} />
+                        <SendIcon sx={{ fontSize: 32 }} />
                       </Avatar>
                       <Box>
-                        <Typography variant="h4" fontWeight="bold" color="#fff">{stats.total_notificaciones}</Typography>
-                        <Typography variant="body2" sx={{ color: "rgba(255,255,255,0.9)" }}>Notificaciones Enviadas</Typography>
+                        <Typography variant="h4" fontWeight="bold" >{stats.total_notificaciones}</Typography>
+                        <Typography variant="body2" >Notificaciones Enviadas</Typography>
                       </Box>
                     </Box>
                   </Paper>
@@ -357,11 +357,11 @@ export default function Notificaciones() {
                   <Paper elevation={0} sx={{ p: 3, borderRadius: 3, background: "linear-gradient(135deg, rgba(255,193,7,0.9) 0%, rgba(255,193,7,0.7) 100%)", backdropFilter: "blur(20px)", border: "1px solid rgba(255,255,255,0.4)" }}>
                     <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
                       <Avatar sx={{ bgcolor: "rgba(255,255,255,0.3)", width: 60, height: 60 }}>
-                        <HistoryIcon sx={{ color: "#fff", fontSize: 32 }} />
+                        <HistoryIcon sx={{ fontSize: 32 }} />
                       </Avatar>
                       <Box>
-                        <Typography variant="h4" fontWeight="bold" color="#fff">{historial.length}</Typography>
-                        <Typography variant="body2" sx={{ color: "rgba(255,255,255,0.9)" }}>En esta sesión</Typography>
+                        <Typography variant="h4" fontWeight="bold" >{historial.length}</Typography>
+                        <Typography variant="body2" >En esta sesión</Typography>
                       </Box>
                     </Box>
                   </Paper>
@@ -374,15 +374,15 @@ export default function Notificaciones() {
               {/* Form Card */}
               <Grid item xs={12} lg={5.5}>
                 <Fade in timeout={1800}>
-                  <Card elevation={0} sx={{ borderRadius: 3, background: "rgba(255,255,255,0.98)", backdropFilter: "blur(30px)", border: "1px solid rgba(255,255,255,0.5)" }}>
+                  <Card elevation={0} sx={{ borderRadius: 3, background: "background.paper", backdropFilter: "blur(30px)", }}>
                     <CardContent sx={{ p: 5, overflowY: "auto", maxHeight: "calc(100vh - 400px)" }}>
                       <Box sx={{ display: "flex", alignItems: "center", mb: 3 }}>
-                        <Box sx={{ width: 5, height: 35, background: "linear-gradient(180deg,#667eea 0%,#764ba2 100%)", borderRadius: 2, mr: 2 }} />
+                        <Box sx={{ width: 5, height: 35, background: "background.paper", borderRadius: 2, mr: 2 }} />
                         <SendIcon sx={{ color: "#667eea", fontSize: 28, mr: 1 }} />
-                        <Typography variant="h5" fontWeight="800" color="#333">Enviar Nueva Notificación</Typography>
+                        <Typography variant="h5" fontWeight="800" >Enviar Nueva Notificación</Typography>
                       </Box>
 
-                      <Divider sx={{ mb: 4, background: "rgba(0,0,0,0.05)" }} />
+
 
                       <Box component="form" onSubmit={handleSubmit}>
                         <Stack spacing={3.5}>
@@ -390,7 +390,7 @@ export default function Notificaciones() {
                           <FormControl fullWidth>
                             <InputLabel>Destinatario</InputLabel>
                             <Box sx={{ display: "flex", gap: 1, alignItems: "center", mb: 1 }}>
-                              <Button variant={broadcast ? "contained" : "outlined"} color="primary" onClick={() => { setBroadcast((b) => !b); if (!broadcast) setSelectedUsers([]); }} sx={{ textTransform: "none" }}>
+                              <Button variant={broadcast ? "contained" : "outlined"} color="primary" onClick={() => { setBroadcast((b) => !b); if (!broadcast) setSelectedUsers([]); }} sx={{ textTransform: "none", background: "background.paper" }}>
                                 {broadcast ? "Enviar a todos (activo)" : "Enviar a todos (desactivado)"}
                               </Button>
                               <TextField placeholder="Buscar usuario por nombre / email / id" value={query} onChange={(e) => { setQuery(e.target.value); setPage(0); }} size="small" sx={{ ml: "auto", bgcolor: "#f8f9fa", borderRadius: 1 }} />
@@ -433,16 +433,16 @@ export default function Notificaciones() {
                           </FormControl>
 
                           {/* Title */}
-                          <TextField fullWidth label="Título de la Notificación" value={title} onChange={(e) => setTitle(e.target.value)} required placeholder="Ej: Actualización importante del sistema" InputProps={{ startAdornment: <TitleOutlinedIcon sx={{ mr: 1, color: "#667eea" }} /> }} sx={{ "& .MuiOutlinedInput-root": { borderRadius: 2.5, bgcolor: "#f8f9fa", border: "2px solid transparent", height: "56px" } }} />
+                          <TextField fullWidth label="Título de la Notificación" value={title} onChange={(e) => setTitle(e.target.value)} required placeholder="Ej: Actualización importante del sistema" InputProps={{ startAdornment: <TitleOutlinedIcon sx={{ mr: 1, color: "#3d4c8eff" }} /> }} sx={{ "& .MuiOutlinedInput-root": { borderRadius: 2.5, bgcolor: "#f8f9fa", border: "2px solid background.paper", height: "56px", backgroundColor: "background.paper" } }} />
 
                           {/* Message */}
                           <Box>
-                            <TextField fullWidth multiline rows={12} label="Mensaje" value={message} onChange={(e) => setMessage(e.target.value)} required placeholder="Escribe aquí el contenido detallado de tu notificación..." InputLabelProps={{ shrink: true }} sx={{ "& .MuiOutlinedInput-root": { borderRadius: 2.5, bgcolor: "#f8f9fa", border: "2px solid transparent", minHeight: "280px" }, "& .MuiInputBase-inputMultiline": { padding: "16px 14px" } }} />
+                            <TextField fullWidth multiline rows={12} label="Mensaje" value={message} onChange={(e) => setMessage(e.target.value)} required placeholder="Escribe aquí el contenido detallado de tu notificación..." InputLabelProps={{ shrink: true }} sx={{ "& .MuiOutlinedInput-root": { borderRadius: 2.5, bgcolor: "#f8f9fa", border: "2px solid paper", minHeight: "280px", backgroundColor: "background.paper" }, "& .MuiInputBase-inputMultiline": { padding: "16px 14px" } }} />
                           </Box>
 
                           {/* Send button */}
                           <Box>
-                            <Button type="submit" variant="contained" fullWidth size="large" disabled={enviando || (!broadcast && selectedUsers.length === 0)} startIcon={enviando ? null : <SendIcon />} sx={{ py: 2, borderRadius: 2.5, textTransform: "none", fontSize: "1.1rem", fontWeight: 700, background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)" }}>
+                            <Button type="submit" variant="contained" fullWidth size="large" disabled={enviando || (!broadcast && selectedUsers.length === 0)} startIcon={enviando ? null : <SendIcon />} sx={{ py: 2, borderRadius: 2.5, textTransform: "none", fontSize: "1.1rem", fontWeight: 700, background: "background.paper" }}>
                               {enviando ? (<><CircularProgress size={24} color="inherit" sx={{ mr: 1 }} />Enviando...</>) : selectedLabel}
                             </Button>
 
@@ -459,43 +459,45 @@ export default function Notificaciones() {
               {/* Historial Card (unchanged) */}
               <Grid item xs={12} lg={5.5}>
                 <Fade in timeout={2000}>
-                  <Card elevation={0} sx={{ borderRadius: 3, background: "rgba(255,255,255,0.98)", backdropFilter: "blur(30px)", border: "1px solid rgba(255,255,255,0.5)" }}>
+                  <Card elevation={0} sx={{ borderRadius: 3, background: "background.paper", backdropFilter: "blur(30px)", border: "3px solid paper)" }}>
                     <CardContent sx={{ p: 5, overflowY: "auto", maxHeight: "calc(100vh - 400px)" }}>
                       <Box sx={{ display: "flex", alignItems: "center", mb: 3 }}>
                         <Box sx={{ width: 5, height: 35, background: "linear-gradient(180deg,#f093fb 0%,#f5af19 100%)", borderRadius: 2, mr: 2 }} />
                         <HistoryIcon sx={{ color: "#f093fb", fontSize: 28, mr: 1 }} />
-                        <Typography variant="h5" fontWeight="800" color="#333">Historial de Notificaciones</Typography>
+                        <Typography variant="h5" fontWeight="800" >Historial de Notificaciones</Typography>
                       </Box>
 
-                      <Divider sx={{ mb: 3, background: "rgba(0,0,0,0.05)" }} />
+                      <Divider sx={{ mb: 4, background: "background.paper" }} />
 
                       {historial.length === 0 ? (
-                        <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", py: 12, color: "#999" }}>
+                        <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", py: 12 }}>
                           <MailOutlineIcon sx={{ fontSize: 64, mb: 2, opacity: 0.5 }} />
                           <Typography variant="h6" sx={{ mb: 1, fontSize: "1.2rem" }}>No hay notificaciones enviadas</Typography>
                           <Typography variant="body2">Las notificaciones enviadas aparecerán aquí</Typography>
                         </Box>
+
                       ) : (
+
                         <Stack spacing={2.5} sx={{ maxHeight: "calc(100vh - 550px)", overflowY: "auto", pr: 2 }}>
                           {historial.map((notif) => (
                             <Fade in key={notif.id}>
-                              <Paper elevation={0} sx={{ p: 3, borderRadius: 2.5, background: "linear-gradient(135deg,#f5f7fa 0%,#fff 100%)", border: "2px solid #e8ecf1" }}>
+                              <Paper elevation={0} sx={{ p: 3, borderRadius: 2.5, background: "background.paper", border: "1px solid paper" }}>
                                 <Box sx={{ display: "flex", alignItems: "flex-start", gap: 2.5 }}>
                                   <CheckCircleOutlineIcon sx={{ color: "#4CAF50", fontSize: 32, mt: 0.5 }} />
                                   <Box sx={{ flex: 1 }}>
                                     <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 1 }}>
-                                      <Typography variant="h6" fontWeight="700" color="#333" sx={{ wordBreak: "break-word" }}>{notif.titulo}</Typography>
-                                      <Chip label={notif.estado} size="small" sx={{ background: "linear-gradient(135deg,#4CAF50 0%,#45a049 100%)", color: "#fff", fontWeight: 600 }} />
+                                      <Typography variant="h6" fontWeight="700" sx={{ wordBreak: "break-word" }}>{notif.titulo}</Typography>
+                                      <Chip label={notif.estado} size="small" sx={{ background: "linear-gradient(135deg,#4CAF50 0%,#45a049 100%)", fontWeight: 600 }} />
                                     </Box>
-                                    <Typography variant="body2" sx={{ color: "#666", mb: 1.5, lineHeight: 1.6, whiteSpace: "pre-wrap" }}>{notif.mensaje}</Typography>
+                                    <Typography variant="body2" sx={{ mb: 1.5, lineHeight: 1.6, whiteSpace: "pre-wrap" }}>{notif.mensaje}</Typography>
                                     <Box sx={{ display: "flex", gap: 3 }}>
                                       <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
-                                        <PeopleIcon sx={{ fontSize: 16, color: "#999" }} />
-                                        <Typography variant="caption" sx={{ color: "#999", fontSize: "0.85rem" }}>{notif.destinatario}</Typography>
+                                        <PeopleIcon sx={{ fontSize: 16 }} />
+                                        <Typography variant="caption" sx={{ fontSize: "0.85rem" }}>{notif.destinatario}</Typography>
                                       </Box>
                                       <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
-                                        <HistoryIcon sx={{ fontSize: 16, color: "#999" }} />
-                                        <Typography variant="caption" sx={{ color: "#999", fontSize: "0.85rem" }}>{notif.fecha}</Typography>
+                                        <HistoryIcon sx={{ fontSize: 16 }} />
+                                        <Typography variant="caption" sx={{ fontSize: "0.85rem" }}>{notif.fecha}</Typography>
                                       </Box>
                                     </Box>
                                   </Box>
