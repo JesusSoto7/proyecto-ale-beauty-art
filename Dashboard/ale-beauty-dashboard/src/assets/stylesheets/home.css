@@ -15,8 +15,8 @@
   justify-content: center;
   align-items: center;
   margin-top: 24px;
-  background: #ffffff;
-  border: 1px solid #e5e7eb;
+  background: paper;
+  border: 3px solid #5858595a;
   border-radius: 14px;
   padding: 20px;
   box-shadow: 0 8px 24px rgba(2, 6, 23, 0.10);
@@ -30,7 +30,7 @@
   min-height: 200px;
   border: 2px dashed #c4b5fd;
   border-radius: 16px;
-  background: #fafafa;
+  background: paper;
   text-align: center;
   padding: 24px;
   cursor: pointer;
@@ -150,8 +150,8 @@
 
 /* Card */
 .banner-card {
-  background: #ffffff;
-  border: 1px solid #e5e7eb;
+  background: paper;
+  border: 3px solid #81818150;
   border-radius: 14px;
   box-shadow: 0 6px 18px rgba(2, 6, 23, 0.06);
   padding: 12px;
@@ -164,21 +164,36 @@
   box-shadow: 0 16px 34px rgba(2, 6, 23, 0.12);
 }
 
-/* Imagen del banner más grande y completa */
-.banner-img {
+/* FRAME con relación fija: evita espacios y hace todas iguales */
+.banner-frame {
   width: 100%;
-  display: block;
+  aspect-ratio: 16 / 9;
+  /* usa 16:9 porque ya normalizaste a 1280x720 */
   border-radius: 12px;
+  overflow: hidden;
+  background: #f3f4f6;
+  /* color de fondo por si tarda en cargar */
   margin-bottom: 10px;
+  /* separación de los botones */
 }
 
+/* Imagen llena el frame (sin letterbox). ¡Adiós espacios! */
+.banner-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  /* llena y recorta lo que sobra, sin deformar */
+  display: block;
+  margin: 0;
+  /* no dejar margen extra */
+}
+
+/* Elimina cualquier regla anterior de contain que agregue "barras" */
 .banner-img--contain {
-  height: clamp(280px, 28vw, 420px);
-  /* alto responsive */
-  object-fit: contain;
-  /* se ve completa */
-  background: #0b12260d;
-  /* fondo para “letterbox” */
+  /* deprecada */
+  height: auto !important;
+  object-fit: cover !important;
+  background: transparent !important;
 }
 
 /* Barra de acciones bajo la imagen */
@@ -192,6 +207,9 @@
 .banner-actions .MuiButton-root {
   border-radius: 10px;
   font-weight: 700;
+  padding: 10px 16px;
+  /* más grandes */
+  font-size: 0.95rem;
 }
 
 /* Estado vacío y loading inline */
@@ -243,9 +261,30 @@
   }
 }
 
-/* Más altura en pantallas grandes */
+/* Más altura en pantallas muy grandes (opcional) */
 @media (min-width: 1600px) {
-  .banner-img--contain {
-    height: 460px;
+  .banner-frame {
+    aspect-ratio: 16 / 9;
   }
+
+  /* ya 16:9; puedes cambiar a 21/9 si tus banners son ultrawide */
+}
+
+.banner-card.dragging {
+  opacity: 0.6;
+  transform: scale(0.98);
+  border-color: #6366f1;
+}
+
+.banner-card.drag-over {
+  outline: 3px dashed #7e6bfb;
+  outline-offset: -3px;
+}
+
+.banner-card[draggable="true"] {
+  cursor: grab;
+}
+
+.banner-card[draggable="true"]:active {
+  cursor: grabbing;
 }

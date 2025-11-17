@@ -1,12 +1,11 @@
 import React, { useEffect, useRef, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 import Skeleton from '@mui/material/Skeleton';
-import bannerNovedades from '../../assets/images/bannerNovedades.jpg'
+import bannerNovedades from '../../assets/images/bannerNovedades.jpg';
 import { useOutletContext } from "react-router-dom";
 import RotatingBanner from "./RotatingBanner";
 import { useTranslation } from 'react-i18next';
 import FloatingChat from '../../components/FloatingChat';
-import BannerProduct from '../../components/bannerProducts';
 import "../../assets/stylesheets/RankingPro.css";
 import '../../assets/stylesheets/ProductCard.css';
 import RankingPro from '../../components/rankingPro.jsx';
@@ -23,41 +22,41 @@ function Inicio() {
   const { favoriteIds, loadFavorites } = useOutletContext();
   const { addAlert } = useAlert();
   const { t } = useTranslation();
-  
+
   const token = localStorage.getItem('token');
   const interesRef = useRef(null);
 
-  // ✅ Custom hooks separados
-  const { 
-    products, 
-    newProducts, 
-    cart, 
-    setCart, 
+  const {
+    products,
+    newProducts,
+    cart,
+    setCart,
     loading,
-    carousel
+    carousel,
+    carouselLoading,
+    carouselError,
+    reloadCarousel
   } = useHomeData(token, addAlert);
 
-  const { 
-    productRatings, 
-    loadRatings 
+  const {
+    productRatings,
+    loadRatings
   } = useProductRatings(token);
 
   const { addToCart } = useCartActions(token, setCart, addAlert, t);
-  
-  // ✅ Hook de favoritos con validación
+
   const { toggleFavorite, effectiveFavorites } = useFavoriteActions(
-    token, 
-    loadFavorites, 
-    addAlert, 
-    favoriteIds || [], // ✅ Fallback a array vacío
+    token,
+    loadFavorites,
+    addAlert,
+    favoriteIds || [],
     t
   );
 
-  // ✅ Memoizar productos para evitar re-renders
   const memoizedProducts = useMemo(() => products.slice(0, 9), [products]);
   const memoizedNewProducts = useMemo(() => newProducts, [newProducts]);
 
-  // ✅ Auto-scroll para el carrusel
+  // Auto-scroll “Quizás te puedan interesar”
   useEffect(() => {
     const interval = setInterval(() => {
       if (interesRef.current) {
@@ -72,61 +71,87 @@ function Inicio() {
     return () => clearInterval(interval);
   }, []);
 
-  // ✅ Cargar ratings de TODOS los productos (para el ranking)
+  // Ratings globales
   useEffect(() => {
     if (!loading && products.length > 0) {
-      const timer = setTimeout(() => {
-        loadRatings(products);
-      }, 1000);
+      const timer = setTimeout(() => loadRatings(products), 800);
       return () => clearTimeout(timer);
     }
   }, [loading, products, loadRatings]);
 
-  // ✅ Cargar ratings de novedades
+  // Ratings novedades
   useEffect(() => {
     if (!loading && newProducts.length > 0) {
-      const timer = setTimeout(() => {
-        loadRatings(newProducts.slice(0, 6));
-      }, 500);
+      const timer = setTimeout(() => loadRatings(newProducts.slice(0, 6)), 400);
       return () => clearTimeout(timer);
     }
   }, [loading, newProducts, loadRatings]);
 
-  // ✅ Helper seguro para verificar favoritos
-  const isFavorite = (productId) => {
-    return Array.isArray(effectiveFavorites) && effectiveFavorites.includes(productId);
-  };
+  const isFavorite = (productId) =>
+    Array.isArray(effectiveFavorites) && effectiveFavorites.includes(productId);
+
+  // Para depurar manualmente en consola
+  useEffect(() => {
+    window.reloadCarousel = reloadCarousel;
+    return () => { delete window.reloadCarousel; };
+  }, [reloadCarousel]);
 
   return (
     <div>
-
-      {/* banner */}
+      {/* Carrusel principal */}
       {loading ? (
-        <Skeleton sx={{ bgcolor: 'grey.800' }} variant="rectangular" width={"100%"} height={350} />
+        <Skeleton sx={{ bgcolor: 'grey.800' }} variant="rectangular" width="100%" height={350} />
+      ) : carouselLoading ? (
+        <Skeleton variant="rectangular" width="100%" height={350} />
+      ) : carouselError ? (
+        <div style={{ padding: '1rem', textAlign: 'center', color: '#b91c1c' }}>
+          {t('home.carouselError') || 'Error cargando carrusel'}: {carouselError.message}
+          <button
+            style={{
+              marginLeft: 12,
+              background: '#7e6bfb',
+              color: '#fff',
+              border: 'none',
+              padding: '6px 14px',
+              borderRadius: 8,
+              cursor: 'pointer'
+            }}
+            onClick={reloadCarousel}
+          >
+            {t('home.retry') || 'Reintentar'}
+          </button>
+        </div>
       ) : carousel.length > 0 ? (
         <Carousel interval={3000} className="mb-0">
-          {carousel.map((img, idx) => (
-            <Carousel.Item key={idx} sx={{ marginTop: "70px"}}>
+          {carousel.map(item => (
+            <Carousel.Item key={item.id}>
               <img
                 className="d-block w-100"
-                src={img}
-                alt={`${t('home.slide')} ${idx + 1}`}
+                src={item.url}
+                alt={`${t('home.slide')} ${item.id}`}
                 style={{ height: "450px", objectFit: "cover" }}
+                loading="lazy"
+                onError={(e) => {
+                  e.currentTarget.src = 'https://placehold.co/1280x450?text=Imagen+no+disponible';
+                }}
               />
             </Carousel.Item>
           ))}
         </Carousel>
+      ) : (
+        <div style={{ textAlign: 'center', padding: '1rem', color: '#64748b' }}>
+          {t('home.noCarouselImages') || 'No hay imágenes en el carrusel.'}
+        </div>
+      )}
 
-      ) : console.log(carousel.length)}
-
-      {/* Sección Novedades Maquillaje */}
+      {/* Novedades */}
       <section className="mt-5">
         <h2 className="mb-4">{t('home.newMakeup')}</h2>
         {loading ? (
           <div className="carousel-container">
             <div className="carousel-items">
-              {[1, 2, 3, 4].map((skeleton) => (
-                <div className="product-card" key={skeleton}>
+              {[1, 2, 3, 4].map((s) => (
+                <div className="product-card" key={s}>
                   <div className="image-container">
                     <Skeleton variant="rectangular" width="100%" height={200} />
                   </div>
@@ -184,10 +209,10 @@ function Inicio() {
         )}
       </section>
 
-      {/* Banner - SIN MARGEN */}
+      {/* Banner grande */}
       <div style={{ margin: 0, padding: 0, width: "100%" }}>
         <img
-          src={bannerNovedades} 
+          src={bannerNovedades}
           alt={t('home.newsBannerAlt')}
           loading="lazy"
           decoding="async"
@@ -202,7 +227,7 @@ function Inicio() {
         />
       </div>
 
-      {/* Banner delgado en movimiento - PEGADO AL BANNER */}
+      {/* Banner ticker */}
       <div className="banner-ticker" style={{ marginTop: 0 }}>
         <div className="banner-track">
           {[
@@ -231,15 +256,14 @@ function Inicio() {
         </div>
       </div>
 
-      {/* Sección Quizás te puedan interesar */}
+      {/* Quizás te puedan interesar */}
       <section className="mt-5">
         <h2 className="mb-4">{t('home.mayInterestYou')}</h2>
-
         {loading ? (
           <div className="carousel-container">
             <div className="carousel-items">
-              {[1, 2, 3, 4, 5, 6].map((skeleton) => (
-                <div className="product-card" key={skeleton}>
+              {[1, 2, 3, 4, 5, 6].map((s) => (
+                <div className="product-card" key={s}>
                   <div className="image-container">
                     <Skeleton variant="rectangular" width="100%" height={200} />
                   </div>
@@ -276,9 +300,8 @@ function Inicio() {
       </section>
 
       <FloatingChat />
-      {/* <BannerProduct products={products} productRatings={productRatings}/> */}
       <RotatingBanner />
-      
+
       <h2 className="mb-4">Productos mejor valorados</h2>
       <RankingPro products={products} productRatings={productRatings} loading={loading} />
     </div>

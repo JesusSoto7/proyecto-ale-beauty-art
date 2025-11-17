@@ -130,7 +130,7 @@ const ProductTable = () => {
     muiTablePaperProps: {
       sx: {
         width: "100%",
-        boxShadow:  "background.paper",
+        boxShadow: "background.paper",
         borderRadius: "16px",
         border: `1px solid ${isDark ? "#333" : "#e5e7eb"}`,
         backgroundColor: "background.paper",
@@ -160,8 +160,8 @@ const ProductTable = () => {
           "& tr": {
             transition: "all 0.3s ease",
             "&:hover": {
-              backgroundColor:  "background.paper",
-              boxShadow:  "background.paper",
+              backgroundColor: "background.paper",
+              boxShadow: "background.paper",
             },
           },
           "& td": {
@@ -190,7 +190,7 @@ const ProductTable = () => {
           sx: {
             position: "sticky",
             right: 0,
-            backgroundColor:  "background.paper",
+            backgroundColor: "background.paper",
             boxShadow: "-2px 0 4px rgba(0,0,0,0.05)",
             zIndex: 1,
           },
@@ -206,7 +206,7 @@ const ProductTable = () => {
             sx={{
               transition: "all 0.2s ease",
               "&:hover": {
-                backgroundColor:  "background.paper",
+                backgroundColor: "background.paper",
                 transform: "scale(1.1)",
               },
             }}
@@ -235,7 +235,7 @@ const ProductTable = () => {
       <Button
         variant="contained"
         sx={{
-          background:  "background.paper",
+          background: "background.paper",
           borderRadius: "10px",
           fontWeight: 700,
           fontSize: "0.95em",

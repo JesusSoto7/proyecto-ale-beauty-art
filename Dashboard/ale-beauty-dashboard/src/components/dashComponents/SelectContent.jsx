@@ -9,7 +9,7 @@ const pinkTheme = {
   light: '#fce4ec',
   background: '#fff5f7'
 };
-const textColor = '#1f2937'; 
+const textColor = '#1f2937';
 export default function SelectContent() {
   const [company, setCompany] = React.useState('');
 

@@ -99,6 +99,7 @@ Rails.application.routes.draw do
       get  "mercadopago/payment_methods", to: "mercadopago#payment_methods"
       get  "mercadopago/pse_banks",       to: "mercadopago#pse_banks"
 
+      patch "carousel/reorder", to: "carousel#reorder"
       resources :payments, only: [:create] do
         collection do
           post :create_preference   # POST /api/v1/payments/create_preference

@@ -1,4 +1,6 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback } from 'react';
+
+const API_BASE = import.meta.env.VITE_API_URL || 'https://localhost:4000';
 
 export const useHomeData = (token, addAlert) => {
   const [products, setProducts] = useState([]);
@@ -7,56 +9,78 @@ export const useHomeData = (token, addAlert) => {
   const [cart, setCart] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  // Carrusel
   const [carousel, setCarousel] = useState([]);
-  
-  // ✅ Usar ref para evitar re-fetch cuando solo cambia el cart
-  const hasLoadedRef = useRef(false);
+  const [carouselLoading, setCarouselLoading] = useState(false);
+  const [carouselError, setCarouselError] = useState(null);
+
+  const authHeaders = token ? { Authorization: `Bearer ${token}` } : {};
 
   const loadHomeData = useCallback(async () => {
-    // Si ya cargamos los datos, no recargar
-    if (hasLoadedRef.current) return;
-    
     setLoading(true);
     setError(null);
-
     try {
-      const [inicioData, novedadesData, cartData] = await Promise.all([
-        fetch('https://localhost:4000/api/v1/inicio').then(r => r.json()),
-        fetch('https://localhost:4000/api/v1/products/novedades', {
-          headers: { Authorization: `Bearer ${token}` }
-        }).then(r => r.json()),
-        fetch('https://localhost:4000/api/v1/cart', {
-          headers: { Authorization: `Bearer ${token}` }
-        }).then(r => r.json())
+      const [inicioRes, novedadesRes, cartRes] = await Promise.all([
+        fetch(`${API_BASE}/api/v1/inicio`, { headers: authHeaders }),
+        fetch(`${API_BASE}/api/v1/products/novedades`, { headers: authHeaders }),
+        fetch(`${API_BASE}/api/v1/cart`, { headers: authHeaders }),
       ]);
+
+      const inicioData = inicioRes.ok ? await inicioRes.json() : {};
+      const novedadesData = novedadesRes.ok ? await novedadesRes.json() : [];
+      const cartData = cartRes.ok ? await cartRes.json() : {};
 
       setProducts(inicioData.products || []);
       setCategories(inicioData.categories || []);
-      setCarousel(inicioData.carousel || []);
-      setNewProducts(novedadesData || []);
-      setCart(cartData.cart);
-      
-      hasLoadedRef.current = true; // ✅ Marcar como cargado
-      
-      return {
-        products: inicioData.products || [],
-        newProducts: novedadesData || []
-      };
+      setNewProducts(Array.isArray(novedadesData) ? novedadesData : []);
+      setCart(cartData.cart || null);
+
     } catch (err) {
       console.error('Error loading home data:', err);
       setError(err);
-      if (addAlert) {
-        addAlert('Error al cargar los datos', 'error', 3500);
-      }
-      return { products: [], newProducts: [] };
+      addAlert?.('Error al cargar los datos', 'error', 3500);
     } finally {
       setLoading(false);
     }
-  }, [token, addAlert]); // ✅ Removido la dependencia innecesaria
+  }, [token, addAlert]);
+
+  const loadCarousel = useCallback(async () => {
+    setCarouselLoading(true);
+    setCarouselError(null);
+    try {
+      const res = await fetch(`${API_BASE}/api/v1/carousel`, { headers: authHeaders });
+      if (!res.ok) throw new Error(`Carousel ${res.status}`);
+      const data = await res.json();
+
+      // Normalizar (por si algún backend antiguo devuelve solo strings):
+      const normalized = Array.isArray(data)
+        ? data.map(d => (typeof d === 'string'
+            ? { id: crypto.randomUUID(), url: d }
+            : { id: d.id, url: d.url }))
+        : [];
+
+      setCarousel(normalized);
+    } catch (err) {
+      console.error('Error loading carousel:', err);
+      setCarouselError(err);
+    } finally {
+      setCarouselLoading(false);
+    }
+  }, [token]);
 
   useEffect(() => {
     loadHomeData();
-  }, [loadHomeData]);
+    loadCarousel();
+  }, [loadHomeData, loadCarousel]);
+
+  useEffect(() => {
+    const handler = () => {
+      loadCarousel();
+    };
+    window.addEventListener('carousel:updated', handler);
+    return () => window.removeEventListener('carousel:updated', handler);
+  }, [loadCarousel]);
 
   return {
     products,
@@ -65,8 +89,11 @@ export const useHomeData = (token, addAlert) => {
     cart,
     setCart,
     loading,
-    carousel,
     error,
-    reloadHomeData: loadHomeData
+    carousel,
+    carouselLoading,
+    carouselError,
+    reloadHomeData: loadHomeData,
+    reloadCarousel: loadCarousel,
   };
 };
