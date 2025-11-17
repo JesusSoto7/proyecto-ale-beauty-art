@@ -10,11 +10,13 @@ export default function NotificationsMenu({
   notificaciones,
   loading,
   formatTime,
-  pinkTheme
+  pinkTheme,
+  forceCenter = false
 }) {
   const { t } = useTranslation();
-  // Solo centrar en móviles (hamburguesa presente). En >=768px anclar bajo el icono.
-  const centerOverlay = useMediaQuery('(max-width:767px)');
+  // Centrar cuando hay menú hamburguesa (forceCenter) o en móviles (<768px)
+  const isMobile = useMediaQuery('(max-width:767px)');
+  const centerOverlay = forceCenter || isMobile;
   const anchorPosition = centerOverlay && typeof window !== 'undefined' && open
     ? { top: window.innerHeight / 2, left: window.innerWidth / 2 }
     : undefined;

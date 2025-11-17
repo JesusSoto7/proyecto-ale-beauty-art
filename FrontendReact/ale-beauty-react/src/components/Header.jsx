@@ -47,6 +47,10 @@ export default function Header({ loadFavorites }) {
   // Responsive width queries for overflow management
   const isMidRange = useMediaQuery('(min-width:900px) and (max-width:1419px)');
   const isLarge = useMediaQuery('(min-width:1420px)');
+  // Rango solicitado 915–1418px donde sólo deben mostrarse idioma y perfil, lo demás va al menú hamburguesa
+  const isDesktopMidSpan = useMediaQuery('(min-width:915px) and (max-width:1418px)');
+  // Usado para controlar visibilidad de hamburguesa y comportamiento específico a partir de 768px
+  const isMdUp = useMediaQuery('(min-width:768px)');
   // Breakpoints progresivos para ir sacando ítems del menú hamburguesa en móviles
   // Ajustados para evitar saturación entre 601 y 844
   const showLanguage = useMediaQuery('(min-width:520px)');
@@ -56,6 +60,10 @@ export default function Header({ loadFavorites }) {
   const showFavorites = useMediaQuery('(min-width:760px)');
   const showNotifications = useMediaQuery('(min-width:820px)');
   const allPromoted = showLanguage && showProfileIcon && showUserName && showCart && showFavorites && showNotifications;
+  // Modo hamburguesa extendido: cuando todavía faltan ítems O estamos en mid-span limitado (<1420 y rango 915–1418)
+  const inHamburgerMode = (!isLarge) && (!allPromoted || isDesktopMidSpan);
+  // Hamburguesa visible sólo cuando realmente debe mostrarse: <768 o en 915–1418
+  const isHamburgerVisible = inHamburgerMode && (!isMdUp || isDesktopMidSpan);
   // Media queries para ajustar título y barra de búsqueda evitando que oculten íconos/hamburguesa
   const isLt360 = useMediaQuery('(max-width:359px)');
   const isLt480 = useMediaQuery('(max-width:479px)');
@@ -64,7 +72,6 @@ export default function Header({ loadFavorites }) {
   const isLt845 = useMediaQuery('(max-width:844px)');
   const isLt760 = useMediaQuery('(max-width:759px)');
   const isLt800 = useMediaQuery('(max-width:799px)');
-  const isMdUp = useMediaQuery('(min-width:768px)');
   const is800to845 = useMediaQuery('(min-width:800px) and (max-width:845px)');
   let titleFontSize = '1.9rem';
   if (isLt845) titleFontSize = '1.45rem';
@@ -74,6 +81,7 @@ export default function Header({ loadFavorites }) {
   if (isLt480) titleFontSize = '1.1rem';
   if (isLt360) titleFontSize = '1.0rem';
   let searchBarMaxWidth = '600px';
+  if (isMidRange) searchBarMaxWidth = '500px';
   if (isLt845) searchBarMaxWidth = '340px';
   if (is800to845) searchBarMaxWidth = '280px';
   if (isLt800) searchBarMaxWidth = '300px';
@@ -93,6 +101,7 @@ export default function Header({ loadFavorites }) {
   // Refs
   const navCategoriesRef = useRef(null);
   const scrollContainerRef = useRef(null);
+  const hamburgerBtnRef = useRef(null);
 
   // ✅ Custom hooks
   const { cart, cartCount } = useCartState(token, t);
@@ -206,8 +215,8 @@ export default function Header({ loadFavorites }) {
         </MenuItem>
       )}
 
-      {/* Carrito */}
-      {!showCart && (
+      {/* Carrito (en mid-span también va al menú) */}
+      {(!showCart || isDesktopMidSpan) && (
         <MenuItem 
           component={Link} 
           to={`/${lang}/carrito`}
@@ -220,8 +229,8 @@ export default function Header({ loadFavorites }) {
         </MenuItem>
       )}
 
-      {/* Favoritos */}
-      {!showFavorites && (
+      {/* Favoritos (en mid-span también va al menú) */}
+      {(!showFavorites || isDesktopMidSpan) && (
         <MenuItem 
           onClick={() => {
             setOpenModal(true);
@@ -234,8 +243,8 @@ export default function Header({ loadFavorites }) {
         </MenuItem>
       )}
 
-      {/* Idioma */}
-      {!showLanguage && (
+      {/* Idioma (no duplicar en mid-span, ya está en header) */}
+      {!showLanguage && !isDesktopMidSpan && (
         <MenuItem className="mobile-menu-item">
           <BsGlobe />
           <FormControl size="small" sx={{ minWidth: 80, ml: 1 }}>
@@ -258,11 +267,15 @@ export default function Header({ loadFavorites }) {
         </MenuItem>
       )}
 
-      {/* Notificaciones */}
-      {!showNotifications && (
+      {/* Notificaciones (en mid-span también va al menú) */}
+      {(!showNotifications || isDesktopMidSpan) && (
         <MenuItem 
-          onClick={(e) => {
-            handleOpenNotificationsMenu(e);
+          onClick={() => {
+            if (hamburgerBtnRef.current) {
+              handleOpenNotificationsMenu({ currentTarget: hamburgerBtnRef.current });
+            } else {
+              handleOpenNotificationsMenu({ currentTarget: null });
+            }
             setMobileMoreAnchorEl(null);
           }}
           className="mobile-menu-item"
@@ -328,9 +341,10 @@ export default function Header({ loadFavorites }) {
 
             {/* Íconos */}
             {/* Desktop / Mid-range icons. Some items hidden on mid-range to prevent overflow. */}
+            {/* Íconos desktop y mid (≥900px). En el rango 915–1418 no ocultar íconos si hay espacio. */}
             <Box sx={{ display: { xs: 'none', md: 'flex' }, alignItems: 'center', gap: 2 }}>
               {/* Selector de idioma */}
-              {isLarge && (
+              {(showLanguage || isLarge) && (
                 <FormControl size="small" sx={{ minWidth: 80 }}>
                   <Select
                     value={lang || 'es'}
@@ -351,8 +365,8 @@ export default function Header({ loadFavorites }) {
               {/* Perfil */}
               {perfilIcon}
 
-              {/* Nombre */}
-              {isLarge && (
+              {/* Nombre (oculto en mid-span para dejar sólo idioma + perfil) */}
+              {(showUserName || isLarge) && !isDesktopMidSpan && (
                 <Typography 
                   component={Link} 
                   to={user ? `/${lang}/perfil` : `/${lang}/login`}
@@ -364,89 +378,83 @@ export default function Header({ loadFavorites }) {
                     display: { xs: 'none', sm: 'block' },
                     transition: 'color 0.2s',
                     '&:hover': { color: pinkTheme.primary },
-                    minWidth: '80px'
+                    minWidth: '80px',
+                    ml: 1
                   }}
                 >
                   {user ? user.nombre : 'Sign In'}
                 </Typography>
               )}
 
-              {/* Carrito con optimistic count */}
-              <IconButton
-                component={Link}
-                to={`/${lang}/carrito`}
-                sx={{ color: "black", "&:hover": { color: pinkTheme.primary } }}
-              >
-                <Badge
-                  badgeContent={cartCount}
-                  color="error"
-                  overlap="circular"
-                  sx={{
-                    "& .MuiBadge-badge": {
-                      backgroundColor: pinkTheme.primary,
-                      border: "solid 1px white",
-                      fontSize: "0.7rem",
-                      height: "16px",
-                      minWidth: "16px",
-                      top: 4,
-                      right: 4,
-                    },
-                  }}
-                >
-                  <BsCart4 size={25} />
-                </Badge>
-              </IconButton>
-
-              {/* Favoritos */}
-              {isLarge && (
-                <IconButton
-                  onClick={() => setOpenModal(true)}
-                  sx={{ color: "black", "&:hover": { color: pinkTheme.primary } }}
-                >
-                  <BsHeart size={22} />
-                </IconButton>
+              {/* Íconos adicionales ocultos en mid-span (se moverán a hamburguesa). */}
+              {!isDesktopMidSpan && (
+                <>
+                  {/* Carrito con optimistic count */}
+                  <IconButton
+                    component={Link}
+                    to={`/${lang}/carrito`}
+                    sx={{ color: "black", "&:hover": { color: pinkTheme.primary } }}
+                  >
+                    <Badge
+                      badgeContent={cartCount}
+                      color="error"
+                      overlap="circular"
+                      sx={{
+                        "& .MuiBadge-badge": {
+                          backgroundColor: pinkTheme.primary,
+                          border: "solid 1px white",
+                          fontSize: "0.7rem",
+                          height: "16px",
+                          minWidth: "16px",
+                          top: 4,
+                          right: 4,
+                        },
+                      }}
+                    >
+                      <BsCart4 size={25} />
+                    </Badge>
+                  </IconButton>
+                  {/* Favoritos */}
+                  {(showFavorites || isLarge) && (
+                    <IconButton
+                      onClick={() => setOpenModal(true)}
+                      sx={{ color: "black", "&:hover": { color: pinkTheme.primary } }}
+                    >
+                      <BsHeart size={22} />
+                    </IconButton>
+                  )}
+                  {/* Notificaciones */}
+                  <IconButton
+                    sx={{ color: "black", "&:hover": { color: pinkTheme.primary }}}
+                    onClick={(e) => handleOpenNotificationsMenu(e)}
+                  >
+                    <Badge
+                      badgeContent={noLeidas}
+                      color="error"
+                      overlap="circular"
+                      sx={{
+                        "& .MuiBadge-badge": {
+                          backgroundColor: pinkTheme.primary,
+                          border: "solid 1px white",
+                          fontSize: "0.7rem",
+                          height: "16px",
+                          minWidth: "16px",
+                          top: 4,
+                          right: 4,
+                        },
+                      }}
+                    >
+                      <BsBell size={22}/>
+                    </Badge>
+                  </IconButton>
+                </>
               )}
-
-              {/* Notificaciones */}
-              <IconButton
-                sx={{ color: "black", "&:hover": { color: pinkTheme.primary }}}
-                onClick={(e) => handleOpenNotificationsMenu(e)}
-              >
-                <Badge
-                  badgeContent={noLeidas}
-                  color="error"
-                  overlap="circular"
-                  sx={{
-                    "& .MuiBadge-badge": {
-                      backgroundColor: pinkTheme.primary,
-                      border: "solid 1px white",
-                      fontSize: "0.7rem",
-                      height: "16px",
-                      minWidth: "16px",
-                      top: 4,
-                      right: 4,
-                    },
-                  }}
-                >
-                  <BsBell size={22}/>
-                </Badge>
-              </IconButton>
-              
-              {/* Menú de notificaciones */}
-              <NotificationsMenu
-                anchorEl={notificationsAnchorEl}
-                open={isNotificationsMenuOpen}
-                onClose={handleCloseNotificationsMenu}
-                notificaciones={notificaciones}
-                loading={notificacionesLoading}
-                formatTime={formatNotificationTime}
-                pinkTheme={pinkTheme}
-              />
             </Box>
 
             {/* Íconos progresivos (móviles y md) con hamburguesa única */}
-            <Box sx={{ display: { xs: 'flex', md: (!isLarge && !allPromoted) ? 'flex' : 'none' }, alignItems: 'center', gap: 0.7, flexShrink: 0 }}>
-              {showLanguage && (
+            {/* Íconos progresivos/hamburguesa para tamaños <900px o cuando aún no se promueven todos */}
+            <Box sx={{ display: { xs: 'flex', md: inHamburgerMode ? 'flex' : 'none' }, alignItems: 'center', gap: 0.7, flexShrink: 0 }}>
+              {showLanguage && !isDesktopMidSpan && (
                 <FormControl size="small" sx={{ minWidth: isLt760 ? 50 : 62, ml: isLt760 ? 0.4 : 0.8 }}>
                   <Select
                     value={lang || 'es'}
@@ -464,7 +472,7 @@ export default function Header({ loadFavorites }) {
                   </Select>
                 </FormControl>
               )}
-              {showProfileIcon && perfilIcon}
+              {showProfileIcon && !isDesktopMidSpan && perfilIcon}
               {showUserName && (
                 <Typography 
                   component={Link} 
@@ -479,13 +487,14 @@ export default function Header({ loadFavorites }) {
                     maxWidth: '60px',
                     whiteSpace: 'nowrap',
                     overflow: 'hidden',
-                    textOverflow: 'ellipsis'
+                    textOverflow: 'ellipsis',
+                    ml: 0.8
                   }}
                 >
                   {user ? user.nombre : 'Sign In'}
                 </Typography>
               )}
-              {showCart && (
+              {showCart && !isDesktopMidSpan && (
                 <IconButton
                   component={Link}
                   to={`/${lang}/carrito`}
@@ -512,7 +521,7 @@ export default function Header({ loadFavorites }) {
                   </Badge>
                 </IconButton>
               )}
-              {showFavorites && (
+              {showFavorites && !isDesktopMidSpan && (
                 <IconButton
                   onClick={() => setOpenModal(true)}
                   sx={{ color: 'black', '&:hover': { color: pinkTheme.primary } }}
@@ -521,7 +530,7 @@ export default function Header({ loadFavorites }) {
                   <BsHeart size={18} />
                 </IconButton>
               )}
-              {showNotifications && (
+              {showNotifications && !isDesktopMidSpan && (
                 <IconButton
                   sx={{ color: 'black', '&:hover': { color: pinkTheme.primary } }}
                   onClick={(e) => handleOpenNotificationsMenu(e)}
@@ -548,7 +557,7 @@ export default function Header({ loadFavorites }) {
                 </IconButton>
               )}
               {/* Desde 768px, si aún no se promueven notificaciones, mostrar el icono en lugar de la hamburguesa */}
-              {isMdUp && !showNotifications && (
+              {isMdUp && !showNotifications && !isDesktopMidSpan && (
                 <IconButton
                   sx={{ color: 'black', '&:hover': { color: pinkTheme.primary } }}
                   onClick={(e) => handleOpenNotificationsMenu(e)}
@@ -574,9 +583,14 @@ export default function Header({ loadFavorites }) {
                   </Badge>
                 </IconButton>
               )}
-              {/* Hamburguesa sólo si faltan ítems por promover */}
-              {!allPromoted && !isMdUp && (
-                <IconButton aria-label="menu" onClick={(e) => setMobileMoreAnchorEl(e.currentTarget)} size="small">
+              {/* Hamburguesa siempre en modo mid-span o cuando falta promover */}
+              {isHamburgerVisible && (
+                <IconButton
+                  aria-label="menu"
+                  ref={hamburgerBtnRef}
+                  onClick={(e) => setMobileMoreAnchorEl(e.currentTarget)}
+                  size="small"
+                >
                   <MenuIcon />
                 </IconButton>
               )}
@@ -599,6 +613,18 @@ export default function Header({ loadFavorites }) {
 
         {/* Menú móvil render */}
         {renderMobileMenu}
+
+        {/* Menú de notificaciones global (siempre montado) */}
+        <NotificationsMenu
+          anchorEl={notificationsAnchorEl}
+          open={isNotificationsMenuOpen}
+          onClose={handleCloseNotificationsMenu}
+          notificaciones={notificaciones}
+          loading={notificacionesLoading}
+          formatTime={formatNotificationTime}
+          pinkTheme={pinkTheme}
+          forceCenter={isHamburgerVisible}
+        />
 
         {/* Menú de usuario */}
         <UserMenu
