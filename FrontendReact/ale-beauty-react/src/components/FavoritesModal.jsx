@@ -23,7 +23,11 @@ export default function FavoritesModal({ open, onClose }) {
   const { t } = useTranslation();
   const [cart, setCart] = useState(null);
   const isNarrow = useMediaQuery('(max-width: 400px)');
-  const isStack = useMediaQuery('(max-width:1279px)'); // aplicar layout vertical hasta tablet grande
+  // Apilar sólo hasta 1023px. Desde 1024px horizontal completo.
+  const isStack = useMediaQuery('(max-width:1023px)');
+  // Solicitud: también integrar precio + stock + botón en filas para anchos 540, 853, 912.
+  // Activamos integración en stacked layout a partir de 540px.
+  const isInlineStack = useMediaQuery('(min-width:540px)');
 
   const token = localStorage.getItem("token");
 
@@ -312,9 +316,12 @@ export default function FavoritesModal({ open, onClose }) {
                           style={{ width: 60, height: 60, objectFit: 'scale-down', borderRadius: 12 }}
                         />
                         <Box sx={{ flex: 1, minWidth: 0 }}>
-                          <Typography level="body1" sx={{ fontWeight: 'bold', lineHeight: 1.2, display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 1 }}>
+                          <Typography level="body1" sx={{ fontWeight: 'bold', lineHeight: 1.2, display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 0.6 }}>
                             <span>{product.nombre_producto}</span>
-                            {isStack && (
+                            {/* Categoría al lado del nombre */}
+                            <span style={{ fontSize: '0.7rem', fontWeight: 500, color: '#555', letterSpacing: '0.3px' }}>· {product.categoria}</span>
+                            {/* Estado sólo en bloque superior cuando <540px */}
+                            {isStack && !isInlineStack && (
                               <span style={{
                                 fontSize: '0.65rem',
                                 fontWeight: 600,
@@ -332,20 +339,15 @@ export default function FavoritesModal({ open, onClose }) {
                               </span>
                             )}
                           </Typography>
-                          <Typography level="body2" color="neutral" sx={{ fontSize: '0.8rem' }}>
-                            {product.categoria}
-                          </Typography>
-                        </Box>
-                        {/* Layout horizontal (solo desktop) muestra precio y stock inline */}
-                        {!isStack && (
-                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 3 }}>
-                            <Box sx={{ textAlign: 'right' }}>
+                          {/* Precio debajo del nombre cuando layout es stacked (cualquier ancho <=1023) */}
+                          {isStack && (
+                            <Box sx={{ mt: 0.5 }}>
                               {priceDiscount && priceDiscount < priceOriginal ? (
                                 <>
                                   <Typography level="body2" sx={{ fontWeight: 'bold', color: '#dc2626' }}>
                                     {formatCOP(priceDiscount)}
                                   </Typography>
-                                  <Typography level="body2" sx={{ textDecoration: 'line-through', color: '#64748b', fontSize: '0.75rem' }}>
+                                  <Typography level="body2" sx={{ textDecoration: 'line-through', color: '#64748b', fontSize: '0.7rem' }}>
                                     {formatCOP(priceOriginal)}
                                   </Typography>
                                 </>
@@ -355,41 +357,75 @@ export default function FavoritesModal({ open, onClose }) {
                                 </Typography>
                               )}
                             </Box>
-                            <Box sx={{ minWidth: 70 }}>
-                              {product.stock > 9 ? (
-                                <Typography sx={{ fontWeight: 'bold', color: 'green', fontSize: '0.75rem' }}>{t('favorites.inStock')}</Typography>
-                              ) : product.stock > 5 ? (
-                                <Typography sx={{ fontWeight: 'bold', color: 'orange', fontSize: '0.75rem' }}>{t('favorites.fewLeft')}</Typography>
-                              ) : product.stock > 0 ? (
-                                <Typography sx={{ fontWeight: 'bold', color: '#ff5405ff', fontSize: '0.75rem' }}>{t('favorites.lastUnits')}</Typography>
-                              ) : (
-                                <Typography sx={{ fontWeight: 'bold', color: 'red', fontSize: '0.75rem' }}>{t('favorites.soldOut')}</Typography>
-                              )}
-                            </Box>
+                          )}
+                        </Box>
+                        {/* Fila derecha: desktop muestra precio+stock+botón; stacked >=540 sólo botón a la derecha */}
+                        {(!isStack || (isStack && isInlineStack)) && (
+                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, ml: 'auto' }}>
+                            {/* Desktop: precio + stock */}
+                            {!isStack && (
+                              <>
+                                <Box sx={{ textAlign: 'right', minWidth: 82 }}>
+                                  {priceDiscount && priceDiscount < priceOriginal ? (
+                                    <>
+                                      <Typography level="body2" sx={{ fontWeight: 'bold', color: '#dc2626' }}>
+                                        {formatCOP(priceDiscount)}
+                                      </Typography>
+                                      <Typography level="body2" sx={{ textDecoration: 'line-through', color: '#64748b', fontSize: '0.7rem' }}>
+                                        {formatCOP(priceOriginal)}
+                                      </Typography>
+                                    </>
+                                  ) : (
+                                    <Typography level="body2" sx={{ fontWeight: 'bold' }}>
+                                      {formatCOP(priceOriginal)}
+                                    </Typography>
+                                  )}
+                                </Box>
+                                <Box sx={{ minWidth: 70 }}>
+                                  {product.stock > 9 ? (
+                                    <Typography sx={{ fontWeight: 'bold', color: 'green', fontSize: '0.7rem' }}>{t('favorites.inStock')}</Typography>
+                                  ) : product.stock > 5 ? (
+                                    <Typography sx={{ fontWeight: 'bold', color: 'orange', fontSize: '0.7rem' }}>{t('favorites.fewLeft')}</Typography>
+                                  ) : product.stock > 0 ? (
+                                    <Typography sx={{ fontWeight: 'bold', color: '#ff5405ff', fontSize: '0.7rem' }}>{t('favorites.lastUnits')}</Typography>
+                                  ) : (
+                                    <Typography sx={{ fontWeight: 'bold', color: 'red', fontSize: '0.7rem' }}>{t('favorites.soldOut')}</Typography>
+                                  )}
+                                </Box>
+                              </>
+                            )}
+                            {/* Stacked >=540px: mostrar estado (sin precio para evitar duplicado) */}
+                            {isStack && isInlineStack && (
+                              <Box sx={{ minWidth: 70 }}>
+                                {product.stock > 9 ? (
+                                  <Typography sx={{ fontWeight: 'bold', color: 'green', fontSize: '0.65rem' }}>{t('favorites.inStock')}</Typography>
+                                ) : product.stock > 5 ? (
+                                  <Typography sx={{ fontWeight: 'bold', color: 'orange', fontSize: '0.65rem' }}>{t('favorites.fewLeft')}</Typography>
+                                ) : product.stock > 0 ? (
+                                  <Typography sx={{ fontWeight: 'bold', color: '#ff5405ff', fontSize: '0.65rem' }}>{t('favorites.lastUnits')}</Typography>
+                                ) : (
+                                  <Typography sx={{ fontWeight: 'bold', color: 'red', fontSize: '0.65rem' }}>{t('favorites.soldOut')}</Typography>
+                                )}
+                              </Box>
+                            )}
+                            <Button
+                              className="colorButon"
+                              size="sm"
+                              variant="solid"
+                              color="primary"
+                              onClick={(e) => { e.preventDefault(); e.stopPropagation(); addToCart(product.id); }}
+                              sx={{ whiteSpace: 'nowrap', px: 2.2 }}
+                            >
+                              {t('favorites.addToCart')}
+                            </Button>
                           </Box>
                         )}
                       </Box>
                     </Link>
 
-                    {/* Bloque inferior (solo en stack): precio + stock + botón */}
-                    {isStack && (
-                      <Box sx={{ px: 2, pb: 2, pt: 0, display: 'flex', flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', gap: 1 }}>
-                        <Box>
-                          {priceDiscount && priceDiscount < priceOriginal ? (
-                            <>
-                              <Typography level="body2" sx={{ fontWeight: 'bold', color: '#dc2626' }}>
-                                {formatCOP(priceDiscount)}
-                              </Typography>
-                              <Typography level="body2" sx={{ textDecoration: 'line-through', color: '#64748b', fontSize: '0.7rem' }}>
-                                {formatCOP(priceOriginal)}
-                              </Typography>
-                            </>
-                          ) : (
-                            <Typography level="body2" sx={{ fontWeight: 'bold' }}>
-                              {formatCOP(priceOriginal)}
-                            </Typography>
-                          )}
-                        </Box>
+                    {/* Bloque inferior (stack <540px): solo botón (precio ya mostrado arriba) */}
+                    {isStack && !isInlineStack && (
+                      <Box sx={{ px: 2, pb: 2, pt: 0, display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
                         <Button
                           className="colorButon"
                           size="sm"
@@ -403,19 +439,7 @@ export default function FavoritesModal({ open, onClose }) {
                       </Box>
                     )}
 
-                    {/* Botón horizontal sólo para layout desktop */}
-                    {!isStack && (
-                      <Button
-                        className="colorButon"
-                        size="sm"
-                        variant="solid"
-                        color="primary"
-                        onClick={() => addToCart(product.id)}
-                        sx={{ marginRight: 4 }}
-                      >
-                        {t('favorites.addToCart')}
-                      </Button>
-                    )}
+                    {/* Botón eliminado fuera del enlace en layout horizontal; ahora integrado */}
                   </Box>
                 );
               })}
