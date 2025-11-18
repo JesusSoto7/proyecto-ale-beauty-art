@@ -235,6 +235,25 @@
   justify-content: center;
 }
 
+/* Toggle/Actions bar for mobile filters */
+.prodcli-actions-bar {
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 10px;
+}
+
+.prodcli-filter-toggle {
+  background: #fff;
+  border: 1px solid #f0f0f0;
+  border-radius: 8px;
+  padding: 6px 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+.prodcli-filter-toggle:hover {
+  background: #fff0f7;
+}
+
 /* ✅ GRID DE PRODUCTOS - ACTUALIZADO */
 .prodcli-products-grid {
   display: grid;
@@ -331,12 +350,8 @@
     align-items: center;
   }
 
-  .prodcli-sidebar {
-    width: 100%;
-    max-width: 600px;
-    position: static;
-    margin-bottom: 30px;
-  }
+  /* Sidebar se oculta en móviles/tablets, se usa Drawer */
+  .prodcli-sidebar { display: none; }
 
   .prodcli-products-grid {
     grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
