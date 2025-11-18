@@ -55,7 +55,7 @@ const SubCategorias = () => {
   useEffect(() => {
     if (!token) return;
     setLoading(true);
-    
+
     // Cargar nombre de categoría
     fetch(`https://localhost:4000/api/v1/categories/${slug}`, {
       headers: { Authorization: `Bearer ${token}` },
@@ -201,9 +201,7 @@ const SubCategorias = () => {
       sx={{
         width: "100%",
         minHeight: "100vh",
-        background: isDark
-          ? "linear-gradient(135deg, #0f0f1e 0%, #1a1a2e 100%)"
-          : "linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%)",
+        background: "background.paper",
         p: 3,
       }}
     >
@@ -338,11 +336,11 @@ const SubCategorias = () => {
               <CategoryIcon sx={{ fontSize: 80, mb: 2, opacity: 0.3 }} />
               <Typography
                 variant="h6"
-                sx={{ mb: 1, fontSize: "1.2rem", color: isDark ? "#9ca3af" : "#6b7280" }}
+                sx={{ mb: 1, fontSize: "1.2rem" }}
               >
                 No hay subcategorías todavía
               </Typography>
-              <Typography variant="body2" sx={{ color: isDark ? "#6b7280" : "#9ca3af" }}>
+              <Typography variant="body2" >
                 Crea tu primera subcategoría para comenzar
               </Typography>
             </Box>
@@ -402,7 +400,6 @@ const SubCategorias = () => {
                       sx={{
                         fontWeight: 700,
                         fontSize: "1.1em",
-                        color: isDark ? "#fff" : "#1f2937",
                         mb: 0.5,
                       }}
                     >
@@ -411,7 +408,6 @@ const SubCategorias = () => {
                     <Typography
                       variant="body2"
                       sx={{
-                        color: isDark ? "#9ca3af" : "#6b7280",
                         fontSize: "0.85em",
                       }}
                     >
@@ -483,7 +479,7 @@ const SubCategorias = () => {
           maxWidth="sm"
           fullWidth
           PaperProps={{
-            sx:{
+            sx: {
               borderRadius: "16px",
               boxShadow: "0 20px 60px rgba(16, 185, 129, 0.15)",
               backgroundColor: isDark ? "#1a1a2e" : "#fff",
@@ -606,8 +602,8 @@ const SubCategorias = () => {
                   {imagen
                     ? imagen.name
                     : subCategoriaEdit
-                    ? "Cambiar imagen"
-                    : "Seleccionar imagen"}
+                      ? "Cambiar imagen"
+                      : "Seleccionar imagen"}
                   <input
                     type="file"
                     accept="image/*"
@@ -767,9 +763,8 @@ const SubCategorias = () => {
               fontSize: "1em",
               boxShadow: "0 10px 40px rgba(0, 0, 0, 0.1)",
               borderRadius: "12px",
-              border: `1px solid ${
-                snackbar.severity === "success" ? "#86efac" : "#fca5a5"
-              }`,
+              border: `1px solid ${snackbar.severity === "success" ? "#86efac" : "#fca5a5"
+                }`,
               background:
                 snackbar.severity === "success"
                   ? "linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%)"

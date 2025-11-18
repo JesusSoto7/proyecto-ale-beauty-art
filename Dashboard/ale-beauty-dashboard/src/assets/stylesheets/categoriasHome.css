@@ -1,4 +1,4 @@
-.categories-container{
+.categories-container {
   display: "flex";
   gap: "20px";
   flex-wrap: "wrap";
@@ -49,10 +49,10 @@
 
 @media (max-width: 700px) and (min-width: 0px) {
 
-  .categories-container{
-  display: "flex";
-  justify-content: center;
-}
+  .categories-container {
+    display: "flex";
+    justify-content: center;
+  }
 
-  
+
 }

@@ -18,10 +18,13 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
 import CustomDatePicker from './CustomDatePicker';
 import ColorModeIconDropdown from '../../shared-theme/ColorModeIconDropdown';
+import { useNavigate, useParams } from 'react-router-dom';
 
 export default function Header() {
   const [user, setUser] = useState(null);
   const [anchorEl, setAnchorEl] = useState(null);
+  const navigate = useNavigate();
+  const { lang } = useParams();
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -37,6 +40,11 @@ export default function Header() {
   const open = Boolean(anchorEl);
   const handleMenuOpen = (e) => setAnchorEl(e.currentTarget);
   const handleMenuClose = () => setAnchorEl(null);
+
+  const currentLang =
+    lang && ['es', 'en'].includes(lang)
+      ? lang
+      : ((navigator.language || 'es').startsWith('es') ? 'es' : 'en');
 
   return (
     <Box
@@ -75,7 +83,7 @@ export default function Header() {
       {/* Derecha: búsqueda + fecha + modo + notificaciones + perfil */}
       <Stack direction="row" alignItems="center" spacing={2}>
         {/* Barra de búsqueda */}
-        <Paper
+        {/*         <Paper
           elevation={0}
           sx={{
             display: 'flex',
@@ -94,16 +102,12 @@ export default function Header() {
             inputProps={{ 'aria-label': 'search' }}
             sx={{ flex: 1, fontSize: 14 }}
           />
-        </Paper>
-
+        </Paper> */}
 
         <CustomDatePicker />
 
-
         {/* Selector de tema */}
-
         <ColorModeIconDropdown />
-
 
         {/* Notificaciones */}
         <IconButton
@@ -175,7 +179,6 @@ export default function Header() {
           <ExpandMoreIcon sx={{ fontSize: 18, color: 'text.secondary' }} />
         </Stack>
 
-
         <Menu
           anchorEl={anchorEl}
           open={open}
@@ -187,12 +190,19 @@ export default function Header() {
           transformOrigin={{ vertical: 'top', horizontal: 'right' }}
         >
           <MenuItem disabled>{user?.email || 'user@example.com'}</MenuItem>
-          <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
+          <MenuItem
+            onClick={() => {
+              handleMenuClose();
+              navigate(`/${currentLang}/home/user-profile`);
+            }}
+          >
+            Profile
+          </MenuItem>
           <MenuItem
             onClick={() => {
               handleMenuClose();
               localStorage.removeItem('token');
-              window.location.href = '/es/login';
+              window.location.href = `/${currentLang}/login`;
             }}
           >
             Logout

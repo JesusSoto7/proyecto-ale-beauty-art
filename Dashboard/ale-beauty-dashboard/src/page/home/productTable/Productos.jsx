@@ -1,5 +1,10 @@
-import React, { useState, useMemo, useEffect, useCallback } from "react";
-import { MaterialReactTable, useMaterialReactTable } from "material-react-table";
+// Opción A: Toolbar NO sticky, sólo header sticky
+import React, { useState, useCallback } from "react";
+import {
+  MaterialReactTable,
+  useMaterialReactTable,
+  MRT_ToggleFullScreenButton,
+} from "material-react-table";
 import {
   Box,
   Button,
@@ -13,7 +18,6 @@ import { useTheme } from "@mui/material/styles";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import AddIcon from "@mui/icons-material/Add";
-import { formatCOP } from "../../../services/currency";
 import { useProducts } from "./hooks/useProducts";
 import { useProductColumns } from "./hooks/useProductColumns";
 import ProductModal from "./ProductModal";
@@ -28,8 +32,7 @@ const ProductTable = () => {
   const showAlert = useCallback((message, severity = "success") => {
     setAlert({ open: true, message, severity });
   }, []);
-
-  const handleCloseAlert = useCallback((event, reason) => {
+  const handleCloseAlert = useCallback((_, reason) => {
     if (reason === "clickaway") return;
     setAlert((prev) => ({ ...prev, open: false }));
   }, []);
@@ -51,25 +54,19 @@ const ProductTable = () => {
   const handleCreateProduct = useCallback(
     async (formData) => {
       const success = await createProduct(formData);
-      if (success) {
-        setModalState({ open: false, mode: null, product: null });
-      }
+      if (success) setModalState({ open: false, mode: null, product: null });
       return success;
     },
     [createProduct]
   );
-
   const handleUpdateProduct = useCallback(
     async (formData, slug) => {
       const success = await updateProduct(formData, slug);
-      if (success) {
-        setModalState({ open: false, mode: null, product: null });
-      }
+      if (success) setModalState({ open: false, mode: null, product: null });
       return success;
     },
     [updateProduct]
   );
-
   const handleDelete = useCallback(
     async (row) => {
       if (!window.confirm(`¿Eliminar producto "${row.original.nombre_producto}"?`)) return;
@@ -77,126 +74,161 @@ const ProductTable = () => {
     },
     [deleteProduct]
   );
-
   const openCreateModal = useCallback(() => {
     setModalState({ open: true, mode: "create", product: null });
   }, []);
-
   const openEditModal = useCallback((product) => {
     setModalState({ open: true, mode: "edit", product });
   }, []);
-
   const closeModal = useCallback(() => {
     setModalState({ open: false, mode: null, product: null });
   }, []);
 
+  const commonSurface = {
+    bgcolor: "background.paper",
+    borderColor: "divider",
+  };
+
   const tableInstance = useMaterialReactTable({
     columns,
     data: products,
-    enableEditing: true,
-    enableColumnResizing: true,
-    columnResizeMode: "onChange",
     getRowId: (row) => row.id,
-    initialState: { showColumnFilters: true, density: "comfortable" },
+
+    // Mostrar SIEMPRE el buscador global
+    initialState: { density: "comfortable", showGlobalFilter: true },
+    state: { isLoading },
+
+    // Mostrar buscador global, quitar demás controles
+    enableGlobalFilter: true,
+    enableColumnFilters: false,
+    enableColumnActions: false,
+    enableHiding: false,
+    enableDensityToggle: false,
+
+    // ACTIVAR columna de acciones
+    enableRowActions: true,
+    positionActionsColumn: "last",
+
+    // Renderizar solo el botón de pantalla completa
+    renderToolbarInternalActions: ({ table }) => (
+      <MRT_ToggleFullScreenButton table={table} />
+    ),
+    positionGlobalFilter: "left",
+
+    muiTablePaperProps: {
+      sx: (theme) => ({
+        bgcolor: "background.paper",
+        "&.mrt-full-screen": {
+          bgcolor: "background.default",
+        },
+        "&.mrt-full-screen .MuiTableContainer-root": {
+          maxHeight: "calc(100dvh - 120px)",
+          minHeight: "calc(100dvh - 120px)",
+          bgcolor: (theme.vars || theme).palette.background.paper,
+        },
+      }),
+    },
+
     muiToolbarAlertBannerProps: isError
-      ? { color: "error", children: "Error al cargar productos" }
+      ? {
+        color: "error",
+        sx: {
+          ...commonSurface,
+          border: `1px solid ${theme.palette.error.main}`,
+          my: 0,
+        },
+      }
       : undefined,
+
+    muiTopToolbarProps: {
+      sx: {
+        ...commonSurface,
+        borderBottom: `1px solid ${theme.palette.divider}`,
+        p: 1,
+      },
+    },
+    muiBottomToolbarProps: {
+      sx: {
+        ...commonSurface,
+        borderTop: `1px solid ${theme.palette.divider}`,
+        p: 1,
+      },
+    },
+    muiTablePaginationProps: {
+      sx: {
+        ...commonSurface,
+        ".MuiTablePagination-select": { bgcolor: "background.paper" },
+      },
+    },
     muiTableContainerProps: {
       sx: {
         minHeight: "600px",
-        maxHeight: "calc(100vh - 300px)",
+        maxHeight: "calc(100dvh - 220px)",
         width: "100%",
-        overflowX: "auto",
-        overflowY: "auto",
-        backgroundColor: "background.paper",
-        borderRadius: "16px",
-        "&::-webkit-scrollbar": {
-          height: "12px",
-          width: "12px",
-        },
-        "&::-webkit-scrollbar-track": {
-          background: "background.paper",
-          borderRadius: "10px",
-        },
-        "&::-webkit-scrollbar-thumb": {
-          background: "background.paper",
-          borderRadius: "10px",
-          "&:hover": {
-            background: "background.paper",
-          },
-        },
-      },
-    },
-    muiTablePaperProps: {
-      sx: {
-        width: "100%",
-        boxShadow: "background.paper",
-        borderRadius: "16px",
-        border: `1px solid ${isDark ? "#333" : "#e5e7eb"}`,
-        backgroundColor: "background.paper",
+        overflow: "auto",
+        bgcolor: "background.paper",
+        borderRadius: 2,
+        border: `1px solid ${theme.palette.divider}`,
       },
     },
     muiTableProps: {
       sx: {
         tableLayout: "auto",
         minWidth: "1400px",
+        bgcolor: "background.paper",
         "& thead": {
           position: "sticky",
           top: 0,
           zIndex: 2,
           "& th": {
-            backgroundColor: "background.paper",
-            borderBottom: `2px solid ${isDark ? "#333" : "#e5e7eb"}`,
+            bgcolor: "background.paper",
+            borderBottom: `2px solid ${theme.palette.divider}`,
             fontWeight: 800,
-            fontSize: "0.95em",
+            fontSize: "0.95rem",
             textTransform: "uppercase",
             letterSpacing: "0.5px",
-            padding: "16px 12px",
-            whiteSpace: "normal",
-            wordWrap: "break-word",
+            p: "12px 12px",
           },
         },
-        "& tbody": {
-          "& tr": {
-            transition: "all 0.3s ease",
-            "&:hover": {
-              backgroundColor: "background.paper",
-              boxShadow: "background.paper",
-            },
-          },
-          "& td": {
-            borderBottom: `1px solid ${isDark ? "#2a2a3e" : "#f3f4f6"}`,
-            padding: "16px 12px",
-            fontSize: "0.95em",
-            whiteSpace: "normal",
-            wordWrap: "break-word",
-          },
+        "& tbody tr:hover": {
+          bgcolor: theme.palette.action.hover,
+        },
+        "& tbody td": {
+          bgcolor: "background.paper",
+          borderBottom: `1px solid ${theme.palette.divider}`,
+          p: "14px 12px",
+          fontSize: "0.95rem",
         },
       },
     },
+
+    muiTableHeadCellProps: { sx: { bgcolor: "background.paper" } },
+    muiTableBodyCellProps: { sx: { bgcolor: "background.paper" } },
+
     displayColumnDefOptions: {
       "mrt-row-actions": {
-        size: 120,
+        size: 140,
         muiTableHeadCellProps: {
           sx: {
             position: "sticky",
             right: 0,
-            backgroundColor: "background.paper",
-            boxShadow: "-2px 0 4px rgba(0,0,0,0.1)",
-            zIndex: 1,
+            bgcolor: "background.paper",
+            borderLeft: `1px solid ${theme.palette.divider}`,
+            zIndex: 3,
           },
         },
         muiTableBodyCellProps: {
           sx: {
             position: "sticky",
             right: 0,
-            backgroundColor: "background.paper",
-            boxShadow: "-2px 0 4px rgba(0,0,0,0.05)",
-            zIndex: 1,
+            bgcolor: "background.paper",
+            borderLeft: `1px solid ${theme.palette.divider}`,
+            zIndex: 2,
           },
         },
       },
     },
+
     renderRowActions: ({ row }) => (
       <Box sx={{ display: "flex", gap: "0.5rem", justifyContent: "center" }}>
         <Tooltip title="Editar">
@@ -204,11 +236,8 @@ const ProductTable = () => {
             color="primary"
             onClick={() => openEditModal(row.original)}
             sx={{
-              transition: "all 0.2s ease",
-              "&:hover": {
-                backgroundColor: "background.paper",
-                transform: "scale(1.1)",
-              },
+              transition: "transform 0.2s ease",
+              "&:hover": { bgcolor: "action.hover", transform: "scale(1.06)" },
             }}
           >
             <EditIcon />
@@ -219,11 +248,8 @@ const ProductTable = () => {
             color="error"
             onClick={() => handleDelete(row)}
             sx={{
-              transition: "all 0.2s ease",
-              "&:hover": {
-                backgroundColor: "#fee2e2",
-                transform: "scale(1.1)",
-              },
+              transition: "transform 0.2s ease",
+              "&:hover": { bgcolor: "action.hover", transform: "scale(1.06)" },
             }}
           >
             <DeleteIcon />
@@ -231,37 +257,29 @@ const ProductTable = () => {
         </Tooltip>
       </Box>
     ),
+
     renderTopToolbarCustomActions: () => (
       <Button
         variant="contained"
-        sx={{
-          background: "background.paper",
-          borderRadius: "10px",
-          fontWeight: 700,
-          fontSize: "0.95em",
-          px: 3,
-          py: 1.2,
-          boxShadow: "0 4px 15px rgba(37, 99, 235, 0.3)",
-          transition: "all 0.3s ease",
-          textTransform: "none",
-          ":hover": {
-            background: "linear-gradient(135deg, #1eaf5aff 0%, #3330ceff 100%)",
-            boxShadow: "0 6px 20px rgba(37, 99, 235, 0.4)",
-            transform: "translateY(-2px)",
-          },
-        }}
         startIcon={<AddIcon />}
         onClick={openCreateModal}
+        sx={{
+          borderRadius: 2,
+          fontWeight: 700,
+          fontSize: "0.9rem",
+          px: 3,
+          py: 1,
+          textTransform: "none",
+        }}
       >
         Nuevo Producto
       </Button>
     ),
-    state: { isLoading },
   });
 
   return (
     <Box sx={{ width: "100%", px: 0, py: 4 }}>
-      <Box sx={{ mb: 4 }}>
+      <Box sx={{ mb: 3 }}>
         <Typography
           variant="h4"
           component="h2"
@@ -308,8 +326,7 @@ const ProductTable = () => {
           sx={{
             width: "100%",
             fontWeight: 600,
-            fontSize: "1em",
-            boxShadow: "0 10px 40px rgba(0, 0, 0, 0.1)",
+            fontSize: "0.95rem",
             borderRadius: "12px",
             border: `1px solid ${alert.severity === "success" ? "#86efac" : "#fca5a5"}`,
             background:

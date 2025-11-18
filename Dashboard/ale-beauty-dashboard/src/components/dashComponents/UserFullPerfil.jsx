@@ -158,31 +158,31 @@ function UserFullPerfil() {
             headers: { Authorization: `Bearer ${token}` },
         })
             .then((res) => {
-            if (!res.ok) throw new Error("No se pudo cargar el usuario.");
-            return res.json();
+                if (!res.ok) throw new Error("No se pudo cargar el usuario.");
+                return res.json();
             })
             .then((data) => {
-            setUser(data);
-            setOrders(data.orders || []);
-            setUserReviews(data.reviews || []);
-            setFavorites(data.favorites || []);
-            setCart(data.cart || null);
+                setUser(data);
+                setOrders(data.orders || []);
+                setUserReviews(data.reviews || []);
+                setFavorites(data.favorites || []);
+                setCart(data.cart || null);
 
-            setReviewCount((data.reviews || []).length);
-            setFormData({
-                nombre: data.nombre || "",
-                apellido: data.apellido || "",
-                email: data.email || "",
-                telefono: data.telefono || "",
-                direccion: data.direccion || "",
-            });
+                setReviewCount((data.reviews || []).length);
+                setFormData({
+                    nombre: data.nombre || "",
+                    apellido: data.apellido || "",
+                    email: data.email || "",
+                    telefono: data.telefono || "",
+                    direccion: data.direccion || "",
+                });
             })
             .catch((err) => {
-            console.error("Error al cargar perfil:", err);
-            setError("Error al cargar el perfil del usuario.");
+                console.error("Error al cargar perfil:", err);
+                setError("Error al cargar el perfil del usuario.");
             })
             .finally(() => setLoading(false));
-        }, [id]);
+    }, [id]);
 
     const handleLogout = () => {
         console.log("El administrador está cerrando sesión.");
@@ -323,27 +323,27 @@ function UserFullPerfil() {
 
         try {
             const res = await fetch(`https://localhost:4000/api/v1/users/${user.id}`, {
-            method: "PUT",
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${token}`,
-            },
-            body: JSON.stringify({
-                user: {
-                nombre: formData.nombre,
-                apellido: formData.apellido,
-                email: formData.email,
-                telefono: formData.telefono
-                }
-            }),
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`,
+                },
+                body: JSON.stringify({
+                    user: {
+                        nombre: formData.nombre,
+                        apellido: formData.apellido,
+                        email: formData.email,
+                        telefono: formData.telefono
+                    }
+                }),
             });
 
             const data = await res.json();
 
             if (!res.ok) {
-            console.error("Error al actualizar usuario:", data);
-            addAlert(data.errors?.join(", ") || "Error al actualizar usuario", "error");
-            return;
+                console.error("Error al actualizar usuario:", data);
+                addAlert(data.errors?.join(", ") || "Error al actualizar usuario", "error");
+                return;
             }
 
             // Actualiza el estado del usuario en pantalla
@@ -354,7 +354,7 @@ function UserFullPerfil() {
             console.error("Error inesperado:", err);
             addAlert("Error inesperado al actualizar", "error");
         }
-        };
+    };
 
 
     return (
@@ -367,35 +367,35 @@ function UserFullPerfil() {
 
             {/* Perfil principal */}
             <div className="profile-content">
-                <div style={{display:"flex", marginTop: 25, justifyContent:"space-between"}}>
-                    <div display="flex" style={{display:"flex", zIndex: 100}}>
+                <div style={{ display: "flex", marginTop: 25, justifyContent: "space-between" }}>
+                    <div display="flex" style={{ display: "flex", zIndex: 100 }}>
                         <div style={{ position: "relative" }}>
-                            <img src={profilePic} alt="Profile" className="profile-img"/>
+                            <img src={profilePic} alt="Profile" className="profile-img" />
                         </div>
-                        <div id="div-name-role" style={{display:"flex", flexDirection:"column", marginLeft:"20px", justifyContent:"end"}}>
+                        <div id="div-name-role" style={{ display: "flex", flexDirection: "column", marginLeft: "20px", justifyContent: "end" }}>
                             <h1 className="profile-name">{user.nombre} {user.apellido}</h1>
                             <p className="profile-role">
                                 {/* Puedes usar el rol del usuario aquí */}
                                 Usuario ID: {user.id}
-                            </p> 
+                            </p>
                         </div>
                     </div>
-                    
+
                     {/* Botón de Logout del ADMINISTRADOR */}
                     <div className="profile-actions">
-                        <button style={{borderRadius: 10, backgroundColor: "#f5e9e9", height: 50}} id="notiButton" onClick={handleOpenNotif} ><NotificationAddIcon fontSize="medium" /></button>
-                        <button id="logout-button-1" className="btn btn-primary" onClick={handleLogout}>Logout Admin <LogoutIcon fontSize="small"/></button>
+                        <button style={{ borderRadius: 10, backgroundColor: "#f5e9e9", height: 50 }} id="notiButton" onClick={handleOpenNotif} ><NotificationAddIcon fontSize="medium" /></button>
+                        <button id="logout-button-1" className="btn btn-primary" onClick={handleLogout}>Logout Admin <LogoutIcon fontSize="small" /></button>
                         <button id="logout-button-2" className="btn btn-primary" onClick={handleLogout}><LogoutIcon fontSize="small" /></button>
                     </div>
                 </div>
 
                 {/* Sección sobre mí */}
                 <section className="about-section section-user-profile">
-                    <section className="section-user-profile" style={{display: "flex", flexDirection: "row", justifyContent: "space-between", gap: "20px"}}>
-                        <div style={{width: "135%"}}>
+                    <section className="section-user-profile" style={{ display: "flex", flexDirection: "row", justifyContent: "space-between", gap: "20px" }}>
+                        <div style={{ width: "135%" }}>
                             <h2 className="h2-unic">Estadísticas del Usuario</h2>
-                            <div className="exp-section" style={{ display: "flex", flexDirection: "row", gap: "15px"}}>
-                                <div style={{display: "flex", flexDirection: "column", width: "100%", gap: "15px"}}>
+                            <div className="exp-section" style={{ display: "flex", flexDirection: "row", gap: "15px" }}>
+                                <div style={{ display: "flex", flexDirection: "column", width: "100%", gap: "15px" }}>
                                     <div className="exp-card">
                                         <h3>compras realizadas</h3>
                                         <p>{orders.length}</p>
@@ -405,7 +405,7 @@ function UserFullPerfil() {
                                         <p>{reviewCount}</p>
                                     </div>
                                 </div>
-                                <div style={{display: "flex", flexDirection: "column", width: "100%", gap: "15px"}}>
+                                <div style={{ display: "flex", flexDirection: "column", width: "100%", gap: "15px" }}>
                                     <div className="exp-card">
                                         <h3>Productos en favoritos</h3>
                                         <p>{favorites?.length ?? 0}</p>
@@ -413,12 +413,12 @@ function UserFullPerfil() {
                                     <div className="exp-card">
                                         <h3>Productos en carrito</h3>
                                         <p>{cart?.cart_products?.length ?? 0}</p>
-                                    </div> 
+                                    </div>
                                 </div>
-                                
+
                             </div>
                         </div>
-                        
+
                         <div id="more-me">
                             <h2 className="h2-unic">Datos de contacto</h2>
                             <div className="about-details">
@@ -436,7 +436,7 @@ function UserFullPerfil() {
                                 </div>
                                 <hr />
 
-                                
+
                                 <button className="edit-btn" onClick={toggleDrawer(true)}>
                                     Editar perfil
                                 </button>
@@ -452,11 +452,11 @@ function UserFullPerfil() {
                                     <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
                                         <h3 style={{ textAlign: "center", margin: 0 }}>Editar perfil de usuario</h3>
 
-                                        <TextField label="Nombre" variant="outlined" value={formData.nombre} onChange={(e) => setFormData({ ...formData, nombre: e.target.value })} fullWidth InputLabelProps={{ style: { color: "#8b949e" } }} InputProps={{ style: { color: "#a3a3a3" } }}/>
-                                        <TextField label="Apellido" variant="outlined" value={formData.apellido} onChange={(e) => setFormData({ ...formData, apellido: e.target.value })} fullWidth InputLabelProps={{ style: { color: "#8b949e" } }} InputProps={{ style: { color: "#a3a3a3" } }}/>
-                                        <TextField label="Teléfono" variant="outlined" value={formData.telefono} onChange={(e) => setFormData({ ...formData, telefono: e.target.value })} fullWidth InputLabelProps={{ style: { color: "#8b949e" } }} InputProps={{ style: { color: "#a3a3a3" } }}/>
-                                        <TextField label="Email" type="email" variant="outlined" value={formData.email} onChange={(e) => setFormData({ ...formData, email: e.target.value })} fullWidth InputLabelProps={{ style: { color: "#8b949e" } }} InputProps={{ style: { color: "#a3a3a3" } }}/>
-                                        
+                                        <TextField label="Nombre" variant="outlined" value={formData.nombre} onChange={(e) => setFormData({ ...formData, nombre: e.target.value })} fullWidth InputLabelProps={{ style: { color: "#8b949e" } }} InputProps={{ style: { color: "#a3a3a3" } }} />
+                                        <TextField label="Apellido" variant="outlined" value={formData.apellido} onChange={(e) => setFormData({ ...formData, apellido: e.target.value })} fullWidth InputLabelProps={{ style: { color: "#8b949e" } }} InputProps={{ style: { color: "#a3a3a3" } }} />
+                                        <TextField label="Teléfono" variant="outlined" value={formData.telefono} onChange={(e) => setFormData({ ...formData, telefono: e.target.value })} fullWidth InputLabelProps={{ style: { color: "#8b949e" } }} InputProps={{ style: { color: "#a3a3a3" } }} />
+                                        <TextField label="Email" type="email" variant="outlined" value={formData.email} onChange={(e) => setFormData({ ...formData, email: e.target.value })} fullWidth InputLabelProps={{ style: { color: "#8b949e" } }} InputProps={{ style: { color: "#a3a3a3" } }} />
+
                                         <Button variant="contained" onClick={() => { handleSaveUser(); toggleDrawer(false); }} sx={{ mt: 2, backgroundColor: "#202020", "&:hover": { backgroundColor: "#ed3c76", borderColor: "#ed3c76" }, color: "#fff", borderRadius: "8px" }}>
                                             Guardar cambios
                                         </Button>
@@ -465,15 +465,15 @@ function UserFullPerfil() {
                             </div>
 
                         </div>
-                        
+
                     </section>
 
-                    
+
                 </section>
 
                 {/* información */}
                 <section className="experience-section section-user-profile">
-                    <h2>informacion administrativa</h2>
+                    <h2>Información Administrativa</h2>
                     <div className="experience-grid">
                         <div className="exp-card">
                             <h3>Roles</h3>
@@ -486,22 +486,22 @@ function UserFullPerfil() {
                             <span>ID de la base de datos</span>
                         </div>
                         {user.roles?.includes("admin") ? (
-                            <div id="role-user" className="exp-card" style={{background: "linear-gradient(90deg, #ededed 35%, #e3e3e3 50%, rgba(167, 255, 167, 1) 100%)"}}>
+                            <div id="role-user" className="exp-card" style={{ background: "background.paper" }}>
                                 <div>
                                     <h3>Tipo de usuario</h3>
                                     <p>Admin</p>
                                     <span>Acceso total</span>
                                 </div>
-                                <div style={{width: "80px", height: "80px", backgroundColor: "#a7ffa7ff", borderRadius: 10, display: "flex", alignItems: "center", justifyContent: "center"}}><h1>A</h1></div>
+                                <div style={{ width: "80px", height: "80px", backgroundColor: "#a7ffa7ff", borderRadius: 10, display: "flex", alignItems: "center", justifyContent: "center" }}><h1>A</h1></div>
                             </div>
                         ) : (
-                            <div id="role-user" className="exp-card" style={{background: "linear-gradient(90deg, #ededed 35%, #e3e3e3 50%, #eb5e8c 100%)"}}>
+                            <div id="role-user" className="exp-card" style={{ background: "paper" }}>
                                 <div>
                                     <h3>Tipo de usuario</h3>
                                     <p>Regular User</p>
                                     <span>Acceso limitado</span>
                                 </div>
-                                <div style={{width: "80px", height: "80px", backgroundColor: "#eb5e8c", borderRadius: 10, display: "flex", alignItems: "center", justifyContent: "center"}}><h1 style={{color: "#fff"}}>R</h1></div>
+                                <div style={{ width: "80px", height: "80px", backgroundColor: "#eb5e8c", borderRadius: 10, display: "flex", alignItems: "center", justifyContent: "center" }}><h1 style={{ color: "#fff" }}>R</h1></div>
                             </div>
                         )}
                     </div>
@@ -514,7 +514,7 @@ function UserFullPerfil() {
                         sx={{
                             position: "fixed",
                             inset: 0,
-                            backgroundColor: "rgba(0,0,0,0.4)", 
+                            backgroundColor: "rgba(0,0,0,0.4)",
                             display: "flex",
                             alignItems: "center",
                             justifyContent: "center",
@@ -530,14 +530,14 @@ function UserFullPerfil() {
                                 p: 3,
                                 borderRadius: 4,
                                 boxShadow: 24,
-                                backgroundColor: "#fcfcfc", 
+                                backgroundColor: "#fcfcfc",
                             }}
                         >
                             {/* Título del Modal */}
                             <Typography variant="h6" fontWeight={500} textAlign="center" mb={3}>
                                 Enviar notificación a {user.nombre} {user.apellido}
                             </Typography>
-                            
+
                             <TextField
                                 fullWidth
                                 label="Título"
@@ -572,8 +572,8 @@ function UserFullPerfil() {
                             )}
 
                             <Stack direction="row" spacing={2} mt={4} justifyContent="flex-end">
-                                <Button 
-                                    variant="outlined" 
+                                <Button
+                                    variant="outlined"
                                     onClick={handleCloseNotif}
                                     sx={{
                                         borderColor: '#e0e0e0',

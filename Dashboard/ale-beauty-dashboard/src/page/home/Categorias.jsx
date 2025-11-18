@@ -30,6 +30,8 @@ import ImageIcon from "@mui/icons-material/Image";
 import { useParams, useNavigate } from "react-router-dom";
 import { useTheme } from "@mui/material/styles";
 
+import '../../assets/stylesheets/categoriasHome.css';
+
 const Categorias = () => {
   const theme = useTheme();
   const isDark = theme.palette.mode === "dark";
@@ -104,7 +106,7 @@ const Categorias = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (!validateForm()) return;
 
     const formData = new FormData();
@@ -296,10 +298,10 @@ const Categorias = () => {
               }}
             >
               <CategoryIcon sx={{ fontSize: 80, mb: 2, opacity: 0.3 }} />
-              <Typography variant="h6" sx={{ mb: 1, fontSize: "1.2rem", color: isDark ? "#9ca3af" : "#6b7280" }}>
+              <Typography variant="h6" sx={{ mb: 1, fontSize: "1.2rem" }}>
                 No hay categorías todavía
               </Typography>
-              <Typography variant="body2" sx={{ color: isDark ? "#6b7280" : "#9ca3af" }}>
+              <Typography variant="body2" >
                 Crea tu primera categoría para comenzar
               </Typography>
             </Box>
@@ -361,25 +363,11 @@ const Categorias = () => {
                         sx={{
                           fontWeight: 700,
                           fontSize: "1.1em",
-                          color: isDark ? "#fff" : "#1f2937",
                           flex: 1,
                         }}
                       >
                         {cat.nombre_categoria}
                       </Typography>
-                      <Chip
-                        label={`${cat.sub_categories?.length || 0} sub`}
-                        size="small"
-                        sx={{
-                          borderRadius: "20px",
-                          background: "linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%)",
-                          color: "#065f46",
-                          fontWeight: 700,
-                          fontSize: "0.75rem",
-                          height: 24,
-                          border: "1px solid #6ee7b7",
-                        }}
-                      />
                     </Box>
 
                     <Typography
@@ -450,7 +438,7 @@ const Categorias = () => {
           )}
         </Box>
 
-        
+
         {/* Modal */}
         <Dialog
           open={open}
@@ -482,7 +470,7 @@ const Categorias = () => {
             {categoriaEdit ? <EditIcon sx={{ color: "#f59e0b" }} /> : <AddIcon sx={{ color: "#2563eb" }} />}
             {categoriaEdit ? "Editar Categoría" : "Nueva Categoría"}
           </DialogTitle>
-            <br></br>
+          <br></br>
           <DialogContent sx={{ pt: 3, pb: 2, px: 3 }}>
             <Stack spacing={3}>
               {errors.submit && (
@@ -506,7 +494,7 @@ const Categorias = () => {
                 InputLabelProps={{
                   shrink: true,
                   style: {
-                    backgroundColor: isDark ? "#1a1a2e" : "#fff",
+                    backgroundColor: "background.paper",
                     paddingLeft: "4px",
                     paddingRight: "4px",
                   },
@@ -538,11 +526,11 @@ const Categorias = () => {
               />
 
               <Box>
-                <Typography 
-                  variant="body2" 
-                  sx={{ 
-                    mb: 1.5, 
-                    fontWeight: 600, 
+                <Typography
+                  variant="body2"
+                  sx={{
+                    mb: 1.5,
+                    fontWeight: 600,
                     color: errors.imagen ? "#d32f2f" : isDark ? "#d1d5db" : "#374151",
                     fontSize: "0.95em",
                   }}
@@ -581,11 +569,11 @@ const Categorias = () => {
                   />
                 </Button>
                 {errors.imagen && (
-                  <Typography 
-                    variant="caption" 
-                    sx={{ 
-                      color: "#d32f2f", 
-                      mt: 0.5, 
+                  <Typography
+                    variant="caption"
+                    sx={{
+                      color: "#d32f2f",
+                      mt: 0.5,
                       display: "block",
                       fontSize: "0.8em",
                     }}
@@ -676,7 +664,7 @@ const Categorias = () => {
               variant="contained"
               sx={{
                 borderRadius: "8px",
-                background: categoriaEdit 
+                background: categoriaEdit
                   ? "linear-gradient(135deg, #f59e0b 0%, #d97706 100%)"
                   : "linear-gradient(135deg, #2563eb 0%, #1e40af 100%)",
                 textTransform: "none",
@@ -719,9 +707,8 @@ const Categorias = () => {
               fontSize: "1em",
               boxShadow: "0 10px 40px rgba(0, 0, 0, 0.1)",
               borderRadius: "12px",
-              border: `1px solid ${
-                snackbar.severity === "success" ? "#86efac" : "#fca5a5"
-              }`,
+              border: `1px solid ${snackbar.severity === "success" ? "#86efac" : "#fca5a5"
+                }`,
               background:
                 snackbar.severity === "success"
                   ? "linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%)"

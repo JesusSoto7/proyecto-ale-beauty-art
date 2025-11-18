@@ -9,7 +9,7 @@ export const useProductColumns = ({ isDark }) => {
         accessorKey: "id",
         header: "ID",
         enableEditing: false,
-        backgroundColor:  "background.paper",
+        backgroundColor: "background.paper",
         size: 60,
       },
       {
@@ -29,7 +29,7 @@ export const useProductColumns = ({ isDark }) => {
                   height: "60px",
                   objectFit: "cover",
                   borderRadius: "12px",
-                  backgroundColor:  "background.paper",
+                  backgroundColor: "background.paper",
                   border: `2px solid ${isDark ? "#444" : "#e0e0e0"}`,
                   transition: "transform 0.2s ease",
                   cursor: "pointer",
@@ -51,7 +51,7 @@ export const useProductColumns = ({ isDark }) => {
         size: 200,
         Cell: ({ cell }) => {
           return (
-            <Typography sx={{ fontWeight: 600, backgroundColor: "background.paper" }}>
+            <Typography sx={{ fontWeight: 600 }}>
               {cell.getValue()}
             </Typography>
           );
@@ -101,7 +101,7 @@ export const useProductColumns = ({ isDark }) => {
             <Chip
               label={cell.getValue() || "Sin categoría"}
               sx={{
-                background:  "background.paper",
+                background: "background.paper",
                 color: isDark ? "#eaa8f5" : "#a12c7f",
                 fontWeight: 600,
               }}
@@ -127,12 +127,11 @@ export const useProductColumns = ({ isDark }) => {
         size: 180,
         Cell: ({ row }) => {
           if (row.original?.discount) {
-            const discountLabel = `${row.original.discount.nombre} (${
-              row.original.discount.tipo === "porcentaje"
-                ? `${row.original.discount.valor}%`
-                : `$${row.original.discount.valor}`
-            })`;
-            
+            const discountLabel = `${row.original.discount.nombre} (${row.original.discount.tipo === "porcentaje"
+              ? `${row.original.discount.valor}%`
+              : `$${row.original.discount.valor}`
+              })`;
+
             return (
               <Chip
                 label={discountLabel}
@@ -144,7 +143,7 @@ export const useProductColumns = ({ isDark }) => {
               />
             );
           }
-          
+
           return (
             <Typography variant="body2" sx={{ color: isDark ? "#aaa" : "#999" }}>
               Sin descuento
@@ -188,7 +187,7 @@ export const useProductColumns = ({ isDark }) => {
               </Box>
             );
           }
-          
+
           return (
             <Typography sx={{ fontWeight: 700, color: "#2563eb", fontSize: "1.1em" }}>
               {formatCOP(priceOriginal)}
@@ -204,7 +203,7 @@ export const useProductColumns = ({ isDark }) => {
           const stock = cell.getValue();
           const isLow = stock < 10;
           const isOut = stock === 0;
-          
+
           return (
             <Box sx={{ display: "flex", justifyContent: "center" }}>
               <Chip
