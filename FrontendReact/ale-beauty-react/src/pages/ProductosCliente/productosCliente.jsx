@@ -32,6 +32,15 @@ function ProductosCliente() {
   const [selectedRatings, setSelectedRatings] = useState([]);
   const { addAlert } = useAlert();
   const isMdDown = useMediaQuery('(max-width: 992px)');
+  // JS fallback para asegurar detección exacta del ancho (algunos emuladores reportan 430 pero media query no coincide)
+  const [viewportWidth, setViewportWidth] = useState(() => window.innerWidth);
+  const isSmallTwoCol = viewportWidth >= 370 && viewportWidth <= 430;
+
+  useEffect(() => {
+    const onResize = () => setViewportWidth(window.innerWidth);
+    window.addEventListener('resize', onResize);
+    return () => window.removeEventListener('resize', onResize);
+  }, []);
   const [filtersOpen, setFiltersOpen] = useState(false);
 
   const [currentPage, setCurrentPage] = useState(1);
@@ -538,7 +547,7 @@ const toggleFavorite = async (productId) => {
           <div className="prodcli-main prodcli-main-centered">
             {/* Toggle de filtros en móviles/tablets */}
             {isMdDown && (
-              <div className="prodcli-actions-bar">
+              <div className={`prodcli-actions-bar ${isSmallTwoCol ? 'prodcli-small-actions' : ''}`}>
                 <IconButton
                   className="prodcli-filter-toggle"
                   onClick={() => setFiltersOpen(true)}
@@ -551,7 +560,7 @@ const toggleFavorite = async (productId) => {
                 </IconButton>
               </div>
             )}
-            <div className="prodcli-products-grid">
+            <div className={`prodcli-products-grid ${isSmallTwoCol ? 'prodcli-grid-small' : ''}`}>
               {currentProducts.map((prod, index) => (
                 <ProductCard
                   key={prod.id}
