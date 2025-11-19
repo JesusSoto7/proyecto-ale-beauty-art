@@ -112,8 +112,16 @@ Rails.application.routes.draw do
           member do
             patch :status, to: 'orders#update_status'
           end
+          collection do
+            get :sales_by_category
+            get :products_sold_by_category
+            get :sales_by_subcategory
+            get :products_sold_by_subcategory
+            get :sales_bounds
+          end
         end
       end
+
       resources :users, only: [:index, :show, :update, :destroy]
       get "/me", to: "users#me"
       patch 'me', to: 'users#update' 

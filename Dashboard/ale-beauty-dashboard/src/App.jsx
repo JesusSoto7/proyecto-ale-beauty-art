@@ -28,6 +28,7 @@ import { isAuthenticated, isAdmin } from './services/authService';
 import AuthGate from './components/auth/AuthGate.jsx';
 import UserFullPerfil from './components/dashComponents/UserFullPerfil';
 import Orders from './page/home/Orders.jsx';
+import Sales from './page/home/Sales.jsx';
 
 function Wrapper() {
   const { lang } = useParams();
@@ -64,13 +65,13 @@ function App() {
   return (
     <AlertProvider>
       <Router>
-         <AuthGate /> 
+        <AuthGate />
         <Routes>
           {/* Redirige / al idioma por defecto */}
           <Route
             path="/"
             element={
-              isLoggedIn 
+              isLoggedIn
                 ? <Navigate to={`/${(navigator.language || "es").startsWith("es") ? "es" : "en"}/home`} replace />
                 : <Navigate to={`/${(navigator.language || "es").startsWith("es") ? "es" : "en"}/login`} replace />
             }
@@ -79,15 +80,15 @@ function App() {
           {/* Rutas con idioma */}
           <Route path="/:lang" element={<Wrapper />}>
             {/* Ruta de login */}
-            <Route 
-              path="login" 
+            <Route
+              path="login"
               element={
-                isLoggedIn ? 
-                  <Navigate to="home" replace /> : 
+                isLoggedIn ?
+                  <Navigate to="home" replace /> :
                   <AdminLoginForm onLogin={handleLogin} />
-              } 
+              }
             />
-            
+
 
             {/* Página de acceso denegado */}
             <Route path="403" element={<Forbidden403 />} />
@@ -102,7 +103,7 @@ function App() {
               <Route path="products" element={<ProductTable />} />
               <Route path="categories" element={<Categorias />} />
               <Route path="categories/:slug" element={<SubCategorias />} />
-              <Route path="categories/:id" element={<CategoryProducts />} /> 
+              <Route path="categories/:id" element={<CategoryProducts />} />
               <Route path="carousel" element={<Carousel />} />
               <Route path="usuarios" element={<GestionUsuarios />} />
               <Route path="user-full-perfil/:id" element={<UserFullPerfil />} />
@@ -110,6 +111,7 @@ function App() {
               <Route path="crear_descuento" element={<CreateDiscount />} />
               <Route path="user-profile" element={<UserProfile />} />
               <Route path="orders" element={<Orders />} />
+              <Route path="ventas" element={<Sales />} />
             </Route>
           </Route>
 
