@@ -169,17 +169,18 @@ const CategoryNav = forwardRef(({
           sx={{
             position: 'absolute',
             top: '100%',
-            left: '50%',
-            transform: 'translateX(-50%)',
+            left: { xs: 0, md: '50%' },
+            right: { xs: 0, md: 'auto' },
+            transform: { xs: 'none', md: 'translateX(-50%)' },
             borderRadius: '8px',
             zIndex: 1300,
             mt: 1,
             boxShadow: '0 10px 30px rgba(0, 0, 0, 0.15)',
-            minWidth: hoveredNavCategory.sub_categories.length <= 2 ? '400px' : 
-                     hoveredNavCategory.sub_categories.length <= 4 ? '600px' : '800px',
-            maxWidth: '90vw',
-            width: 'auto',
+            minWidth: { xs: '100vw', md: hoveredNavCategory.sub_categories.length <= 2 ? '400px' : hoveredNavCategory.sub_categories.length <= 4 ? '600px' : '800px' },
+            maxWidth: '100vw',
+            width: { xs: '100vw', md: 'auto' },
             animation: 'fadeScale 160ms ease-out',
+            p: 0,
           }}
           onMouseEnter={() => openCategory(hoveredNavCategory)}
           onMouseLeave={() => closeCategory()}
@@ -188,17 +189,17 @@ const CategoryNav = forwardRef(({
             backgroundColor: '#fff',
             color: '#202020',
             borderRadius: '8px',
-            py: 3,
-            px: 4,
+            py: { xs: 1.5, sm: 2, md: 3 },
+            px: { xs: 1, sm: 2, md: 4 },
             display: 'flex',
             flexDirection: 'column',
-            maxHeight: '70vh',
+            maxHeight: { xs: '60vh', md: '70vh' },
             overflow: 'hidden',
           }}>
             <Typography variant="h6" sx={{
               mb: 2,
               fontWeight: 'bold',
-              fontSize: { xs: '18px', md: '20px' },
+              fontSize: { xs: '16px', sm: '18px', md: '20px' },
               textTransform: 'uppercase',
               letterSpacing: '0.5px',
               color: '#202020',
@@ -206,7 +207,6 @@ const CategoryNav = forwardRef(({
             }}>
               {hoveredNavCategory.nombre_categoria || hoveredNavCategory.name}
             </Typography>
-            
             <Box sx={{
               width: '50px',
               height: '3px',
@@ -216,24 +216,34 @@ const CategoryNav = forwardRef(({
               mx: 'auto',
             }} />
 
-            <Box sx={{
-              display: 'grid',
-              gridTemplateColumns: hoveredNavCategory.sub_categories.length <= 2 ? 'repeat(2, 1fr)' :
-                                   hoveredNavCategory.sub_categories.length <= 4 ? 'repeat(2, 1fr)' :
-                                   { xs: 'repeat(1, 1fr)', sm: 'repeat(2, 1fr)', md: 'repeat(3, 1fr)' },
-              gap: 2,
-              overflowY: 'auto',
-              maxHeight: '50vh',
-            }}>
+            {/* Carrusel horizontal en móviles/tabletas, grid en desktop */}
+            <Box
+              sx={theme => ({
+                display: { xs: 'block', sm: 'block', md: 'grid' },
+                gridTemplateColumns: hoveredNavCategory.sub_categories.length <= 2 ? 'repeat(2, 1fr)' :
+                  hoveredNavCategory.sub_categories.length <= 4 ? 'repeat(2, 1fr)' :
+                  'repeat(3, 1fr)',
+                gap: { xs: 1.5, sm: 2, md: 2 },
+                overflowX: { xs: 'auto', sm: 'auto', md: 'visible' },
+                overflowY: { xs: 'hidden', sm: 'hidden', md: 'auto' },
+                maxWidth: '100vw',
+                maxHeight: { xs: '180px', sm: '200px', md: '50vh' },
+                whiteSpace: { xs: 'nowrap', sm: 'nowrap', md: 'normal' },
+                pb: { xs: 1, sm: 1, md: 0 },
+                px: { xs: 0.5, sm: 1, md: 0 },
+                WebkitOverflowScrolling: 'touch',
+              })}
+            >
               {hoveredNavCategory.sub_categories.map((sub) => (
                 <Box
                   key={sub.id || sub.slug}
                   onClick={() => goToCategory(sub, hoveredNavCategory)}
-                  sx={{
+                  sx={theme => ({
                     cursor: 'pointer',
-                    maxWidth: '250px',
-                    width: '100%',
-                    display: 'flex',
+                    minWidth: { xs: '120px', sm: '140px', md: '180px' },
+                    maxWidth: { xs: '140px', sm: '180px', md: '250px' },
+                    width: { xs: '120px', sm: '140px', md: '100%' },
+                    display: 'inline-flex',
                     flexDirection: 'column',
                     alignItems: 'center',
                     textAlign: 'center',
@@ -242,33 +252,36 @@ const CategoryNav = forwardRef(({
                     borderRadius: '8px',
                     backgroundColor: '#fafafa',
                     transition: 'all 0.3s ease',
-                    margin: '0 auto',
+                    margin: { xs: '0 8px 0 0', sm: '0 12px 0 0', md: '0 auto' },
                     border: '1px solid #f0f0f0',
                     '&:hover': {
                       transform: 'translateY(-3px)',
                       boxShadow: '0 5px 15px rgba(0,0,0,0.1)',
                     },
-                  }}
+                    whiteSpace: 'normal',
+                  })}
                 >
-                  <Box sx={{ width: '100%', height: '150px', overflow: 'hidden' }}>
+                  <Box sx={{ width: '100%', height: { xs: '70px', sm: '120px', md: '220px' }, overflow: 'hidden', background: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                     <img
                       src={sub.imagen_url || noImage}
                       alt={sub.nombre_categoria || sub.nombre}
                       style={{
                         width: '100%',
                         height: '100%',
-                        objectFit: 'cover',
+                        objectFit: 'contain',
+                        background: '#fff',
                         transition: 'all 0.3s ease',
+                        display: 'block',
                       }}
                     />
                   </Box>
                   <Typography sx={{
-                    mt: 1.5,
-                    fontSize: '14px',
+                    mt: 1,
+                    fontSize: { xs: '12px', sm: '13px', md: '14px' },
                     fontWeight: 500,
                     color: '#202020',
                     textTransform: 'capitalize',
-                    padding: '0 10px 10px',
+                    padding: '0 6px 8px',
                   }}>
                     {sub.nombre_categoria || sub.nombre}
                   </Typography>
