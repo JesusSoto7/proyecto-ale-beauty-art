@@ -19,7 +19,7 @@
   text-align: center;
   margin-bottom: 40px;
   padding: 40px 20px;
-  background: linear-gradient(135deg, #ffd1e3, #ffe3f1);
+  background: linear-gradient(135deg, #ffd1e3, #ffe3f1) !important;
   border-radius: 16px;
   box-shadow: 0 4px 16px rgba(255, 77, 148, 0.1);
 }
@@ -28,10 +28,10 @@
   margin: 0;
   font-size: 2.5rem;
   font-weight: 900;
-  color: #5f5f5f;
+  color: #5f5f5f !important;
   font-family: "Poppins", Arial, sans-serif;
   letter-spacing: 1.5px;
-  text-shadow: 0 2px 10px rgba(255, 255, 255, 0.2);
+  text-shadow: 0 2px 10px rgba(255, 255, 255, 0.2) !important;
 }
 
 .shop-container {
@@ -213,6 +213,8 @@
   }
 
   .shop-header h1 {
+    color: #5f5f5f !important;
+    text-shadow: 0 2px 10px rgba(255, 255, 255, 0.2) !important;
     font-size: 2rem;
   }
 
@@ -259,6 +261,7 @@
   }
 
   .shop-header {
+    background: linear-gradient(135deg, #ffd1e3, #ffe3f1) !important;
     padding: 35px 20px 25px 20px;
     margin-bottom: 25px;
   }
@@ -275,6 +278,7 @@
   }
 
   .shop-header {
+    background: linear-gradient(135deg, #ffd1e3, #ffe3f1) !important;
     padding: 30px 15px;
   }
 
@@ -751,6 +755,8 @@
   }
   
   .shop-header h1 {
+    color: #5f5f5f !important;
+    text-shadow: 0 2px 10px rgba(255, 255, 255, 0.2) !important;
     font-size: 1.9rem;
   }
 }
@@ -768,6 +774,8 @@
   }
   
   .shop-header h1 {
+    color: #5f5f5f !important;
+    text-shadow: 0 2px 10px rgba(255, 255, 255, 0.2) !important;
     font-size: 1.8rem;
   }
 }
@@ -826,11 +834,14 @@
   }
   
   .shop-header {
+    background: linear-gradient(135deg, #ffd1e3, #ffe3f1) !important;
     padding: 35px 16px 25px 16px;
     margin-bottom: 20px;
   }
   
   .shop-header h1 {
+    color: #5f5f5f !important;
+    text-shadow: 0 2px 10px rgba(255, 255, 255, 0.2) !important;
     font-size: 1.7rem;
   }
   
@@ -849,10 +860,13 @@
   }
   
   .shop-header {
+    background: linear-gradient(135deg, #ffd1e3, #ffe3f1) !important;
     padding: 30px 14px 20px 14px;
   }
   
   .shop-header h1 {
+    color: #5f5f5f !important;
+    text-shadow: 0 2px 10px rgba(255, 255, 255, 0.2) !important;
     font-size: 1.6rem;
   }
 }
@@ -893,11 +907,14 @@
     padding: 0px 12px !important;
   }
   .shop-header {
+    background: linear-gradient(135deg, #ffd1e3, #ffe3f1) !important;
     padding: 25px 14px 18px 14px;
     margin-bottom: 18px;
   }
   
   .shop-header h1 {
+    color: #5f5f5f !important;
+    text-shadow: 0 2px 10px rgba(255, 255, 255, 0.2) !important;
     font-size: 1.5rem;
   }
 
@@ -926,10 +943,13 @@
     padding: 0px 10px !important;
   }
   .shop-header { 
+    background: linear-gradient(135deg, #ffd1e3, #ffe3f1) !important;
     padding: 22px 12px 16px 12px; 
     margin-bottom: 15px; 
   }
   .shop-header h1 { 
+    color: #5f5f5f !important;
+    text-shadow: 0 2px 10px rgba(255, 255, 255, 0.2) !important;
     font-size: 1.4rem; 
   }
   
@@ -967,11 +987,14 @@
   }
   
   .shop-header {
+    background: linear-gradient(135deg, #ffd1e3, #ffe3f1) !important;
     padding: 20px 8px 12px 8px;
     margin-bottom: 12px;
   }
   
   .shop-header h1 {
+    color: #5f5f5f !important;
+    text-shadow: 0 2px 10px rgba(255, 255, 255, 0.2) !important;
     font-size: 1.2rem;
   }
 }
@@ -985,10 +1008,13 @@
   }
   
   .shop-header {
+    background: linear-gradient(135deg, #ffd1e3, #ffe3f1) !important;
     padding: 20px 10px 15px 10px;
   }
   
   .shop-header h1 {
+    color: #5f5f5f !important;
+    text-shadow: 0 2px 10px rgba(255, 255, 255, 0.2) !important;
     font-size: 1.3rem;
   }
 }
@@ -1012,10 +1038,13 @@
   }
   
   .shop-header {
+    background: linear-gradient(135deg, #ffd1e3, #ffe3f1) !important;
     padding: 35px 20px 25px 20px;
   }
   
   .shop-header h1 {
+    color: #5f5f5f !important;
+    text-shadow: 0 2px 10px rgba(255, 255, 255, 0.2) !important;
     font-size: 2.1rem;
   }
 }
@@ -1118,11 +1147,14 @@
   }
 
   .shop-header {
+    background: linear-gradient(135deg, #ffd1e3, #ffe3f1) !important;
     padding: 30px 20px 20px 20px;
     margin-bottom: 20px;
   }
 
   .shop-header h1 {
+    color: #5f5f5f !important;
+    text-shadow: 0 2px 10px rgba(255, 255, 255, 0.2) !important;
     font-size: 1.8rem;
   }
 }
