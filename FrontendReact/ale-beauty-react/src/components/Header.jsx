@@ -681,7 +681,7 @@ export default function Header({ loadFavorites }) {
         />
       </Box>
 
-      <Box sx={{ height: '100px' }} />
+      <Box sx={{ height: '95px' }} />
     </>
   );
 }

@@ -174,7 +174,7 @@ const CategoryNav = forwardRef(({
             transform: { xs: 'none', md: 'translateX(-50%)' },
             borderRadius: '8px',
             zIndex: 1300,
-            mt: 1,
+            mt: 0,
             boxShadow: '0 10px 30px rgba(0, 0, 0, 0.15)',
             minWidth: { xs: '100vw', md: hoveredNavCategory.sub_categories.length <= 2 ? '400px' : hoveredNavCategory.sub_categories.length <= 4 ? '600px' : '800px' },
             maxWidth: '100vw',
