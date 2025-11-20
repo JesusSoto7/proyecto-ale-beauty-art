@@ -1,3 +1,30 @@
+@media (max-width: 1280px) {
+  .user-options {
+    gap: 0px !important;
+    display: flex;
+    align-items: center;
+  }
+  .user-options .user-name,
+  .user-options .language-switcher,
+  #profile-icon {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    padding: 0 !important;
+  }
+}
+
+@media (max-width: 1024px) {
+  .user-options {
+    gap: 0px !important;
+  }
+  #profile-icon {
+    margin-left: 0px !important;
+  }
+  .user-options .language-switcher {
+    margin-left: 0px !important;
+    margin-right: 0px !important;
+  }
+}
 /* Estilo base/inicial */
 .header {
     width: 100%;
