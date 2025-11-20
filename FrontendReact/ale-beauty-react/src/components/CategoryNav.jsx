@@ -58,16 +58,12 @@ const CategoryNav = forwardRef(({
       sx={{ 
         backgroundColor: '#df6897ff',
         color: 'white',
-        py: 1,
+        py: 0.5, // Reduce el padding vertical
         position: 'relative',
       }}
     >
       <Box 
         sx={{ 
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          gap: 4,
           overflowX: 'auto',
           overflowY: 'hidden',
           whiteSpace: 'nowrap',
@@ -75,9 +71,9 @@ const CategoryNav = forwardRef(({
           '&::-webkit-scrollbar': { display: 'none' },
           WebkitOverflowScrolling: 'touch',
           padding: '0 16px',
-          minHeight: '30px',
+          minHeight: '24px', // Reduce la altura mínima
           margin: '0 auto',
-          width: 'fit-content',
+          width: '100%',
           maxWidth: '100%',
         }}
       >
@@ -88,6 +84,7 @@ const CategoryNav = forwardRef(({
           flexShrink: 0,
           justifyContent: 'center',
           flexWrap: 'nowrap',
+          width: 'fit-content',
         }}>
           <Typography 
             component={Link} 
