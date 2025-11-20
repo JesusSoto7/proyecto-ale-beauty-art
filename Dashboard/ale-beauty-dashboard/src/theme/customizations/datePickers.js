@@ -1,10 +1,8 @@
 import { alpha } from '@mui/material/styles';
-
 import { menuItemClasses } from '@mui/material/MenuItem';
 import { pickersDayClasses, yearCalendarClasses } from '@mui/x-date-pickers';
 import { gray, brand } from '../../shared-theme/themePrimitives';
 
-/* eslint-disable import/prefer-default-export */
 export const datePickersCustomizations = {
   MuiPickerPopper: {
     styleOverrides: {
@@ -28,18 +26,121 @@ export const datePickersCustomizations = {
       }),
     },
   },
+
+  /* ==== FLECHAS DEL CALENDARIO (Arrow Switcher) ==== */
   MuiPickersArrowSwitcher: {
     styleOverrides: {
-      spacer: { width: 16 },
+      root: ({ theme }) => ({
+        display: 'flex',
+        alignItems: 'center',
+        gap: 8,                          // separa los dos icon buttons
+        // Evita que un borde se “pegue” al otro
+        '& .MuiIconButton-root': {
+          border: 'none !important',     // anula borde global de MuiIconButton
+          backgroundColor: 'transparent',
+          width: 34,
+          height: 34,
+          padding: 0,
+          boxShadow: 'none',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          transition: 'background-color 120ms, color 120ms',
+          '&:hover': {
+            backgroundColor: alpha(gray[200], 0.4),
+          },
+          '&:active': {
+            backgroundColor: alpha(gray[300], 0.6),
+          },
+          '&:focus-visible': {
+            outline: `3px solid ${alpha(brand[500], 0.45)}`,
+            outlineOffset: '2px',
+          },
+          '& .MuiTouchRipple-root': {
+            display: 'none',             // por si quedara ripple
+          },
+          ...theme.applyStyles('dark', {
+            color: (theme.vars || theme).palette.grey[400],
+            '&:hover': {
+              backgroundColor: alpha(gray[700], 0.4),
+            },
+            '&:active': {
+              backgroundColor: alpha(gray[600], 0.6),
+            },
+          }),
+        },
+        // Si hubiera un spacer generando línea visual, lo anulamos:
+        '& .MuiPickersArrowSwitcher-spacer': {
+          width: 0,
+          display: 'none',
+        },
+      }),
+      // Mantén spacer override por si internamente lo usan:
+      spacer: { width: 0 },
+      // Override directo del "button" (algunos builds de MUI x pickers lo usan):
       button: ({ theme }) => ({
         backgroundColor: 'transparent',
         color: (theme.vars || theme).palette.grey[500],
+        border: 'none',
+        width: 34,
+        height: 34,
+        padding: 0,
+        '&:hover': {
+          backgroundColor: alpha(gray[200], 0.4),
+        },
+        '&:active': {
+          backgroundColor: alpha(gray[300], 0.6),
+        },
+        '&:focus-visible': {
+          outline: `3px solid ${alpha(brand[500], 0.45)}`,
+          outlineOffset: '2px',
+        },
         ...theme.applyStyles('dark', {
           color: (theme.vars || theme).palette.grey[400],
+          '&:hover': {
+            backgroundColor: alpha(gray[700], 0.4),
+          },
+          '&:active': {
+            backgroundColor: alpha(gray[600], 0.6),
+          },
         }),
       }),
+
+      /* --- Variante ALTERNATIVA “ghost” SIN hover gris (descomentar si la prefieres)
+      button: ({ theme }) => ({
+        backgroundColor: 'transparent',
+        color: (theme.vars || theme).palette.grey[500],
+        border: 'none',
+        width: 34,
+        height: 34,
+        padding: 0,
+        '&:hover': {
+          backgroundColor: 'transparent',
+          color: (theme.vars || theme).palette.text.primary,
+        },
+        '&:active': {
+          backgroundColor: 'transparent',
+          opacity: 0.6,
+        },
+        '&:focus-visible': {
+          outline: `3px solid ${alpha(brand[500], 0.45)}`,
+          outlineOffset: '2px',
+        },
+        ...theme.applyStyles('dark', {
+          color: (theme.vars || theme).palette.grey[400],
+          '&:hover': {
+            backgroundColor: 'transparent',
+            color: (theme.vars || theme).palette.text.primary,
+          },
+          '&:active': {
+            opacity: 0.6,
+          },
+        }),
+      }),
+      */
     },
   },
+
   MuiPickersCalendarHeader: {
     styleOverrides: {
       switchViewButton: {
@@ -48,6 +149,7 @@ export const datePickersCustomizations = {
       },
     },
   },
+
   MuiMonthCalendar: {
     styleOverrides: {
       button: ({ theme }) => ({
@@ -88,6 +190,7 @@ export const datePickersCustomizations = {
       }),
     },
   },
+
   MuiYearCalendar: {
     styleOverrides: {
       button: ({ theme }) => ({
@@ -129,6 +232,7 @@ export const datePickersCustomizations = {
       }),
     },
   },
+
   MuiPickersDay: {
     styleOverrides: {
       root: ({ theme }) => ({
