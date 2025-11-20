@@ -3,7 +3,13 @@ import { useParams, useOutletContext } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import CircularProgress from "@mui/material/CircularProgress";
 import Typography from "@mui/material/Typography";
+import IconButton from "@mui/material/IconButton";
+import Drawer from "@mui/material/Drawer";
+import Box from "@mui/material/Box";
+import useMediaQuery from "@mui/material/useMediaQuery";
+import FilterListIcon from "@mui/icons-material/FilterList";
 import "../assets/stylesheets/SubCateProds.css";
+import "../assets/stylesheets/ProductosCliente.css";
 import { useAlert } from "../components/AlertProvider.jsx";
 import ProductCard from "../components/ProductCard";
 import { addItem as addGuestItem } from "../utils/guestCart.js";
@@ -29,6 +35,18 @@ export default function ProductsPageSubCategory() {
   // ✅ ESTADOS PARA PAGINACIÓN
   const [currentPage, setCurrentPage] = useState(1);
   const [productsPerPage] = useState(9);
+
+  // ✅ ESTADOS PARA FILTROS MÓVILES
+  const isMdDown = useMediaQuery('(max-width: 992px)');
+  const [filtersOpen, setFiltersOpen] = useState(false);
+  const [viewportWidth, setViewportWidth] = useState(() => window.innerWidth);
+  const isSmallTwoCol = viewportWidth >= 370 && viewportWidth <= 430;
+
+  useEffect(() => {
+    const onResize = () => setViewportWidth(window.innerWidth);
+    window.addEventListener('resize', onResize);
+    return () => window.removeEventListener('resize', onResize);
+  }, []);
 
   useEffect(() => {
     const savedToken = localStorage.getItem("token");
@@ -97,7 +115,6 @@ export default function ProductsPageSubCategory() {
     fetchSubCategory();
   }, [categorySlug, subCategorySlug]);
 
-
   useEffect(() => {
     setCurrentPage(1);
   }, [sortOrder, priceRange, selectedRatings]);
@@ -114,13 +131,6 @@ export default function ProductsPageSubCategory() {
     });
   }
 
-  if (selectedRatings.length > 0) {
-    filteredProducts = filteredProducts.filter((p) => {
-      const productRating = Math.floor(productRatings[p.id]?.avg || 0);
-      return selectedRatings.includes(productRating);
-    });
-  }
-  
   if (selectedRatings.length > 0) {
     filteredProducts = filteredProducts.filter((p) => {
       const productRating = Math.floor(productRatings[p.id]?.avg || 0);
@@ -149,8 +159,7 @@ export default function ProductsPageSubCategory() {
     if (currentPage > 1) setCurrentPage(currentPage - 1);
   };
 
-const toggleFavorite = async (productId) => {
-    // 4) Evita llamadas sin token
+  const toggleFavorite = async (productId) => {
     if (!token) {
       addAlert(t("productDetails.loginToFavorite") || "Inicia sesión para gestionar favoritos", "info", 3500);
       return;
@@ -208,7 +217,6 @@ const toggleFavorite = async (productId) => {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        // 2) Solo incluye Authorization cuando hay token
         ...(token ? { Authorization: `Bearer ${token}` } : {})
       },
       body: JSON.stringify({ product_id: productId }),
@@ -235,6 +243,100 @@ const toggleFavorite = async (productId) => {
         }));
       });
   };
+
+  // ✅ PANEL DE FILTROS REUTILIZABLE
+  const FiltersPanel = () => (
+    <>
+      <h3>Filtros</h3>
+      
+      <div className="filter-group">
+        <h4>Ordenar por precio</h4>
+        <label>
+          <input
+            type="radio"
+            name="sort"
+            checked={sortOrder === null}
+            onChange={() => setSortOrder(null)}
+          />
+          Sin ordenar
+        </label>
+        <label>
+          <input
+            type="radio"
+            name="sort"
+            checked={sortOrder === "asc"}
+            onChange={() => setSortOrder("asc")}
+          />
+          Menor a mayor
+        </label>
+        <label>
+          <input
+            type="radio"
+            name="sort"
+            checked={sortOrder === "desc"}
+            onChange={() => setSortOrder("desc")}
+          />
+          Mayor a menor
+        </label>
+      </div>
+      
+      <div className="filter-group">
+        <h4>Rango de precio</h4>
+        <div className="price-range">
+          <input
+            type="number"
+            placeholder="Min"
+            value={priceRange.min}
+            onChange={(e) =>
+              setPriceRange({ ...priceRange, min: e.target.value })
+            }
+          />
+          <span>-</span>
+          <input
+            type="number"
+            placeholder="Max"
+            value={priceRange.max}
+            onChange={(e) =>
+              setPriceRange({ ...priceRange, max: e.target.value })
+            }
+          />
+        </div>
+      </div>
+      
+      <div className="filter-group">
+        <h4>Valoración</h4>
+        {[4, 3, 2, 1].map((rating) => (
+          <label key={rating}>
+            <input
+              type="checkbox"
+              checked={selectedRatings.includes(rating)}
+              onChange={() =>
+                setSelectedRatings((prev) =>
+                  prev.includes(rating)
+                    ? prev.filter((r) => r !== rating)
+                    : [...prev, rating]
+                )
+              }
+            />
+            {"★".repeat(rating)} ({rating})
+          </label>
+        ))}
+      </div>
+      
+      {(sortOrder || priceRange.min || priceRange.max || selectedRatings.length > 0) && (
+        <button
+          className="clear-filters"
+          onClick={() => {
+            setSortOrder(null);
+            setPriceRange({ min: "", max: "" });
+            setSelectedRatings([]);
+          }}
+        >
+          Limpiar filtros
+        </button>
+      )}
+    </>
+  );
   
   if (loading)
     return (
@@ -274,103 +376,32 @@ const toggleFavorite = async (productId) => {
         </div>
         
         <div className="shop-container">
-          <aside className="filter-sidebar">
-            <h3>Filtros</h3>
-            
-            <div className="filter-group">
-              <h4>Ordenar por precio</h4>
-              <label>
-                <input
-                  type="radio"
-                  name="sort"
-                  checked={sortOrder === null}
-                  onChange={() => setSortOrder(null)}
-                />
-                Sin ordenar
-              </label>
-              <label>
-                <input
-                  type="radio"
-                  name="sort"
-                  checked={sortOrder === "asc"}
-                  onChange={() => setSortOrder("asc")}
-                />
-                Menor a mayor
-              </label>
-              <label>
-                <input
-                  type="radio"
-                  name="sort"
-                  checked={sortOrder === "desc"}
-                  onChange={() => setSortOrder("desc")}
-                />
-                Mayor a menor
-              </label>
-            </div>
-            
-            <div className="filter-group">
-              <h4>Rango de precio</h4>
-              <div className="price-range">
-                <input
-                  type="number"
-                  placeholder="Min"
-                  value={priceRange.min}
-                  onChange={(e) =>
-                    setPriceRange({ ...priceRange, min: e.target.value })
-                  }
-                />
-                <span>-</span>
-                <input
-                  type="number"
-                  placeholder="Max"
-                  value={priceRange.max}
-                  onChange={(e) =>
-                    setPriceRange({ ...priceRange, max: e.target.value })
-                  }
-                />
-              </div>
-            </div>
-            
-            <div className="filter-group">
-              <h4>Valoración</h4>
-              {[4, 3, 2, 1].map((rating) => (
-                <label key={rating}>
-                  <input
-                    type="checkbox"
-                    checked={selectedRatings.includes(rating)}
-                    onChange={() =>
-                      setSelectedRatings((prev) =>
-                        prev.includes(rating)
-                          ? prev.filter((r) => r !== rating)
-                          : [...prev, rating]
-                      )
-                    }
-                  />
-                  {"★".repeat(rating)} ({rating})
-                </label>
-              ))}
-            </div>
-            
-            {(sortOrder ||
-              priceRange.min ||
-              priceRange.max ||
-              selectedRatings.length > 0) && (
-              <button
-                className="clear-filters"
-                onClick={() => {
-                  setSortOrder(null);
-                  setPriceRange({ min: "", max: "" });
-                  setSelectedRatings([]);
-                }}
-              >
-                Limpiar filtros
-              </button>
-            )}
-          </aside>
+          {/* Sidebar de filtros (visible en desktop) */}
+          {!isMdDown && (
+            <aside className="filter-sidebar">
+              <FiltersPanel />
+            </aside>
+          )}
           
           {/* ✅ GRID CON PRODUCTCARD Y PAGINACIÓN */}
           <div className="products-main">
-            <div className="products-grid">
+            {/* Toggle de filtros en móviles/tablets */}
+            {isMdDown && (
+              <div className={`prodcli-actions-bar ${isSmallTwoCol ? 'prodcli-small-actions' : ''}`}>
+                <IconButton
+                  className="prodcli-filter-toggle"
+                  onClick={() => setFiltersOpen(true)}
+                  aria-label="Filtros"
+                >
+                  <FilterListIcon />
+                  <span style={{ marginLeft: 8, fontWeight: 600 }}>
+                    Filtros
+                  </span>
+                </IconButton>
+              </div>
+            )}
+
+            <div className={`prodcli-products-grid ${isSmallTwoCol ? 'prodcli-grid-small' : ''}`}>
               {currentProducts.map((prod, index) => (
                 <ProductCard
                   key={prod.id}
@@ -436,6 +467,25 @@ const toggleFavorite = async (productId) => {
           </div>
         </div>
       </div>
+
+      {/* ✅ DRAWER DE FILTROS PARA MÓVILES/TABLETS */}
+      <Drawer
+        anchor="left"
+        open={filtersOpen}
+        onClose={() => setFiltersOpen(false)}
+        ModalProps={{ keepMounted: true }}
+      >
+        <Box sx={{ width: 320, p: 2 }} role="presentation">
+          <FiltersPanel />
+          <button 
+            onClick={() => setFiltersOpen(false)}
+            className="prodcli-clearbtn"
+            style={{ marginTop: 12 }}
+          >
+            Cerrar
+          </button>
+        </Box>
+      </Drawer>
     </section>
   );
 }

@@ -285,7 +285,8 @@
     "max": "Max",
     "stars": "Stars",
     "star": "Star",
-    "page": "Page"
+    "page": "Page",
+    "close": "Close"
   },
   "filters": {
     "title": "Filters",

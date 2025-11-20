@@ -284,7 +284,8 @@
     "max": "Máx",
     "stars": "Estrellas",
     "star": "Estrella",
-    "page": "Página"
+    "page": "Página",
+    "close": "Cerrar"
   },
   "filters": {
     "title": "Filtros",
