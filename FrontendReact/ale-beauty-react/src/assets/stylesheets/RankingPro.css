@@ -9,16 +9,25 @@
   margin: 0 auto;
 }
 
+/* Variables fluidas alineadas a ProductCard */
+:root {
+  --rk-card-max-w: clamp(220px, 24vw, 320px);
+  --rk-card-min-w: clamp(200px, 20vw, 280px);
+  --rk-image-max-h: clamp(180px, 22vw, 300px);
+}
+
 .ranking-card {
   position: relative;
   width: 100%;
-  max-width: 340px;
+  max-width: var(--rk-card-max-w);
+  min-width: var(--rk-card-min-w);
   background: #fff;
   border-radius: 20px;
   box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
   overflow: hidden;
   transition: all 0.3s ease;
   cursor: pointer;
+  height: auto; /* Alineado con diseño fluido */
 }
 
 .ranking-card:hover {
@@ -29,7 +38,9 @@
 /* ✅ IMAGEN DEL PRODUCTO - COMPLETA */
 .ranking-image {
   width: 100%;
-  height: 280px;
+  height: auto;
+  max-height: var(--rk-image-max-h);
+  aspect-ratio: 29 / 30; /* similar a product card */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -185,18 +196,32 @@
 
 @media (max-width: 768px) {
   .ranking-container {
-    gap: 1.5rem;
-    padding: 1rem 0.5rem;
+    flex-wrap: nowrap; /* carrusel horizontal */
+    gap: 1rem;
+    padding: 1rem 1rem; /* espacio lateral para ver completo primer/último */
+    justify-content: flex-start; /* importante para scroll desde el inicio */
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    scroll-padding-left: 1rem; /* asegura snap inicial visible */
   }
+  .ranking-container::-webkit-scrollbar { display: none; }
+  .ranking-container { scrollbar-width: none; }
+  /* Ítems del carrusel: cada enlace envuelve la tarjeta */
+  .ranking-container > a {
+    flex: 0 0 auto;
+    display: flex;
+    scroll-snap-align: start;
+  }
+  .ranking-container::before { content:""; flex:0 0 1rem; }
+  .ranking-container::after { content:""; flex:0 0 1rem; }
 
   .ranking-card {
-    max-width: 100%;
+    flex: 0 0 auto; /* usa ancho natural (max-width 340px) */
+    scroll-snap-align: start; /* evita recorte en extremos */
   }
-
-  .ranking-image {
-    height: 240px;
-    padding: 0; /* ✅ Sin padding */
-  }
+  .ranking-image { max-height: 240px; }
 
   .ranking-image img {
     width: 100%;
@@ -228,17 +253,29 @@
 
 @media (max-width: 480px) {
   .ranking-container {
-    padding: 1rem 0.5rem;
+    flex-wrap: nowrap;
+    gap: 0.75rem;
+    padding: 0.9rem 0.9rem; /* simétrico para visibilidad total */
+    justify-content: flex-start; /* permite deslizar hasta el primer ítem */
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-snap-type: x mandatory;
+    scroll-padding-left: 0.9rem;
   }
-
+  .ranking-container::-webkit-scrollbar { display: none; }
+  .ranking-container { scrollbar-width: none; }
+  .ranking-container > a {
+    flex: 0 0 auto;
+    display: flex;
+    scroll-snap-align: start;
+  }
+  .ranking-container::before { content:""; flex:0 0 0.9rem; }
+  .ranking-container::after { content:""; flex:0 0 0.9rem; }
   .ranking-card {
-    max-width: 100%;
+    flex: 0 0 auto; /* conserva diseño original */
+    scroll-snap-align: start;
   }
-
-  .ranking-image {
-    height: 220px; /* ✅ Altura ajustada */
-    padding: 0;
-  }
+  .ranking-image { max-height: 220px; }
 
   .ranking-image img {
     width: 100%;

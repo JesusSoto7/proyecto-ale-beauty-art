@@ -81,7 +81,11 @@
     "inStock": "en stock",
     "fewLeft": "quedan pocas",
     "lastUnits": "últimas unidades",
-    "soldOut": "agotado"
+    "soldOut": "agotado",
+    "inStockShort": "stock",
+    "fewLeftShort": "pocas",
+    "lastUnitsShort": "últimas",
+    "soldOutShort": "agot."
   },
    "footer": {
     "information": {
@@ -111,12 +115,19 @@
     "logout": "Cerrar sesión",
     "cart": "Carrito",
     "favorites": "Favoritos",
+    "notifications": "Notificaciones",
     "noName": "Sin nombre",
     "myAccount": "Mi Cuenta",
     "personalSpace": "Bienvenido a tu espacio personal",
     "manageYourPersonalInformation": "Gestiona tu información personal",
     "checkYourOrders": "Consulta tu historial de pedidos",
     "manageYourAddresses": "Gestiona tus direcciones de envío"
+  },
+  "notifications": {
+    "empty": "No tienes notificaciones",
+    "viewAll": "Ver todas las notificaciones",
+    "count_one": "{{count}} notificación",
+    "count_other": "{{count}} notificaciones"
   },
   "login": {
     "login": "Iniciar sesión",
@@ -273,7 +284,8 @@
     "max": "Máx",
     "stars": "Estrellas",
     "star": "Estrella",
-    "page": "Página"
+    "page": "Página",
+    "close": "Cerrar"
   },
   "filters": {
     "title": "Filtros",

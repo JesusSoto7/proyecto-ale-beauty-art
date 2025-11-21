@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useMediaQuery } from '@mui/material';
 import Modal from "@mui/joy/Modal";
 import ModalDialog from "@mui/joy/ModalDialog";
 import ModalClose from "@mui/joy/ModalClose";
@@ -21,6 +22,12 @@ export default function FavoritesModal({ open, onClose }) {
   const [clearing, setClearing] = useState(false);
   const { t } = useTranslation();
   const [cart, setCart] = useState(null);
+  const isNarrow = useMediaQuery('(max-width: 400px)');
+  // Apilar sólo hasta 1023px. Desde 1024px horizontal completo.
+  const isStack = useMediaQuery('(max-width:1023px)');
+  // Solicitud: también integrar precio + stock + botón en filas para anchos 540, 853, 912.
+  // Activamos integración en stacked layout a partir de 540px.
+  const isInlineStack = useMediaQuery('(min-width:540px)');
 
   const token = localStorage.getItem("token");
 
@@ -190,13 +197,27 @@ export default function FavoritesModal({ open, onClose }) {
 
   return (
     <Modal open={open} onClose={onClose}>
-      <ModalDialog className="modal" size="lg" sx={{ borderRadius: "16px" }}>
+      <ModalDialog
+        className="modal"
+        size="lg"
+        sx={{
+          width: { xs: '92vw', sm: '88vw', md: '75vw', lg: 960 },
+          maxWidth: '95vw',
+          maxHeight: { xs: '85vh', md: '80vh' },
+          overflow: 'hidden',
+          borderRadius: { xs: 3, md: 4 },
+          p: { xs: 2, md: 3 },
+          boxShadow: '0 12px 32px rgba(0,0,0,0.18)',
+          display: 'flex',
+          flexDirection: 'column'
+        }}
+      >
         <ModalClose />
-        <Typography level="h4" sx={{ mb: 2 }}>
+        <Typography level="h4" sx={{ mb: 2, fontSize: { xs: '1.1rem', md: '1.4rem' } }}>
           {t('favorites.myFavorites')}
         </Typography>
 
-        <Box id="ModalList">
+        <Box id="ModalList" sx={{ flex: 1, overflowY: 'auto', pr: 0.5 }}>
           {loading ? (
             <Box sx={{ display: "grid", gap: 2 }}>
               {[...Array(3)].map((_, index) => (
@@ -239,113 +260,221 @@ export default function FavoritesModal({ open, onClose }) {
                     key={product.id}
                     className={product.isRemoving ? "slide-out-right" : ""}
                     sx={{
-                      display: "flex",
-                      alignItems: "center",
-                      borderRadius: "12px",
-                      bgcolor: "background.body",
-                      border: "1px solid",
-                      borderColor: "neutral.outlinedBorder",
-                      overflow: "hidden",
-                      transition: "all 0.3s ease-in-out",
+                      display: 'flex',
+                      flexDirection: isStack ? 'column' : 'row',
+                      alignItems: isStack ? 'stretch' : 'center',
+                      borderRadius: '12px',
+                      bgcolor: 'background.body',
+                      border: '1px solid',
+                      borderColor: 'neutral.outlinedBorder',
+                      overflow: 'hidden',
+                      transition: 'all 0.3s ease-in-out',
+                      position: 'relative'
                     }}
                   >
                     <div
                       className="borrarFav"
                       onClick={() => removeFavorite(product.id)}
                       title={t('favorites.remove')}
+                      style={{
+                        background: '#f5f5f5',
+                        color: '#999',
+                        width: '28px',
+                        minHeight: '100%',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        cursor: 'pointer',
+                        transition: 'all 0.2s ease',
+                        borderTopLeftRadius: '12px',
+                        borderBottomLeftRadius: '12px',
+                        borderBottomRightRadius: isStack ? '0px' : '0px',
+                        borderTopRightRadius: '0px',
+                        boxShadow: '0 1px 2px rgba(0,0,0,0.05)',
+                        fontSize: '16px',
+                        fontWeight: 'bold',
+                        fontFamily: 'Arial, sans-serif',
+                        position: isStack ? 'absolute' : 'static',
+                        top: isStack ? '0' : 'auto',
+                        left: isStack ? '0' : 'auto',
+                        zIndex: isStack ? '1' : 'auto',
+                        border: '1px solid #e0e0e0'
+                      }}
+                      onMouseEnter={(e) => { 
+                        e.currentTarget.style.background = '#ff1744';
+                        e.currentTarget.style.color = '#fff';
+                        e.currentTarget.style.width = '32px'; // Se expande ligeramente al hover
+                        e.currentTarget.style.borderColor = '#ff1744';
+                      }}
+                      onMouseLeave={(e) => { 
+                        if (!product.isRemoving) {
+                          e.currentTarget.style.background = '#f5f5f5';
+                          e.currentTarget.style.color = '#999';
+                          e.currentTarget.style.width = '28px'; // Vuelve a ser delgado
+                          e.currentTarget.style.borderColor = '#e0e0e0';
+                        }
+                      }}
+                      onMouseDown={(e) => { 
+                        e.currentTarget.style.background = '#d50000';
+                        e.currentTarget.style.transform = 'scale(0.98)';
+                      }}
+                      onMouseUp={(e) => { 
+                        e.currentTarget.style.transform = 'scale(1)';
+                      }}
                     >
-                      <DeleteIcon />
+                      {product.isRemoving ? '×' : <DeleteIcon fontSize="small" />}
                     </div>
-
+                    {/* Bloque superior: imagen + nombre (en stack solo esto dentro del link) */}
                     <Link
                       to={`/es/producto/${product.slug}`}
-                      style={{ textDecoration: "none", color: "inherit", flex: 1 }}
+                      style={{ 
+                        textDecoration: 'none', 
+                        color: 'inherit', 
+                        flex: isStack ? 'none' : 1,
+                        marginLeft: isStack ? '28px' : '0' // Compensa el botón más delgado
+                      }}
                       onClick={onClose}
                     >
                       <Box
                         sx={{
-                          display: "flex",
-                          alignItems: "center",
-                          borderRadius: "12px",
-                          bgcolor: "background.body",
-                          borderColor: "neutral.outlinedBorder",
-                          overflow: "hidden",
-                          transition: "all 0.3s ease-in-out",
+                          display: 'flex',
+                          alignItems: 'center',
                           p: 2,
                           gap: 2,
+                          flex: 1
                         }}
                       >
                         <img
                           src={product.imagen_url || noImage}
                           alt={product.nombre_producto}
                           onError={(e) => { e.currentTarget.src = noImage; }}
-                          style={{
-                            width: 60,
-                            height: 60,
-                            objectFit: "scale-down",
-                            borderRadius: 12,
-                          }}
+                          style={{ width: 60, height: 60, objectFit: 'scale-down', borderRadius: 12 }}
                         />
-
-                        <Box sx={{ flex: 2 }}>
-                          <Typography level="body1" sx={{ fontWeight: "bold" }}>
-                            {product.nombre_producto}
+                        <Box sx={{ flex: 1, minWidth: 0 }}>
+                          <Typography level="body1" sx={{ fontWeight: 'bold', lineHeight: 1.2, display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 0.6 }}>
+                            <span>{product.nombre_producto}</span>
+                            {/* Categoría al lado del nombre */}
+                            <span style={{ fontSize: '0.7rem', fontWeight: 500, color: '#555', letterSpacing: '0.3px' }}>· {product.categoria}</span>
+                            {/* Estado sólo en bloque superior cuando <540px */}
+                            {isStack && !isInlineStack && (
+                              <span style={{
+                                fontSize: '0.65rem',
+                                fontWeight: 600,
+                                textTransform: 'uppercase',
+                                letterSpacing: '0.5px',
+                                color: product.stock > 9 ? 'green' : product.stock > 5 ? 'orange' : product.stock > 0 ? '#ff5405ff' : 'red'
+                              }}>
+                                {product.stock > 9
+                                  ? t('favorites.inStock')
+                                  : product.stock > 5
+                                    ? t('favorites.fewLeft')
+                                    : product.stock > 0
+                                      ? t('favorites.lastUnits')
+                                      : t('favorites.soldOut')}
+                              </span>
+                            )}
                           </Typography>
-                          <Typography level="body2" color="neutral">
-                            {product.categoria}
-                          </Typography>
-                        </Box>
-
-                        {/* ✅ Precio con descuento */}
-                        <Box sx={{ flex: 1 }}>
-                          {priceDiscount && priceDiscount < priceOriginal ? (
-                            <>
-                              <Typography level="body2" sx={{ fontWeight: "bold", color: "#dc2626" }}>
-                                {formatCOP(priceDiscount)}
-                              </Typography>
-                              <Typography level="body2" sx={{ textDecoration: "line-through", color: "#64748b", fontSize: "0.85em" }}>
-                                {formatCOP(priceOriginal)}
-                              </Typography>
-                            </>
-                          ) : (
-                            <Typography level="body2" sx={{ fontWeight: "bold" }}>
-                              {formatCOP(priceOriginal)}
-                            </Typography>
+                          {/* Precio debajo del nombre cuando layout es stacked (cualquier ancho <=1023) */}
+                          {isStack && (
+                            <Box sx={{ mt: 0.5 }}>
+                              {priceDiscount && priceDiscount < priceOriginal ? (
+                                <>
+                                  <Typography level="body2" sx={{ fontWeight: 'bold', color: '#dc2626' }}>
+                                    {formatCOP(priceDiscount)}
+                                  </Typography>
+                                  <Typography level="body2" sx={{ textDecoration: 'line-through', color: '#64748b', fontSize: '0.7rem' }}>
+                                    {formatCOP(priceOriginal)}
+                                  </Typography>
+                                </>
+                              ) : (
+                                <Typography level="body2" sx={{ fontWeight: 'bold' }}>
+                                  {formatCOP(priceOriginal)}
+                                </Typography>
+                              )}
+                            </Box>
                           )}
                         </Box>
-
-                        <Box sx={{ flex: 1 }}>
-                          {product.stock > 9 ? (
-                            <Typography sx={{ fontWeight: "bold", color: "green" }}>
-                              {t('favorites.inStock')}
-                            </Typography>
-                          ) : product.stock > 5 ? (
-                            <Typography sx={{ fontWeight: "bold", color: "orange" }}>
-                              {t('favorites.fewLeft')}
-                            </Typography>
-                          ) : product.stock > 0 ? (
-                            <Typography sx={{ fontWeight: "bold", color: "#ff5405ff" }}>
-                              {t('favorites.lastUnits')}
-                            </Typography>
-                          ) : (
-                            <Typography sx={{ fontWeight: "bold", color: "red" }}>
-                              {t('favorites.soldOut')}
-                            </Typography>
-                          )}
-                        </Box>
+                        {/* Fila derecha: desktop muestra precio+stock+botón; stacked >=540 sólo botón a la derecha */}
+                        {(!isStack || (isStack && isInlineStack)) && (
+                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, ml: 'auto' }}>
+                            {/* Desktop: precio + stock */}
+                            {!isStack && (
+                              <>
+                                <Box sx={{ textAlign: 'right', minWidth: 82 }}>
+                                  {priceDiscount && priceDiscount < priceOriginal ? (
+                                    <>
+                                      <Typography level="body2" sx={{ fontWeight: 'bold', color: '#dc2626' }}>
+                                        {formatCOP(priceDiscount)}
+                                      </Typography>
+                                      <Typography level="body2" sx={{ textDecoration: 'line-through', color: '#64748b', fontSize: '0.7rem' }}>
+                                        {formatCOP(priceOriginal)}
+                                      </Typography>
+                                    </>
+                                  ) : (
+                                    <Typography level="body2" sx={{ fontWeight: 'bold' }}>
+                                      {formatCOP(priceOriginal)}
+                                    </Typography>
+                                  )}
+                                </Box>
+                                <Box sx={{ minWidth: 70 }}>
+                                  {product.stock > 9 ? (
+                                    <Typography sx={{ fontWeight: 'bold', color: 'green', fontSize: '0.7rem' }}>{t('favorites.inStock')}</Typography>
+                                  ) : product.stock > 5 ? (
+                                    <Typography sx={{ fontWeight: 'bold', color: 'orange', fontSize: '0.7rem' }}>{t('favorites.fewLeft')}</Typography>
+                                  ) : product.stock > 0 ? (
+                                    <Typography sx={{ fontWeight: 'bold', color: '#ff5405ff', fontSize: '0.7rem' }}>{t('favorites.lastUnits')}</Typography>
+                                  ) : (
+                                    <Typography sx={{ fontWeight: 'bold', color: 'red', fontSize: '0.7rem' }}>{t('favorites.soldOut')}</Typography>
+                                  )}
+                                </Box>
+                              </>
+                            )}
+                            {/* Stacked >=540px: mostrar estado (sin precio para evitar duplicado) */}
+                            {isStack && isInlineStack && (
+                              <Box sx={{ minWidth: 70 }}>
+                                {product.stock > 9 ? (
+                                  <Typography sx={{ fontWeight: 'bold', color: 'green', fontSize: '0.65rem' }}>{t('favorites.inStock')}</Typography>
+                                ) : product.stock > 5 ? (
+                                  <Typography sx={{ fontWeight: 'bold', color: 'orange', fontSize: '0.65rem' }}>{t('favorites.fewLeft')}</Typography>
+                                ) : product.stock > 0 ? (
+                                  <Typography sx={{ fontWeight: 'bold', color: '#ff5405ff', fontSize: '0.65rem' }}>{t('favorites.lastUnits')}</Typography>
+                                ) : (
+                                  <Typography sx={{ fontWeight: 'bold', color: 'red', fontSize: '0.65rem' }}>{t('favorites.soldOut')}</Typography>
+                                )}
+                              </Box>
+                            )}
+                            <Button
+                              className="colorButon"
+                              size="sm"
+                              variant="solid"
+                              color="primary"
+                              onClick={(e) => { e.preventDefault(); e.stopPropagation(); addToCart(product.id); }}
+                              sx={{ whiteSpace: 'nowrap', px: 2.2 }}
+                            >
+                              {t('favorites.addToCart')}
+                            </Button>
+                          </Box>
+                        )}
                       </Box>
                     </Link>
 
-                    <Button
-                      className="colorButon"
-                      size="sm"
-                      variant="solid"
-                      color="primary"
-                      onClick={() => addToCart(product.id)}
-                      sx={{ marginRight: 4 }}
-                    >
-                      {t('favorites.addToCart')}
-                    </Button>
+                    {/* Bloque inferior (stack <540px): solo botón (precio ya mostrado arriba) */}
+                    {isStack && !isInlineStack && (
+                      <Box sx={{ px: 2, pb: 2, pt: 0, display: 'flex', flexDirection: 'row', alignItems: 'center', marginLeft: '28px' }}>
+                        <Button
+                          className="colorButon"
+                          size="sm"
+                          variant="solid"
+                          color="primary"
+                          onClick={() => addToCart(product.id)}
+                          sx={{ ml: 'auto', flexGrow: 1 }}
+                        >
+                          {t('favorites.addToCart')}
+                        </Button>
+                      </Box>
+                    )}
+
+                    {/* Botón eliminado fuera del enlace en layout horizontal; ahora integrado */}
                   </Box>
                 );
               })}
@@ -353,7 +482,7 @@ export default function FavoritesModal({ open, onClose }) {
           )}
         </Box>
 
-        <Box sx={{ display: "flex", gap: 2, mt: 2, justifyContent: "flex-end" }}>
+        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1.5, mt: 2, justifyContent: 'flex-end' }}>
           <Button
             size="sm"
             variant="outlined"
@@ -372,6 +501,7 @@ export default function FavoritesModal({ open, onClose }) {
             onClick={addAllToCart}
             startDecorator={<ShoppingCartIcon />}
             disabled={loading || clearing || favorites.length === 0}
+            sx={{ minWidth: { xs: '100%', sm: 'auto' } }}
           >
             {t('favorites.addAllToCart')}
           </Button>

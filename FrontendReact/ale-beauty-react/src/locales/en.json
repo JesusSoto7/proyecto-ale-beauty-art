@@ -81,7 +81,11 @@
     "inStock": "in stock",
     "fewLeft": "few left",
     "lastUnits": "last units",
-    "soldOut": "sold out"
+    "soldOut": "sold out",
+    "inStockShort": "stock",
+    "fewLeftShort": "few",
+    "lastUnitsShort": "last",
+    "soldOutShort": "sold"
   },
    "footer": {
     "information": {
@@ -111,6 +115,7 @@
     "logout": "Logout",
     "cart": "Cart",
     "favorites": "Favorites",
+    "notifications": "Notifications",
     "noName": "No name",
     "myAccount": "My Account",
     "personalSpace": "Welcome to your personal space",
@@ -118,6 +123,12 @@
     "checkYourOrders": "View your order history",
     "manageYourAddresses": "Manage your shipping addresses"
 
+  },
+  "notifications": {
+    "empty": "You have no notifications",
+    "viewAll": "View all notifications",
+    "count_one": "{{count}} notification",
+    "count_other": "{{count}} notifications"
   },
   "login": {
      "login": "Log In",
@@ -274,7 +285,8 @@
     "max": "Max",
     "stars": "Stars",
     "star": "Star",
-    "page": "Page"
+    "page": "Page",
+    "close": "Close"
   },
   "filters": {
     "title": "Filters",

@@ -9,6 +9,7 @@ import FloatingChat from '../../components/FloatingChat';
 import BannerProduct from '../../components/bannerProducts';
 import "../../assets/stylesheets/RankingPro.css";
 import '../../assets/stylesheets/ProductCard.css';
+import '../../assets/stylesheets/Inicio.css';
 import RankingPro from '../../components/rankingPro.jsx';
 import { useAlert } from "../../components/AlertProvider.jsx";
 import { useHomeData } from './hooks/useHomeData';
@@ -104,14 +105,13 @@ function Inicio() {
       {loading ? (
         <Skeleton sx={{ bgcolor: 'grey.800' }} variant="rectangular" width={"100%"} height={350} />
       ) : carousel.length > 0 ? (
-        <Carousel interval={3000} className="mb-0">
+        <Carousel interval={3000} className="main-carousel mb-0">
           {carousel.map((img, idx) => (
             <Carousel.Item key={idx} sx={{ marginTop: "70px"}}>
               <img
                 className="d-block w-100"
                 src={img}
                 alt={`${t('home.slide')} ${idx + 1}`}
-                style={{ height: "450px", objectFit: "cover" }}
               />
             </Carousel.Item>
           ))}
@@ -191,6 +191,7 @@ function Inicio() {
           alt={t('home.newsBannerAlt')}
           loading="lazy"
           decoding="async"
+          className="banner-novedades-img"
           style={{
             width: "100%",
             height: "350px",

@@ -1,7 +1,7 @@
 /* ======== SECCIÓN PRINCIPAL ======== */
 /* ======== SECCIÓN PRINCIPAL ======== */
 .prodcli-section {
-  margin-top: 5px;
+  margin-top: 5px; /* Revertido: sólo cambios 375-430 */
   font-family: 'Arial', sans-serif;
 }
 
@@ -15,10 +15,10 @@
 .prodcli-banner {
   width: 100%;
   background: linear-gradient(90deg, #b6b6b656 15%, rgba(202, 202, 202, 0.356) 100%);
-  padding: 73px 20px 54px 20px;
+  padding: 73px 20px 54px 20px; /* Revertido a valores originales */
   border-bottom: 1px solid #e0e0e0;
   text-align: center;
-  margin-bottom: 30px;
+  margin-bottom: 30px; /* Revertido */
   box-shadow: 0 2px 16px rgba(255, 77, 148, 0.05);
 }
 
@@ -235,6 +235,25 @@
   justify-content: center;
 }
 
+/* Toggle/Actions bar for mobile filters */
+.prodcli-actions-bar {
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 10px;
+}
+
+.prodcli-filter-toggle {
+  background: #fff;
+  border: 1px solid #f0f0f0;
+  border-radius: 8px;
+  padding: 6px 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+.prodcli-filter-toggle:hover {
+  background: #fff0f7;
+}
+
 /* ✅ GRID DE PRODUCTOS - ACTUALIZADO */
 .prodcli-products-grid {
   display: grid;
@@ -243,6 +262,28 @@
   width: 100%;
   padding: 1rem 0;
   animation: fadeIn 0.5s ease-in;
+}
+
+/* Clases forzadas para rango 370-430 cuando JS añade la clase */
+.prodcli-grid-small {
+  grid-template-columns: repeat(2, 1fr) !important;
+  gap: 1rem !important;
+  justify-items: center !important;
+}
+
+.prodcli-small-actions { justify-content: flex-start !important; }
+.prodcli-small-actions .prodcli-filter-toggle {
+  padding: 4px 8px !important;
+  border-radius: 6px !important;
+}
+.prodcli-small-actions .prodcli-filter-toggle span { font-size: 12px !important; }
+.prodcli-small-actions .prodcli-filter-toggle svg { font-size: 18px !important; }
+
+/* Ajuste de tarjetas dentro de dos columnas forzadas */
+.prodcli-grid-small .product-card-v3 {
+  min-width: 160px !important;
+  max-width: 100% !important;
+  width: 100% !important;
 }
 
 @keyframes fadeIn {
@@ -315,7 +356,7 @@
 
 @media (max-width: 992px) {
   .prodcli-banner {
-    padding: 50px 20px;
+    padding: 50px 20px; /* Original */
   }
 
   .prodcli-banner h1 {
@@ -331,12 +372,8 @@
     align-items: center;
   }
 
-  .prodcli-sidebar {
-    width: 100%;
-    max-width: 600px;
-    position: static;
-    margin-bottom: 30px;
-  }
+  /* Sidebar se oculta en móviles/tablets, se usa Drawer */
+  .prodcli-sidebar { display: none; }
 
   .prodcli-products-grid {
     grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
@@ -350,7 +387,8 @@
   }
 
   .prodcli-banner {
-    padding: 40px 20px;
+    padding: 34px 16px 30px 16px; /* Menos alto para teléfonos */
+    margin-bottom: 20px; /* Reduce espacio bajo banner */
   }
 
   .prodcli-banner h1 {
@@ -363,36 +401,74 @@
 
   .prodcli-products-grid {
     grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-    gap: 1rem;
+    gap: 0.75rem; /* Menor separación entre tarjetas */
   }
 
   .prodcli-contentwrap {
     padding: 15px;
   }
+  .prodcli-info-bar {
+    padding: 8px 0; /* Menos alto */
+    margin-bottom: 14px; /* Reduce separación con grid */
+  }
 }
 
-@media (max-width: 480px) {
-  .prodcli-banner h1 {
-    font-size: 1.5rem;
-  }
-
-  .prodcli-banner p {
-    font-size: 0.9rem;
-  }
-
+/* Ajuste: single column solo debajo de 370px para no interferir con 370-430 dos columnas */
+@media (max-width: 369px) {
+  .prodcli-section { margin-top: 0; }
+  /* Banner gris más alto y totalmente arriba */
+  .prodcli-banner { padding: 82px 14px 60px 14px; margin-bottom: 18px; }
+  .prodcli-banner h1 { font-size: 1.45rem; }
+  .prodcli-banner p { font-size: 0.85rem; }
+  /* Ahora dos columnas en 340px–369px (incluye 360px solicitado) */
   .prodcli-products-grid {
-    grid-template-columns: 1fr;
-    gap: 1rem;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem; /* más compacto para caber sin scroll horizontal */
+    justify-items: center;
+  }
+  /* Botón de filtros más pequeño alineado a la izquierda */
+  .prodcli-actions-bar { justify-content: flex-start; }
+  .prodcli-filter-toggle { padding: 4px 8px; border-radius: 6px; }
+  .prodcli-filter-toggle span { font-size: 11px; }
+  .prodcli-filter-toggle svg { font-size: 17px; }
+  .prodcli-sidebar { padding: 20px 16px; }
+  .prodcli-info-bar { font-size: 12.5px; padding: 6px 0; margin-bottom: 12px; }
+}
+
+/* === Ajustes finos: 370px a 430px === */
+@media (min-width: 370px) and (max-width: 430px) {
+  /* Banner totalmente arriba y más largo */
+  .prodcli-section { margin-top: 0; }
+  .prodcli-banner {
+    padding: 70px 16px 50px 16px; /* Reducido para menos espacio vertical */
+    margin-bottom: 20px; /* Menos separación debajo */
   }
 
-  .prodcli-sidebar {
-    padding: 20px 16px;
+  /* Productos en dos columnas compactas */
+  .prodcli-products-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 1rem !important; /* gap algo menor para aprovechar espacio */
+    justify-items: center !important;
   }
 
-  .prodcli-info-bar {
-    font-size: 13px;
-    padding: 8px 0;
+  /* Botón de filtros compacto alineado a la izquierda */
+  .prodcli-actions-bar { justify-content: flex-start !important; }
+  .prodcli-filter-toggle {
+    padding: 4px 8px !important;
+    border-radius: 6px !important;
   }
+  .prodcli-filter-toggle svg { font-size: 18px !important; }
+  .prodcli-filter-toggle span { font-size: 12px !important; }
+}
+
+/* Ajustes extra para teléfonos muy pequeños <=480px */
+@media (max-width: 480px) {
+  .prodcli-banner {
+    padding: 26px 14px 22px 14px; /* Compacto */
+    margin-bottom: 16px;
+  }
+  .prodcli-products-grid { gap: 0.6rem; }
+  .prodcli-info-bar { font-size: 13px; padding: 6px 0; margin-bottom: 12px; }
 }
 
 /* ======== ELIMINADOS - YA NO SE USAN ======== */
@@ -468,3 +544,7 @@
     min-width: 35px;
   }
 }
+
+/* Reforzar estilos exactamente en 430px: dos columnas y botón compacto a la izquierda */
+/* Eliminado bloque específico width:430 (unificado en rango 370-430) */
+
