@@ -389,38 +389,40 @@ export default function Header({ loadFavorites }) {
                 </FormControl>
               )}
 
-              {/* Perfil */}
-              {perfilIcon}
+              {/* Grupo Perfil + Nombre */}
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, mr: 2 }}>
+                {perfilIcon}
 
-              {/* Nombre (oculto en mid-span para dejar sólo idioma + perfil) */}
-              {(showUserName || isLarge) && !isDesktopMidSpan && (
-                <Typography 
-                  component={Link} 
-                  to={user ? `/${lang}/perfil` : `/${lang}/login`}
-                  sx={{ 
-                    color: 'black',
-                    textDecoration: 'none',
-                    fontWeight: 'bold',
-                    fontSize: '14px',
-                    display: { xs: 'none', sm: 'block' },
-                    transition: 'color 0.2s',
-                    '&:hover': { color: pinkTheme.primary },
-                    // Evitar reservar ancho: quitar espacio extra a la derecha
-                    minWidth: 0,
-                    maxWidth: isNarrowDesktop ? '64px' : 'none',
-                    ml: isNarrowDesktop ? 0 : 1,
-                    whiteSpace: isNarrowDesktop ? 'nowrap' : undefined,
-                    overflow: isNarrowDesktop ? 'hidden' : undefined,
-                    textOverflow: isNarrowDesktop ? 'ellipsis' : undefined
-                  }}
-                >
-                  {user ? user.nombre : 'Sign In'}
-                </Typography>
-              )}
+                {/* Nombre (oculto en mid-span para dejar sólo idioma + perfil) */}
+                {(showUserName || isLarge) && !isDesktopMidSpan && (
+                  <Typography 
+                    component={Link} 
+                    to={user ? `/${lang}/perfil` : `/${lang}/login`}
+                    sx={{ 
+                      color: 'black',
+                      textDecoration: 'none',
+                      fontWeight: 'bold',
+                      fontSize: '14px',
+                      display: { xs: 'none', sm: 'block' },
+                      transition: 'color 0.2s',
+                      '&:hover': { color: pinkTheme.primary },
+                      minWidth: 0,
+                      maxWidth: isNarrowDesktop ? '64px' : 'none',
+                      ml: 0.3,
+                      whiteSpace: isNarrowDesktop ? 'nowrap' : undefined,
+                      overflow: isNarrowDesktop ? 'hidden' : undefined,
+                      textOverflow: isNarrowDesktop ? 'ellipsis' : undefined
+                    }}
+                  >
+                    {user ? user.nombre : 'Sign In'}
+                  </Typography>
+                )}
+              </Box>
 
+              {/* Grupo Carrito + Favoritos + Notificaciones */}
               {/* Íconos adicionales ocultos en mid-span (se moverán a hamburguesa). */}
               {!isDesktopMidSpan && (
-                <>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                   {/* Carrito con optimistic count */}
                   <IconButton
                     component={Link}
@@ -479,7 +481,7 @@ export default function Header({ loadFavorites }) {
                       <BsBell size={22}/>
                     </Badge>
                   </IconButton>
-                </>
+                </Box>
               )}
             </Box>
 
@@ -520,7 +522,7 @@ export default function Header({ loadFavorites }) {
                     whiteSpace: 'nowrap',
                     overflow: 'hidden',
                     textOverflow: 'ellipsis',
-                    ml: 0.8
+                    ml: 0.3
                   }}
                 >
                   {user ? user.nombre : 'Sign In'}
