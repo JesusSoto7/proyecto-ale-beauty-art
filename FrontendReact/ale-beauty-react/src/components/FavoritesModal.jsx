@@ -268,7 +268,8 @@ export default function FavoritesModal({ open, onClose }) {
                       border: '1px solid',
                       borderColor: 'neutral.outlinedBorder',
                       overflow: 'hidden',
-                      transition: 'all 0.3s ease-in-out'
+                      transition: 'all 0.3s ease-in-out',
+                      position: 'relative'
                     }}
                   >
                     <div
@@ -276,28 +277,62 @@ export default function FavoritesModal({ open, onClose }) {
                       onClick={() => removeFavorite(product.id)}
                       title={t('favorites.remove')}
                       style={{
-                        background: product.isRemoving ? '#ff5252' : '#ff1744',
-                        color: '#fff',
-                        width: 36,
-                        height: 36,
+                        background: '#f5f5f5',
+                        color: '#999',
+                        width: '28px',
+                        minHeight: '100%',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
                         cursor: 'pointer',
-                        transition: 'background .2s ease',
-                        borderBottomRightRadius: isStack ? 12 : 0,
-                        borderTopLeftRadius: 12,
-                        boxShadow: '0 2px 6px rgba(0,0,0,0.25)'
+                        transition: 'all 0.2s ease',
+                        borderTopLeftRadius: '12px',
+                        borderBottomLeftRadius: '12px',
+                        borderBottomRightRadius: isStack ? '0px' : '0px',
+                        borderTopRightRadius: '0px',
+                        boxShadow: '0 1px 2px rgba(0,0,0,0.05)',
+                        fontSize: '16px',
+                        fontWeight: 'bold',
+                        fontFamily: 'Arial, sans-serif',
+                        position: isStack ? 'absolute' : 'static',
+                        top: isStack ? '0' : 'auto',
+                        left: isStack ? '0' : 'auto',
+                        zIndex: isStack ? '1' : 'auto',
+                        border: '1px solid #e0e0e0'
                       }}
-                      onMouseEnter={(e) => { e.currentTarget.style.background = '#d50000'; }}
-                      onMouseLeave={(e) => { e.currentTarget.style.background = product.isRemoving ? '#ff5252' : '#ff1744'; }}
+                      onMouseEnter={(e) => { 
+                        e.currentTarget.style.background = '#ff1744';
+                        e.currentTarget.style.color = '#fff';
+                        e.currentTarget.style.width = '32px'; // Se expande ligeramente al hover
+                        e.currentTarget.style.borderColor = '#ff1744';
+                      }}
+                      onMouseLeave={(e) => { 
+                        if (!product.isRemoving) {
+                          e.currentTarget.style.background = '#f5f5f5';
+                          e.currentTarget.style.color = '#999';
+                          e.currentTarget.style.width = '28px'; // Vuelve a ser delgado
+                          e.currentTarget.style.borderColor = '#e0e0e0';
+                        }
+                      }}
+                      onMouseDown={(e) => { 
+                        e.currentTarget.style.background = '#d50000';
+                        e.currentTarget.style.transform = 'scale(0.98)';
+                      }}
+                      onMouseUp={(e) => { 
+                        e.currentTarget.style.transform = 'scale(1)';
+                      }}
                     >
-                      <DeleteIcon fontSize="small" />
+                      {product.isRemoving ? '×' : <DeleteIcon fontSize="small" />}
                     </div>
                     {/* Bloque superior: imagen + nombre (en stack solo esto dentro del link) */}
                     <Link
                       to={`/es/producto/${product.slug}`}
-                      style={{ textDecoration: 'none', color: 'inherit', flex: isStack ? 'none' : 1 }}
+                      style={{ 
+                        textDecoration: 'none', 
+                        color: 'inherit', 
+                        flex: isStack ? 'none' : 1,
+                        marginLeft: isStack ? '28px' : '0' // Compensa el botón más delgado
+                      }}
                       onClick={onClose}
                     >
                       <Box
@@ -425,7 +460,7 @@ export default function FavoritesModal({ open, onClose }) {
 
                     {/* Bloque inferior (stack <540px): solo botón (precio ya mostrado arriba) */}
                     {isStack && !isInlineStack && (
-                      <Box sx={{ px: 2, pb: 2, pt: 0, display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+                      <Box sx={{ px: 2, pb: 2, pt: 0, display: 'flex', flexDirection: 'row', alignItems: 'center', marginLeft: '28px' }}>
                         <Button
                           className="colorButon"
                           size="sm"
