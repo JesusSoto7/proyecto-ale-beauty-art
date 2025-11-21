@@ -14,7 +14,11 @@ const CategoryNav = forwardRef(({
   pinkTheme 
 }, ref) => {
   const containerRef = useRef(null);
+  const contentRef = useRef(null);
   const touchFlagRef = useRef(false); // evita doble disparo touch+click
+  const [shouldCenter, setShouldCenter] = useState(true);
+  const [isTouch, setIsTouch] = useState(false);
+
   const sameCategory = useCallback((cat) => {
     if (!cat || !hoveredNavCategory) return false;
     return (hoveredNavCategory.id && hoveredNavCategory.id === cat.id) ||
@@ -34,6 +38,32 @@ const CategoryNav = forwardRef(({
     if (!cat) return;
     if (sameCategory(cat)) closeCategory(); else openCategory(cat);
   }, [sameCategory, closeCategory, openCategory]);
+
+  // Detectar si es touch (responsiva)
+  useEffect(() => {
+    const updateIsTouch = () => {
+      setIsTouch(window.matchMedia('(pointer: coarse)').matches || 'ontouchstart' in window);
+    };
+    updateIsTouch();
+    window.addEventListener('resize', updateIsTouch);
+    return () => window.removeEventListener('resize', updateIsTouch);
+  }, []);
+
+  // Efecto para calcular si el contenido cabe en el contenedor
+  useEffect(() => {
+    const checkWidth = () => {
+      if (containerRef.current && contentRef.current) {
+        const containerWidth = containerRef.current.offsetWidth;
+        const contentWidth = contentRef.current.scrollWidth;
+        setShouldCenter(contentWidth <= containerWidth);
+      }
+    };
+    checkWidth();
+    window.addEventListener('resize', checkWidth);
+    return () => {
+      window.removeEventListener('resize', checkWidth);
+    };
+  }, [categories]);
 
   // Cierre al click / tap fuera del dropdown y del contenedor
   useEffect(() => {
@@ -77,15 +107,20 @@ const CategoryNav = forwardRef(({
           maxWidth: '100%',
         }}
       >
-        <Box sx={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: 4,
-          flexShrink: 0,
-          justifyContent: 'center',
-          flexWrap: 'nowrap',
-          width: 'fit-content',
-        }}>
+        <Box 
+          ref={contentRef}
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 4,
+            flexShrink: 0,
+            justifyContent: shouldCenter ? 'center' : 'flex-start',
+            flexWrap: 'nowrap',
+            width: 'fit-content',
+            margin: shouldCenter ? '0 auto' : '0',
+            transition: 'justify-content 0.3s ease, margin 0.3s ease',
+          }}
+        >
           <Typography 
             component={Link} 
             to={`/${lang}/productos`}
@@ -111,25 +146,21 @@ const CategoryNav = forwardRef(({
               <Box
                 key={category.id || category.slug}
                 sx={{ position: 'relative', cursor: 'pointer', flexShrink: 0 }}
-                onMouseEnter={() => { if (hasSubcategories) openCategory(category); }}
-                onMouseLeave={() => {
-                  // Si el puntero sale del nombre y no entra al dropdown, cerrar
+                onMouseEnter={!isTouch ? (() => { if (hasSubcategories) openCategory(category); }) : undefined}
+                onMouseLeave={!isTouch ? (() => {
                   setTimeout(() => {
                     const dropdownHovered = document.querySelector('.nav-category-dropdown:hover');
-                    // Cerramos sólo si seguimos en la misma categoría y no estamos sobre el dropdown
                     if (!dropdownHovered && sameCategory(category)) {
                       closeCategory();
                     }
                   }, 120);
-                }}
-                onTouchStart={() => {
-                  touchFlagRef.current = true;
+                }) : undefined}
+                onTouchStart={isTouch ? (() => {
                   if (hasSubcategories) toggleCategory(category); else goToCategory(category);
-                }}
-                onClick={() => {
-                  if (touchFlagRef.current) { touchFlagRef.current = false; return; }
+                }) : undefined}
+                onClick={isTouch ? undefined : (() => {
                   if (hasSubcategories) toggleCategory(category); else goToCategory(category);
-                }}
+                })}
                 onKeyDown={(e) => {
                   if (e.key === 'Enter' || e.key === ' ') {
                     e.preventDefault();
@@ -169,21 +200,31 @@ const CategoryNav = forwardRef(({
           sx={{
             position: 'absolute',
             top: '100%',
-            left: { xs: 0, md: '50%' },
-            right: { xs: 0, md: 'auto' },
-            transform: { xs: 'none', md: 'translateX(-50%)' },
+            left: { xs: '50%', md: '50%' },
+            transform: { xs: 'translateX(-50%)', md: 'translateX(-50%)' },
             borderRadius: '8px',
             zIndex: 1300,
             mt: 0,
             boxShadow: '0 10px 30px rgba(0, 0, 0, 0.15)',
-            minWidth: { xs: '100vw', md: hoveredNavCategory.sub_categories.length <= 2 ? '400px' : hoveredNavCategory.sub_categories.length <= 4 ? '600px' : '800px' },
+            // Responsiva: ancho dinámico según número de subcategorías
+            width: {
+              xs: `min(calc(${hoveredNavCategory.sub_categories.length} * 150px + 32px), 100vw)`,
+              sm: `min(calc(${hoveredNavCategory.sub_categories.length} * 170px + 40px), 100vw)`,
+              md: hoveredNavCategory.sub_categories.length <= 2 ? '400px' : hoveredNavCategory.sub_categories.length <= 4 ? '600px' : '800px'
+            },
+            minWidth: {
+              xs: hoveredNavCategory.sub_categories.length === 1 ? '170px' : 'unset',
+              sm: hoveredNavCategory.sub_categories.length === 1 ? '200px' : 'unset',
+              md: 'unset',
+            },
             maxWidth: '100vw',
-            width: { xs: '100vw', md: 'auto' },
             animation: 'fadeScale 160ms ease-out',
             p: 0,
+            left: { xs: '50%', md: '50%' },
+            right: 'auto',
           }}
-          onMouseEnter={() => openCategory(hoveredNavCategory)}
-          onMouseLeave={() => closeCategory()}
+          onMouseEnter={!isTouch ? (() => openCategory(hoveredNavCategory)) : undefined}
+          onMouseLeave={!isTouch ? (() => closeCategory()) : undefined}
         >
           <Box sx={{
             backgroundColor: '#fff',
