@@ -30,6 +30,7 @@ export default function MenuContent() {
   const mainListItems = [
     { text: 'Home', icon: <HomeRoundedIcon />, path: `/${lang}/home` },
     { text: 'Productos', icon: <AnalyticsRoundedIcon />, path: `/${lang}/home/products` },
+    { text: 'Ventas', icon: <AnalyticsRoundedIcon />, path: `/${lang}/home/ventas` },
     { text: 'Categorias', icon: <TbCategory2 />, path: `/${lang}/home/categories` },
     { text: 'Carousel', icon: <AssignmentRoundedIcon />, path: `/${lang}/home/carousel` },
     { text: 'Usuarios', icon: <PeopleRoundedIcon />, path: `/${lang}/home/usuarios` },

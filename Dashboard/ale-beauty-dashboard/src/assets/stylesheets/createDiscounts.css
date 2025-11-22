@@ -1,0 +1,248 @@
+/* Contenedor general */
+.cd-root {
+  width: 100%;
+  min-height: 100dvh;
+  box-sizing: border-box;
+  padding: clamp(16px, 2vw, 24px);
+  background-color: var(--template-palette-background-default);
+}
+
+/* Tarjetas (Paper) */
+.cd-card {
+  background-color: var(--template-palette-background-paper);
+  border: 1px solid var(--template-palette-divider);
+  border-radius: 12px;
+  padding: clamp(16px, 2vw, 24px);
+  margin: 0 auto clamp(16px, 2vw, 24px) auto;
+  box-shadow: var(--template-palette-baseShadow, 0 4px 16px rgba(0, 0, 0, 0.07));
+  max-width: 720px;
+}
+
+.cd-card--wide {
+  max-width: 1000px;
+}
+
+/* Títulos */
+.cd-title {
+  margin: 0 0 16px 0;
+  font-weight: 800;
+  color: var(--template-palette-text-primary);
+}
+
+.cd-subtitle {
+  margin: 0 0 12px 0;
+  font-weight: 700;
+  color: var(--template-palette-text-primary);
+}
+
+/* Campos */
+.cd-field {
+  margin-bottom: 14px;
+}
+
+.cd-label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 6px;
+  color: var(--template-palette-text-primary);
+}
+
+.cd-input {
+  width: 100%;
+  padding: 12px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--template-palette-divider);
+  background-color: var(--template-palette-background-default);
+  color: var(--template-palette-text-primary);
+  font-size: 0.95rem;
+  outline: none;
+  transition: border-color .15s ease, background-color .15s ease, box-shadow .15s ease;
+}
+
+.cd-input:focus {
+  border-color: var(--template-palette-primary-main);
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--template-palette-primary-main) 25%, transparent);
+  background-color: var(--template-palette-background-paper);
+}
+
+.cd-textarea {
+  min-height: 72px;
+  resize: vertical;
+}
+
+/* Grid de tres columnas en desktop */
+.cd-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 12px;
+}
+
+@media (max-width: 900px) {
+  .cd-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Checkbox */
+.cd-switch {
+  margin: 12px 0;
+}
+
+.cd-checkbox {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--template-palette-text-primary);
+}
+
+.cd-checkbox input {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--template-palette-primary-main);
+}
+
+/* Acciones del formulario */
+.cd-actionsRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.cd-btn {
+  text-transform: none !important;
+  font-weight: 700 !important;
+  border-radius: 8px !important;
+}
+
+.cd-btn--primary {
+  background-color: var(--template-palette-primary-main) !important;
+  color: var(--template-palette-primary-contrastText, #fff) !important;
+}
+
+.cd-btn--ghost {
+  color: var(--template-palette-text-primary) !important;
+  border-color: var(--template-palette-divider) !important;
+  background-color: transparent !important;
+}
+
+/* Mensajes */
+.cd-msg {
+  margin-top: 12px;
+  font-weight: 600;
+}
+
+.cd-msg--error {
+  color: var(--template-palette-error-main);
+}
+
+.cd-msg--success {
+  color: var(--template-palette-success-main);
+}
+
+.cd-error {
+  color: var(--template-palette-error-main);
+  margin-top: 6px;
+  font-size: 0.9rem;
+}
+
+/* Tabla */
+.cd-tableWrapper {
+  width: 100%;
+  overflow: auto;
+  border-radius: 10px;
+}
+
+.cd-table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: var(--template-palette-background-paper);
+  table-layout: fixed;
+  min-width: 720px;
+  border: 1px solid var(--template-palette-divider);
+  border-radius: 10px;
+}
+
+.cd-table thead tr {
+  background-color: color-mix(in oklab, var(--template-palette-background-paper) 85%, var(--template-palette-text-primary) 15%);
+}
+
+.cd-table th,
+.cd-table td {
+  border-bottom: 1px solid var(--template-palette-divider);
+  padding: 12px;
+  text-align: left;
+  color: var(--template-palette-text-primary);
+  vertical-align: middle;
+  word-break: break-word;
+}
+
+.cd-empty {
+  text-align: center;
+  color: var(--template-palette-text-secondary);
+  padding: 24px;
+}
+
+.cd-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 24px;
+}
+
+.cd-loadingText {
+  color: var(--template-palette-primary-main);
+  font-weight: 600;
+}
+
+/* Badges */
+.cd-badge {
+  font-weight: 700;
+  padding: 4px 8px;
+  border-radius: 999px;
+  font-size: 0.85rem;
+}
+
+.cd-badge--success {
+  color: var(--template-palette-success-main);
+  background-color: color-mix(in oklab, var(--template-palette-success-main) 12%, transparent);
+}
+
+.cd-badge--danger {
+  color: var(--template-palette-error-main);
+  background-color: color-mix(in oklab, var(--template-palette-error-main) 12%, transparent);
+}
+
+/* Columna de acciones */
+.cd-colActions {
+  width: 120px;
+}
+
+.cd-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* IconButtons uniformes */
+.cd-iconBtn.MuiIconButton-root {
+  width: 36px;
+  height: 36px;
+  border: 1px solid currentColor;
+  border-radius: 8px;
+  transition: background-color .2s ease, transform .1s ease;
+}
+
+.cd-iconBtn--edit {
+  color: var(--template-palette-primary-main);
+}
+
+.cd-iconBtn--delete {
+  color: var(--template-palette-error-main);
+}
+
+.cd-iconBtn.MuiIconButton-root:hover {
+  background-color: color-mix(in oklab, currentColor 12%, transparent);
+  transform: scale(1.06);
+}

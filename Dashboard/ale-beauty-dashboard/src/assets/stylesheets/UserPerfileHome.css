@@ -33,7 +33,7 @@
 }
 
 .profile-img {
-    display: flex;
+  display: flex;
   width: 120px;
   height: 120px;
   border-radius: 50%;
@@ -50,7 +50,6 @@
 }
 
 .profile-role {
-  color: #8b949e;
   margin-bottom: 1rem;
 }
 
@@ -83,19 +82,19 @@
   color: #c9d1d9;
 }
 
-.edit-btn{
-    width: 100%;
-    height: 40px;
-    background-color: transparent;
-    border-radius: 10px;
-    border: 1px solid #bec0c1;
-    color: #333b4d;
-    transition: 90ms;
+.edit-btn {
+  width: 100%;
+  height: 40px;
+  background-color: transparent;
+  border-radius: 10px;
+  border: 1px solid #bec0c1;
+  color: #333b4d;
+  transition: 90ms;
 }
 
-.edit-btn:hover{
-    background-color: #b6b6b6;
-    border: 1px solid #bec0c1;
+.edit-btn:hover {
+  background-color: #b6b6b6;
+  border: 1px solid #bec0c1;
 }
 
 .input-edit {
@@ -104,7 +103,7 @@
   padding: 8px 10px;
   border: 1px solid #30363d;
   border-radius: 6px;
-  background-color: #0d1117;
+  background-color: paper;
   color: #c9d1d9;
   font-size: 0.95rem;
 }
@@ -115,14 +114,16 @@
 }
 
 
-#role-user{
-   display: flex;
-   align-items: center;
-   justify-content: space-between;
+#role-user {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
 }
-#role-user h1{
-    margin: 0;
-    color: #000;
+
+#role-user h1 {
+  margin: 0;
+  color: #000;
 }
 
 .section-user-profile {
@@ -135,15 +136,14 @@
 .recent-section h2 {
   font-size: 1.3rem;
   margin-bottom: 0.8rem;
-  color: #333b4d;
 }
 
-.h2-unic{
-    font-size: 20px !important;
-   margin: 0px !important;
-   margin-bottom: 0.8rem !important;
-   display: flex;
-   padding: 0 !important;
+.h2-unic {
+  font-size: 20px !important;
+  margin: 0px !important;
+  margin-bottom: 0.8rem !important;
+  display: flex;
+  padding: 0 !important;
 }
 
 .about-section p {
@@ -151,14 +151,14 @@
 }
 
 .about-details {
-  background: #ededed;
+  background: paper;
   padding: 1rem;
   border-radius: 10px;
   transition: background 0.3s;
   /* width: 333px; */
   height: 224px;
   width: 100%;
-  color: #333b4d;
+
 }
 
 .about-details a {
@@ -166,11 +166,10 @@
   text-decoration: none;
 }
 
-.about-details hr{
-    color: #30363d;
-    margin: 15px;
-    margin-left: 0;
-    margin-right: 0;
+.about-details hr {
+  margin: 15px;
+  margin-left: 0;
+  margin-right: 0;
 }
 
 .experience-grid {
@@ -180,15 +179,16 @@
 }
 
 .exp-card {
-  background: #ededed;
+  background: paper;
   padding: 1rem;
   border-radius: 10px;
   transition: background 0.3s;
+  border: 3px solid rgba(143, 143, 143, 0.181);
 }
 
 
 .exp-section {
-  background: #f5f6fa;
+  background: paper;
   padding: 1rem;
   border-radius: 10px;
   transition: background 0.3s;
@@ -201,17 +201,15 @@
 .exp-card h3 {
   margin: 0;
   font-size: 1.1rem;
-  color: #333b4d;
 }
 
 .exp-card p {
-  color: #8b949e;
   margin: 0.4rem 0;
 }
 
 .exp-card span {
   font-size: 0.9rem;
-  color: #6e7681;
+  color: #569dff;
 }
 
 .recent-grid {
@@ -250,83 +248,91 @@
   margin-top: 8px;
 }
 
-#more-me{
+#more-me {
   width: 66%;
 }
 
-#logout-button-2{
+#logout-button-2 {
   display: none;
   background-color: #eb5e8c;
 }
 
-#logout-button-1{
+#logout-button-1 {
   display: block;
   background-color: #eb5e8c;
 }
 
-#notiButton{
-  border-radius: 10px; 
-  background-color: #f5e9e9; 
+#notiButton {
+  border-radius: 10px;
+  background-color: #f5e9e9;
   height: 50px;
   color: #333b4d;
   transition: 90ms;
 }
 
-#notiButton:hover{
+#notiButton:hover {
   border: #b6b6b6 solid 1px;
-  background-color: #e2e2e6; 
+  background-color: #e2e2e6;
 }
 
-@media (max-width: 1100px)  {
-  .section-user-profile{
+@media (max-width: 1100px) {
+  .section-user-profile {
     flex-direction: column !important;
   }
-  .exp-section{
+
+  .exp-section {
     width: 75%;
   }
-  .about-details{
+
+  .about-details {
     width: 100% !important;
   }
-  #more-me{
+
+  #more-me {
     width: 100% !important;
   }
 }
 
 /* movil */
-@media (max-width: 635px)  {
-  .section-user-profile{
+@media (max-width: 635px) {
+  .section-user-profile {
     flex-direction: column !important;
   }
-  .exp-section{
+
+  .exp-section {
     width: 75%;
     flex-direction: column !important;
   }
-  .about-details{
+
+  .about-details {
     width: 100% !important;
   }
-  #more-me{
+
+  #more-me {
     width: 100% !important;
   }
-  .profile-role{
+
+  .profile-role {
     display: none;
   }
-  #div-name-role{
+
+  #div-name-role {
     justify-content: center !important;
     align-self: center !important;
   }
 
-  #logout-button-1{
+  #logout-button-1 {
     display: none;
   }
 
-  #logout-button-2{
+  #logout-button-2 {
     display: block;
     height: 40px;
     width: 40px;
     padding: 0;
   }
 
-  #notiButton{
+  #notiButton {
     height: 40px !important;
     width: 40px;
     padding: 0;

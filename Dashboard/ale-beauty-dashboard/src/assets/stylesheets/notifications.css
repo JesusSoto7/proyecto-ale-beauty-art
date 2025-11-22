@@ -1,0 +1,147 @@
+/* Notificaciones – layout fluido + fixes de inputs */
+
+.ntf-root {
+  position: static;
+  width: 100%;
+  min-height: 100%;
+  overflow: visible;
+}
+
+.ntf-content {
+  max-width: 1600px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.ntf-header-title {
+  letter-spacing: -0.5px;
+}
+
+/* KPIs */
+.ntf-stat {
+  padding: 24px;
+  border-radius: 20px;
+  backdrop-filter: blur(18px);
+  display: flex;
+  align-items: center;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  min-height: 120px;
+}
+
+.ntf-stat-inner {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.ntf-stat-avatar {
+  width: 54px !important;
+  height: 54px !important;
+  background: rgba(255, 255, 255, 0.25);
+}
+
+.ntf-stat--blue {
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.95) 0%, rgba(102, 126, 234, 0.75) 100%);
+}
+
+.ntf-stat--violet {
+  background: linear-gradient(135deg, rgba(240, 147, 251, 0.95) 0%, rgba(240, 147, 251, 0.75) 100%);
+}
+
+.ntf-stat--gold {
+  background: linear-gradient(135deg, rgba(255, 193, 7, 0.95) 0%, rgba(255, 193, 7, 0.75) 100%);
+}
+
+/* Tabla */
+.ntf-table {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Botón enviar deshabilitado: texto visible */
+.ntf-submit.Mui-disabled {
+  color: var(--template-palette-text-primary) !important;
+  opacity: 0.7;
+  background-image: none !important;
+}
+
+/* TEXTAREA GRANDE: neutraliza el alto fijo del theme en OutlinedInput y fija altura mínima amplia */
+.ntf-textarea .MuiOutlinedInput-root {
+  height: auto !important;
+  /* anula height de variant size=medium del theme */
+  min-height: 280px !important;
+  /* como lo tenías grande */
+  align-items: flex-start;
+  padding: 0 !important;
+  /* deja el padding al textarea, no al root */
+  display: block;
+}
+
+.ntf-textarea .MuiInputBase-inputMultiline {
+  padding: 16px 14px !important;
+  /* cómodo para escribir */
+  line-height: 1.5;
+  resize: vertical;
+  /* permitir redimensionar si el user quiere */
+}
+
+/* -------- Breakpoints -------- */
+@media (max-width: 1450px) {
+  .ntf-content {
+    padding-inline: 12px;
+  }
+
+  .ntf-main-grid>.MuiGrid-item {
+    flex-basis: 100% !important;
+    max-width: 100% !important;
+  }
+}
+
+@media (max-width: 1100px) {
+  .ntf-stat {
+    padding: 18px;
+    min-height: 100px;
+  }
+
+  .ntf-stat-inner {
+    gap: 12px;
+  }
+}
+
+@media (max-width: 900px) {
+  .ntf-header-title {
+    font-size: 1.45rem !important;
+  }
+
+  .ntf-content {
+    padding-inline: 10px;
+  }
+
+  .ntf-textarea .MuiOutlinedInput-root {
+    min-height: 180px !important;
+    /* algo más pequeño en móvil */
+  }
+}
+
+@media (max-width: 600px) {
+  .ntf-header-title {
+    font-size: 1.3rem !important;
+  }
+
+  .ntf-stat {
+    padding: 16px;
+    min-height: 92px;
+  }
+
+  .ntf-stat-avatar {
+    width: 46px !important;
+    height: 46px !important;
+  }
+}
+
+/* mega pantallas: textarea aún más alto si quieres */
+@media (min-width: 1600px) {
+  .ntf-textarea .MuiOutlinedInput-root {
+    min-height: 320px !important;
+  }
+}

@@ -25,6 +25,8 @@ gem 'aws-sdk-s3', '~> 1.198', require: false
 
 gem 'jwt'
 
+gem 'redis', '~> 5.4', '>= 5.4.1'
+
 gem "image_processing", "~> 1.2"
 
 gem 'mercadopago-sdk', '~> 2.3'

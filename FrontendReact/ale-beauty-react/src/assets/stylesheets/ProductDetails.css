@@ -14,3 +14,13 @@
         align-self: flex-start !important;
     }
 }
+
+.related-products .carousel-items {
+  display: flex;
+  flex-wrap: nowrap;      /* <- clave */
+}
+
+/* Forzar que cada card ocupe un ancho fijo y no se encoja */
+.related-products .carousel-items > * {
+  flex: 0 0 250px;        /* ancho base igual al de las cards reales */
+}

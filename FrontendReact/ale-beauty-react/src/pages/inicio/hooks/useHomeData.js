@@ -1,62 +1,114 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 
+const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:4000';
+
 export const useHomeData = (token, addAlert) => {
   const [products, setProducts] = useState([]);
   const [newProducts, setNewProducts] = useState([]);
   const [categories, setCategories] = useState([]);
   const [cart, setCart] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+
+  const [homeLoading, setHomeLoading] = useState(true);
+  const [homeError, setHomeError] = useState(null);
+
   const [carousel, setCarousel] = useState([]);
-  
-  // ✅ Usar ref para evitar re-fetch cuando solo cambia el cart
-  const hasLoadedRef = useRef(false);
+  const [carouselLoading, setCarouselLoading] = useState(false);
+  const [carouselError, setCarouselError] = useState(null);
+
+  const firstHomeLoadRef = useRef(false);
+  const fetchingCarouselRef = useRef(false);
+
+  const authHeaders = token ? { Authorization: `Bearer ${token}` } : {};
 
   const loadHomeData = useCallback(async () => {
-    // Si ya cargamos los datos, no recargar
-    if (hasLoadedRef.current) return;
-    
-    setLoading(true);
-    setError(null);
-
+    // Evitar poner loading otra vez si ya tenemos datos (opcional)
+    if (!firstHomeLoadRef.current) {
+      setHomeLoading(true);
+    }
+    setHomeError(null);
     try {
-      const [inicioData, novedadesData, cartData] = await Promise.all([
-        fetch('https://localhost:4000/api/v1/inicio').then(r => r.json()),
-        fetch('https://localhost:4000/api/v1/products/novedades', {
-          headers: { Authorization: `Bearer ${token}` }
-        }).then(r => r.json()),
-        fetch('https://localhost:4000/api/v1/cart', {
-          headers: { Authorization: `Bearer ${token}` }
-        }).then(r => r.json())
+      const [inicioRes, novedadesRes, cartRes] = await Promise.all([
+        fetch(`${API_BASE}/api/v1/inicio`, { headers: authHeaders }),
+        fetch(`${API_BASE}/api/v1/products/novedades`, { headers: authHeaders }),
+        fetch(`${API_BASE}/api/v1/cart`, { headers: authHeaders }),
       ]);
+
+      const inicioData    = inicioRes.ok    ? await inicioRes.json()    : {};
+      const novedadesData = novedadesRes.ok ? await novedadesRes.json() : [];
+      const cartData      = cartRes.ok      ? await cartRes.json()      : {};
 
       setProducts(inicioData.products || []);
       setCategories(inicioData.categories || []);
-      setCarousel(inicioData.carousel || []);
-      setNewProducts(novedadesData || []);
-      setCart(cartData.cart);
-      
-      hasLoadedRef.current = true; // ✅ Marcar como cargado
-      
-      return {
-        products: inicioData.products || [],
-        newProducts: novedadesData || []
-      };
+      setNewProducts(Array.isArray(novedadesData) ? novedadesData : []);
+      setCart(cartData.cart || null);
+
     } catch (err) {
       console.error('Error loading home data:', err);
-      setError(err);
-      if (addAlert) {
-        addAlert('Error al cargar los datos', 'error', 3500);
-      }
-      return { products: [], newProducts: [] };
+      setHomeError(err);
+      addAlert?.('Error al cargar los datos', 'error', 3500);
     } finally {
-      setLoading(false);
+      setHomeLoading(false);
+      firstHomeLoadRef.current = true;
     }
-  }, [token, addAlert]); // ✅ Removido la dependencia innecesaria
+  }, [token, addAlert]);
 
+  const loadCarousel = useCallback(async (force = false) => {
+    if (fetchingCarouselRef.current) return;          // evitar doble carga simultánea
+    if (!force && carousel.length > 0) return;        // ya cargado
+    fetchingCarouselRef.current = true;
+
+    setCarouselLoading(true);
+    setCarouselError(null);
+    try {
+      const res = await fetch(`${API_BASE}/api/v1/carousel`, { headers: authHeaders });
+      if (!res.ok) throw new Error(`Carousel ${res.status}`);
+      const data = await res.json();
+
+      const normalized = Array.isArray(data)
+        ? data.map(d => (typeof d === 'string'
+            ? { id: crypto.randomUUID(), url: d }
+            : { id: d.id, url: d.url }))
+        : [];
+
+      setCarousel(normalized);
+    } catch (err) {
+      console.error('Error loading carousel:', err);
+      setCarouselError(err);
+    } finally {
+      setCarouselLoading(false);
+      fetchingCarouselRef.current = false;
+    }
+  }, [token]); // authHeaders depende de token; ok
+
+  // Cargar al montar / cambio de token
   useEffect(() => {
     loadHomeData();
-  }, [loadHomeData]);
+    loadCarousel(true); // fuerza primera carga del carrusel
+  }, [loadHomeData, loadCarousel]);
+
+  // Listener mejorado: si quieres reordenar sin refetch
+  useEffect(() => {
+    const reorderHandler = (e) => {
+      // e.detail: nueva lista (opcional)
+      if (Array.isArray(e.detail?.items)) {
+        setCarousel(e.detail.items);
+      } else {
+        // Si realmente necesitas refetch
+        loadCarousel(true);
+      }
+    };
+    window.addEventListener('carousel:reordered', reorderHandler);
+    return () => window.removeEventListener('carousel:reordered', reorderHandler);
+  }, [loadCarousel]);
+
+  // Si alguien sigue usando 'carousel:updated', lo rediriges al nuevo evento
+  useEffect(() => {
+    const legacyHandler = () => {
+      loadCarousel(true);
+    };
+    window.addEventListener('carousel:updated', legacyHandler);
+    return () => window.removeEventListener('carousel:updated', legacyHandler);
+  }, [loadCarousel]);
 
   return {
     products,
@@ -64,9 +116,12 @@ export const useHomeData = (token, addAlert) => {
     categories,
     cart,
     setCart,
-    loading,
+    homeLoading,
+    homeError,
     carousel,
-    error,
-    reloadHomeData: loadHomeData
+    carouselLoading,
+    carouselError,
+    reloadHomeData: loadHomeData,
+    reloadCarousel: () => loadCarousel(true),
   };
 };

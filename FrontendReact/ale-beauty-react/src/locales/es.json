@@ -225,7 +225,12 @@
     "quantity": "Cant",
     "subtotal": "Sub Total",
     "shipping": "Envío",
-    "total": "Total"
+    "total": "Total",
+    "shippingAddressTitle": "Dirección de envío",
+    "noShippingAddress": "No disponible",
+    "paymentMethodTitle": "Método de pago",
+    "noPaymentInfo": "No disponible",
+    "purchasedProducts": "Productos adquiridos"
   },
   "home": {
     "loadError": "Error cargando datos",

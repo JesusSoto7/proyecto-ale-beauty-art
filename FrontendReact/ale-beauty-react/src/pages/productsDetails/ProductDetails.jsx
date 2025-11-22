@@ -1287,14 +1287,14 @@ function ProductDetails() {
               padding: "0 10px"
             }}>
               {[1, 2, 3, 4].map((skeleton) => (
-                <div key={skeleton} style={{
-                  backgroundColor: "white",
-                  borderRadius: "12px",
-                  padding: "16px",
-                  boxShadow: "0 2px 12px rgba(0,0,0,0.1)",
-                  width: "280px",
-                  flexShrink: 0
-                }}>
+                  <div key={skeleton} style={{
+                    backgroundColor: "white",
+                    borderRadius: "12px",
+                    padding: "16px",
+                    boxShadow: "0 2px 12px rgba(0,0,0,0.1)",
+                    width: "250px",
+                    flexShrink: 0
+                  }}>
                   <div style={{ marginBottom: "12px" }}>
                     <Skeleton variant="rectangular" width={"100%"} height={200} sx={{ borderRadius: "8px" }} />
                   </div>

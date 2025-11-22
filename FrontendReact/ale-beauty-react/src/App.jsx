@@ -49,6 +49,7 @@ import CreateDiscount from './pages/home/CreateDiscount';
 import OptionsMenu from "./components/dashComponents/OptionsMenu.jsx";
 import UserProfile from "./components/dashComponents/userPerfil.jsx";
 import GuestCheckout from './components/GuestCheckout/GuestCheckout.jsx';
+import useRecordPageView from './pages/inicio/hooks/useRecordPageView.js';
 
 function Wrapper() {
   const { lang } = useParams();
@@ -60,11 +61,12 @@ function Wrapper() {
       i18n.changeLanguage(lang);
     }
   }, [lang, i18n]);
-
+  useRecordPageView();
   return <Outlet />;
 }
 
 function App() {
+
   const [isLoggedIn, setIsLoggedIn] = React.useState(() => {
     return !!localStorage.getItem('token');
   });
@@ -118,16 +120,16 @@ function App() {
               <DashboardLayout />
             </ProtectedRoute>
           }>
-              <Route index element={<Dashboard />} />
-              <Route path="products" element={<ProductTable />} />
-              <Route path="categories" element={<Categorias />} />
-              <Route path="categories/:slug" element={<SubCategorias />} />
-              <Route path="categories/:id" element={<CategoryProducts />} /> 
-              <Route path="carousel" element={<Carousel />} />
-              <Route path="usuarios" element={<GestionUsuarios />} />
-              <Route path="notificaciones" element={<Notificationes />} />
-              <Route path="crear_descuento" element={<CreateDiscount />} />
-              <Route path="user-profile" element={<UserProfile />} />
+            <Route index element={<Dashboard />} />
+            <Route path="products" element={<ProductTable />} />
+            <Route path="categories" element={<Categorias />} />
+            <Route path="categories/:slug" element={<SubCategorias />} />
+            <Route path="categories/:id" element={<CategoryProducts />} />
+            <Route path="carousel" element={<Carousel />} />
+            <Route path="usuarios" element={<GestionUsuarios />} />
+            <Route path="notificaciones" element={<Notificationes />} />
+            <Route path="crear_descuento" element={<CreateDiscount />} />
+            <Route path="user-profile" element={<UserProfile />} />
           </Route>
         </Route>
         <Route path="/:lang/403" element={<Forbidden403 />} />

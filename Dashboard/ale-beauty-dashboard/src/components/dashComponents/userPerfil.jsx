@@ -39,10 +39,10 @@ function UserProfile() {
     const [openDrawer, setOpenDrawer] = useState(false);
 
     const toggleDrawer = (open) => (event) => {
-    if (event && event.type === "keydown" && (event.key === "Tab" || event.key === "Shift")) {
-        return;
-    }
-    setOpenDrawer(open);
+        if (event && event.type === "keydown" && (event.key === "Tab" || event.key === "Shift")) {
+            return;
+        }
+        setOpenDrawer(open);
     };
 
 
@@ -68,37 +68,37 @@ function UserProfile() {
     const columns = [
         { field: "id", headerName: "ID Pedido", width: 120 },
         {
-        field: "numero_de_orden",
-        headerName: "N° de Orden",
-        width: 150,
+            field: "numero_de_orden",
+            headerName: "N° de Orden",
+            width: 150,
         },
         {
-        field: "created_at",
-        headerName: "Fecha",
-        width: 150,
-        valueGetter: (value, row) =>
-            new Date(row.created_at).toLocaleDateString(),
+            field: "created_at",
+            headerName: "Fecha",
+            width: 150,
+            valueGetter: (value, row) =>
+                new Date(row.created_at).toLocaleDateString(),
         },
         {
-        field: "estado",
-        headerName: "Estado",
-        width: 120,
+            field: "estado",
+            headerName: "Estado",
+            width: 120,
         },
         {
-        field: "total",
-        headerName: "Total ($)",
-        width: 110,
-        type: "number",
+            field: "total",
+            headerName: "Total ($)",
+            width: 110,
+            type: "number",
         },
         {
-        field: "cliente",
-        headerName: "Cliente",
-        width: 160,
+            field: "cliente",
+            headerName: "Cliente",
+            width: 160,
         },
         {
-        field: "email_cliente",
-        headerName: "Email Cliente",
-        width: 200,
+            field: "email_cliente",
+            headerName: "Email Cliente",
+            width: 200,
         },
         {
             field: "pdf_url",
@@ -106,192 +106,192 @@ function UserProfile() {
             width: 150,
             sortable: false,
             renderCell: (params) => {
-            const pdfUrl = params.value;
-            if (!pdfUrl) return "—";
+                const pdfUrl = params.value;
+                if (!pdfUrl) return "—";
 
-            return (
-                <a
-                href={pdfUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                style={{
-                    color: "#D32F2F",
-                    display: "flex",
-                    alignItems: "center",
-                    textDecoration: "none",
-                }}
-                >
-                <PictureAsPdfIcon />
-                </a>
-            );
+                return (
+                    <a
+                        href={pdfUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        style={{
+                            color: "#D32F2F",
+                            display: "flex",
+                            alignItems: "center",
+                            textDecoration: "none",
+                        }}
+                    >
+                        <PictureAsPdfIcon />
+                    </a>
+                );
             },
         },
     ];
-    
+
     const faqItems = [
         {
-        title: "Pedidos realizados",
-        content: (
-            <Box sx={{ height: 420, width: "100%" }}>
-            <DataGrid
-                rows={rows}
-                columns={columns}
-                loading={loading}
-                initialState={{
-                pagination: { paginationModel: { pageSize: 5 } },
-                }}
-                pageSizeOptions={[5, 10]}
-                disableRowSelectionOnClick
-                sx={{
-                "& .MuiDataGrid-columnHeaders": {
-                    backgroundColor: "#0078FF",
-                    color: "white",
-                    fontWeight: "bold",
-                },
-                "& .MuiDataGrid-cell": {
-                    fontSize: "0.95rem",
-                },
-                }}
-            />
-            </Box>
-        ),
-        },
-        {
-        title: `Reviews escritas (${userReviews.length})`,
-        content: (
-            <div style={{ display: "flex", flexDirection: "column", gap: "15px" }}>
-                {userReviews.length > 0 ? (
-                    userReviews.map((review) => (
-                    <div
-                        key={review.id}
-                        style={{
-                        display: "flex",
-                        flexDirection: "column",
-                        background: "#fff",
-                        borderRadius: "10px",
-                        padding: "15px 20px",
-                        boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
+            title: "Pedidos realizados",
+            content: (
+                <Box sx={{ height: 420, width: "100%" }}>
+                    <DataGrid
+                        rows={rows}
+                        columns={columns}
+                        loading={loading}
+                        initialState={{
+                            pagination: { paginationModel: { pageSize: 5 } },
                         }}
-                    >
-                        {/* Encabezado con avatar, nombre y fecha */}
-                        <div
-                        style={{
-                            display: "flex",
-                            justifyContent: "space-between",
-                            alignItems: "center",
-                        }}
-                        >
-                        <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-                            <div
-                            style={{
-                                width: "40px",
-                                height: "40px",
-                                borderRadius: "50%",
-                                background: "#ddd",
-                                display: "flex",
-                                alignItems: "center",
-                                justifyContent: "center",
+                        pageSizeOptions={[5, 10]}
+                        disableRowSelectionOnClick
+                        sx={{
+                            "& .MuiDataGrid-columnHeaders": {
+                                backgroundColor: "#0078FF",
+                                color: "white",
                                 fontWeight: "bold",
-                                color: "#555",
-                            }}
+                            },
+                            "& .MuiDataGrid-cell": {
+                                fontSize: "0.95rem",
+                            },
+                        }}
+                    />
+                </Box>
+            ),
+        },
+        {
+            title: `Reviews escritas (${userReviews.length})`,
+            content: (
+                <div style={{ display: "flex", flexDirection: "column", gap: "15px" }}>
+                    {userReviews.length > 0 ? (
+                        userReviews.map((review) => (
+                            <div
+                                key={review.id}
+                                style={{
+                                    display: "flex",
+                                    flexDirection: "column",
+                                    background: "#fff",
+                                    borderRadius: "10px",
+                                    padding: "15px 20px",
+                                    boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
+                                }}
                             >
-                            {user?.nombre?.[0]?.toUpperCase() || "?"}
-                            </div>
-                            <div>
-                                <strong style={{ display: "flex", fontSize: "1rem", justifyContent: "start" }}>
-                                    {user?.nombre || "Usuario"}
-                                </strong>
-                                <span style={{ fontSize: "0.8rem", color: "#777" }}>
-                                    {new Date(review.created_at).toLocaleDateString("es-ES", {
-                                    day: "2-digit",
-                                    month: "long",
-                                    year: "numeric",
-                                    })}
-                                </span>
-                            </div>
-                        </div>
+                                {/* Encabezado con avatar, nombre y fecha */}
+                                <div
+                                    style={{
+                                        display: "flex",
+                                        justifyContent: "space-between",
+                                        alignItems: "center",
+                                    }}
+                                >
+                                    <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                                        <div
+                                            style={{
+                                                width: "40px",
+                                                height: "40px",
+                                                borderRadius: "50%",
+                                                background: "#ddd",
+                                                display: "flex",
+                                                alignItems: "center",
+                                                justifyContent: "center",
+                                                fontWeight: "bold",
+                                                color: "#555",
+                                            }}
+                                        >
+                                            {user?.nombre?.[0]?.toUpperCase() || "?"}
+                                        </div>
+                                        <div>
+                                            <strong style={{ display: "flex", fontSize: "1rem", justifyContent: "start" }}>
+                                                {user?.nombre || "Usuario"}
+                                            </strong>
+                                            <span style={{ fontSize: "0.8rem", color: "#777" }}>
+                                                {new Date(review.created_at).toLocaleDateString("es-ES", {
+                                                    day: "2-digit",
+                                                    month: "long",
+                                                    year: "numeric",
+                                                })}
+                                            </span>
+                                        </div>
+                                    </div>
 
-                        {/* Estrellas */}
-                        <div style={{ display: "flex", color: "#e91e63" }}>
-                            {[...Array(5)].map((_, i) => (
-                            <FaStar key={i} size={18} color={i < review.rating ? "#e91e63" : "#ccc"} />
-                            ))}
-                        </div>
-                        </div>
+                                    {/* Estrellas */}
+                                    <div style={{ display: "flex", color: "#e91e63" }}>
+                                        {[...Array(5)].map((_, i) => (
+                                            <FaStar key={i} size={18} color={i < review.rating ? "#e91e63" : "#ccc"} />
+                                        ))}
+                                    </div>
+                                </div>
 
-                        {/* Comentario */}
-                        <p style={{ marginTop: "10px", color: "#333", fontSize: "0.95rem" }}>
-                        {review.comentario}
-                        </p>
-                    </div>
-                    ))
-                ) : (
-                    <p>No has escrito reseñas aún.</p>
-                )}
-            </div>
-        ),
+                                {/* Comentario */}
+                                <p style={{ marginTop: "10px", color: "#333", fontSize: "0.95rem" }}>
+                                    {review.comentario}
+                                </p>
+                            </div>
+                        ))
+                    ) : (
+                        <p>No has escrito reseñas aún.</p>
+                    )}
+                </div>
+            ),
         },
 
         {
-        title: "- - -",
-        content: "Pestaña libre para futuros usos.",
+            title: "- - -",
+            content: "Pestaña libre para futuros usos.",
         },
     ];
 
     useEffect(() => {
         const savedToken = localStorage.getItem("token");
         if (savedToken) {
-        setToken(savedToken);
+            setToken(savedToken);
         } else {
-        alert(t('orders.notAuthenticated'));
-        setLoading(false);
+            alert(t('orders.notAuthenticated'));
+            setLoading(false);
         }
     }, []);
 
     useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (!token) return;
+        const token = localStorage.getItem("token");
+        if (!token) return;
 
-    fetch("https://localhost:4000/api/v1/my_reviews", {
-        headers: { Authorization: `Bearer ${token}` },
-    })
-        .then((res) => res.json())
-        .then((data) => {
-        setReviewCount(data.total);     // número total
-        setUserReviews(data.reviews);   // lista completa
+        fetch("https://localhost:4000/api/v1/my_reviews", {
+            headers: { Authorization: `Bearer ${token}` },
         })
-        .catch((err) => console.error("Error al obtener reseñas:", err));
+            .then((res) => res.json())
+            .then((data) => {
+                setReviewCount(data.total);     // número total
+                setUserReviews(data.reviews);   // lista completa
+            })
+            .catch((err) => console.error("Error al obtener reseñas:", err));
     }, []);
 
     const fetchCart = () => {
         setLoading(true);
         setError(null);
         fetch("https://localhost:4000/api/v1/cart", {
-        headers: {
-            Authorization: `Bearer ${token}`,
-        },
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
         })
-        .then((res) => {
-            if (!res.ok) throw new Error("Failed to fetch cart");
-            return res.json();
-        })
-        .then((data) => setCart(data))
-        .catch((err) => {
-            console.error("Error cargando cart: ", err);
-            setError(t("cart.loadingError"));
-        })
-        .finally(() => setLoading(false));
+            .then((res) => {
+                if (!res.ok) throw new Error("Failed to fetch cart");
+                return res.json();
+            })
+            .then((data) => setCart(data))
+            .catch((err) => {
+                console.error("Error cargando cart: ", err);
+                setError(t("cart.loadingError"));
+            })
+            .finally(() => setLoading(false));
     };
 
     useEffect(() => {
         if (!token) return;
         fetch("https://localhost:4000/api/v1/my_orders", {
-        headers: { Authorization: `Bearer ${token}` },
+            headers: { Authorization: `Bearer ${token}` },
         })
-        .then((res) => res.json())
-        .then((data) => setOrders(data))
-        .catch((err) => console.error(t('orders.loadError'), err))
-        .finally(() => setLoading(false));
+            .then((res) => res.json())
+            .then((data) => setOrders(data))
+            .catch((err) => console.error(t('orders.loadError'), err))
+            .finally(() => setLoading(false));
         fetchFavorites();
         fetchCart();
     }, [token]);
@@ -301,315 +301,315 @@ function UserProfile() {
         if (!token) return;
 
         fetch("https://localhost:4000/api/v1/me", {
-        headers: { Authorization: `Bearer ${token}` },
+            headers: { Authorization: `Bearer ${token}` },
         })
-        .then((res) => {
-            if (!res.ok) throw new Error(t("profile.loadError"));
-            return res.json();
-        })
-        .then((data) => {
-            setUser(data);
-            setFormData({
-            nombre: data.nombre || "",
-            apellido: data.apellido || "",
-            email: data.email || "",
-            telefono: data.telefono || "",
-            });
-        })
-        .catch((err) => console.error(err));
+            .then((res) => {
+                if (!res.ok) throw new Error(t("profile.loadError"));
+                return res.json();
+            })
+            .then((data) => {
+                setUser(data);
+                setFormData({
+                    nombre: data.nombre || "",
+                    apellido: data.apellido || "",
+                    email: data.email || "",
+                    telefono: data.telefono || "",
+                });
+            })
+            .catch((err) => console.error(err));
     }, []);
 
     const handleSave = () => {
         const token = localStorage.getItem("token");
 
         fetch("https://localhost:4000/api/v1/me", {
-        method: "PATCH",
-        headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(formData),
+            method: "PATCH",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify(formData),
         })
-        .then((res) => {
-            if (!res.ok) throw new Error(t("profile.updateError"));
-            return res.json();
-        })
-        .then((updatedUser) => {
-            setUser(updatedUser);
-            setEditMode(false);
-        })
-        .catch((err) => console.error(err));
+            .then((res) => {
+                if (!res.ok) throw new Error(t("profile.updateError"));
+                return res.json();
+            })
+            .then((updatedUser) => {
+                setUser(updatedUser);
+                setEditMode(false);
+            })
+            .catch((err) => console.error(err));
     };
 
     if (!user) {
         return <div className="profile-loading">Loading profile...</div>;
     }
 
-    
+
 
     async function fetchFavorites() {
         setLoading(true);
         try {
-        const res = await fetch("https://localhost:4000/api/v1/favorites", {
-            headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
-        });
-        if (res.ok) {
-            const data = await res.json();
-            setFavorites(data.map(p => ({ ...p, isRemoving: false })));
-        }
+            const res = await fetch("https://localhost:4000/api/v1/favorites", {
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem("token")}`,
+                },
+            });
+            if (res.ok) {
+                const data = await res.json();
+                setFavorites(data.map(p => ({ ...p, isRemoving: false })));
+            }
         } catch (err) {
-        console.error(t('favorites.loadError'), err);
+            console.error(t('favorites.loadError'), err);
         } finally {
-        setLoading(false);
+            setLoading(false);
         }
     }
 
     async function handleLogout() {
         const token = localStorage.getItem('token');
         try {
-        await fetch('https://localhost:4000/api/v1/sign_out', {
-            method: 'DELETE',
-            headers: { Authorization: `Bearer ${token}` },
-        });
+            await fetch('https://localhost:4000/api/v1/sign_out', {
+                method: 'DELETE',
+                headers: { Authorization: `Bearer ${token}` },
+            });
         } catch (err) {
-        console.warn('Error cerrando sesión:', err);
+            console.warn('Error cerrando sesión:', err);
         }
         localStorage.removeItem('token');
         window.location.href = `/${lang || 'es'}/login`; // ✅ Redirección con idioma por defecto
     }
 
-  return (
-    <div className="profile-container">
-      {/* Banner */}
-      <div className="banner-perfil">
-        <div className="banner-overlay"></div>
-        <svg id="figure" xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:svgjs="http://svgjs.dev/svgjs" viewBox="0 0 800 800"><defs><linearGradient gradientTransform="rotate(45 0.5 0.5)" x1="50%" y1="0%" x2="50%" y2="100%" id="ppperspective-grad2"><stop stop-color="hsl(0, 0%, 100%)" stop-opacity="1" offset="0%"></stop><stop stop-color="hsl(0, 0%, 100%)" stop-opacity="0" offset="100%"></stop></linearGradient></defs><g fill="hsl(0, 0%, 100%)" shape-rendering="crispEdges"><polygon points="0,578 289,289 289,511 0,800" fill="url(#ppperspective-grad2)" opacity="0.45"></polygon><polygon points="0,800 289,511 511,511 222,800" fill="url(#ppperspective-grad2)" opacity="0.2"></polygon><rect width="222" height="222" x="289" y="289"></rect></g></svg>
-      </div>
-
-      {/* Perfil principal */}
-      <div className="profile-content">
-        <div style={{display:"flex", marginTop: 25, justifyContent:"space-between"}}>
-            <div display="flex" style={{display:"flex", zIndex: 100}}>
-                <div style={{ position: "relative" }}>
-                    <img
-                    src={profilePic}
-                    alt="Profile"
-                    className="profile-img"/>
-                </div>
-                <div id="div-name-role" style={{display:"flex", flexDirection:"column", marginLeft:"20px", justifyContent:"end"}}>
-                    <h1 className="profile-name">{user.nombre} {user.apellido}</h1>
-                    <p className="profile-role">
-                    I'm a Product Designer based in Melbourne.
-                    </p> 
-                </div>
+    return (
+        <div className="profile-container">
+            {/* Banner */}
+            <div className="banner-perfil">
+                <div className="banner-overlay"></div>
+                <svg id="figure" xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:svgjs="http://svgjs.dev/svgjs" viewBox="0 0 800 800"><defs><linearGradient gradientTransform="rotate(45 0.5 0.5)" x1="50%" y1="0%" x2="50%" y2="100%" id="ppperspective-grad2"><stop stop-color="hsl(0, 0%, 100%)" stop-opacity="1" offset="0%"></stop><stop stop-color="hsl(0, 0%, 100%)" stop-opacity="0" offset="100%"></stop></linearGradient></defs><g fill="hsl(0, 0%, 100%)" shape-rendering="crispEdges"><polygon points="0,578 289,289 289,511 0,800" fill="url(#ppperspective-grad2)" opacity="0.45"></polygon><polygon points="0,800 289,511 511,511 222,800" fill="url(#ppperspective-grad2)" opacity="0.2"></polygon><rect width="222" height="222" x="289" y="289"></rect></g></svg>
             </div>
-            
 
-            <div className="profile-actions">
-                <button id="logout-button-1" className="btn btn-primary" onClick={handleLogout}>Logout <LogoutIcon fontSize="small"/></button>
-                <button id="logout-button-2" className="btn btn-primary" onClick={handleLogout}><LogoutIcon fontSize="small" /></button>
-            </div>
-        </div>
-
-        {/* Sección sobre mí */}
-        <section className="about-section section-user-profile">
-          <section className="section-user-profile" style={{display: "flex", flexDirection: "row", justifyContent: "space-between", gap: "20px"}}>
-            <div style={{width: "135%"}}>
-                <h2 className="h2-unic">About me</h2>
-                <div className="exp-section" style={{ display: "flex", flexDirection: "row", gap: "15px"}}>
-                    <div style={{display: "flex", flexDirection: "column", width: "100%", gap: "15px"}}>
-                        <div className="exp-card" style={{}}>
-                            <h3>compras realizadas</h3>
-                            <p>{orders.length}</p>
+            {/* Perfil principal */}
+            <div className="profile-content">
+                <div style={{ display: "flex", marginTop: 25, justifyContent: "space-between" }}>
+                    <div display="flex" style={{ display: "flex", zIndex: 100 }}>
+                        <div style={{ position: "relative" }}>
+                            <img
+                                src={profilePic}
+                                alt="Profile"
+                                className="profile-img" />
                         </div>
-                        <div className="exp-card">
-                            <h3>reviews escritas</h3>
-                            <p>{reviewCount}</p>
-                        </div>    
-                    </div>
-                    <div style={{display: "flex", flexDirection: "column", width: "100%", gap: "15px"}}>
-                        <div className="exp-card">
-                            <h3>Productos en favoritos</h3>
-                            <p>{favorites.length}</p>
-                        </div>
-                        <div className="exp-card">
-                            <h3>Productos en carrito</h3>
-                            <p>
-                                {cart && cart.products
-                                    ? cart.products.reduce((total, item) => total + item.cantidad, 0)
-                                    : 0
-                                }
+                        <div id="div-name-role" style={{ display: "flex", flexDirection: "column", marginLeft: "20px", justifyContent: "end" }}>
+                            <h1 className="profile-name">{user.nombre} {user.apellido}</h1>
+                            <p className="profile-role">
+                                I'm a Product Designer based in Melbourne.
                             </p>
-                        </div>    
+                        </div>
                     </div>
-                    
+
+
+                    <div className="profile-actions">
+                        <button id="logout-button-1" className="btn btn-primary" onClick={handleLogout}>Logout <LogoutIcon fontSize="small" /></button>
+                        <button id="logout-button-2" className="btn btn-primary" onClick={handleLogout}><LogoutIcon fontSize="small" /></button>
+                    </div>
                 </div>
 
+                {/* Sección sobre mí */}
+                <section className="about-section section-user-profile">
+                    <section className="section-user-profile" style={{ display: "flex", flexDirection: "row", justifyContent: "space-between", gap: "20px" }}>
+                        <div style={{ width: "135%" }}>
+                            <h2 className="h2-unic">About me</h2>
+                            <div className="exp-section" style={{ display: "flex", flexDirection: "row", gap: "15px" }}>
+                                <div style={{ display: "flex", flexDirection: "column", width: "100%", gap: "15px" }}>
+                                    <div className="exp-card" style={{}}>
+                                        <h3>compras realizadas</h3>
+                                        <p>{orders.length}</p>
+                                    </div>
+                                    <div className="exp-card">
+                                        <h3>reviews escritas</h3>
+                                        <p>{reviewCount}</p>
+                                    </div>
+                                </div>
+                                <div style={{ display: "flex", flexDirection: "column", width: "100%", gap: "15px" }}>
+                                    <div className="exp-card">
+                                        <h3>Productos en favoritos</h3>
+                                        <p>{favorites.length}</p>
+                                    </div>
+                                    <div className="exp-card">
+                                        <h3>Productos en carrito</h3>
+                                        <p>
+                                            {cart && cart.products
+                                                ? cart.products.reduce((total, item) => total + item.cantidad, 0)
+                                                : 0
+                                            }
+                                        </p>
+                                    </div>
+                                </div>
 
-            </div>
-            
-            <div id="more-me">
-                <h2 className="h2-unic">More About me</h2>
-                <div className="about-details">
-                    <div>
-                        <strong>Dirección:</strong> {user.direccion || "No proporcionada"}
+                            </div>
+
+
+                        </div>
+
+                        <div id="more-me">
+                            <h2 className="h2-unic">More About me</h2>
+                            <div className="about-details">
+                                <div>
+                                    <strong>Dirección:</strong> {user.direccion || "No proporcionada"}
+                                </div>
+                                <hr />
+                                <div>
+                                    <strong>Teléfono:</strong> {user.telefono || "No proporcionado"}
+                                </div>
+                                <hr />
+                                <div>
+                                    <strong>Email:</strong>{" "}
+                                    <a href={`mailto:${user.email}`}>{user.email}</a>
+                                </div>
+                                <hr />
+
+                                {/* 🟢 Botón que abre el Drawer */}
+                                <button className="edit-btn" onClick={toggleDrawer(true)}>
+                                    Editar perfil
+                                </button>
+
+                                {/* 🟣 Drawer deslizante */}
+                                <SwipeableDrawer
+                                    id="SwipeableDrawer"
+                                    anchor="right"
+                                    open={openDrawer}
+                                    onClose={toggleDrawer(false)}
+                                    onOpen={toggleDrawer(true)}
+                                    PaperProps={{
+                                        sx: {
+                                            // backgroundColor: "#161b22",
+                                            color: "#333b4d",
+                                            padding: "20px",
+                                            background: "#ffffffff"
+                                        },
+                                    }}
+                                >
+                                    <Box
+                                        sx={{
+                                            display: "flex",
+                                            flexDirection: "column",
+                                            gap: 2,
+                                        }}
+                                    >
+                                        <h3 style={{ textAlign: "center", margin: 0 }}>Editar perfil</h3>
+
+                                        <TextField
+                                            label="Nombre"
+                                            variant="outlined"
+                                            value={formData.nombre}
+                                            onChange={(e) =>
+                                                setFormData({ ...formData, nombre: e.target.value })
+                                            }
+                                            fullWidth
+                                            InputLabelProps={{ style: { color: "#8b949e" } }}
+                                            InputProps={{ style: { color: "#a3a3a3" } }}
+                                        />
+
+                                        <TextField
+                                            label="Apellido"
+                                            variant="outlined"
+                                            value={formData.apellido}
+                                            onChange={(e) =>
+                                                setFormData({ ...formData, apellido: e.target.value })
+                                            }
+                                            fullWidth
+                                            InputLabelProps={{ style: { color: "#8b949e" } }}
+                                            InputProps={{ style: { color: "#a3a3a3" } }}
+                                        />
+
+                                        <TextField
+                                            label="Teléfono"
+                                            variant="outlined"
+                                            value={formData.telefono}
+                                            onChange={(e) =>
+                                                setFormData({ ...formData, telefono: e.target.value })
+                                            }
+                                            fullWidth
+                                            InputLabelProps={{ style: { color: "#8b949e" } }}
+                                            InputProps={{ style: { color: "#a3a3a3" } }}
+                                        />
+
+                                        <TextField
+                                            label="Email"
+                                            type="email"
+                                            variant="outlined"
+                                            value={formData.email}
+                                            onChange={(e) =>
+                                                setFormData({ ...formData, email: e.target.value })
+                                            }
+                                            fullWidth
+                                            InputLabelProps={{ style: { color: "#8b949e" } }}
+                                            InputProps={{ style: { color: "#a3a3a3" } }}
+                                        />
+
+                                        <Button
+                                            variant="contained"
+                                            onClick={() => {
+                                                handleSave(formData);
+                                                setOpenDrawer(false);
+                                            }}
+                                            sx={{
+                                                mt: 2,
+                                                backgroundColor: "#202020",
+                                                "&:hover": { backgroundColor: "#ed3c76", borderColor: "#ed3c76" },
+                                                color: "#fff",
+                                                borderRadius: "8px",
+                                            }}
+                                        >
+                                            Guardar cambios
+                                        </Button>
+                                    </Box>
+                                </SwipeableDrawer>
+                            </div>
+
+                        </div>
+
+                    </section>
+
+
+                </section>
+
+                {/* información */}
+                <section className="experience-section section-user-profile">
+                    <h2>informacion</h2>
+                    <div className="experience-grid">
+                        <div className="exp-card">
+                            <h3>ultima vez conectado</h3>
+                            <p>ahora mismo</p>
+                            <span>May 2020 - Present</span>
+                        </div>
+                        <div className="exp-card">
+                            <h3>ID de usuario</h3>
+                            <p> USER ID: {user.id || "Not provided"}</p>
+                            <span>Mar 2017 - Jan 2018</span>
+                        </div>
+                        {user.roles?.includes("admin") ? (
+                            <div id="role-user" className="exp-card" style={{ background: "linear-gradient(90deg, #ededed 35%, #e3e3e3 50%, rgba(167, 255, 167, 1) 100%)" }}>
+                                <div>
+                                    <h3>Tipo de usuario</h3>
+                                    <p>Admin</p>
+                                    <span>Jan 2016 - May 2020</span>
+                                </div>
+
+                                <div style={{ width: "80px", height: "80px", backgroundColor: "#a7ffa7ff", borderRadius: 10, display: "flex", alignItems: "center", justifyContent: "center" }}><h1>A</h1></div>
+                            </div>
+                        ) : (
+                            <div className="exp-card">
+                                <h3>Tipo de usuario</h3>
+                                <p>Regular User</p>
+                                <span>Jan 2016 - May 2020</span>
+                            </div>
+                        )}
+
+
                     </div>
-                    <hr />
-                    <div>
-                        <strong>Teléfono:</strong> {user.telefono || "No proporcionado"}
-                    </div>
-                    <hr />
-                    <div>
-                        <strong>Email:</strong>{" "}
-                        <a href={`mailto:${user.email}`}>{user.email}</a>
-                    </div>
-                    <hr />
+                </section>
 
-                    {/* 🟢 Botón que abre el Drawer */}
-                    <button className="edit-btn" onClick={toggleDrawer(true)}>
-                        Editar perfil
-                    </button>
-
-                    {/* 🟣 Drawer deslizante */}
-                    <SwipeableDrawer
-                        id="SwipeableDrawer"
-                        anchor="right"
-                        open={openDrawer}
-                        onClose={toggleDrawer(false)}
-                        onOpen={toggleDrawer(true)}
-                        PaperProps={{
-                        sx: {
-                            // backgroundColor: "#161b22",
-                            color: "#333b4d",
-                            padding: "20px",
-                            background: "#ffffffff"
-                        },
-                        }}
-                    >
-                        <Box
-                        sx={{
-                            display: "flex",
-                            flexDirection: "column",
-                            gap: 2,
-                        }}
-                        >
-                        <h3 style={{ textAlign: "center", margin: 0 }}>Editar perfil</h3>
-
-                        <TextField
-                            label="Nombre"
-                            variant="outlined"
-                            value={formData.nombre}
-                            onChange={(e) =>
-                            setFormData({ ...formData, nombre: e.target.value })
-                            }
-                            fullWidth
-                            InputLabelProps={{ style: { color: "#8b949e" } }}
-                            InputProps={{ style: { color: "#a3a3a3" } }}
-                        />
-
-                        <TextField
-                            label="Apellido"
-                            variant="outlined"
-                            value={formData.apellido}
-                            onChange={(e) =>
-                            setFormData({ ...formData, apellido: e.target.value })
-                            }
-                            fullWidth
-                            InputLabelProps={{ style: { color: "#8b949e" } }}
-                            InputProps={{ style: { color: "#a3a3a3" } }}
-                        />
-
-                        <TextField
-                            label="Teléfono"
-                            variant="outlined"
-                            value={formData.telefono}
-                            onChange={(e) =>
-                            setFormData({ ...formData, telefono: e.target.value })
-                            }
-                            fullWidth
-                            InputLabelProps={{ style: { color: "#8b949e" } }}
-                            InputProps={{ style: { color: "#a3a3a3" } }}
-                        />
-
-                        <TextField
-                            label="Email"
-                            type="email"
-                            variant="outlined"
-                            value={formData.email}
-                            onChange={(e) =>
-                            setFormData({ ...formData, email: e.target.value })
-                            }
-                            fullWidth
-                            InputLabelProps={{ style: { color: "#8b949e" } }}
-                            InputProps={{ style: { color: "#a3a3a3" } }}
-                        />
-
-                        <Button
-                            variant="contained"
-                            onClick={() => {
-                            handleSave(formData);
-                            setOpenDrawer(false);
-                            }}
-                            sx={{
-                            mt: 2,
-                            backgroundColor: "#202020",
-                            "&:hover": { backgroundColor: "#ed3c76", borderColor: "#ed3c76" },
-                            color: "#fff",
-                            borderRadius: "8px",
-                            }}
-                        >
-                            Guardar cambios
-                        </Button>
-                        </Box>
-                    </SwipeableDrawer>
-                    </div>
-
-            </div>
-            
-          </section>
-
-          
-        </section>
-
-        {/* información */}
-        <section className="experience-section section-user-profile">
-          <h2>informacion</h2>
-          <div className="experience-grid">
-            <div className="exp-card">
-              <h3>ultima vez conectado</h3>
-              <p>ahora mismo</p>
-              <span>May 2020 - Present</span>
-            </div>
-            <div className="exp-card">
-              <h3>ID de usuario</h3>
-              <p> USER ID: {user.id || "Not provided"}</p>
-              <span>Mar 2017 - Jan 2018</span>
-            </div>
-            {user.roles?.includes("admin") ? (
-                <div id="role-user" className="exp-card" style={{background: "linear-gradient(90deg, #ededed 35%, #e3e3e3 50%, rgba(167, 255, 167, 1) 100%)"}}>
-                    <div>
-                        <h3>Tipo de usuario</h3>
-                        <p>Admin</p>
-                        <span>Jan 2016 - May 2020</span>  
-                    </div>
-
-                    <div style={{width: "80px", height: "80px", backgroundColor: "#a7ffa7ff", borderRadius: 10, display: "flex", alignItems: "center", justifyContent: "center"}}><h1>A</h1></div>
-                </div>
-            ) : (
-                <div className="exp-card">
-                    <h3>Tipo de usuario</h3>
-                    <p>Regular User</p>
-                    <span>Jan 2016 - May 2020</span>
-                </div>
-            )}
-
-
-          </div>
-        </section>
-
-        {/* Trabajos recientes
+                {/* Trabajos recientes
         <section className="recent-section section-user-profile">
           <h2>Recent work</h2>
           <div className="recent-grid">
@@ -619,12 +619,12 @@ function UserProfile() {
           </div>
         </section> */}
 
-        <Accordion items={faqItems} />
-        {/* compras realizadas */}
-        {/* comentarios */}
-      </div>
-    </div>
-  );
+                <Accordion items={faqItems} />
+                {/* compras realizadas */}
+                {/* comentarios */}
+            </div>
+        </div>
+    );
 }
 
 export default UserProfile;

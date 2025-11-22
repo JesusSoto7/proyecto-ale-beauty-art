@@ -226,7 +226,12 @@
     "quantity": "Qty",
     "subtotal": "Subtotal",
     "shipping": "Shipping",
-    "total": "Total"
+    "total": "Total",
+    "shippingAddressTitle": "Shipping address",
+    "noShippingAddress": "No shipping address",
+    "paymentMethodTitle": "Payment method",
+    "noPaymentInfo": "No payment information",
+    "purchasedProducts": "Purchased products"
   },
   "home": {
     "loadError": "Error loading data",

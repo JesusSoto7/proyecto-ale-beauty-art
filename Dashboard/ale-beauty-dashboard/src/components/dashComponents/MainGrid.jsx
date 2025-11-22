@@ -3,13 +3,12 @@ import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
+import Paper from '@mui/material/Paper';
 import Copyright from '../../internals/components/Copyright';
-import CustomizedTreeView from './CustomizedTreeView';
-import CustomizedDataGrid from './CustomizedDataGrid';
-import HighlightedCard from './HighlightedCard';
 import PageViewsBarChart from './PageViewsBarChart';
 import ProductsChart from './ProductsChart';
 import StatCard from './StatCard';
+import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
 import { formatCOP } from '../../services/currency';
 import ChartProductsByCategory from './ChartProductsByCategory';
 import { useTranslation } from "react-i18next";
@@ -23,6 +22,11 @@ export default function MainGrid() {
   const [orderCharData, setOrderCharData] = React.useState({ labels: [], values: [] });
   const [totalSales, setTotalSales] = React.useState(0);
   const [totalSalesCharData, setTotalSalesCharData] = React.useState({ labels: [], values: [] });
+
+  // estados nuevos para vistas
+  const [totalPageViews, setTotalPageViews] = React.useState(0);
+  const [pageViewsCharData, setPageViewsCharData] = React.useState({ labels: [], values: [] });
+
   const { t } = useTranslation();
 
   React.useEffect(() => {
@@ -93,69 +97,145 @@ export default function MainGrid() {
       .catch(console.error);
   }, [token]);
 
-  const data = [
-    {
-      title: 'Usuarios Registrados',
-      value: userCount,
-      interval: 'Ultimos 30 dias',
-      trend: 'up',
-      data: userChartData.values || [],
-      labels: userChartData.labels || [],
-    },
-    {
-      title: 'Compras',
-      value: completedOrders,
-      interval: 'Ultimos 30 dias',
-      trend: 'down',
-      data: orderCharData.values || [],
-      labels: orderCharData.labels || [],
-    },
+  // NUEVO: obtener datos de vistas desde backend (analytics controller)
+  React.useEffect(() => {
+    if (!token) return;
+
+    apiGet('/api/v1/analytics/total_page_views', token)
+      .then((data) => setTotalPageViews(data?.total_page_views ?? 0))
+      .catch((err) => {
+        console.error("total_page_views error:", err);
+        console.error("body:", err.body);
+      });
+
+
+    apiGet('/api/v1/analytics/page_views_per_day', token)
+      .then((data) => {
+        const labels = Object.keys(data || {}).map(dateStr => {
+          const bogotaDate = new Date(
+            new Date(dateStr).toLocaleString("en-US", { timeZone: "America/Bogota" })
+          );
+          return bogotaDate.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+        });
+        const values = Object.values(data || {}).map((v) => Number(v) || 0);
+        setPageViewsCharData({ labels, values });
+      })
+      .catch((err) => {
+        console.error("page_views_per_day error:", err);
+        console.error("body:", err.body);
+      });
+  }, [token]);
+
+  // compute a simple trend & delta from last two data points
+  function computeTrendInfo(values) {
+    if (!values || values.length < 2) {
+      return { trend: 'neutral', percentText: '+0%', deltaText: '+0' };
+    }
+    const last = Number(values[values.length - 1] || 0);
+    const prev = Number(values[values.length - 2] || 0);
+
+    // avoid division by zero
+    const percent = prev === 0 ? (last === 0 ? 0 : 100) : ((last - prev) / Math.abs(prev)) * 100;
+    const delta = last - prev;
+
+    const trend = percent > 2 ? 'up' : percent < -2 ? 'down' : 'neutral';
+    const percentText = `${percent >= 0 ? '+' : ''}${percent.toFixed(1)}%`;
+    const deltaText = delta >= 1000 || delta <= -1000
+      ? `${delta >= 0 ? '+' : ''}${(delta / 1000).toFixed(1)}k`
+      : `${delta >= 0 ? '+' : ''}${delta}`;
+
+    return { trend, percentText, deltaText };
+  }
+
+  const totalSalesTrend = computeTrendInfo(totalSalesCharData.values);
+  const pageViewsTrend = computeTrendInfo(pageViewsCharData.values);
+
+  const cards = [
     {
       title: 'Total vendido',
       value: totalSales,
-      interval: 'Ultimos 30 dias',
-      trend: 'neutral',
+      interval: 'Últimos 30 días',
+      trend: totalSalesTrend.trend,
+      percentText: totalSalesTrend.percentText,
+      deltaText: `${totalSalesTrend.deltaText} this week`,
+      subtitle: `${completedOrders} Orders`,
       data: totalSalesCharData.values || [],
       labels: totalSalesCharData.labels || [],
+    },
+    {
+      title: 'Usuarios Registrados',
+      value: userCount,
+      interval: 'Últimos 30 días',
+      trend: 'up',
+      data: userChartData.values || [],
+      labels: userChartData.labels || [],
+      subtitle: '',
+      percentText: '+0%',
+      deltaText: '',
+    },
+    {
+      title: 'Visitas a la página',
+      value: totalPageViews,
+      interval: 'Últimos 30 días',
+      trend: pageViewsTrend.trend,
+      percentText: pageViewsTrend.percentText,
+      deltaText: `${pageViewsTrend.deltaText} vs prev`,
+      subtitle: '',
+      data: pageViewsCharData.values || [],
+      labels: pageViewsCharData.labels || [],
+      icon: VisibilityOutlinedIcon,
     },
   ];
 
   return (
-    <Box sx={{ width: '100%', maxWidth: 'none', overflow: 'hidden' }}>
-      <Typography component="h2" variant="h6" sx={{ mb: 2 }}>
+    <Box sx={{ width: '100%', maxWidth: 'none', overflow: 'hidden', px: { xs: 1, md: 3 } }}>
+      <Typography component="h2" variant="h6" sx={{ mb: 3 }}>
         {t("overview")}
       </Typography>
-      <Grid container spacing={2} columns={12} sx={{ mb: (theme) => theme.spacing(2), width: '100%', margin: 0 }}>
-        {data.map((card, index) => (
-          <Grid key={index} size={{ xs: 12, sm: 6, lg: 3 }}>
+
+      {/* Top stat cards row - 3 cards, larger */}
+      {/* Top stat cards row - 3 cards, larger */}
+      <Grid container spacing={3} sx={{ mb: 3 }}>
+        {cards.map((card, index) => (
+          <Grid key={index} size={{ xs: 12, sm: 6, lg: 4 }}>
             <StatCard {...card} />
           </Grid>
         ))}
-        <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
-          <HighlightedCard />
-        </Grid>
-        <Grid size={{ xs: 12, md: 6 }}>
-          <ProductsChart />
-        </Grid>
-        <Grid size={{ xs: 12, md: 6 }}>
-          <PageViewsBarChart />
-        </Grid>
+
       </Grid>
-      <Typography component="h2" variant="h6" sx={{ mb: 2 }}>
-        {t("details")}
-      </Typography>
-      <Grid container spacing={2} columns={12} sx={{ width: '100%', margin: 0 }}>
-        <Grid size={{ xs: 12, lg: 9 }}>
-          <CustomizedDataGrid />
+
+      {/* Big charts row: ProductsChart (wide) + right column with PageViewsBarChart and Category chart stacked */}
+      <Grid container spacing={3} sx={{ mb: 3 }}>
+        <Grid item xs={12} md={8}>
+          <Paper sx={{ p: 3, borderRadius: 3, minHeight: 480 }}>
+            <Typography variant="h6" sx={{ mb: 2, fontWeight: 700 }}>
+              Embudo de productos
+            </Typography>
+            <Box sx={{ height: 400, maxWidt: '1000px', minWidth: '1000px' }}>
+              <ProductsChart />
+            </Box>
+          </Paper>
         </Grid>
-        <Grid size={{ xs: 12, lg: 3 }}>
-          <Stack gap={2} direction={{ xs: 'column', sm: 'row', lg: 'column' }}>
-            <CustomizedTreeView />
-            <ChartProductsByCategory />
+
+        <Grid item xs={12} md={4}>
+          <Stack spacing={3}>
+
+            <Paper sx={{ p: 2.5, borderRadius: 3, minHeight: 220, maxWidth: '500px' }}>
+              <Typography variant="h6" sx={{ mb: 1.5, fontWeight: 700 }}>
+                Total vendidos por categoría
+              </Typography>
+              <Box sx={{ height: 410, width: '400px' }}>
+                <ChartProductsByCategory />
+              </Box>
+            </Paper>
           </Stack>
         </Grid>
       </Grid>
-      <Copyright sx={{ my: 4 }} />
+
+      {/* Footer spacing and copyright */}
+      <Box sx={{ mt: 4 }}>
+        <Copyright />
+      </Box>
     </Box>
   );
 }

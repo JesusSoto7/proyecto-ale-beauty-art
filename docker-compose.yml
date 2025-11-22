@@ -12,13 +12,20 @@ services:
       - db_data:/var/lib/mysql
       - ./Backend/db/init.sql:/docker-entrypoint-initdb.d/init.sql
     ports:
-      - "3307:3306"
+      - '3307:3306'
     deploy:
       resources:
         limits:
-          memory: 2g   # súbelo si tienes RAM
+          memory: 2g # súbelo si tienes RAM
         reservations:
           memory: 1g
+
+  redis:
+    image: redis:7-alpine
+    container_name: redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
 
   backend:
     build:
@@ -27,7 +34,7 @@ services:
     volumes:
       - ./Backend:/app
     ports:
-      - "4000:4000"
+      - '4000:4000'
     environment:
       RAILS_ENV: development
       DATABASE_HOST: db
@@ -36,10 +43,11 @@ services:
       DATABASE_NAME: tienda_maquillaje_db_development
     depends_on:
       - db
+      - redis 
     deploy:
       resources:
         limits:
-          memory: 2g   # súbelo si tienes RAM
+          memory: 2g # súbelo si tienes RAM
         reservations:
           memory: 1g
 
@@ -53,7 +61,7 @@ services:
       - ./FrontendReact/ale-beauty-react:/app
       - /app/node_modules
     ports:
-      - "3000:3000"
+      - '3000:3000'
     stdin_open: true
     tty: true
     depends_on:
@@ -61,31 +69,31 @@ services:
     deploy:
       resources:
         limits:
-          memory: 2g   # súbelo si tienes RAM
+          memory: 2g # súbelo si tienes RAM
         reservations:
           memory: 1g
 
   dashboard:
-      build:
-        context: ./Dashboard/ale-beauty-dashboard
-        dockerfile: Dockerfile.dev
-      container_name: dashboard_app
-      command: npm run dev -- --host
-      volumes:
-        - ./Dashboard/ale-beauty-dashboard:/app
-        - /app/node_modules
-      ports:
-        - "5173:5173"
-      stdin_open: true
-      tty: true
-      depends_on:
-        - backend
-      deploy:
-        resources:
-          limits:
-            memory: 2g   # súbelo si tienes RAM
-          reservations:
-            memory: 1g
+    build:
+      context: ./Dashboard/ale-beauty-dashboard
+      dockerfile: Dockerfile.dev
+    container_name: dashboard_app
+    command: npm run dev -- --host
+    volumes:
+      - ./Dashboard/ale-beauty-dashboard:/app
+      - /app/node_modules
+    ports:
+      - '5173:5173'
+    stdin_open: true
+    tty: true
+    depends_on:
+      - backend
+    deploy:
+      resources:
+        limits:
+          memory: 2g # súbelo si tienes RAM
+        reservations:
+          memory: 1g
 
 volumes:
   db_data:

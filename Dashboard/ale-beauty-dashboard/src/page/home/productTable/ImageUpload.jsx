@@ -27,7 +27,7 @@ const ImageUpload = ({ currentImage, onImageChange, isDark }) => {
         p: 3,
         border: `2px dashed ${isDark ? "#444" : "#e0e0e0"}`,
         borderRadius: "12px",
-        backgroundColor: isDark ? "#1a1a2e" : "#f9fafb",
+        backgroundColor:  "background.paper",
       }}
     >
       {preview && (
