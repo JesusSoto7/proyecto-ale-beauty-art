@@ -17,8 +17,10 @@ import { useCartActions } from './hooks/useCartActions';
 import { useFavoriteActions } from './hooks/useFavoriteActions';
 import ProductCard from '../../components/ProductCard.jsx';
 import Carousel from 'react-bootstrap/Carousel';
+import useRecordPageView from './hooks/useRecordPageView.js';
 
 function Inicio() {
+  useRecordPageView();
   const { lang } = useParams();
   const { favoriteIds, loadFavorites } = useOutletContext();
   const { addAlert } = useAlert();
