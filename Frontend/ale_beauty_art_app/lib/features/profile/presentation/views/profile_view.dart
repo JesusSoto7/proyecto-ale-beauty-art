@@ -7,6 +7,8 @@ import 'package:ale_beauty_art_app/features/shipping_address/presentation/bloc/s
 import 'package:ale_beauty_art_app/features/shipping_address/presentation/bloc/shipping_address_event.dart';
 import 'package:ale_beauty_art_app/features/shipping_address/presentation/views/shipping_address_page.dart';
 import 'package:flutter/material.dart';
+import 'dart:io' show Platform;
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ale_beauty_art_app/styles/colors.dart';
 import 'package:ale_beauty_art_app/styles/text_styles.dart';
@@ -312,7 +314,31 @@ class _LanguageMenuButton extends StatelessWidget {
       color: Colors.white,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
       padding: EdgeInsets.zero,
-      onSelected: (locale) => context.setLocale(locale),
+      onSelected: (locale) async {
+        await context.setLocale(locale);
+        // Reapply system UI style after locale change to avoid OEM/framework
+        // resets that can change navigation button colors.
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          // small delay to allow framework rebuild to complete on some devices
+          Future.delayed(const Duration(milliseconds: 80), () {
+            if (Platform.isAndroid) {
+              SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+              SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+                systemNavigationBarColor: Color(0xFFE0E0E0),
+                systemNavigationBarIconBrightness: Brightness.dark,
+                systemNavigationBarDividerColor: Color(0xFFE0E0E0),
+                systemNavigationBarContrastEnforced: false,
+              ));
+            } else {
+              SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+                systemNavigationBarColor: Colors.white,
+                systemNavigationBarIconBrightness: Brightness.dark,
+                systemNavigationBarDividerColor: Colors.white,
+              ));
+            }
+          });
+        });
+      },
       itemBuilder: (context) => [
         PopupMenuItem<Locale>(
           value: const Locale('es'),
