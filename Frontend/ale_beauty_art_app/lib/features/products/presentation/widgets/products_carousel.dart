@@ -68,6 +68,8 @@ class _ProductsCarouselState extends State<ProductsCarousel> {
           final double screenW = MediaQuery.of(context).size.width;
           final double cardWidth = screenW * (compact ? 0.42 : 0.42);
 
+          final bool isTouchDevice = Theme.of(context).platform == TargetPlatform.android || Theme.of(context).platform == TargetPlatform.iOS;
+
           return SizedBox(
             height: carouselHeight, // Limitar altura total del carrusel
             child: Stack(
@@ -352,16 +354,15 @@ class _ProductsCarouselState extends State<ProductsCarousel> {
                   },
                 ),
 
-                // Botón izquierdo
-                if (_currentPage > 0)
+                // Flechas sólo en plataformas no táctiles (desktop)
+                if (!isTouchDevice && _currentPage > 0)
                   Positioned(
                     left: 8,
                     child: _arrowButton(
                         icon: Icons.arrow_back_ios, onPressed: _previousPage),
                   ),
 
-                // Botón derecho
-                if (_currentPage < _productosDestacados.length - 1)
+                if (!isTouchDevice && _currentPage < _productosDestacados.length - 1)
                   Positioned(
                     right: 8,
                     child: _arrowButton(

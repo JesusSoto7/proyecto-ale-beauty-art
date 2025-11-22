@@ -16,6 +16,7 @@ import 'package:ale_beauty_art_app/features/profile/presentation/views/profile_v
 import 'package:ale_beauty_art_app/features/categories/presentation/views/categories_row.dart';
 import 'package:ale_beauty_art_app/styles/text_styles.dart';
 import 'package:ale_beauty_art_app/features/products/presentation/widgets/products_carousel.dart';
+import 'package:ale_beauty_art_app/features/products/presentation/widgets/top_rated_products.dart';
 import 'package:ale_beauty_art_app/features/favorites/presentation/bloc/favorite_bloc.dart';
 import '../widgets/buscador.dart';
 
@@ -191,6 +192,17 @@ class InitialView extends StatelessWidget {
                   }),
                   const SizedBox(height: 20),
                   const SizedBox(height: 200, child: ProductsCarousel(compact: true)),
+                  const SizedBox(height: 24),
+                  // Header for Top Rated (no "see more")
+                  Text(
+                    'home.top_rated'.tr(),
+                    style: AppTextStyles.title.copyWith(
+                      fontSize: 20,
+                      color: Colors.black87,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  const SizedBox(height: 170, child: TopRatedProducts()),
                 ],
               ),
             ),

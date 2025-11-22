@@ -63,7 +63,8 @@
     }
   },
   "home": {
-    "popular_products": "Popular products"
+    "popular_products": "Popular products",
+    "top_rated": "Top rated"
   },
   "search": {
     "placeholder": "Search products"

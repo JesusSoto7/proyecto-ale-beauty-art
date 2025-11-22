@@ -15,6 +15,8 @@ class Product extends Equatable {
   // Imagen asociada a la subcategoría (si el backend la entrega en sub_category.imagen_url)
   final String? subCategoryImagenUrl;
   final String? slug;
+  final double? averageRating;
+  final int? reviewsCount;
 
   final Discount? discount;
   final Discount? mejorDescuentoParaPrecio;
@@ -32,6 +34,8 @@ class Product extends Equatable {
     required this.nombreCategoria,
     required this.imagenUrl,
     this.slug,
+    this.averageRating,
+    this.reviewsCount,
     this.subCategoryImagenUrl,
     this.discount,
     this.mejorDescuentoParaPrecio,
@@ -67,6 +71,21 @@ class Product extends Equatable {
               ? double.tryParse(json['precio_con_mejor_descuento'])
               : (json['precio_con_mejor_descuento'] as num?)?.toDouble())
           : null,
+        // ratings (optional)
+        averageRating: json['average_rating'] != null
+          ? (json['average_rating'] is String
+            ? double.tryParse(json['average_rating'])
+            : (json['average_rating'] as num?)?.toDouble())
+          : (json['average'] != null
+            ? (json['average'] is String
+              ? double.tryParse(json['average'])
+              : (json['average'] as num?)?.toDouble())
+            : null),
+        reviewsCount: json['reviews_count'] != null
+          ? (json['reviews_count'] is String
+            ? int.tryParse(json['reviews_count'])
+            : (json['reviews_count'] as num?)?.toInt())
+          : null,
     );
   }
 
@@ -89,6 +108,8 @@ class Product extends Equatable {
           'mejor_descuento_para_precio': mejorDescuentoParaPrecio!.toJson(),
         if (precioConMejorDescuento != null)
           'precio_con_mejor_descuento': precioConMejorDescuento,
+        if (averageRating != null) 'average_rating': averageRating,
+        if (reviewsCount != null) 'reviews_count': reviewsCount,
       };
 
   // 🆕 Método helper para saber si tiene descuento activo
@@ -117,7 +138,9 @@ class Product extends Equatable {
         nombreCategoria,
         imagenUrl,
     slug,
-    subCategoryImagenUrl,
+      averageRating,
+      reviewsCount,
+      subCategoryImagenUrl,
         discount,
         mejorDescuentoParaPrecio,
         precioConMejorDescuento,
