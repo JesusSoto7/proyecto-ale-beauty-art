@@ -6,6 +6,7 @@ import 'package:ale_beauty_art_app/features/orders/presentation/views/order_page
 import 'package:ale_beauty_art_app/features/shipping_address/presentation/bloc/shipping_address_bloc.dart';
 import 'package:ale_beauty_art_app/features/shipping_address/presentation/bloc/shipping_address_event.dart';
 import 'package:ale_beauty_art_app/features/shipping_address/presentation/views/shipping_address_page.dart';
+import 'package:ale_beauty_art_app/features/profile/presentation/views/profile_account_view.dart';
 import 'package:flutter/material.dart';
 import 'dart:io' show Platform;
 import 'package:flutter/services.dart';
@@ -53,17 +54,43 @@ class ProfileView extends StatelessWidget {
                   Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                  // Avatar con borde blanco
+                  // Avatar con borde blanco y sombra rosadita
                   Container(
                     padding: const EdgeInsets.all(4),
-                    decoration: const BoxDecoration(
+                    decoration: BoxDecoration(
                       color: Colors.white,
                       shape: BoxShape.circle,
+                      boxShadow: [
+                        BoxShadow(
+                          color: AppColors.accentPink.withOpacity(0.35),
+                          blurRadius: 12,
+                          offset: const Offset(0, 6),
+                        ),
+                      ],
                     ),
                     child: CircleAvatar(
                       radius: 50,
                       backgroundColor: AppColors.primaryPink,
-                      child: const Icon(Icons.person, size: 56, color: Colors.white),
+                      child: BlocBuilder<AuthBloc, AuthState>(
+                        builder: (context, state) {
+                          if (state is AuthSuccess) {
+                            final nombre = (state.user['nombre'] ?? '').toString();
+                            final email = (state.user['email'] ?? '').toString();
+                            final initial = nombre.isNotEmpty
+                                ? nombre[0].toUpperCase()
+                                : (email.isNotEmpty ? email[0].toUpperCase() : 'J');
+                            return Text(
+                              initial,
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 40,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            );
+                          }
+                          return const Icon(Icons.person, size: 56, color: Colors.white);
+                        },
+                      ),
                     ),
                   ),
                   const SizedBox(height: 12),
@@ -97,90 +124,55 @@ class ProfileView extends StatelessWidget {
 
             const SizedBox(height: 16),
 
-            // Botón de acción (Login / Logout)
+            // Botón de acción (Login) - si no está logeado
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: BlocBuilder<AuthBloc, AuthState>(
                 builder: (context, state) {
-                  if (state is AuthSuccess) {
+                  if (state is! AuthSuccess) {
+                    // Botón login con gradiente
                     return SizedBox(
                       width: double.infinity,
                       height: 48,
-                      child: ElevatedButton.icon(
+                      child: ElevatedButton(
                         onPressed: () {
-                          context.read<AuthBloc>().add(LogoutRequested());
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text(
-                                'profile.logout_success'.tr(),
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              backgroundColor: AppColors.primaryPink,
-                              behavior: SnackBarBehavior.floating,
-                              margin: const EdgeInsets.fromLTRB(20, 0, 20, 30),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(16),
-                              ),
-                              elevation: 6,
-                              duration: const Duration(seconds: 3),
-                            ),
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (_) => const LoginPage()),
                           );
                         },
-                        icon: const Icon(Icons.logout, color: Colors.white),
-                        label: Text('profile.logout'.tr(), style: const TextStyle(color: Colors.white)),
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color.fromARGB(255, 235, 98, 98),
+                          padding: EdgeInsets.zero,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(14),
+                          ),
+                        ).copyWith(
+                          backgroundColor: MaterialStateProperty.all(Colors.transparent),
+                        ),
+                        child: Ink(
+                          decoration: BoxDecoration(
+                            gradient: const LinearGradient(
+                              colors: [AppColors.primaryPink, AppColors.accentPink],
+                              begin: Alignment.centerLeft,
+                              end: Alignment.centerRight,
+                            ),
+                            borderRadius: BorderRadius.circular(14),
+                          ),
+                          child: Center(
+                            child: Text(
+                              'profile.login'.tr(),
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
                           ),
                         ),
                       ),
                     );
                   }
 
-                  // Botón login con gradiente
-                  return SizedBox(
-                    width: double.infinity,
-                    height: 48,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (_) => const LoginPage()),
-                        );
-                      },
-                      style: ElevatedButton.styleFrom(
-                        padding: EdgeInsets.zero,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(14),
-                        ),
-                      ).copyWith(
-                        backgroundColor: MaterialStateProperty.all(Colors.transparent),
-                      ),
-                      child: Ink(
-                        decoration: BoxDecoration(
-                          gradient: const LinearGradient(
-                            colors: [AppColors.primaryPink, AppColors.accentPink],
-                            begin: Alignment.centerLeft,
-                            end: Alignment.centerRight,
-                          ),
-                          borderRadius: BorderRadius.circular(14),
-                        ),
-                        child: Center(
-                          child: Text(
-                            'profile.login'.tr(),
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  );
+                  return const SizedBox.shrink();
                 },
               ),
             ),
@@ -192,6 +184,32 @@ class ProfileView extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Column(
                 children: [
+                  BlocBuilder<AuthBloc, AuthState>(
+                    builder: (context, state) {
+                      if (state is AuthSuccess) {
+                        return _buildOptionTile(
+                          context,
+                          icon: Icons.person,
+                          title: 'profile.my_account'.tr(),
+                          onTap: () async {
+                            final authState = context.read<AuthBloc>().state;
+                            if (authState is! AuthSuccess) {
+                              final result = await Navigator.push(
+                                context,
+                                MaterialPageRoute(builder: (_) => const LoginPage()),
+                              );
+                              if (result != true) return;
+                            }
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (_) => const ProfileAccountView()),
+                            );
+                          },
+                        );
+                      }
+                      return const SizedBox.shrink();
+                    },
+                  ),
                   _buildOptionTile(
                     context,
                     icon: Icons.shopping_bag,

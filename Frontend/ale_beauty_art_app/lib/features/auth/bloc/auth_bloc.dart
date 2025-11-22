@@ -150,5 +150,26 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       await secureStorage.delete(key: 'jwt_token');
       emit(AuthInitial());
     });
+
+    // UPDATE PROFILE (local state update; backend not available here)
+    on<UpdateProfileSubmitted>((event, emit) async {
+      final current = state;
+      if (current is AuthSuccess) {
+        // emit a brief in-progress state if needed
+        emit(AuthInProgress());
+        // Merge updated fields into user map
+        final updatedUser = Map<String, dynamic>.from(current.user);
+        updatedUser['nombre'] = event.nombre;
+        updatedUser['apellido'] = event.apellido;
+        updatedUser['email'] = event.email;
+        // optional telefono
+        if (event.telefono != null) {
+          updatedUser['telefono'] = event.telefono;
+        }
+        // Persist token remains the same
+        await Future.delayed(const Duration(milliseconds: 200));
+        emit(AuthSuccess(user: updatedUser, token: current.token));
+      }
+    });
   }
 }

@@ -130,7 +130,7 @@ class _OrderDetailPageViewState extends State<OrderDetailPageView> {
               icon: const Icon(
                 Icons.arrow_back_ios_new_rounded,
                 size: 20,
-                color: Color(0xFFD95D85),
+                color: Colors.black87,
               ),
               onPressed: () => Navigator.pop(context),
             ),

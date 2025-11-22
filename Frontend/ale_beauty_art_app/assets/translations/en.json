@@ -4,6 +4,7 @@
     "ok": "OK",
     "cancel": "Cancel",
     "error": "Error",
+    "save": "Save",
     "select_language": "Select language",
     "english": "English",
     "spanish": "Spanish",
@@ -19,16 +20,25 @@
     "logout": "Log out",
     "logout_success": "Logged out",
     "login": "Log in",
+    "my_account": "My profile",
     "my_orders": "My orders",
     "favorites": "Favorites",
     "my_addresses": "My addresses"
+    ,
+    "details": "Account details",
+    "phone": "Phone",
+    "edit": "Edit",
+    "first_name": "First name",
+    "last_name": "Last name",
+    "email": "Email",
+    "updated_success": "Details updated"
   },
   "nav": {
     "home": "Home",
     "products": "Products",
     "categories": "Categories",
     "cart": "Cart",
-    "profile": "Profile"
+    "profile": "Account"
   },
   "products": {
     "filters": "Filters",
@@ -120,6 +130,7 @@
     "forgot_password": "Forgot your password?",
     "fill_all_fields": "Please complete all fields"
   },
+  
   "favorites": {
     "title": "My Favorites",
     "empty": "You don't have favorite products."

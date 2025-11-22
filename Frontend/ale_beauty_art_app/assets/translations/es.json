@@ -4,6 +4,7 @@
     "ok": "Aceptar",
     "cancel": "Cancelar",
     "error": "Error",
+    "save": "Guardar",
     "select_language": "Seleccionar idioma",
     "english": "Inglés",
     "spanish": "Español",
@@ -19,16 +20,24 @@
     "logout": "Cerrar Sesión",
     "logout_success": "Sesión cerrada",
     "login": "Iniciar Sesión",
+    "my_account": "Mi perfil",
     "my_orders": "Mis pedidos",
     "favorites": "Favoritos",
-    "my_addresses": "Mis direcciones"
+    "my_addresses": "Mis direcciones",
+    "details": "Detalles de la cuenta",
+    "phone": "Teléfono",
+    "edit": "Editar",
+    "first_name": "Nombre",
+    "last_name": "Apellido",
+    "email": "Correo electrónico",
+    "updated_success": "Datos actualizados"
   },
   "nav": {
     "home": "Inicio",
     "products": "Productos",
     "categories": "Categorías",
     "cart": "Carrito",
-    "profile": "Perfil"
+    "profile": "Cuenta"
   },
   "products": {
     "filters": "Filtros",
@@ -120,6 +129,7 @@
     "forgot_password": "¿Olvidaste tu contraseña?",
     "fill_all_fields": "Completa todos los campos"
   },
+  
   "favorites": {
     "title": "Mis Favoritos",
     "empty": "No tienes productos favoritos."
