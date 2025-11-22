@@ -595,8 +595,13 @@ class _ProductDetailViewState extends State<ProductDetailView> {
                           )
                         : LayoutBuilder(
                             builder: (context, constraints) {
-                              // Use available height to size image/text so price is visible and no overflow.
-                              final itemWidth = 150.0;
+                              // Use available width to choose a card size that adapts to small screens.
+                              final screenW = MediaQuery.of(context).size.width;
+                              final bool narrow = screenW < 360;
+                              // Increase vertical space on narrow screens so prices fit.
+                              final itemWidth = narrow ? 160.0 : 150.0;
+                              final itemHeight = narrow ? 260.0 : 210.0; // increased heights
+                              final imageHeight = narrow ? 100.0 : 110.0; // slightly reduced image to free vertical space
                               return ListView.separated(
                                 padding: const EdgeInsets.symmetric(horizontal: 4),
                                 scrollDirection: Axis.horizontal,
@@ -614,7 +619,7 @@ class _ProductDetailViewState extends State<ProductDetailView> {
                                       },
                                       child: Container(
                                         width: itemWidth,
-                                        height: 190,
+                                        height: itemHeight,
                                         decoration: BoxDecoration(
                                           color: Colors.white,
                                           borderRadius: BorderRadius.circular(12),
@@ -625,7 +630,7 @@ class _ProductDetailViewState extends State<ProductDetailView> {
                                           children: [
                                             // Image area
                                             Container(
-                                              height: 120,
+                                              height: imageHeight,
                                               width: double.infinity,
                                               decoration: const BoxDecoration(
                                                 borderRadius: BorderRadius.only(topLeft: Radius.circular(12), topRight: Radius.circular(12)),
@@ -670,19 +675,36 @@ class _ProductDetailViewState extends State<ProductDetailView> {
                                             // Text area
                                             Padding(
                                               padding: const EdgeInsets.fromLTRB(10, 8, 10, 8),
-                                              child: Column(
+                                                child: Column(
                                                 crossAxisAlignment: CrossAxisAlignment.start,
                                                 children: [
                                                   SizedBox(
                                                     width: itemWidth - 20,
                                                     child: Text(p.nombreProducto, maxLines: 2, overflow: TextOverflow.ellipsis, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w700)),
                                                   ),
-                                                  const SizedBox(height: 6),
+                                                  const SizedBox(height: 2),
                                                   if (p.tieneDescuento)
-                                                    Row(
+                                                    Column(
+                                                      mainAxisSize: MainAxisSize.min,
+                                                      crossAxisAlignment: CrossAxisAlignment.start,
                                                       children: [
-                                                        Expanded(child: Text(formatPriceCOP(p.precioConMejorDescuento ?? p.precioProducto), style: const TextStyle(color: Color(0xFFD95D85), fontWeight: FontWeight.bold, fontSize: 14))),
-                                                        const SizedBox(width: 6),
+                                                        Text(
+                                                          formatPriceCOP(p.precioProducto),
+                                                          maxLines: 1,
+                                                          overflow: TextOverflow.ellipsis,
+                                                          style: TextStyle(
+                                                            color: Colors.grey[500],
+                                                            fontSize: 11,
+                                                            decoration: TextDecoration.lineThrough,
+                                                          ),
+                                                        ),
+                                                        const SizedBox(height: 2),
+                                                        Text(
+                                                          formatPriceCOP(p.precioConMejorDescuento ?? p.precioProducto),
+                                                          maxLines: 1,
+                                                          overflow: TextOverflow.ellipsis,
+                                                          style: const TextStyle(color: Color(0xFFD95D85), fontWeight: FontWeight.bold, fontSize: 14),
+                                                        ),
                                                       ],
                                                     )
                                                   else
