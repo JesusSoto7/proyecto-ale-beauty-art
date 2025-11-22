@@ -155,20 +155,46 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<UpdateProfileSubmitted>((event, emit) async {
       final current = state;
       if (current is AuthSuccess) {
-        // emit a brief in-progress state if needed
         emit(AuthInProgress());
-        // Merge updated fields into user map
-        final updatedUser = Map<String, dynamic>.from(current.user);
-        updatedUser['nombre'] = event.nombre;
-        updatedUser['apellido'] = event.apellido;
-        updatedUser['email'] = event.email;
-        // optional telefono
-        if (event.telefono != null) {
-          updatedUser['telefono'] = event.telefono;
+        try {
+          final Map<String, dynamic> userBody = {
+            'nombre': event.nombre,
+            'apellido': event.apellido,
+            'email': event.email,
+          };
+          // Always include telefono in the payload. If null, send empty string
+          // so backend clears the phone number when the user removed it.
+          userBody['telefono'] = event.telefono ?? '';
+
+          final response = await CustomHttpClient.patchRequest('/api/v1/me', {'user': userBody});
+
+          if (response.statusCode == 200) {
+            final data = jsonDecode(response.body);
+            // Backend returns user JSON
+            final updatedUser = Map<String, dynamic>.from(data);
+            // Keep the same token
+            emit(AuthSuccess(user: updatedUser, token: current.token));
+          } else {
+            // Try to read error message
+            String msg = 'Error updating profile: ${response.statusCode}';
+            try {
+              final body = jsonDecode(response.body);
+              if (body is Map && body['errors'] != null) {
+                msg = (body['errors'] as List).join(', ');
+              } else if (body is Map && body['message'] != null) {
+                msg = body['message'];
+              }
+            } catch (_) {}
+            emit(AuthFailure(msg));
+            // restore previous success state so UI still has user data
+            await Future.delayed(const Duration(milliseconds: 200));
+            emit(current);
+          }
+        } catch (e) {
+          emit(AuthFailure('Error de conexión con el servidor'));
+          await Future.delayed(const Duration(milliseconds: 200));
+          emit(current);
         }
-        // Persist token remains the same
-        await Future.delayed(const Duration(milliseconds: 200));
-        emit(AuthSuccess(user: updatedUser, token: current.token));
       }
     });
   }

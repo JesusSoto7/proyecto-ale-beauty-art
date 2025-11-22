@@ -26,15 +26,15 @@ class _ProfileAccountViewState extends State<ProfileAccountView> {
     super.initState();
     final authState = context.read<AuthBloc>().state;
     if (authState is! AuthSuccess) {
-      // Not logged in: push login and wait
       WidgetsBinding.instance.addPostFrameCallback((_) async {
         final res = await Navigator.push(
-            context, MaterialPageRoute(builder: (_) => const LoginPage()));
+          context,
+          MaterialPageRoute(builder: (_) => const LoginPage()),
+        );
         if (res != true) {
           if (mounted) Navigator.pop(context);
           return;
         }
-        // If returned logged in, populate fields
         final s2 = context.read<AuthBloc>().state;
         if (s2 is AuthSuccess) _populateFromUser(s2.user);
       });
@@ -52,20 +52,12 @@ class _ProfileAccountViewState extends State<ProfileAccountView> {
 
   Future<void> _onSave() async {
     setState(() => _saving = true);
-    // Dispatch update to AuthBloc (local update)
     context.read<AuthBloc>().add(UpdateProfileSubmitted(
           nombre: _nombreCtrl.text.trim(),
           apellido: _apellidoCtrl.text.trim(),
           email: _emailCtrl.text.trim(),
           telefono: _telefonoCtrl.text.trim().isEmpty ? null : _telefonoCtrl.text.trim(),
         ));
-    await Future.delayed(const Duration(milliseconds: 300));
-    setState(() => _saving = false);
-    if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text('profile.updated_success'.tr()),
-      ));
-    }
   }
 
   void _onLogout() {
@@ -75,47 +67,74 @@ class _ProfileAccountViewState extends State<ProfileAccountView> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color(0xFFF8F5F7),
-      appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(56),
-        child: Container(
-          decoration: BoxDecoration(
-            color: Colors.white,
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.20),
-                blurRadius: 12,
-                offset: const Offset(0, 3),
+    return BlocListener<AuthBloc, AuthState>(
+      listener: (context, state) {
+        if (state is AuthSuccess) {
+          setState(() {
+            _saving = false;
+            _editing = false;
+          });
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                'profile.updated_success'.tr(),
+                style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
               ),
-            ],
-          ),
-          child: AppBar(
-            backgroundColor: Colors.white,
-            elevation: 0,
-            centerTitle: true,
-            leading: IconButton(
-              icon: const Icon(
-                Icons.arrow_back_ios_new_rounded,
-                size: 20,
-                color: Colors.black87,
+              backgroundColor: const Color(0xFFD95D85),
+              behavior: SnackBarBehavior.floating,
+              margin: const EdgeInsets.fromLTRB(20, 0, 20, 30),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+              elevation: 6,
+              duration: const Duration(seconds: 1),
+            ),
+          );
+        } else if (state is AuthFailure) {
+          setState(() => _saving = false);
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.message)));
+        }
+      },
+      child: Scaffold(
+        backgroundColor: const Color(0xFFF8F5F7),
+        appBar: PreferredSize(
+          preferredSize: const Size.fromHeight(56),
+          child: Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.20),
+                  blurRadius: 12,
+                  offset: const Offset(0, 3),
+                ),
+              ],
+            ),
+            child: AppBar(
+              backgroundColor: Colors.white,
+              elevation: 0,
+              centerTitle: true,
+              leading: IconButton(
+                icon: const Icon(
+                  Icons.arrow_back_ios_new_rounded,
+                  size: 20,
+                  color: Colors.black87,
+                ),
+                onPressed: () => Navigator.pop(context),
               ),
-              onPressed: () => Navigator.pop(context),
-            ),
-            title: Text(
-              'profile.my_account'.tr(),
-              style: const TextStyle(color: Color.fromARGB(255, 0, 0, 0), fontSize: 18, fontWeight: FontWeight.w600),
-            ),
-            systemOverlayStyle: const SystemUiOverlayStyle(
-              statusBarIconBrightness: Brightness.light,
-              statusBarBrightness: Brightness.dark,
+              title: Text(
+                'profile.my_account'.tr(),
+                style: const TextStyle(color: Color.fromARGB(255, 0, 0, 0), fontSize: 18, fontWeight: FontWeight.w600),
+              ),
+              systemOverlayStyle: const SystemUiOverlayStyle(
+                statusBarIconBrightness: Brightness.light,
+                statusBarBrightness: Brightness.dark,
+              ),
             ),
           ),
         ),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: _editing ? _buildEditView() : _buildDisplayView(),
+        body: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: _editing ? _buildEditView() : _buildDisplayView(),
+        ),
       ),
     );
   }
@@ -160,8 +179,7 @@ class _ProfileAccountViewState extends State<ProfileAccountView> {
         const SizedBox(height: 6),
         Text(email, style: const TextStyle(color: Colors.black54)),
         if (email.isNotEmpty) const SizedBox(height: 6),
-        if ((_getPhoneFromUser(context) ?? '').isNotEmpty)
-          Text((_getPhoneFromUser(context) ?? ''), style: const TextStyle(color: Colors.black54)),
+        if ((_getPhoneFromUser(context) ?? '').isNotEmpty) Text((_getPhoneFromUser(context) ?? ''), style: const TextStyle(color: Colors.black54)),
         const SizedBox(height: 24),
         Row(
           children: [
@@ -204,79 +222,22 @@ class _ProfileAccountViewState extends State<ProfileAccountView> {
           const SizedBox(height: 12),
           Text('profile.details'.tr(), style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
           const SizedBox(height: 12),
-          // Form with nicer styling
-          Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(12),
-              boxShadow: [
-                BoxShadow(color: Colors.black.withOpacity(0.04), blurRadius: 8, offset: const Offset(0, 4)),
-              ],
-            ),
-            child: Column(
-              children: [
-                TextField(
-                  controller: _nombreCtrl,
-                  decoration: InputDecoration(
-                    labelText: 'profile.first_name'.tr(),
-                    prefixIcon: const Icon(Icons.person),
-                    filled: true,
-                    fillColor: Colors.white,
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
-                  ),
-                ),
-                const SizedBox(height: 10),
-                TextField(
-                  controller: _apellidoCtrl,
-                  decoration: InputDecoration(
-                    labelText: 'profile.last_name'.tr(),
-                    prefixIcon: const Icon(Icons.person_outline),
-                    filled: true,
-                    fillColor: Colors.white,
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
-                  ),
-                ),
-                const SizedBox(height: 10),
-                TextField(
-                  controller: _emailCtrl,
-                  decoration: InputDecoration(
-                    labelText: 'profile.email'.tr(),
-                    prefixIcon: const Icon(Icons.email_outlined),
-                    filled: true,
-                    fillColor: Colors.white,
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
-                  ),
-                  keyboardType: TextInputType.emailAddress,
-                ),
-                const SizedBox(height: 10),
-                TextField(
-                  controller: _telefonoCtrl,
-                  decoration: InputDecoration(
-                    labelText: 'profile.phone'.tr(),
-                    prefixIcon: const Icon(Icons.phone),
-                    filled: true,
-                    fillColor: Colors.white,
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
-                  ),
-                  keyboardType: TextInputType.phone,
-                ),
-              ],
-            ),
+          ProfileEditForm(
+            nombreController: _nombreCtrl,
+            apellidoController: _apellidoCtrl,
+            emailController: _emailCtrl,
+            telefonoController: _telefonoCtrl,
           ),
           const SizedBox(height: 20),
           Row(
             children: [
               Expanded(
                 child: ElevatedButton(
-                  onPressed: _saving ? null : () async {
-                    await _onSave();
-                    setState(() => _editing = false);
+                  onPressed: _saving ? null : () {
+                    _onSave();
                   },
                   style: ElevatedButton.styleFrom(backgroundColor: AppColors.primaryPink),
-                    child: _saving
-                      ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
-                      : Text('common.save'.tr(), style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                  child: _saving ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white)) : Text('common.save'.tr(), style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
                 ),
               ),
               const SizedBox(width: 12),
@@ -303,5 +264,83 @@ class _ProfileAccountViewState extends State<ProfileAccountView> {
     _emailCtrl.dispose();
     _telefonoCtrl.dispose();
     super.dispose();
+  }
+}
+
+class ProfileEditForm extends StatelessWidget {
+  final TextEditingController nombreController;
+  final TextEditingController apellidoController;
+  final TextEditingController emailController;
+  final TextEditingController telefonoController;
+
+  const ProfileEditForm({
+    Key? key,
+    required this.nombreController,
+    required this.apellidoController,
+    required this.emailController,
+    required this.telefonoController,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(color: Colors.black.withOpacity(0.04), blurRadius: 8, offset: const Offset(0, 4)),
+        ],
+      ),
+      child: Column(
+        children: [
+          TextField(
+            controller: nombreController,
+            decoration: InputDecoration(
+              labelText: 'profile.first_name'.tr(),
+              prefixIcon: const Icon(Icons.person),
+              filled: true,
+              fillColor: Colors.white,
+              border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+            ),
+          ),
+          const SizedBox(height: 10),
+          TextField(
+            controller: apellidoController,
+            decoration: InputDecoration(
+              labelText: 'profile.last_name'.tr(),
+              prefixIcon: const Icon(Icons.person_outline),
+              filled: true,
+              fillColor: Colors.white,
+              border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+            ),
+          ),
+          const SizedBox(height: 10),
+          TextField(
+            controller: emailController,
+            decoration: InputDecoration(
+              labelText: 'profile.email'.tr(),
+              prefixIcon: const Icon(Icons.email_outlined),
+              filled: true,
+              fillColor: Colors.white,
+              border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+            ),
+            keyboardType: TextInputType.emailAddress,
+          ),
+          const SizedBox(height: 10),
+          TextField(
+            controller: telefonoController,
+            decoration: InputDecoration(
+              labelText: 'profile.phone'.tr(),
+              prefixIcon: const Icon(Icons.phone),
+              filled: true,
+              fillColor: Colors.white,
+              border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+            ),
+            keyboardType: TextInputType.phone,
+          ),
+        ],
+      ),
+    );
   }
 }
