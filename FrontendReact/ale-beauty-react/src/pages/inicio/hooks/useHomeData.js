@@ -1,25 +1,31 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 
-const API_BASE = import.meta.env.VITE_API_URL || 'https://localhost:4000';
+const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:4000';
 
 export const useHomeData = (token, addAlert) => {
   const [products, setProducts] = useState([]);
   const [newProducts, setNewProducts] = useState([]);
   const [categories, setCategories] = useState([]);
   const [cart, setCart] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
 
-  // Carrusel
+  const [homeLoading, setHomeLoading] = useState(true);
+  const [homeError, setHomeError] = useState(null);
+
   const [carousel, setCarousel] = useState([]);
   const [carouselLoading, setCarouselLoading] = useState(false);
   const [carouselError, setCarouselError] = useState(null);
 
+  const firstHomeLoadRef = useRef(false);
+  const fetchingCarouselRef = useRef(false);
+
   const authHeaders = token ? { Authorization: `Bearer ${token}` } : {};
 
   const loadHomeData = useCallback(async () => {
-    setLoading(true);
-    setError(null);
+    // Evitar poner loading otra vez si ya tenemos datos (opcional)
+    if (!firstHomeLoadRef.current) {
+      setHomeLoading(true);
+    }
+    setHomeError(null);
     try {
       const [inicioRes, novedadesRes, cartRes] = await Promise.all([
         fetch(`${API_BASE}/api/v1/inicio`, { headers: authHeaders }),
@@ -27,9 +33,9 @@ export const useHomeData = (token, addAlert) => {
         fetch(`${API_BASE}/api/v1/cart`, { headers: authHeaders }),
       ]);
 
-      const inicioData = inicioRes.ok ? await inicioRes.json() : {};
+      const inicioData    = inicioRes.ok    ? await inicioRes.json()    : {};
       const novedadesData = novedadesRes.ok ? await novedadesRes.json() : [];
-      const cartData = cartRes.ok ? await cartRes.json() : {};
+      const cartData      = cartRes.ok      ? await cartRes.json()      : {};
 
       setProducts(inicioData.products || []);
       setCategories(inicioData.categories || []);
@@ -38,14 +44,19 @@ export const useHomeData = (token, addAlert) => {
 
     } catch (err) {
       console.error('Error loading home data:', err);
-      setError(err);
+      setHomeError(err);
       addAlert?.('Error al cargar los datos', 'error', 3500);
     } finally {
-      setLoading(false);
+      setHomeLoading(false);
+      firstHomeLoadRef.current = true;
     }
   }, [token, addAlert]);
 
-  const loadCarousel = useCallback(async () => {
+  const loadCarousel = useCallback(async (force = false) => {
+    if (fetchingCarouselRef.current) return;          // evitar doble carga simultánea
+    if (!force && carousel.length > 0) return;        // ya cargado
+    fetchingCarouselRef.current = true;
+
     setCarouselLoading(true);
     setCarouselError(null);
     try {
@@ -53,7 +64,6 @@ export const useHomeData = (token, addAlert) => {
       if (!res.ok) throw new Error(`Carousel ${res.status}`);
       const data = await res.json();
 
-      // Normalizar (por si algún backend antiguo devuelve solo strings):
       const normalized = Array.isArray(data)
         ? data.map(d => (typeof d === 'string'
             ? { id: crypto.randomUUID(), url: d }
@@ -66,20 +76,38 @@ export const useHomeData = (token, addAlert) => {
       setCarouselError(err);
     } finally {
       setCarouselLoading(false);
+      fetchingCarouselRef.current = false;
     }
-  }, [token]);
+  }, [token]); // authHeaders depende de token; ok
 
+  // Cargar al montar / cambio de token
   useEffect(() => {
     loadHomeData();
-    loadCarousel();
+    loadCarousel(true); // fuerza primera carga del carrusel
   }, [loadHomeData, loadCarousel]);
 
+  // Listener mejorado: si quieres reordenar sin refetch
   useEffect(() => {
-    const handler = () => {
-      loadCarousel();
+    const reorderHandler = (e) => {
+      // e.detail: nueva lista (opcional)
+      if (Array.isArray(e.detail?.items)) {
+        setCarousel(e.detail.items);
+      } else {
+        // Si realmente necesitas refetch
+        loadCarousel(true);
+      }
     };
-    window.addEventListener('carousel:updated', handler);
-    return () => window.removeEventListener('carousel:updated', handler);
+    window.addEventListener('carousel:reordered', reorderHandler);
+    return () => window.removeEventListener('carousel:reordered', reorderHandler);
+  }, [loadCarousel]);
+
+  // Si alguien sigue usando 'carousel:updated', lo rediriges al nuevo evento
+  useEffect(() => {
+    const legacyHandler = () => {
+      loadCarousel(true);
+    };
+    window.addEventListener('carousel:updated', legacyHandler);
+    return () => window.removeEventListener('carousel:updated', legacyHandler);
   }, [loadCarousel]);
 
   return {
@@ -88,12 +116,12 @@ export const useHomeData = (token, addAlert) => {
     categories,
     cart,
     setCart,
-    loading,
-    error,
+    homeLoading,
+    homeError,
     carousel,
     carouselLoading,
     carouselError,
     reloadHomeData: loadHomeData,
-    reloadCarousel: loadCarousel,
+    reloadCarousel: () => loadCarousel(true),
   };
 };
