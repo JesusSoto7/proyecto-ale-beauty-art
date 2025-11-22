@@ -12,6 +12,7 @@ function Register() {
   const [nombre, setNombre] = useState("");
   const [apellido, setApellido] = useState("");
   const [password, setPassword] = useState("");
+  const [telefono, setTelefono] = useState("");
   const [passwordConfirmation, setPasswordConfirmation] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -116,6 +117,7 @@ function Register() {
         password_confirmation: passwordConfirmation,
         nombre,
         apellido,
+        telefono
       });
       setSuccess(t("register.registrationSuccess"));
       addAlert(t("register.registrationSuccess"), "success", 5000);
@@ -145,6 +147,16 @@ function Register() {
                 placeholder={t("register.lastName")}
               />
             </div>
+
+            <input
+              value={telefono}
+              name="telefono"
+              type="tel"
+              onChange={(e) => setTelefono(e.target.value)}
+              // placeholder={t("register.telefono")}
+              placeholder="numero celular"
+              autoComplete="tel"
+            />
 
             <input
               value={email}

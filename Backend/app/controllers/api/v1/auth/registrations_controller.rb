@@ -21,7 +21,8 @@ module Api
                 id: user.id,
                 email: user.email,
                 nombre: user.nombre,
-                apellido: user.apellido
+                apellido: user.apellido,
+                telefono: user.telefono
               }
             }, status: :created
           else
@@ -35,7 +36,7 @@ module Api
         private
 
         def sign_up_params
-          params.require(:registration).permit(:email, :password, :password_confirmation, :nombre, :apellido)
+          params.require(:registration).permit(:email, :password, :password_confirmation, :nombre, :apellido, :telefono)
         end
 
       end
