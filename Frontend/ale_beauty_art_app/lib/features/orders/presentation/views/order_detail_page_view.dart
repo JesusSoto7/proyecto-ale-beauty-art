@@ -317,9 +317,6 @@ class _OrderDetailPageViewState extends State<OrderDetailPageView> {
   }
 }
 
-// ============ WIDGETS AUXILIARES ============
-
-/// 🎯 Card de estado con diseño destacado
 class _StatusCard extends StatelessWidget {
   final String numero;
   final String status;

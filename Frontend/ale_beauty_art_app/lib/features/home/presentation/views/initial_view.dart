@@ -111,18 +111,27 @@ class InitialView extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Icon(Icons.menu, color: Colors.white, size: 28),
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(12),
-                  child: Image.asset(
-                    'assets/images/ale_logo.png',
-                    height: 42,
-                    width: 42,
-                    fit: BoxFit.cover,
+                // Nombre de la tienda en la esquina izquierda (estilo firma)
+                Text(
+                  'Ale Beauty Art',
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontStyle: FontStyle.italic,
+                    fontSize: 22,
+                    fontWeight: FontWeight.w800,
+                    letterSpacing: 0.3,
+                    shadows: [
+                      Shadow(
+                        color: Colors.black26,
+                        blurRadius: 6,
+                        offset: Offset(0, 2),
+                      ),
+                    ],
                   ),
                 ),
+                const Spacer(),
                 // 🔔 Reemplaza el Container por el widget de notificaciones
                 NotificationBellIcon(),
               ],
