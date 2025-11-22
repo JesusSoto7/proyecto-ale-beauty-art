@@ -473,13 +473,30 @@ class _ProductDetailViewState extends State<ProductDetailView> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Expanded(
-                        child: Text(
-                          product.nombreProducto,
-                          style: const TextStyle(
-                            fontSize: 22,
-                            fontWeight: FontWeight.w800,
-                            color: Color(0xFF1F2937),
-                          ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              product.nombreProducto,
+                              style: const TextStyle(
+                                fontSize: 22,
+                                fontWeight: FontWeight.w800,
+                                color: Color(0xFF1F2937),
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            // Promedio directamente debajo del título
+                            Row(
+                              children: [
+                                const Icon(Icons.star, color: Color(0xFFFFC107), size: 18),
+                                const SizedBox(width: 6),
+                                Text(
+                                  _averageRating.toStringAsFixed(1),
+                                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                                ),
+                              ],
+                            ),
+                          ],
                         ),
                       ),
                       const SizedBox(width: 12),
