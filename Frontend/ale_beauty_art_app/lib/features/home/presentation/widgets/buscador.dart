@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:ale_beauty_art_app/styles/colors.dart';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:ale_beauty_art_app/features/products/presentation/views/products_page_view.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:ale_beauty_art_app/features/navigation/bloc/navigation_bloc.dart';
+import 'package:ale_beauty_art_app/features/products/presentation/bloc/product_bloc.dart';
+// products_page_view is not needed here because we navigate via NavigationBloc and ProductBloc
 
 class ExpandableSearchBar extends StatefulWidget {
   const ExpandableSearchBar({super.key});
@@ -144,24 +147,29 @@ class _ExpandableSearchBarState extends State<ExpandableSearchBar> {
   Future<void> _submitSearch(BuildContext context) async {
     final query = _controller.text.trim();
     FocusScope.of(context).unfocus();
-    await Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (_) => ProductsPageView(
-          searchQuery: query.isEmpty ? null : query,
-        ),
-      ),
-    );
+    // Cambiar a la pestaña Productos y aplicar el filtro en el ProductBloc
+    // Esto evita empujar una nueva ruta sobre la pantalla actual y evita problemas
+    // para volver atrás.
+    final productBloc = context.read<ProductBloc>();
+    final navBloc = context.read<NavigationBloc>();
+
+    // Construir nuevo filtro conservando valores existentes cuando sea posible
+    ProductFilter newFilter;
+    final state = productBloc.state;
+    if (state is ProductLoadSuccess) {
+      newFilter = state.filter.copyWith(searchQuery: query.isEmpty ? null : query);
+    } else {
+      newFilter = ProductFilter(searchQuery: query.isEmpty ? null : query);
+    }
+
+    productBloc.add(ProductFilterChanged(newFilter));
+    navBloc.add(const NavigationTabChanged(1));
 
     if (!mounted) return;
-    // Al volver, expandir nuevamente para facilitar una nueva búsqueda
+    // Mantener el buscador colapsado y limpiar el texto
     setState(() {
-      _isExpanded = true;
+      _isExpanded = false;
       _controller.clear();
-    });
-    // Dar un pequeño tiempo para que se reconstruya y luego enfocar
-    Future.delayed(const Duration(milliseconds: 80), () {
-      if (mounted) FocusScope.of(context).requestFocus(_focusNode);
     });
   }
 }
