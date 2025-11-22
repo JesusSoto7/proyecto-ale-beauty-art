@@ -267,7 +267,6 @@ section h2,
 .main-carousel {
   margin: 0 !important;
   padding: 0 !important;
-  width: 100vw !important;
   max-width: 100vw !important;
   position: relative;
   left: 0;
@@ -304,10 +303,10 @@ section h2,
   .main-carousel .carousel-item img { height: 460px !important; }
 }
 @media (min-width: 1440px) and (max-width: 1919px) {
-  .main-carousel .carousel-item img { height: 510px !important; }
+  .main-carousel .carousel-item img { height: 490px !important; }
 }
 @media (min-width: 1920px) {
-  .main-carousel .carousel-item img { height: 560px !important; }
+  .main-carousel .carousel-item img { height: 500px !important; }
 }
 
 .banner-ticker {

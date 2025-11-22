@@ -50,6 +50,7 @@ import OptionsMenu from "./components/dashComponents/OptionsMenu.jsx";
 import UserProfile from "./components/dashComponents/userPerfil.jsx";
 import GuestCheckout from './components/GuestCheckout/GuestCheckout.jsx';
 import useRecordPageView from './pages/inicio/hooks/useRecordPageView.js';
+import PrivacyPolicy from './components/PrivacyPolicy.jsx';
 
 function Wrapper() {
   const { lang } = useParams();
@@ -101,6 +102,7 @@ function App() {
             <Route path="pedidos/:id" element={<DetallePedido />} />
             <Route path="about" element={<AboutUs />} />
             <Route path="terms" element={<TermsAndConditions />} />
+            <Route path="privacy-policy" element={<PrivacyPolicy />} />
             <Route path="/:lang/categoria/:categorySlug/:subCategorySlug/products" element={<SubCateProd />} />
           </Route>
 
