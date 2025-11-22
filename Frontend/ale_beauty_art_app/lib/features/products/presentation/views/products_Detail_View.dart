@@ -721,6 +721,17 @@ class _ProductDetailViewState extends State<ProductDetailView> {
                       padding: const EdgeInsets.only(bottom: 12.0),
                       child: ElevatedButton(
                         onPressed: () async {
+                          // If form is currently visible, act as "Cancelar" -> hide and reset
+                          if (_showReviewForm) {
+                            setState(() {
+                              _showReviewForm = false;
+                              _reviewController.clear();
+                              _newRating = 5;
+                            });
+                            return;
+                          }
+
+                          // Otherwise act as activator: ensure login + purchase check
                           final authState = context.read<AuthBloc>().state;
                           if (authState is! AuthSuccess) {
                             final result = await Navigator.push(
@@ -740,7 +751,7 @@ class _ProductDetailViewState extends State<ProductDetailView> {
                           setState(() => _showReviewForm = true);
                         },
                         style: ElevatedButton.styleFrom(backgroundColor: AppColors.primaryPink),
-                        child: const Text('Calificar', style: TextStyle(color: Colors.white)),
+                        child: Text(_showReviewForm ? 'Cancelar' : 'Calificar', style: const TextStyle(color: Colors.white)),
                       ),
                     ),
 
