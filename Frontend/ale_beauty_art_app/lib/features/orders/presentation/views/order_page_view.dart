@@ -119,7 +119,7 @@ class _OrderPageViewState extends State<OrderPageView> {
             color: Colors.white,
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.08),
+                color: Colors.black.withOpacity(0.20),
                 blurRadius: 12,
                 offset: const Offset(0, 3),
               ),
