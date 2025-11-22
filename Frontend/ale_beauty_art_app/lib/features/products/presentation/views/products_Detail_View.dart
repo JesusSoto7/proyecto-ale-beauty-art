@@ -13,6 +13,7 @@ import 'package:shimmer/shimmer.dart';
 import 'package:ale_beauty_art_app/styles/colors.dart';
 import 'package:ale_beauty_art_app/core/utils/formatters.dart';
 import 'package:ale_beauty_art_app/features/favorites/presentation/bloc/favorite_bloc.dart';
+import 'package:ale_beauty_art_app/features/products/presentation/widgets/favorite_toggle_button.dart';
 import 'package:ale_beauty_art_app/core/http/custom_http_client.dart';
 import 'dart:convert';
 
@@ -31,6 +32,9 @@ class _ProductDetailViewState extends State<ProductDetailView> {
   List<Map<String, dynamic>> _reviews = [];
   bool _relatedLoading = true;
   List<Product> _relatedProducts = [];
+  bool _showReviewForm = false;
+  bool _hasPurchased = false;
+  bool _checkingPurchase = true;
   // Review submission state
   final TextEditingController _reviewController = TextEditingController();
   int _newRating = 5;
@@ -80,6 +84,134 @@ class _ProductDetailViewState extends State<ProductDetailView> {
     // Cargar reseñas del backend
     _fetchReviews();
     _fetchRelatedProducts();
+    // Verificar si el usuario compró este producto (para permitir reseñas)
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _checkIfPurchased();
+    });
+  }
+
+  Future<void> _checkIfPurchased() async {
+    if (!mounted) return;
+    setState(() => _checkingPurchase = true);
+
+    try {
+      final authState = context.read<AuthBloc>().state;
+      if (authState is! AuthSuccess) {
+        if (mounted) setState(() {
+          _hasPurchased = false;
+          _checkingPurchase = false;
+        });
+        return;
+      }
+
+      final token = authState.token;
+      final client = await CustomHttpClient.client;
+
+      // Build identifier: prefer non-empty slug, otherwise use id
+      final identifier = (widget.product.slug != null && widget.product.slug!.isNotEmpty)
+          ? widget.product.slug!
+          : widget.product.id.toString();
+
+      final url = Uri.parse('${CustomHttpClient.baseUrl}/api/v1/products/$identifier/can_review');
+      debugPrint('[can_review] GET $url');
+
+      try {
+        final resp = await client.get(url, headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        });
+        debugPrint('[can_review] status=${resp.statusCode} body=${resp.body}');
+
+        if (resp.statusCode == 200) {
+          final body = jsonDecode(resp.body);
+          bool purchased = false;
+          if (body is Map<String, dynamic> && body.containsKey('can_review')) {
+            final val = body['can_review'];
+            purchased = (val == true) || (val?.toString() == 'true');
+          }
+
+          if (purchased) {
+            if (mounted) setState(() {
+              _hasPurchased = true;
+              _checkingPurchase = false;
+            });
+            return;
+          }
+
+          // If server says false, attempt a fallback scan of user's orders to help diagnose
+          debugPrint('[can_review] server returned false, attempting fallback /my_orders scan');
+        } else {
+          debugPrint('[can_review] non-200 response, attempting fallback /my_orders scan');
+        }
+      } catch (e) {
+        debugPrint('[can_review] request error: $e');
+      }
+
+      // --- Fallback: fetch /my_orders and look for this product in paid orders ---
+      try {
+        final ordersUrl = Uri.parse('${CustomHttpClient.baseUrl}/api/v1/my_orders');
+        debugPrint('[my_orders] GET $ordersUrl');
+        final orResp = await client.get(ordersUrl, headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        });
+        debugPrint('[my_orders] status=${orResp.statusCode} body=${orResp.body}');
+
+        if (orResp.statusCode == 200) {
+          final jsonBody = jsonDecode(orResp.body);
+          // jsonBody could be a list or a map with 'orders'
+          List<dynamic> ordersList = [];
+          if (jsonBody is List) ordersList = jsonBody;
+          else if (jsonBody is Map<String, dynamic>) {
+            if (jsonBody.containsKey('orders') && jsonBody['orders'] is List) ordersList = jsonBody['orders'];
+            else if (jsonBody.containsKey('data') && jsonBody['data'] is List) ordersList = jsonBody['data'];
+          }
+
+          final prodId = widget.product.id;
+          bool found = false;
+          for (final o in ordersList) {
+            if (o is Map<String, dynamic>) {
+              final status = o['status'];
+              // consider numeric 1 or string '1' or 'paid' as paid
+              final paid = (status == 1) || (status?.toString() == '1') || (status?.toString().toLowerCase() == 'paid') || (status?.toString().toLowerCase() == 'completed');
+              final details = o['order_details'] ?? o['orderDetails'] ?? o['items'] ?? o['products'];
+              if (paid && details is List) {
+                for (final d in details) {
+                  if (d is Map<String, dynamic>) {
+                    final pid = d['product_id'] ?? d['productId'] ?? d['id'] ?? d['product']?['id'];
+                    if (pid != null && pid.toString() == prodId.toString()) {
+                      found = true;
+                      break;
+                    }
+                  }
+                }
+              }
+            }
+            if (found) break;
+          }
+
+          if (mounted) setState(() {
+            _hasPurchased = found;
+            _checkingPurchase = false;
+          });
+          return;
+        }
+      } catch (e) {
+        debugPrint('[my_orders] request error: $e');
+      }
+
+      // Default: not purchased
+      if (mounted) setState(() {
+        _hasPurchased = false;
+        _checkingPurchase = false;
+      });
+    } catch (e) {
+      debugPrint('[checkIfPurchased] unexpected error: $e');
+      if (mounted) setState(() {
+        _hasPurchased = false;
+        _checkingPurchase = false;
+      });
+    }
   }
 
   Future<void> _fetchRelatedProducts() async {
@@ -132,6 +264,12 @@ class _ProductDetailViewState extends State<ProductDetailView> {
       if (result != true) return; // user cancelled
     }
 
+    // Only allow review submission if we detected a purchase
+    if (!_hasPurchased) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Debes comprar el producto para dejar una calificación')));
+      return;
+    }
+
     if (_reviewController.text.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Por favor escribe un comentario')));
       return;
@@ -156,11 +294,11 @@ class _ProductDetailViewState extends State<ProductDetailView> {
         // Refrescar reseñas
         _reviewController.clear();
         await _fetchReviews();
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Reseña enviada')));
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Calificación enviada')));
       } else if (resp.statusCode == 401) {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Debes iniciar sesión para dejar una reseña')));
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Debes iniciar sesión para dejar una calificación')));
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error enviando reseña: ${resp.body}')));
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error enviando calificación: ${resp.body}')));
       }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error de red: $e')));
@@ -370,7 +508,7 @@ class _ProductDetailViewState extends State<ProductDetailView> {
                   const Text('Productos relacionados', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
                   const SizedBox(height: 12),
                   SizedBox(
-                    height: 140,
+                    height: 150,
                     child: _relatedLoading
                         ? ListView.separated(
                             scrollDirection: Axis.horizontal,
@@ -412,6 +550,7 @@ class _ProductDetailViewState extends State<ProductDetailView> {
                                   },
                                   child: Container(
                                     width: 120,
+                                    height: 150,
                                     decoration: BoxDecoration(
                                       color: Colors.white,
                                       borderRadius: BorderRadius.circular(12),
@@ -420,20 +559,62 @@ class _ProductDetailViewState extends State<ProductDetailView> {
                                     child: Column(
                                       crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
-                                        ClipRRect(
-                                          borderRadius: const BorderRadius.only(topLeft: Radius.circular(12), topRight: Radius.circular(12)),
-                                          child: img != null
-                                              ? Image.network(img, height: 86, width: 120, fit: BoxFit.cover)
-                                              : Container(height: 86, color: Colors.grey[200], child: const Icon(Icons.image, color: Colors.grey)),
+                                        // Image area with discount badge and favorite button
+                                        Container(
+                                          height: 86,
+                                          decoration: const BoxDecoration(
+                                            borderRadius: BorderRadius.only(topLeft: Radius.circular(12), topRight: Radius.circular(12)),
+                                          ),
+                                          child: Stack(
+                                            children: [
+                                              ClipRRect(
+                                                borderRadius: const BorderRadius.only(topLeft: Radius.circular(12), topRight: Radius.circular(12)),
+                                                child: img != null
+                                                    ? Image.network(img, height: 86, width: 120, fit: BoxFit.cover)
+                                                    : Container(height: 86, color: Colors.grey[200], child: const Icon(Icons.image, color: Colors.grey)),
+                                              ),
+                                              if (p.tieneDescuento)
+                                                Positioned(
+                                                  top: 8,
+                                                  left: 8,
+                                                  child: Container(
+                                                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+                                                    decoration: BoxDecoration(
+                                                      gradient: const LinearGradient(colors: [Color.fromARGB(255, 197, 78, 118), Color.fromARGB(255, 218, 55, 106)]),
+                                                      borderRadius: BorderRadius.circular(8),
+                                                    ),
+                                                    child: Text('-${p.porcentajeDescuento}%', style: const TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.bold)),
+                                                  ),
+                                                ),
+                                              Positioned(
+                                                top: 6,
+                                                right: 6,
+                                                child: Container(
+                                                  decoration: BoxDecoration(color: Colors.white, shape: BoxShape.circle, boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.08), blurRadius: 6)]),
+                                                  child: FavoriteToggleButton(productId: p.id, size: 18),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
                                         ),
                                         Padding(
-                                          padding: const EdgeInsets.all(8.0),
+                                            padding: const EdgeInsets.all(6.0),
                                           child: Column(
                                             crossAxisAlignment: CrossAxisAlignment.start,
                                             children: [
                                               Text(p.nombreProducto, maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600)),
                                               const SizedBox(height: 4),
-                                              Text(formatPriceCOP(p.precioProducto), style: TextStyle(fontSize: 12, color: Colors.grey[700])),
+                                              if (p.tieneDescuento)
+                                                Column(
+                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                                  children: [
+                                                    Text(formatPriceCOP(p.precioProducto), style: TextStyle(color: Colors.grey[500], fontSize: 11, decoration: TextDecoration.lineThrough)),
+                                                    const SizedBox(height: 2),
+                                                    Text(formatPriceCOP(p.precioConMejorDescuento ?? p.precioProducto), style: const TextStyle(color: Color(0xFFD95D85), fontWeight: FontWeight.bold)),
+                                                  ],
+                                                )
+                                              else
+                                                Text(formatPriceCOP(p.precioProducto), style: const TextStyle(color: Color(0xFFD95D85), fontWeight: FontWeight.bold)),
                                             ],
                                           ),
                                         ),
@@ -449,76 +630,146 @@ class _ProductDetailViewState extends State<ProductDetailView> {
                   ),
                   const SizedBox(height: 24),
 
-                  // Reviews section
+                  // Calificaciones generales
                   const Divider(),
                   const SizedBox(height: 12),
+                  const Text('Calificaciones generales', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                  const SizedBox(height: 8),
                   Row(
                     children: [
                       const Icon(Icons.star, color: Color(0xFFFFC107), size: 28),
                       const SizedBox(width: 8),
                       Text(
-                        _reviewCount > 0 ? _averageRating.toStringAsFixed(1) : '—',
+                        _averageRating.toStringAsFixed(1),
                         style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
                       ),
                       const SizedBox(width: 8),
-                      Text('(${_reviewCount} reseñas)', style: const TextStyle(color: Colors.grey, fontSize: 16)),
+                      Text(
+                        _reviewCount == 1 ? '(1 calificación)' : '(${_reviewCount} calificaciones)',
+                        style: const TextStyle(color: Colors.grey, fontSize: 16),
+                      ),
                     ],
                   ),
                   const SizedBox(height: 12),
-                  // Review submission form
-                  Card(
-                    margin: const EdgeInsets.only(bottom: 12),
-                    child: Padding(
-                      padding: const EdgeInsets.all(12.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Text('Escribe una reseña', style: TextStyle(fontWeight: FontWeight.bold)),
-                          const SizedBox(height: 8),
-                          Row(
-                            children: List.generate(5, (i) {
-                              final idx = i + 1;
-                              return IconButton(
-                                padding: EdgeInsets.zero,
-                                constraints: const BoxConstraints(),
-                                icon: Icon(
-                                  idx <= _newRating ? Icons.star : Icons.star_border,
-                                  color: const Color(0xFFFFC107),
-                                ),
-                                onPressed: () => setState(() => _newRating = idx),
-                              );
-                            }),
-                          ),
-                          const SizedBox(height: 6),
-                          TextField(
-                            controller: _reviewController,
-                            maxLines: 3,
-                            decoration: const InputDecoration(
-                              hintText: 'Escribe tu opinión aquí...',
-                              border: OutlineInputBorder(),
-                              isDense: true,
-                              contentPadding: EdgeInsets.all(10),
-                            ),
-                          ),
-                          const SizedBox(height: 8),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: [
-                              ElevatedButton(
-                                onPressed: _submittingReview ? null : _submitReview,
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: const Color(0xFFD95D85),
-                                ),
-                                child: _submittingReview
-                                    ? const SizedBox(width: 18, height: 18, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))
-                                    : const Text('Enviar'),
+                  // Rating summary (histogram) and gated review action
+                  const SizedBox(height: 8),
+                  Column(
+                    children: List.generate(5, (i) {
+                      final star = 5 - i;
+                      final count = _reviews.where((r) => ((r['rating'] as num?)?.toInt() ?? 0) == star).length;
+                      final ratio = _reviewCount > 0 ? count / _reviewCount : 0.0;
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 4.0),
+                        child: Row(
+                          children: [
+                            SizedBox(width: 28, child: Row(children: [Text('$star', style: const TextStyle(fontWeight: FontWeight.w600)), const SizedBox(width: 4), const Icon(Icons.star, size: 14, color: Color(0xFFFFC107)) ])),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: LinearProgressIndicator(
+                                value: ratio,
+                                minHeight: 10,
+                                backgroundColor: Colors.grey.shade200,
+                                valueColor: const AlwaysStoppedAnimation(Color(0xFFFFC107)),
                               ),
-                            ],
-                          ),
-                        ],
+                            ),
+                            const SizedBox(width: 8),
+                            SizedBox(width: 36, child: Text('$count', textAlign: TextAlign.right)),
+                          ],
+                        ),
+                      );
+                    }),
+                  ),
+                  const SizedBox(height: 12),
+
+                  // Calificar button + conditional form (only if user purchased)
+                  if (_checkingPurchase)
+                    const Center(child: Padding(padding: EdgeInsets.symmetric(vertical: 8.0), child: SizedBox(width: 20, height: 20, child: CircularProgressIndicator())))
+                  else ...[
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 12.0),
+                      child: ElevatedButton(
+                        onPressed: () async {
+                          final authState = context.read<AuthBloc>().state;
+                          if (authState is! AuthSuccess) {
+                            final result = await Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (_) => const LoginPage()),
+                            );
+                            if (result != true) return;
+                            // user logged in, re-check purchase
+                            await _checkIfPurchased();
+                          }
+
+                          if (!_hasPurchased) {
+                            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Debes comprar el producto para dejar una calificación')));
+                            return;
+                          }
+
+                          setState(() => _showReviewForm = true);
+                        },
+                        style: ElevatedButton.styleFrom(backgroundColor: AppColors.primaryPink),
+                        child: const Text('Calificar', style: TextStyle(color: Colors.white)),
                       ),
                     ),
-                  ),
+
+                    if (_showReviewForm) Card(
+                      margin: const EdgeInsets.only(bottom: 12),
+                      child: Padding(
+                        padding: const EdgeInsets.all(12.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text('Escribe una reseña', style: TextStyle(fontWeight: FontWeight.bold)),
+                            const SizedBox(height: 8),
+                            Row(
+                              children: List.generate(5, (i) {
+                                final idx = i + 1;
+                                return IconButton(
+                                  padding: EdgeInsets.zero,
+                                  constraints: const BoxConstraints(),
+                                  icon: Icon(
+                                    idx <= _newRating ? Icons.star : Icons.star_border,
+                                    color: const Color(0xFFFFC107),
+                                  ),
+                                  onPressed: () => setState(() => _newRating = idx),
+                                );
+                              }),
+                            ),
+                            const SizedBox(height: 6),
+                            TextField(
+                              controller: _reviewController,
+                              maxLines: 3,
+                              decoration: const InputDecoration(
+                                hintText: 'Escribe tu opinión aquí...',
+                                border: OutlineInputBorder(),
+                                isDense: true,
+                                contentPadding: EdgeInsets.all(10),
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                ElevatedButton(
+                                  onPressed: _submittingReview ? null : _submitReview,
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: AppColors.primaryPink,
+                                  ),
+                                  child: _submittingReview
+                                      ? const SizedBox(width: 18, height: 18, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))
+                                      : const Text('Enviar', style: TextStyle(color: Colors.white)),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                  // Comentarios / Reseñas
+                  const SizedBox(height: 8),
+                  const Text('Reseñas', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                  const SizedBox(height: 8),
                   // Reviews dynamic content
                   if (_loadingReviews)
                     const Center(child: Padding(
@@ -528,7 +779,7 @@ class _ProductDetailViewState extends State<ProductDetailView> {
                   else if (_reviews.isEmpty)
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 12),
-                      child: Text('Aún no hay reseñas para este producto.', style: TextStyle(color: Colors.grey[600])),
+                      child: Text('Aún no hay calificaciones para este producto.', style: TextStyle(color: Colors.grey[600])),
                     )
                   else
                     ..._reviews.map((r) {

@@ -14,6 +14,7 @@ class Product extends Equatable {
   final String? imagenUrl;
   // Imagen asociada a la subcategoría (si el backend la entrega en sub_category.imagen_url)
   final String? subCategoryImagenUrl;
+  final String? slug;
 
   final Discount? discount;
   final Discount? mejorDescuentoParaPrecio;
@@ -30,6 +31,7 @@ class Product extends Equatable {
     required this.categoryId,
     required this.nombreCategoria,
     required this.imagenUrl,
+    this.slug,
     this.subCategoryImagenUrl,
     this.discount,
     this.mejorDescuentoParaPrecio,
@@ -51,6 +53,7 @@ class Product extends Equatable {
       nombreCategoria: category['nombre_categoria'] ?? '',
       precioProducto: json['precio_producto'] ?? 0,
       imagenUrl: json['imagen_url'],
+      slug: json['slug']?.toString(),
       // Intentar mapear imagen de subcategoría si viene del backend
       subCategoryImagenUrl: subCategory['imagen_url'] ?? subCategory['imagen'],
       // 🆕 Parsear descuentos
@@ -78,6 +81,7 @@ class Product extends Equatable {
         'sub_category': {'nombre': nombreSubCategoria},
         'category': {'nombre_categoria': nombreCategoria},
         'imagen_url': imagenUrl,
+        if (slug != null) 'slug': slug,
         if (subCategoryImagenUrl != null)
           'sub_category_imagen_url': subCategoryImagenUrl,
         if (discount != null) 'discount': discount!.toJson(),
@@ -112,6 +116,7 @@ class Product extends Equatable {
         categoryId,
         nombreCategoria,
         imagenUrl,
+    slug,
     subCategoryImagenUrl,
         discount,
         mejorDescuentoParaPrecio,
