@@ -107,10 +107,6 @@ export default function PrivacyPolicy() {
                     <li>Conversiones</li>
                     <li>Flujo de navegación</li>
                     </ul>
-                    <p>
-                    Google Analytics puede recopilar cookies e identificadores anónimos. El
-                    usuario puede desactivarlas desde la configuración de su navegador.
-                    </p>
                 </section>
 
                 {/* 6 */}
