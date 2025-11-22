@@ -1,32 +1,48 @@
 import React from 'react';
-import { Menu, Box, Typography, CircularProgress } from '@mui/material';
+import { useTranslation } from 'react-i18next';
+import { Menu, Box, Typography, CircularProgress, useMediaQuery } from '@mui/material';
 import { BsBell } from 'react-icons/bs';
 
-export default function NotificationsMenu({ 
-  anchorEl, 
-  open, 
-  onClose, 
-  notificaciones, 
-  loading, 
-  formatTime, 
-  pinkTheme 
+export default function NotificationsMenu({
+  anchorEl,
+  open,
+  onClose,
+  notificaciones,
+  loading,
+  formatTime,
+  pinkTheme,
+  forceCenter = false
 }) {
+  const { t } = useTranslation();
+  // Centrar cuando hay menú hamburguesa (forceCenter) o en móviles (<768px)
+  const isMobile = useMediaQuery('(max-width:767px)');
+  const centerOverlay = forceCenter || isMobile;
+  const anchorPosition = centerOverlay && typeof window !== 'undefined' && open
+    ? { top: window.innerHeight / 2, left: window.innerWidth / 2 }
+    : undefined;
   return (
     <Menu
-      anchorEl={anchorEl}
+      className="notifications-menu"
       open={open}
       onClose={onClose}
+      anchorEl={centerOverlay ? null : anchorEl}
+      anchorReference={centerOverlay ? 'anchorPosition' : 'anchorEl'}
+      anchorPosition={anchorPosition}
       PaperProps={{
-        style: {
-          width: 380,
-          maxHeight: 480,
-          borderRadius: 12,
+        sx: {
+          width: centerOverlay ? '90vw' : { xs: '90vw', sm: 360, md: 380 },
+          maxWidth: centerOverlay ? '600px' : '95vw',
+          maxHeight: centerOverlay ? '75vh' : { xs: 420, sm: 460, md: 480 },
+          borderRadius: 2,
           boxShadow: '0 8px 24px rgba(0,0,0,0.12)',
-          overflow: 'hidden'
+          overflow: 'hidden',
+          position: centerOverlay ? 'absolute' : 'relative',
+          transform: centerOverlay ? 'translate(-50%, -50%)' : 'none'
         }
       }}
       anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-      transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+      transformOrigin={centerOverlay ? { vertical: 'center', horizontal: 'center' } : { vertical: 'top', horizontal: 'right' }}
+      disableScrollLock
     >
       {/* Header */}
       <Box sx={{ 
@@ -36,11 +52,11 @@ export default function NotificationsMenu({
       }}>
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
           <Typography variant="h6" sx={{ fontWeight: 600, color: '#333', fontSize: '16px' }}>
-            Notificaciones
+            {t('header.notifications', 'Notificaciones')}
           </Typography>
           {notificaciones.length > 0 && (
             <Typography variant="caption" sx={{ color: '#666', fontWeight: 500, fontSize: '12px' }}>
-              {notificaciones.length} {notificaciones.length === 1 ? 'notificación' : 'notificaciones'}
+              {t('notifications.count', { count: notificaciones.length, defaultValue: `${notificaciones.length} ${notificaciones.length === 1 ? 'notificación' : 'notificaciones'}` })}
             </Typography>
           )}
         </Box>
@@ -56,7 +72,7 @@ export default function NotificationsMenu({
           <Box sx={{ textAlign: 'center', py: 4, px: 2 }}>
             <BsBell size={28} style={{ color: '#ccc', marginBottom: 12 }} />
             <Typography variant="body2" sx={{ color: '#999', fontSize: '14px' }}>
-              No tienes notificaciones
+              {t('notifications.empty', 'No tienes notificaciones')}
             </Typography>
           </Box>
         ) : (
@@ -171,7 +187,7 @@ export default function NotificationsMenu({
             }}
             onClick={onClose}
           >
-            Ver todas las notificaciones
+            {t('notifications.viewAll', 'Ver todas las notificaciones')}
           </Typography>
         </Box>
       )}

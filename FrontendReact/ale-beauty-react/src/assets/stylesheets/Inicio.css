@@ -284,6 +284,32 @@ section h2,
   border-radius: 0 !important;
 }
 
+/* === Responsive heights for main carousel === */
+@media (max-width: 360px) {
+  .main-carousel .carousel-item img { height: 180px !important; }
+}
+@media (min-width: 361px) and (max-width: 480px) {
+  .main-carousel .carousel-item img { height: 220px !important; }
+}
+@media (min-width: 481px) and (max-width: 767px) {
+  .main-carousel .carousel-item img { height: 280px !important; }
+}
+@media (min-width: 768px) and (max-width: 1023px) {
+  .main-carousel .carousel-item img { height: 360px !important; }
+}
+@media (min-width: 1024px) and (max-width: 1279px) {
+  .main-carousel .carousel-item img { height: 420px !important; }
+}
+@media (min-width: 1280px) and (max-width: 1439px) {
+  .main-carousel .carousel-item img { height: 460px !important; }
+}
+@media (min-width: 1440px) and (max-width: 1919px) {
+  .main-carousel .carousel-item img { height: 510px !important; }
+}
+@media (min-width: 1920px) {
+  .main-carousel .carousel-item img { height: 560px !important; }
+}
+
 .banner-ticker {
   width: 100%;
   overflow: hidden;
@@ -505,5 +531,566 @@ section h2,
     height: 30px !important;
     top: 8px !important;
     right: 8px !important;
+  }
+}
+/* Estilos Responsivos para Inicio */
+
+.home-container {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+/* Títulos de sección responsivos */
+.section-title {
+  font-size: 1.8rem;
+  font-weight: 600;
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+/* Contenedor del carrusel responsivo */
+.carousel-container {
+  position: relative;
+  width: 100%;
+  margin: 0 auto;
+  padding: 0 10px;
+}
+
+/* Items del carrusel responsivos */
+.carousel-items {
+  display: flex;
+  gap: 15px;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  padding: 10px 5px;
+  scroll-snap-type: x mandatory;
+}
+
+.carousel-items::-webkit-scrollbar {
+  display: none;
+}
+
+/* Botones del carrusel responsivos */
+.carousel-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(255, 255, 255, 0.9);
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  font-size: 1.2rem;
+  cursor: pointer;
+  z-index: 10;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+.carousel-btn:hover {
+  background: white;
+  box-shadow: 0 4px 12px rgba(95, 92, 93, 0.2);
+}
+
+.carousel-btn.prev {
+  left: 5px;
+}
+
+.carousel-btn.next {
+  right: 5px;
+}
+
+/* Banner principal responsivo */
+.banner-container {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+}
+
+.main-banner {
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+  display: block;
+  margin: 0;
+  padding: 0;
+}
+
+/* Banner ticker responsivo */
+.banner-ticker {
+  margin-top: 0;
+  background: #f8f9fa;
+  padding: 12px 0;
+  overflow: hidden;
+  position: relative;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.banner-track {
+  display: flex;
+  animation: scrollBanner 30s linear infinite;
+  white-space: nowrap;
+}
+
+.banner-item {
+  padding: 0 25px;
+  font-weight: 500;
+  color: #495057;
+  font-size: 0.9rem;
+  flex-shrink: 0;
+}
+
+/* Mensaje sin productos */
+.no-products-message {
+  text-align: center;
+  padding: 2rem;
+  color: #6c757d;
+  font-style: italic;
+}
+
+/* Tarjetas de skeleton */
+.skeleton-card {
+  flex: 0 0 auto;
+}
+/* Animación del banner ticker */
+@keyframes scrollBanner {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+/* Mejoras de accesibilidad */
+@media (prefers-reduced-motion: reduce) {
+  .carousel-items {
+    scroll-behavior: auto;
+  }
+  
+  .banner-track {
+    animation: none;
+  }
+  
+  .carousel-btn {
+    transition: none;
+  }
+}
+
+/* Soporte para modo oscuro */
+@media (prefers-color-scheme: dark) {
+  .banner-ticker {
+    background: #e8277e;
+    border-bottom-color: #f3f4f5;
+  }
+  
+  .banner-item {
+    color: #e2e8f0;
+  }
+}
+
+
+/* === RESPONSIVE DESIGN PARA INICIO === */
+
+/* 📱 Teléfonos muy pequeños (320px - 375px) */
+@media (min-width: 344px) and (max-width: 360px) {
+  /* Banner Novedades */
+  .banner-novedades-img {
+    height: 150px !important;
+  }
+  
+  /* Carrusel de productos - tarjetas más pequeñas */
+  .carousel-container {
+    padding: 0.3rem 0;
+  }
+  
+  .carousel-items {
+    gap: 0.3rem;
+    padding: 0.2rem 0;
+  }
+  
+  .product-card {
+    max-width: 250px;
+    min-width: 250px;
+    transform: scale(0.85);
+    margin: 0 3px;
+  }
+  
+  .custom-product-card {
+    max-width: 250px !important;
+    min-width: 250px !important;
+    transform: scale(0.85);
+    margin: 0 3px;
+    height: 350px !important;
+  }
+  
+  .custom-image-wrapper {
+    height: 180px !important;
+  }
+  
+  .custom-image-wrapper img {
+    max-height: 140px !important;
+  }
+  
+  .carousel-btn {
+    width: 25px;
+    height: 35px;
+    font-size: 1rem;
+    display: none; /* Ocultar botones en móviles muy pequeños */
+  }
+  
+  /* Banner delgado */
+  .banner-ticker {
+    height: 25px;
+  }
+  
+  .banner-item {
+    padding: 0 15px;
+    font-size: 0.7rem;
+  }
+  
+  /* Títulos */
+  section h2, .mb-4 {
+    font-size: 1.2rem !important;
+    margin: 15px 0 12px 0 !important;
+    padding: 0 10px !important;
+  }
+  
+  /* Productos mejor valorados - Carrusel */
+  .ranking-product-card-carousel {
+    width: 250px;
+    min-width: 250px;
+    transform: scale(0.85);
+  }
+}
+
+/* 📱 Teléfonos pequeños (376px - 480px) */
+@media (min-width: 375px) and (max-width: 480px) {
+  /* Banner Novedades */
+  .banner-novedades-img {
+    height: 170px !important;
+  }
+  
+  /* Carrusel de productos - tarjetas más pequeñas */
+  .carousel-container {
+    padding: 0.4rem 0;
+  }
+  
+  .carousel-items {
+    gap: 0.4rem;
+    padding: 0.3rem 0;
+  }
+  
+  .product-card {
+    max-width: 260px;
+    min-width: 260px;
+    transform: scale(0.9);
+    margin: 0 4px;
+  }
+  
+  .custom-product-card {
+    max-width: 260px !important;
+    min-width: 260px !important;
+    transform: scale(0.9);
+    margin: 0 4px;
+    height: 360px !important;
+  }
+  
+  .custom-image-wrapper {
+    height: 190px !important;
+  }
+  
+  .custom-image-wrapper img {
+    max-height: 150px !important;
+  }
+  
+  .carousel-btn {
+    width: 28px;
+    height: 38px;
+    font-size: 1.1rem;
+  }
+  
+  /* Banner delgado */
+  .banner-ticker {
+    height: 28px;
+  }
+  
+  .banner-item {
+    padding: 0 18px;
+    font-size: 0.75rem;
+  }
+  
+  /* Títulos */
+  section h2, .mb-4 {
+    font-size: 1.3rem !important;
+    margin: 18px 0 14px 0 !important;
+    padding: 0 12px !important;
+  }
+  
+  /* Productos mejor valorados - Carrusel */
+  .ranking-product-card-carousel {
+    width: 260px;
+    min-width: 260px;
+    transform: scale(0.9);
+  }
+}
+
+/* 📱 Teléfonos grandes (481px - 767px) */
+@media (min-width: 481px) and (max-width: 767px) {
+  .banner-novedades-img {
+    height: 220px !important;
+  }
+  
+  .product-card {
+    max-width: 250px;
+    min-width: 250px;
+    transform: scale(0.95);
+  }
+  
+  .custom-product-card {
+    max-width: 250px !important;
+    min-width: 250px !important;
+    transform: scale(0.95);
+  }
+  
+  .banner-item {
+    padding: 0 30px;
+    font-size: 0.8rem;
+  }
+  
+  .ranking-product-card-carousel {
+    width: 250px;
+    min-width: 250px;
+  }
+}
+
+/* 📟 Tabletas pequeñas (768px - 1023px) */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .banner-novedades-img {
+    height: 300px !important;
+  }
+  
+  .product-card {
+    max-width: 220px;
+    min-width: 220px;
+  }
+  
+  .custom-product-card {
+    max-width: 220px !important;
+    min-width: 220px !important;
+  }
+  
+  .carousel-items {
+    gap: 1rem;
+  }
+  
+  .ranking-product-card-carousel {
+    width: 220px;
+    min-width: 220px;
+  }
+}
+
+/* Estilos para el carrusel de productos mejor valorados */
+.ranking-pro-carousel {
+  width: 100%;
+  overflow: hidden;
+  padding: 0 10px;
+}
+
+.ranking-products-scroll {
+  display: flex;
+  overflow-x: auto;
+  gap: 1rem;
+  padding: 1rem 0.5rem;
+  scrollbar-width: none;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+}
+
+.ranking-products-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+.ranking-product-card-carousel {
+  flex: 0 0 auto;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+  padding: 1rem;
+  transition: transform 0.2s ease;
+}
+
+/* Ajustes específicos para móviles pequeños en el ranking */
+@media (max-width: 375px) {
+  .ranking-pro-carousel {
+    padding: 0 5px;
+  }
+  
+  .ranking-products-scroll {
+    gap: 0.5rem;
+    padding: 0.5rem 0.2rem;
+  }
+}
+
+@media (min-width: 376px) and (max-width: 480px) {
+  .ranking-pro-carousel {
+    padding: 0 8px;
+  }
+  
+  .ranking-products-scroll {
+    gap: 0.8rem;
+    padding: 0.8rem 0.3rem;
+  }
+}
+
+/* 💻 Tabletas grandes (1024px - 1279px) */
+@media (min-width: 1024px) and (max-width: 1279px) {
+  .banner-novedades-img {
+    height: 350px !important;
+  }
+  
+  .product-card {
+    max-width: 200px;
+    min-width: 200px;
+  }
+  
+  .custom-product-card {
+    max-width: 200px !important;
+    min-width: 200px !important;
+  }
+  
+  .carousel-container {
+    max-width: 1100px;
+  }
+  
+  /* Productos mejor valorados vuelven a grid en tablets grandes */
+  .ranking-pro-carousel {
+    display: none;
+  }
+}
+
+/* 💻 Laptops - mitad de pantalla (1280px - 1439px) */
+@media (min-width: 1280px) and (max-width: 1439px) {
+  .banner-novedades-img {
+    height: 400px !important;
+  }
+  
+  .carousel-container {
+    max-width: 1000px;
+  }
+  
+  .product-card {
+    max-width: 220px;
+    min-width: 220px;
+  }
+  
+  .custom-product-card {
+    max-width: 220px !important;
+    min-width: 220px !important;
+  }
+  
+  .ranking-pro-carousel {
+    display: none;
+  }
+}
+
+/* 🖥️ PC Escritorio (1440px - 1919px) */
+@media (min-width: 1440px) and (max-width: 1919px) {
+  .banner-novedades-img {
+    height: 450px !important;
+  }
+  
+  .carousel-container {
+    max-width: 1300px;
+  }
+  
+  .product-card {
+    max-width: 240px;
+    min-width: 240px;
+  }
+  
+  .custom-product-card {
+    max-width: 240px !important;
+    min-width: 240px !important;
+  }
+  
+  section h2, .mb-4 {
+    font-size: 2.2rem !important;
+  }
+  
+  .ranking-pro-carousel {
+    display: none;
+  }
+}
+
+/* 📺 Televisores y pantallas muy grandes (1920px+) */
+@media (min-width: 1920px) {
+  .banner-novedades-img {
+    height: 500px !important;
+  }
+  
+  .carousel-container {
+    max-width: 1600px;
+  }
+  
+  .product-card {
+    max-width: 260px;
+    min-width: 260px;
+  }
+  
+  .custom-product-card {
+    max-width: 260px !important;
+    min-width: 260px !important;
+  }
+  
+  section h2, .mb-4 {
+    font-size: 2.5rem !important;
+  }
+  
+  .banner-item {
+    font-size: 1.1rem;
+    padding: 0 60px;
+  }
+  
+  .ranking-pro-carousel {
+    display: none;
+  }
+}
+
+/* 🎯 Modo landscape en móviles */
+@media (max-height: 500px) and (orientation: landscape) {
+  .banner-novedades-img {
+    height: 150px !important;
+  }
+  
+  .product-card,
+  .custom-product-card {
+    transform: scale(0.8);
+  }
+  
+  .ranking-product-card-carousel {
+    transform: scale(0.8);
+  }
+}
+
+/* Mostrar el carrusel solo en móviles y tablets pequeñas */
+@media (min-width: 1024px) {
+  .ranking-pro-carousel {
+    display: none;
+  }
+}
+
+/* Mostrar el grid normal en desktop */
+@media (min-width: 1024px) {
+  .ranking-pro-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    padding: 1rem 0;
   }
 }

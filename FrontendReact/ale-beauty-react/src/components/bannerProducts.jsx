@@ -56,8 +56,8 @@ function BannerProduct({ products, productRatings }) {
         </div>
         
 
-        <section className="section-DataBanner" style={{    display: "flex", flexDirection: "row-reverse", justifyContent: "flex-end", gap: 20}}>
-          <div style={{ display: "flex", gap: 10, alignItems: "center", flexDirection: "row" }}>
+        <section className="section-DataBanner">
+          <div className="stars">
             <Rating
               name={`product-rating-${product.id}`}
               value={ratingValue}
@@ -71,7 +71,7 @@ function BannerProduct({ products, productRatings }) {
 
           <Link
             to={`/${lang}/producto/${product.slug || product.id}`}
-            style={{ textDecoration: "none", color: "inherit", width: 200 }}
+            style={{ textDecoration: "none", color: "inherit" }}
           >
             <button className="btn-banner">Ver detalles</button>
           </Link>

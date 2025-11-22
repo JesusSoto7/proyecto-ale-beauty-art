@@ -1,7 +1,4 @@
-.carousel-container .carousel-items{
-    flex-wrap: wrap;
-    justify-content: center;
-}
+
 
 
 @media (max-width: 760px) {

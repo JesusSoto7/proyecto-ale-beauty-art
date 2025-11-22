@@ -3,6 +3,11 @@ import { useParams } from "react-router-dom";
 import { useTranslation } from 'react-i18next';
 import CircularProgress from '@mui/material/CircularProgress';
 import Typography from '@mui/material/Typography';
+import IconButton from '@mui/material/IconButton';
+import Drawer from '@mui/material/Drawer';
+import Box from '@mui/material/Box';
+import useMediaQuery from '@mui/material/useMediaQuery';
+import FilterListIcon from '@mui/icons-material/FilterList';
 import "../../assets/stylesheets/ProductosCliente.css";
 import { useOutletContext } from "react-router-dom";
 import { useAlert } from "../../components/AlertProvider.jsx";
@@ -26,6 +31,17 @@ function ProductosCliente() {
   const [productRatings, setProductRatings] = useState({});
   const [selectedRatings, setSelectedRatings] = useState([]);
   const { addAlert } = useAlert();
+  const isMdDown = useMediaQuery('(max-width: 992px)');
+  // JS fallback para asegurar detección exacta del ancho (algunos emuladores reportan 430 pero media query no coincide)
+  const [viewportWidth, setViewportWidth] = useState(() => window.innerWidth);
+  const isSmallTwoCol = viewportWidth >= 370 && viewportWidth <= 430;
+
+  useEffect(() => {
+    const onResize = () => setViewportWidth(window.innerWidth);
+    window.addEventListener('resize', onResize);
+    return () => window.removeEventListener('resize', onResize);
+  }, []);
+  const [filtersOpen, setFiltersOpen] = useState(false);
 
   const [currentPage, setCurrentPage] = useState(1);
   const [productsPerPage] = useState(15);
@@ -215,6 +231,158 @@ useEffect(() => {
     );
   };
 
+  // Reusable filters panel (used in desktop sidebar and mobile drawer)
+  const FiltersPanel = () => (
+    <>
+      <Typography variant="h6" className="prodcli-sidebar-title">
+        {t('filters.title')}
+      </Typography>
+      
+      <div className="prodcli-sidebar-section">
+        <Typography variant="subtitle1" className="prodcli-sidebar-subtitle">
+          {t('filters.categories')}
+        </Typography>
+        <div className="prodcli-radio-col">
+          <label>
+            <input
+              type="radio"
+              name="category"
+              checked={selectedCategory === "Todos"}
+              onChange={() => handleSelectCategory("Todos")}
+            />
+            {t('filters.allCategories')}
+          </label>
+          {categories.map(cat => (
+            <label key={cat.id_categoria || cat.id}>
+              <input
+                type="radio"
+                name="category"
+                checked={String(cat.id_categoria || cat.id) === String(selectedCategory)}
+                onChange={() => handleSelectCategory(cat.id_categoria || cat.id)}
+              />
+              {cat.nombre_categoria || cat.nombre}
+            </label>
+          ))}
+        </div>
+      </div>
+
+      <div className="prodcli-sidebar-section">
+        <Typography variant="subtitle1" className="prodcli-sidebar-subtitle">
+          {t('filters.subcategories')}
+        </Typography>
+        <div className="prodcli-radio-col">
+          <label>
+            <input
+              type="radio"
+              name="subcategory-all"
+              checked={selectedSubcategory === "Todos"}
+              onChange={() => handleSelectSubcategory("Todos")}
+            />
+            {t('filters.allSubcategories')}
+          </label>
+          {filteredSubcategories.map(sub => (
+            <label key={sub.id_subcategoria || sub.id}>
+              <input
+                type="radio"
+                name="subcategory"
+                checked={String(sub.id_subcategoria || sub.id) === String(selectedSubcategory)}
+                onChange={() => handleSelectSubcategory(sub.id_subcategoria || sub.id)}
+              />
+              {sub.nombre_subcategoria || sub.nombre}
+            </label>
+          ))}
+          {filteredSubcategories.length === 0 && selectedCategory !== "Todos" && (
+            <p className="prodcli-nosc">{t('filters.noSubcategories')}</p>
+          )}
+        </div>
+      </div>
+
+      <div className="prodcli-sidebar-section">
+        <Typography variant="subtitle1" className="prodcli-sidebar-subtitle">
+          {t('filters.sortByPrice')}
+        </Typography>
+        <div className="prodcli-radio-col">
+          <label>
+            <input
+              type="radio"
+              name="sort"
+              checked={sortOrder === null}
+              onChange={() => handleSort(null)}
+            />
+            {t('filters.unsorted')}
+          </label>
+          <label>
+            <input
+              type="radio"
+              name="sort"
+              checked={sortOrder === "asc"}
+              onChange={() => handleSort("asc")}
+            />
+            {t('filters.lowToHigh')}
+          </label>
+          <label>
+            <input
+              type="radio"
+              name="sort"
+              checked={sortOrder === "desc"}
+              onChange={() => handleSort("desc")}
+            />
+            {t('filters.highToLow')}
+          </label>
+        </div>
+      </div>
+
+      <div className="prodcli-sidebar-section">
+        <Typography variant="subtitle1" className="prodcli-sidebar-subtitle">
+          {t('filters.priceRange')}
+        </Typography>
+        <div className="prodcli-pricerange">
+          <input
+            type="number"
+            placeholder="$10.00"
+            value={priceRange.min}
+            onChange={(e) => handlePriceRangeChange(e.target.value, priceRange.max)}
+          />
+          <span>-</span>
+          <input
+            type="number"
+            placeholder="$100.00"
+            value={priceRange.max}
+            onChange={(e) => handlePriceRangeChange(priceRange.min, e.target.value)}
+          />
+        </div>
+      </div>
+
+      <div className="prodcli-sidebar-section">
+        <Typography variant="subtitle1" className="prodcli-sidebar-subtitle">
+          {t('products.rating')}
+        </Typography>
+        <div className="prodcli-radio-col">
+          {[4, 3, 2, 1].map(rating => (
+            <label key={rating}>
+              <input
+                type="checkbox"
+                checked={selectedRatings.includes(rating)}
+                onChange={() => handleRatingChange(rating)}
+              />
+              <span className="prodcli-star">{'★'.repeat(rating)}</span>
+              {rating} {rating !== 1 ? t('products.stars') : t('products.star')}
+            </label>
+          ))}
+        </div>
+      </div>
+
+      {(selectedCategory !== "Todos" || selectedSubcategory !== "Todos" || sortOrder || priceRange.min || priceRange.max || selectedRatings.length > 0) && (
+        <button 
+          onClick={handleClearAllFilters}
+          className="prodcli-clearbtn"
+        >
+          {t('products.clearFilters')}
+        </button>
+      )}
+    </>
+  );
+
 const toggleFavorite = async (productId) => {
     // Evita 401: no llames a favoritos sin token
     if (!token) {
@@ -368,159 +536,31 @@ const toggleFavorite = async (productId) => {
         </div>
 
         <div className="prodcli-mainrow prodcli-mainrow-centered">
-          {/* Sidebar de filtros */}
-          <div className="prodcli-sidebar">
-            <Typography variant="h6" className="prodcli-sidebar-title">
-              {t('filters.title')}
-            </Typography>
-            
-            <div className="prodcli-sidebar-section">
-              <Typography variant="subtitle1" className="prodcli-sidebar-subtitle">
-                {t('filters.categories')}
-              </Typography>
-              <div className="prodcli-radio-col">
-                <label>
-                  <input
-                    type="radio"
-                    name="category"
-                    checked={selectedCategory === "Todos"}
-                    onChange={() => handleSelectCategory("Todos")}
-                  />
-                  {t('filters.allCategories')}
-                </label>
-                {categories.map(cat => (
-                  <label key={cat.id_categoria || cat.id}>
-                    <input
-                      type="radio"
-                      name="category"
-                      checked={String(cat.id_categoria || cat.id) === String(selectedCategory)}
-                      onChange={() => handleSelectCategory(cat.id_categoria || cat.id)}
-                    />
-                    {cat.nombre_categoria || cat.nombre}
-                  </label>
-                ))}
-              </div>
+          {/* Sidebar de filtros (visible en desktop) */}
+          {!isMdDown && (
+            <div className="prodcli-sidebar">
+              <FiltersPanel />
             </div>
-
-            <div className="prodcli-sidebar-section">
-              <Typography variant="subtitle1" className="prodcli-sidebar-subtitle">
-                {t('filters.subcategories')}
-              </Typography>
-              <div className="prodcli-radio-col">
-                <label>
-                  <input
-                    type="radio"
-                    name="subcategory-all"
-                    checked={selectedSubcategory === "Todos"}
-                    onChange={() => handleSelectSubcategory("Todos")}
-                  />
-                  {t('filters.allSubcategories')}
-                </label>
-                {filteredSubcategories.map(sub => (
-                  <label key={sub.id_subcategoria || sub.id}>
-                    <input
-                      type="radio"
-                      name="subcategory"
-                      checked={String(sub.id_subcategoria || sub.id) === String(selectedSubcategory)}
-                      onChange={() => handleSelectSubcategory(sub.id_subcategoria || sub.id)}
-                    />
-                    {sub.nombre_subcategoria || sub.nombre}
-                  </label>
-                ))}
-                {filteredSubcategories.length === 0 && selectedCategory !== "Todos" && (
-                  <p className="prodcli-nosc">{t('filters.noSubcategories')}</p>
-                )}
-              </div>
-            </div>
-
-            <div className="prodcli-sidebar-section">
-              <Typography variant="subtitle1" className="prodcli-sidebar-subtitle">
-                {t('filters.sortByPrice')}
-              </Typography>
-              <div className="prodcli-radio-col">
-                <label>
-                  <input
-                    type="radio"
-                    name="sort"
-                    checked={sortOrder === null}
-                    onChange={() => handleSort(null)}
-                  />
-                  {t('filters.unsorted')}
-                </label>
-                <label>
-                  <input
-                    type="radio"
-                    name="sort"
-                    checked={sortOrder === "asc"}
-                    onChange={() => handleSort("asc")}
-                  />
-                  {t('filters.lowToHigh')}
-                </label>
-                <label>
-                  <input
-                    type="radio"
-                    name="sort"
-                    checked={sortOrder === "desc"}
-                    onChange={() => handleSort("desc")}
-                  />
-                  {t('filters.highToLow')}
-                </label>
-              </div>
-            </div>
-
-            <div className="prodcli-sidebar-section">
-              <Typography variant="subtitle1" className="prodcli-sidebar-subtitle">
-                {t('filters.priceRange')}
-              </Typography>
-              <div className="prodcli-pricerange">
-                <input
-                  type="number"
-                  placeholder="$10.00"
-                  value={priceRange.min}
-                  onChange={(e) => handlePriceRangeChange(e.target.value, priceRange.max)}
-                />
-                <span>-</span>
-                <input
-                  type="number"
-                  placeholder="$100.00"
-                  value={priceRange.max}
-                  onChange={(e) => handlePriceRangeChange(priceRange.min, e.target.value)}
-                />
-              </div>
-            </div>
-
-            <div className="prodcli-sidebar-section">
-              <Typography variant="subtitle1" className="prodcli-sidebar-subtitle">
-                {t('products.rating')}
-              </Typography>
-              <div className="prodcli-radio-col">
-                {[4, 3, 2, 1].map(rating => (
-                  <label key={rating}>
-                    <input
-                      type="checkbox"
-                      checked={selectedRatings.includes(rating)}
-                      onChange={() => handleRatingChange(rating)}
-                    />
-                    <span className="prodcli-star">{'★'.repeat(rating)}</span>
-                    {rating} {rating !== 1 ? t('products.stars') : t('products.star')}
-                  </label>
-                ))}
-              </div>
-            </div>
-
-            {(selectedCategory !== "Todos" || selectedSubcategory !== "Todos" || sortOrder || priceRange.min || priceRange.max || selectedRatings.length > 0) && (
-              <button 
-                onClick={handleClearAllFilters}
-                className="prodcli-clearbtn"
-              >
-                {t('products.clearFilters')}
-              </button>
-            )}
-          </div>
+          )}
 
           {/* ✅ PRODUCTOS CON PRODUCTCARD Y PAGINACIÓN */}
           <div className="prodcli-main prodcli-main-centered">
-            <div className="prodcli-products-grid">
+            {/* Toggle de filtros en móviles/tablets */}
+            {isMdDown && (
+              <div className={`prodcli-actions-bar ${isSmallTwoCol ? 'prodcli-small-actions' : ''}`}>
+                <IconButton
+                  className="prodcli-filter-toggle"
+                  onClick={() => setFiltersOpen(true)}
+                  aria-label={t('filters.title', 'Filtros')}
+                >
+                  <FilterListIcon />
+                  <span style={{ marginLeft: 8, fontWeight: 600 }}>
+                    {t('filters.title', 'Filtros')}
+                  </span>
+                </IconButton>
+              </div>
+            )}
+            <div className={`prodcli-products-grid ${isSmallTwoCol ? 'prodcli-grid-small' : ''}`}>
               {currentProducts.map((prod, index) => (
                 <ProductCard
                   key={prod.id}
@@ -587,6 +627,24 @@ const toggleFavorite = async (productId) => {
           </div>
         </div>
       </div>
+      {/* Drawer de filtros para móviles/tablets */}
+      <Drawer
+        anchor="left"
+        open={filtersOpen}
+        onClose={() => setFiltersOpen(false)}
+        ModalProps={{ keepMounted: true }}
+      >
+        <Box sx={{ width: 320, p: 2 }} role="presentation">
+          <FiltersPanel />
+          <button 
+            onClick={() => setFiltersOpen(false)}
+            className="prodcli-clearbtn"
+            style={{ marginTop: 12 }}
+          >
+            {t('products.close') || 'Cerrar'}
+          </button>
+        </Box>
+      </Drawer>
     </section>
   );
 }

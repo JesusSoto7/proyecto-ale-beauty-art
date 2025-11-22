@@ -37,6 +37,26 @@ body {
   margin: 0 auto;
 }
 
+/* Sección de botón y estrellas (desktop mantiene estilo PC) */
+.section-DataBanner {
+  display: flex;
+  flex-direction: row-reverse; /* botón a la izquierda, estrellas a la derecha como vista PC solicitada */
+  justify-content: flex-end;
+  align-items: center;
+  gap: 20px;
+}
+
+.section-DataBanner .stars {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-direction: row;
+}
+
+.section-DataBanner a { /* Link contenedor del botón */
+  width: 200px;
+}
+
 /* --- Zona morada con curva --- */
 .banner::before {
   content: "";
@@ -241,113 +261,737 @@ body {
 }
 
 
+/* === MEDIA QUERIES PARA RESPONSIVIDAD === /*
 
-/* vista portatil */
-@media (max-width: 1272px) {
+/* Laptops grandes (1280px - 1439px) */
+@media (min-width: 1280px) and (max-width: 1439px) {
   .banner {
-    width: 90%;
-    flex-direction: row;
-    /* height: fit-content; */
+    width: 92%;
+    height: 420px;
   }
 
   .banner::before {
-    height: 400px;
-    /* background: transparent; */
-    z-index: 1;
-  }
-
-  .bannerProduct-image-container {
-    width: 100%;
-    border-radius: 0;
-  }
-
-  .section-DataBanner{
-    justify-content: end;
-  }
-  
-  .banner-info{
-    width: 90%;
-  }
-}
-
-
-/* vista portatil */
-@media (max-width: 1145px) {
-  .bannerProducts {
-    flex-direction: column;
-    height: fit-content;
-  }
-
-  .bannerProduct-image-container {
-    height: 100%;
-    width: 100%;
-    border-radius: 0;
-  }
-
-  .banner-title {
-    font-size: 50px;
-  }
-
-  .section-DataBanner{
-    justify-content: end;
-  }
-
-  .banner-info{
-    width: 90%;
-  }
-}
-
-
-/* vista movil */
-@media (max-width: 1070px) {
-  .banner {
-    flex-direction: column-reverse;
-    height: fit-content;
-    border: solid 1px #c9c9c9;
-  }
-
-  .banner::before{
-    background: transparent;
-  }
-
-  .image-area{
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-  }
-
-  .text-strip-H{
-    width: 100%;
-    display: block;
-  }
-
-  .text-content-H span{
-    margin-top: 7px;
-  }
-  .text-strip{
-    display: none;
-    
-  }
-
-  .circle-image {
-    width: 100%;
-    height: 320px;
-    border-radius: 0;
-    object-fit: contain;
-    background-color: #fff;
-    border: none;
+    min-width: 680px;
+    clip-path: path("M0,0 C1150,0 380,140 1150,420 L0,420 Z");
   }
 
   .content {
-    padding-left: 0px;
-    max-width: 100%;
-    padding: 10px;
+    padding-left: 70px;
+    max-width: 50%;
   }
 
-  .section-DataBanner{
-    width: 100%;
+  .content h1 {
+    font-size: 46px;
   }
-  #desc{
+
+  .circle-image {
+    width: 340px;
+    height: 340px;
+  }
+
+  .text-strip-H {
+    display: none;
+  }
+}
+
+/* Laptops pequeños (1024px - 1279px) */
+@media (min-width: 1024px) and (max-width: 1279px) {
+  .banner {
+    width: 94%;
+    height: 380px;
+  }
+
+  .banner::before {
+    min-width: 580px;
+    clip-path: path("M0,0 C950,0 320,120 950,380 L0,380 Z");
+  }
+
+  .content {
+    padding-left: 50px;
+    max-width: 50%;
+  }
+
+  .content h1 {
+    font-size: 40px;
+  }
+
+  .content h2 {
+    font-size: 20px;
+  }
+
+  .circle-image {
+    width: 300px;
+    height: 300px;
+  }
+
+  .text-strip {
+    width: 35px;
+    height: 380px;
+  }
+
+  .text-content span {
+    height: 380px;
+    font-size: 16px;
+  }
+
+  .text-strip-H {
+    display: none;
+  }
+}
+
+/* Tabletas grandes (768px - 1023px) */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .banner {
+    width: 96%;
+    height: 350px;
+  }
+
+  .banner::before {
+    min-width: 480px;
+    clip-path: path("M0,0 C750,0 280,100 750,350 L0,350 Z");
+  }
+
+  .content {
+    padding-left: 40px;
+    max-width: 52%;
+  }
+
+  .content h1 {
+    font-size: 34px;
+  }
+
+  .content h2 {
+    font-size: 18px;
+  }
+
+  .content p {
+    font-size: 13px;
+  }
+
+  .circle-image {
+    width: 260px;
+    height: 260px;
+  }
+
+  .text-strip {
+    width: 32px;
+    height: 350px;
+  }
+
+  .text-content span {
+    height: 350px;
+    font-size: 14px;
+  }
+
+  .text-strip-H {
+    display: none;
+  }
+
+  /* Botón y estrellas en columna para tabletas */
+  .section-DataBanner {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .btn-banner {
+    width: 180px;
+  }
+}
+
+/* Tabletas pequeñas (600px - 767px) */
+@media (min-width: 600px) and (max-width: 767px) {
+  .banner {
+    width: 97%;
+    height: 320px;
+  }
+
+  .banner::before {
+    min-width: 420px;
+    clip-path: path("M0,0 C650,0 250,80 650,320 L0,320 Z");
+  }
+
+  .content {
+    padding-left: 35px;
+    max-width: 55%;
+  }
+
+  .content h1 {
+    font-size: 30px;
+  }
+
+  .content h2 {
+    font-size: 16px;
+  }
+
+  .content p {
+    font-size: 12px;
+  }
+
+  .circle-image {
+    width: 220px;
+    height: 220px;
+  }
+
+  .text-strip {
+    width: 30px;
+    height: 320px;
+    margin-right: 10px;
+  }
+
+  .text-content span {
+    height: 320px;
+    font-size: 13px;
+  }
+
+  .text-strip-H {
+    display: none;
+  }
+
+  /* Botón y estrellas en columna */
+  .section-DataBanner {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .btn-banner {
+    width: 170px;
+    padding: 9px;
+  }
+}
+
+
+/* Teléfonos grandes (425px - 599px) */
+@media (min-width: 425px) and (max-width: 599px) {
+  .banner {
+    width: 97%;
+    height: 250px;
+    flex-direction: column;
+    position: relative; /* Añadido para posicionamiento absoluto */
+  }
+
+  .banner::before {
+    min-width: 100%;
+    height: 100%;
+    clip-path: path("M0,0 C200,0 200,90 600,280 L0,280 Z");
+  }
+
+  .content {
+    padding: 25px 25px 0;
+    max-width: 100%;
+    text-align: left;
+    margin-top: -30px;
+  }
+
+  .content h1 {
+    font-size: 24px;
+    margin-top: 15px;
+  }
+
+  .content h2 {
+    font-size: 16px;
+    text-align: center;
+  }
+
+  .content p {
+    font-size: 13px;
+    max-width: 85%;
+    margin: 12px auto;
+  }
+
+  .circle-image {
+    width: 150px;
+    height: 150px;
+    margin-top: -260px;
+    margin-left: 200px;
+  }
+
+  .text-strip {
+    display: none;
+  }
+
+
+
+  .text-content-H {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    animation: scrollTextVertical 15s linear infinite;
+  }
+
+  .text-content-H span {
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+    font-size: 12px;
+    font-weight: bold;
+    color: white;
+    letter-spacing: 2px;
+    height: auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-transform: uppercase;
+    white-space: nowrap;
+    margin: 8px 0;
+  }
+
+  @keyframes scrollTextVertical {
+    0% {
+      transform: translateY(0);
+    }
+    100% {
+      transform: translateY(-100%);
+    }
+  }
+
+  /* Botón y estrellas en columna centrados */
+  .section-DataBanner {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .btn-banner {
+    width: 150px;
+    margin: 0;
+  }
+
+  .bannerProducts-loading {
+    width: 97%;
+    height: 500px;
+  }
+}
+
+/* Teléfonos pequeños (375px - 424px) */
+@media (max-width: 424px) {
+  .banner {
+    width: 98%;
+    height: 190px;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    padding: 15px;
+    position: relative; /* Añadir esto para contexto de z-index */
+  }
+
+  .banner::before {
+    height: 100%;
+    clip-path: path("M0,0 C200,0 100,80 600,380 L0,380 Z");
+    z-index: 2; /* Parte rosa por encima */
+  }
+
+  .content {
+    padding: 0 15px;
+    max-width: 55%;
+    text-align: left;
+    z-index: 3; /* Contenido por encima */
+    position: relative;
+  }
+
+  .content h1 {
+    font-size: 16px; /* Reducido de 22px a 16px */
+    margin-bottom: 5px;
+  }
+
+  .content h2 {
+    font-size: 12px; /* Reducido de 14px a 12px */
+    text-align: left;
+    margin-bottom: 5px;
+  }
+
+  .content p {
+    font-size: 11px;
+    max-width: 100%;
+    margin: 8px 0;
+  }
+
+  .circle-image {
+    width: 140px;
+    height: 140px;
+    margin-right: 10px;
+    z-index: 4; /* Imagen por encima de TODO - Cambiado a 4 */
+    position: relative;
+  }
+
+  /* TEXT-STRIP-H DETRÁS DE ABSOLUTAMENTE TODO */
+  .text-strip-H {
+    width: 30%;
+    height: 500px;
+    overflow: hidden;
+    margin-left: 150px;
+    background: #2c2c2c00;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    z-index: 1; /* Detrás de todo, incluyendo la parte rosa */
+    left: 0;
+    top: -90px;
+  }
+
+  .text-content-H {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    animation: scrollTextVertical 15s linear infinite;
+    margin-left: 30px;
+    z-index: 1; /* Añadir esto */
+  }
+
+  .text-content-H span {
+    writing-mode: vertical-rl;
+    text-orientation: upright;
+    font-size: 12px;
+    font-weight: bold;
+    color: white;
+    letter-spacing: 3px;
+    height: 200px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-transform: uppercase;
+    /* Eliminar z-index y position del span - no son necesarios */
+  }
+
+  @keyframes scrollTextVertical {
+    0% {
+      transform: translateY(0);
+    }
+    100% {
+      transform: translateY(-800px);
+    }
+  }
+
+  /* Botón sobre las estrellas en columna */
+  .section-DataBanner {
+    flex-direction: column !important;
+    align-items: right;
+    gap: 8px;
+    margin-top: -100px;
+    z-index: 3; /* Por encima */
+    position: relative;
+  }
+
+  .btn-banner {
+    width: 160px;
+    padding: 8px;
+    font-size: 12px;
+    order: -1;
+  }
+
+  #desc {
+    min-height: 80px;
+    max-height: 90px;
+    margin-bottom: 10px;
+  }
+}
+
+@media (min-width: 375px) and (max-width: 390px) {
+  .banner {
+    width: 99%;
+    height: 170px; /* Reducido de 180px */
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px; /* Reducido de 10px */
+    position: relative;
+  }
+
+  .banner::before {
+    height: 100%;
+    clip-path: path("M0,0 C120,0 60,60 500,350 L0,350 Z"); /* Ajustado para pantalla más pequeña */
+    z-index: 2;
+  }
+
+  .content {
+    padding: 0 8px; /* Reducido de 10px */
+    max-width: 57%; /* Reducido de 55% */
+    text-align: left;
+    z-index: 3;
+    position: relative;
+  }
+
+  .content h1 {
+    font-size: 20px; /* Reducido de 15px */
+    margin-top: 5px; /* Reducido de 5px */
+  }
+
+  .content h2 {
+    font-size: 10px; /* Reducido de 11px */
+    text-align: left;
+    margin-bottom: 4px; /* Reducido de 5px */
+  }
+
+  .content p {
+    font-size: 9px; /* Reducido de 10px */
+    max-width: 100%;
+    margin: 6px 0; /* Reducido de 8px */
+    line-height: 1.2; /* Añadido para mejor legibilidad */
+  }
+
+  .circle-image {
+    width: 110px; /* Reducido de 130px */
+    height: 110px; /* Reducido de 130px */
+    margin-right: 10px; /* Reducido de 8px */
+    z-index: 4;
+    position: relative;
+  }
+
+  /* Ocultar text-strip-H en pantallas muy pequeñas */
+  .text-strip-H {
+    display: absolute;
+    margin-left: 200px ;
+  }
+
+  /* Botón sobre las estrellas en columna */
+  .section-DataBanner {
+    flex-direction: column !important;
+    align-items: right;
+    gap: 6px; /* Reducido de 8px */
+    margin-top: -130px; /* Ajustado de -90px */
+    z-index: 3;
+    position: relative;
+  }
+
+  .btn-banner {
+    width: 120px; /* Reducido de 140px */
+    padding: 6px; /* Reducido de 7px */
+    font-size: 10px; /* Reducido de 11px */
+    order: -1;
+  }
+
+  /* Estrellas más pequeñas */
+  .section-DataBanner .stars {
+    transform: scale(0.7); /* Más reducido para pantalla pequeña */
+    transform-origin: left center;
+    
+  }
+
+  #desc {
+    min-height: 60px; /* Reducido de 70px */
+    max-height: 70px; /* Reducido de 80px */
+    margin-bottom: 6px; /* Reducido de 8px */
+  }
+}
+
+@media (max-width: 360px) {
+  .banner {
     width: 100%;
+    height: 160px;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    padding: 5px;
+    position: relative;
+  }
+
+  /* Orden vertical: botón encima de estrellas */
+  .section-DataBanner {
+    width: 100%;
+    flex-direction: column; /* apilar */
+    align-items: flex-start;
+    gap: 14px;
+  }
+  .section-DataBanner a { order: 0; width: 100%; }
+  .section-DataBanner .stars { order: 1; }
+
+  /* Fuente horizontal más pequeña y menor separación */
+  .text-content-H span {
+    font-size: 16px;
+    letter-spacing: 1.5px;
+  }
+  :root { --H-gap: 32px; }
+
+
+/* Pantallas medianas adicionales (<= 768px) */
+@media (max-width: 768px) {
+  .text-content-H span {
+    font-size: 14px;
+    letter-spacing: 1.2px;
+  }
+  :root { --H-gap: 28px; }
+}
+
+/* Pantallas pequeñas (<= 480px) */
+@media (max-width: 480px) {
+  .text-content-H span {
+    font-size: 12px;
+    letter-spacing: 1px;
+  }
+  :root { --H-gap: 22px; }
+}
+  .banner::before {
+    height: 100%;
+    clip-path: path("M0,0 C100,0 50,50 400,300 L0,300 Z");
+    z-index: 2;
+  }
+
+  .content {
+    padding: 0 5px;
+    max-width: 60%;
+    text-align: left;
+    z-index: 3;
+    position: relative;
+  }
+
+  .content h1 {
+    font-size: 18px;
+    margin-top: 5px;
+  }
+
+  .content h2 {
+    font-size: 9px;
+    text-align: left;
+    margin-bottom: 4px;
+  }
+
+  .content p {
+    font-size: 8px;
+    max-width: 100%;
+    margin: 5px 0;
+    line-height: 1.2;
+  }
+
+  .circle-image {
+    width: 100px;
+    height: 100px;
+    margin-right: 8px;
+    z-index: 4;
+    position: relative;
+  }
+
+  .text-strip-H {
+    display: none;
+  }
+
+  .text-content-span {
+    writing-mode: vertical-rl;
+    text-orientation: upright;
+    font-size: 8px;
+    color: white;
+    letter-spacing: 2px;
+    height: auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-transform: uppercase;
+    white-space: nowrap;
+    margin: 5px 0;
+  }
+
+  /* Botón sobre las estrellas en columna */
+  .section-DataBanner {
+    flex-direction: column !important;
+    align-items: right;
+    gap: 5px;
+    margin-top: -140px;
+    z-index: 3;
+    position: relative;
+  }
+
+  .btn-banner {
+    width: 110px;
+    padding: 5px;
+    font-size: 9px;
+    order: -1;
+  }
+  
+  /* Estrellas más pequeñas */
+  .section-DataBanner .stars {
+    transform: scale(0.6);
+    transform-origin: left center;
+    margin-bottom: -10px;
+  }
+
+  #desc {
+    min-height: 50px;
+    max-height: 60px;
+    margin-bottom: 5px;
+  }
+}
+
+/* Orientación horizontal en móviles */
+@media (max-height: 500px) and (orientation: landscape) {
+  .banner {
+    height: 280px;
+    flex-direction: row;
+    width: 97%;
+  }
+
+  .banner::before {
+    height: 100%;
+    clip-path: path("M0,0 C600,0 250,70 600,280 L0,280 Z");
+  }
+
+  .content {
+    padding-left: 25px;
+    max-width: 55%;
+    text-align: left;
+  }
+
+  .content h1 {
+    font-size: 22px;
+  }
+
+  .content h2 {
+    font-size: 14px;
+    text-align: left;
+  }
+
+  .content p {
+    font-size: 11px;
+    max-width: 100%;
+    margin: 5px 0;
+  }
+
+  .circle-image {
+    width: 130px;
+    height: 130px;
+    margin-top: 0;
+  }
+
+  .text-strip-H {
+    display: none;
+  }
+
+  /* En landscape, mantener botón y estrellas en columna */
+  .section-DataBanner {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .btn-banner {
+    width: 150px;
+    padding: 6px;
+    font-size: 12px;
+  }
+
+  #desc {
+    min-height: 70px;
+    max-height: 80px;
+  }
+}
+
+/* Ajustes para alta densidad de píxeles */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  .circle-image {
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: crisp-edges;
+  }
+}
+
+/* Subir botón y estrellas dentro del banner entre 431px y 596px */
+@media (min-width: 431px) and (max-width: 596px) {
+  .section-DataBanner {
+    margin-top: -70px; /* subir la sección para que quede dentro del banner */
+  }
+}
+
+/* En <=419px ocultar los spans duplicados de la tira horizontal */
+@media (max-width: 419px) {
+  .text-content-H span:nth-child(n+5) {
+    display: none;
   }
 }

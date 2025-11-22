@@ -8,6 +8,7 @@ import { useTranslation } from 'react-i18next';
 import FloatingChat from '../../components/FloatingChat';
 import "../../assets/stylesheets/RankingPro.css";
 import '../../assets/stylesheets/ProductCard.css';
+import '../../assets/stylesheets/Inicio.css';
 import RankingPro from '../../components/rankingPro.jsx';
 import { useAlert } from "../../components/AlertProvider.jsx";
 import { useHomeData } from './hooks/useHomeData';
@@ -122,7 +123,7 @@ function Inicio() {
           </button>
         </div>
       ) : carousel.length > 0 ? (
-        <Carousel interval={3000} className="mb-0">
+        <Carousel interval={3000} className="main-carousel mb-0">
           {carousel.map(item => (
             <Carousel.Item key={item.id}>
               <img
@@ -216,6 +217,7 @@ function Inicio() {
           alt={t('home.newsBannerAlt')}
           loading="lazy"
           decoding="async"
+          className="banner-novedades-img"
           style={{
             width: "100%",
             height: "350px",
