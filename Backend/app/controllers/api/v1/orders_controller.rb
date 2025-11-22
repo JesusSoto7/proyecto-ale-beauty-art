@@ -185,11 +185,21 @@ class Api::V1::OrdersController < Api::V1::BaseController
   end
 
   def orders_completed_per_day
-    data = Order.where(status: :pagada)
-                    .group("DATE(created_at)")
-                    .order("DATE(created_at)")
-                    .count
-    render json: data
+    begin
+      return render json: { error: "No hay órdenes completadas" }, status: :not_found if Order.where(status: :pagada).empty?
+
+      data = Order.where(status: :pagada)
+                  .group_by_day(:created_at, time_zone: "America/Bogota")
+                  .count
+
+      formatted_data = data.transform_keys { |date| date.iso8601 } # Usar formato ISO explícito
+
+      Rails.logger.info "Data procesada: #{formatted_data.inspect}"
+      render json: formatted_data
+    rescue => e
+      Rails.logger.error "Error en orders_completed_per_day: #{e.message}"
+      render json: { error: "Error interno en orders_completed_per_day: #{e.message}" }, status: :internal_server_error
+    end
   end
 
   def total_sales
@@ -198,14 +208,29 @@ class Api::V1::OrdersController < Api::V1::BaseController
   end
 
   def total_sales_per_day
-    data = Order.where(status: :pagada)
-                .group("DATE(created_at)")
-                .order("DATE(created_at)")
-                .sum(:pago_total)
+    begin
+      # Filtra órdenes pagadas y asegura que tengan fecha_pago válida
+      data = Order.where(status: :pagada)
+                  .where.not(fecha_pago: nil)
+                  .group_by_day(:fecha_pago, time_zone: "America/Bogota")
+                  .sum(:pago_total)
+                  
+      # Si no se encuentran datos, retorna {} en lugar de un error
+      if data.empty?
+        Rails.logger.info "No existen datos de ventas por día disponibles."
+        render json: { message: "No hay datos disponibles", data: {} }, status: :ok
+        return
+      end
 
-    render json: data
+      formatted_data = data.transform_keys { |date| date.iso8601 }
+      Rails.logger.info "Datos enviados usando fecha_pago: #{formatted_data.inspect}"
+      render json: formatted_data
+    rescue => e
+      Rails.logger.error "Error en total_sales_per_day: #{e.message}"
+      render json: { error: "Error interno en total_sales_per_day: #{e.message}" }, status: :internal_server_error
+    end
   end
-  
+    
   def total_sales_by_category
     categories = Category
                 .left_joins(products: { order_details: :order })

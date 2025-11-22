@@ -22,8 +22,17 @@ class Api::V1::PaymentsController < Api::V1::BaseController
       }
     }
 
+    Rails.logger.info "🔹 Datos de pago enviados a MercadoPago: #{payment_data.inspect}"
     payment_response = sdk.payment.create(payment_data)
+
+    if payment_response[:response].nil? || payment_response[:response].empty?
+      Rails.logger.error "❌ Error en la respuesta de MercadoPago: #{payment_response.inspect}"
+      render json: { error: "Error procesando el pago con MercadoPago", detail: payment_response }, status: :internal_server_error
+      return
+    end
+
     payment = payment_response[:response]
+    Rails.logger.info "🔹 Respuesta de MercadoPago: #{payment_response.inspect}"
 
     order = Order.find(params[:order_id])
 
@@ -47,18 +56,18 @@ class Api::V1::PaymentsController < Api::V1::BaseController
         order.update_column(:correo_cliente, guest_email) if guest_email.present?
       end
 
-      # Limpiar carrito backend del dueño de la orden (funciona logueado o no)
+      # Limpiar carrito backend del dueño de la orden
       begin
         if order.user&.cart
           order.user.cart.cart_products.destroy_all
         else
-          # fallback por si en algún entorno sí tienes current_user seteado
           current_user&.cart&.cart_products&.destroy_all
         end
       rescue => e
         Rails.logger.warn "No se pudo limpiar el carrito del usuario para la orden #{order.id}: #{e.message}"
       end
 
+      # Enviar factura
       begin
         InvoiceMailer.enviar_factura(
           order,
@@ -70,14 +79,18 @@ class Api::V1::PaymentsController < Api::V1::BaseController
         Rails.logger.warn "No se pudo enviar la factura (web): #{e.message}"
       end
 
+      redirect_url = "#{frontend_url}/#{params[:lang]}/checkout/success/#{payment['id']}"
+      Rails.logger.info "🔹 URL generada para redirección: #{redirect_url}"
+      
       render json: {
         message: "Pago exitoso",
         id: payment["id"],
-        redirect_url: "#{frontend_url}/#{params[:lang]}/checkout/success/#{payment['id']}",
+        redirect_url: redirect_url,
         clear_guest_cart: order.user_id.nil?
       }, status: :ok
     else
       order.update(status: :cancelada)
+      Rails.logger.warn "Pago rechazado. Detalles: #{payment['status_detail']}"
       render json: { error: "Pago rechazado", status: payment["status"], detail: payment["status_detail"] }, status: :unprocessable_entity
     end
   end

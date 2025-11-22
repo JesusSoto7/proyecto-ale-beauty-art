@@ -146,7 +146,28 @@ class Api::V1::AnalyticsController < Api::V1::BaseController
 
     render json: { labels: labels, values: values }
   end
-  
+
+  def record_page_view
+    date_key = Date.current.to_s # "2025-11-16"
+    path = params[:path].presence || "unknown"
+
+    # Key por día y por path (si quieres segmentar por ruta)
+    day_key = "page_views:day:#{date_key}"
+    path_day_key = "page_views:day:#{date_key}:path:#{path}"
+
+    # Incrementos atómicos
+    $redis.incr(day_key)
+    $redis.incr(path_day_key)
+    # Opcional: un contador total global
+    $redis.incr("page_views:total")
+
+    head :no_content
+  rescue => e
+    Rails.logger.error("record_page_view error: #{e.message}")
+    render json: { error: "Error recording view" }, status: :internal_server_error
+  end
+
+
 =begin 
   def top_3_products
     property_id = "properties/508198956"

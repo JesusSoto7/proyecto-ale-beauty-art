@@ -24,8 +24,6 @@ export default function MainGrid() {
   const [totalSalesCharData, setTotalSalesCharData] = React.useState({ labels: [], values: [] });
   const [googlePageViewsData, setGooglePageViewsData] = React.useState({ labels: [], values: [] });
 
-  // estados nuevos para vistas
-  const [totalPageViews, setTotalPageViews] = React.useState(0);
   const [pageViewsCharData, setPageViewsCharData] = React.useState({ labels: [], values: [] });
 
   const { t } = useTranslation();
@@ -41,19 +39,43 @@ export default function MainGrid() {
     apiGet('/api/v1/total_sales', token)
       .then((data) => setTotalSales(formatCOP(data?.total_sales ?? 0)))
       .catch(console.error);
-
     apiGet('/api/v1/total_sales_per_day', token)
       .then((data) => {
-        const labels = Object.keys(data || {}).map(dateStr => {
-          const bogotaDate = new Date(
-            new Date(dateStr).toLocaleString("en-US", { timeZone: "America/Bogota" })
-          );
-          return bogotaDate.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+        if (!data || !Object.keys(data).length) {
+          console.warn("No hay datos de ventas por día disponibles.");
+          setTotalSalesCharData({ labels: ["Sin datos"], values: [0] }); // Mostrar valores predeterminados
+          return;
+        }
+
+        const processedData = Object.keys(data).map(dateStr => {
+          const isoDate = new Date(`${dateStr}T00:00:00`); // Asegura formato ISO
+          if (isNaN(isoDate)) {
+            console.error(`Fecha inválida recibida del backend: ${dateStr}`);
+            return { label: "Fecha inválida", value: 0 };
+          }
+          return {
+            label: isoDate.toLocaleDateString("es-CO", { // Formatear para UI
+              year: "numeric",
+              month: "short",
+              day: "numeric",
+            }),
+            value: Number(data[dateStr] || 0),
+          };
         });
-        const values = Object.values(data || {}).map((v) => Number(v) || 0);
-        setTotalSalesCharData({ labels, values });
+
+        const sortedData = processedData.sort(
+          (a, b) => new Date(a.label) - new Date(b.label)
+        );
+
+        setTotalSalesCharData({
+          labels: sortedData.map(item => item.label),
+          values: sortedData.map(item => item.value),
+        });
       })
-      .catch(console.error);
+      .catch((error) => {
+        console.error("Error obteniendo datos de ventas por día:", error);
+        setTotalSalesCharData({ labels: ["Error"], values: [0] }); // Manejar errores
+      });
   }, [token]);
 
   React.useEffect(() => {
@@ -65,14 +87,19 @@ export default function MainGrid() {
 
     apiGet('/api/v1/orders_completed_per_day', token)
       .then((data) => {
-        const labels = Object.keys(data || {}).map(dateStr => {
-          const bogotaDate = new Date(
-            new Date(dateStr).toLocaleString("en-US", { timeZone: "America/Bogota" })
-          );
-          return bogotaDate.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+        const adjustedLabels = Object.keys(data || {}).map(dateStr => {
+          const localDate = new Date(dateStr + "T00:00:00");
+          return localDate.toLocaleDateString("es-CO", {
+            timeZone: "America/Bogota",
+            year: "numeric",
+            month: "short",
+            day: "numeric"
+          });
         });
-        const values = Object.values(data || {}).map((v) => Number(v) || 0);
-        setOrderCharData({ labels, values });
+
+        const values = Object.values(data || {}).map(value => Number(value) || 0);
+        setOrderCharData({ labels: adjustedLabels, values });
+
       })
       .catch(console.error);
   }, [token]);
@@ -117,14 +144,28 @@ export default function MainGrid() {
 
     apiGet('/api/v1/registrations_per_day', token)
       .then((data) => {
-        const labels = Object.keys(data || {}).map(dateStr => {
-          const bogotaDate = new Date(
+        // Combina etiquetas y valores en pares
+        const combinedData = Object.keys(data || {}).map((dateStr) => ({
+          label: new Date(
             new Date(dateStr).toLocaleString("en-US", { timeZone: "America/Bogota" })
-          );
-          return bogotaDate.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+          ).toLocaleDateString("en-US", { month: "short", day: "numeric" }),
+          value: Number(data[dateStr] || 0),
+        }));
+
+        // Ordena los pares basándose en las etiquetas (fechas)
+        const sortedData = combinedData.sort(
+          (a, b) => new Date(a.label) - new Date(b.label)
+        );
+
+        // Separa nuevamente las etiquetas y los valores ordenados
+        const sortedLabels = sortedData.map((item) => item.label);
+        const sortedValues = sortedData.map((item) => item.value);
+
+        // Actualiza el estado con datos ordenados
+        setUserChartData({
+          labels: sortedLabels,
+          values: sortedValues,
         });
-        const values = Object.values(data || {}).map((v) => Number(v) || 0);
-        setUserChartData({ labels, values });
       })
       .catch(console.error);
   }, [token]);
