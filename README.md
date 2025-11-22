@@ -29,5 +29,5 @@ Things you may want to cover:
 
 ## FOTOS DE PRODUCTOS
 
-* https://drive.google.com/file/d/1ESJHXlBzxnQYJ3skbWtwOFSv5sExYaOi/view?usp=sharing
+* https://drive.google.com/drive/folders/1tD59lz2h_R7_Vf0V8MOh50kQzkd0jY0C?usp=drive_link
 
