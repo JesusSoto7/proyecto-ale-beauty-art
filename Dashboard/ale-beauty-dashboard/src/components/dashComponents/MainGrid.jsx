@@ -22,6 +22,7 @@ export default function MainGrid() {
   const [orderCharData, setOrderCharData] = React.useState({ labels: [], values: [] });
   const [totalSales, setTotalSales] = React.useState(0);
   const [totalSalesCharData, setTotalSalesCharData] = React.useState({ labels: [], values: [] });
+  const [googlePageViewsData, setGooglePageViewsData] = React.useState({ labels: [], values: [] });
 
   // estados nuevos para vistas
   const [totalPageViews, setTotalPageViews] = React.useState(0);
@@ -79,6 +80,37 @@ export default function MainGrid() {
   React.useEffect(() => {
     if (!token) return;
 
+    apiGet('/api/v1/analytics/google_page_views', token)
+      .then((data) => {
+        // Combina etiquetas y valores en pares
+        const combinedData = (data.labels || []).map((label, index) => ({
+          label,
+          value: data.values[index] || 0,
+        }));
+
+        // Ordena los pares basándose en las etiquetas (fechas)
+        const sortedData = combinedData.sort(
+          (a, b) => new Date(a.label) - new Date(b.label)
+        );
+
+        // Separa nuevamente las etiquetas y los valores ordenados
+        const sortedLabels = sortedData.map((item) => item.label);
+        const sortedValues = sortedData.map((item) => item.value);
+
+        // Actualiza el estado con datos ordenados
+        setGooglePageViewsData({
+          labels: sortedLabels,
+          values: sortedValues,
+        });
+      })
+      .catch((err) => {
+        console.error("google_page_views error:", err);
+      });
+  }, [token]);
+
+  React.useEffect(() => {
+    if (!token) return;
+
     apiGet('/api/v1/count', token)
       .then((data) => setUserCount(Number(data?.count ?? 0)))
       .catch(console.error);
@@ -97,34 +129,6 @@ export default function MainGrid() {
       .catch(console.error);
   }, [token]);
 
-  // NUEVO: obtener datos de vistas desde backend (analytics controller)
-  React.useEffect(() => {
-    if (!token) return;
-
-    apiGet('/api/v1/analytics/total_page_views', token)
-      .then((data) => setTotalPageViews(data?.total_page_views ?? 0))
-      .catch((err) => {
-        console.error("total_page_views error:", err);
-        console.error("body:", err.body);
-      });
-
-
-    apiGet('/api/v1/analytics/page_views_per_day', token)
-      .then((data) => {
-        const labels = Object.keys(data || {}).map(dateStr => {
-          const bogotaDate = new Date(
-            new Date(dateStr).toLocaleString("en-US", { timeZone: "America/Bogota" })
-          );
-          return bogotaDate.toLocaleDateString("en-US", { month: "short", day: "numeric" });
-        });
-        const values = Object.values(data || {}).map((v) => Number(v) || 0);
-        setPageViewsCharData({ labels, values });
-      })
-      .catch((err) => {
-        console.error("page_views_per_day error:", err);
-        console.error("body:", err.body);
-      });
-  }, [token]);
 
   // compute a simple trend & delta from last two data points
   function computeTrendInfo(values) {
@@ -152,7 +156,7 @@ export default function MainGrid() {
 
   const cards = [
     {
-      title: 'Total vendido',
+      title: 'Ganancias Totales',
       value: totalSales,
       interval: 'Últimos 30 días',
       trend: totalSalesTrend.trend,
@@ -175,14 +179,14 @@ export default function MainGrid() {
     },
     {
       title: 'Visitas a la página',
-      value: totalPageViews,
+      value: googlePageViewsData.values.reduce((acc, curr) => acc + curr, 0),
       interval: 'Últimos 30 días',
-      trend: pageViewsTrend.trend,
-      percentText: pageViewsTrend.percentText,
-      deltaText: `${pageViewsTrend.deltaText} vs prev`,
+      trend: computeTrendInfo(googlePageViewsData.values).trend,
+      percentText: computeTrendInfo(googlePageViewsData.values).percentText,
+      deltaText: `${computeTrendInfo(googlePageViewsData.values).deltaText} vs prev`,
       subtitle: '',
-      data: pageViewsCharData.values || [],
-      labels: pageViewsCharData.labels || [],
+      data: googlePageViewsData.values,
+      labels: googlePageViewsData.labels,
       icon: VisibilityOutlinedIcon,
     },
   ];
