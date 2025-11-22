@@ -141,35 +141,44 @@ export default function MainGrid() {
     apiGet('/api/v1/count', token)
       .then((data) => setUserCount(Number(data?.count ?? 0)))
       .catch(console.error);
-
     apiGet('/api/v1/registrations_per_day', token)
       .then((data) => {
-        // Combina etiquetas y valores en pares
-        const combinedData = Object.keys(data || {}).map((dateStr) => ({
-          label: new Date(
-            new Date(dateStr).toLocaleString("en-US", { timeZone: "America/Bogota" })
-          ).toLocaleDateString("en-US", { month: "short", day: "numeric" }),
-          value: Number(data[dateStr] || 0),
-        }));
+        if (!data || !Object.keys(data).length || data.message) {
+          console.warn("No hay registros de usuarios.");
+          setUserChartData({ labels: ["Sin datos"], values: [0] });
+          return;
+        }
 
-        // Ordena los pares basándose en las etiquetas (fechas)
-        const sortedData = combinedData.sort(
+        const processedData = Object.keys(data).map(dateStr => {
+          const isoDate = new Date(`${dateStr}T00:00:00`);
+          if (isNaN(isoDate)) {
+            console.error(`Fecha inválida recibida del backend: ${dateStr}`);
+            return { label: "Fecha inválida", value: 0 };
+          }
+          return {
+            label: isoDate.toLocaleDateString("es-CO", {
+              year: "numeric",
+              month: "short",
+              day: "numeric",
+            }),
+            value: Number(data[dateStr] || 0),
+          };
+        });
+
+        const sortedData = processedData.sort(
           (a, b) => new Date(a.label) - new Date(b.label)
         );
 
-        // Separa nuevamente las etiquetas y los valores ordenados
-        const sortedLabels = sortedData.map((item) => item.label);
-        const sortedValues = sortedData.map((item) => item.value);
-
-        // Actualiza el estado con datos ordenados
         setUserChartData({
-          labels: sortedLabels,
-          values: sortedValues,
+          labels: sortedData.map(item => item.label),
+          values: sortedData.map(item => item.value),
         });
       })
-      .catch(console.error);
+      .catch((error) => {
+        console.error("Error obteniendo datos de usuarios registrados:", error);
+        setUserChartData({ labels: ["Error"], values: [0] });
+      });
   }, [token]);
-
 
   // compute a simple trend & delta from last two data points
   function computeTrendInfo(values) {

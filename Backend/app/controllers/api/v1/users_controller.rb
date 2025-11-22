@@ -97,10 +97,23 @@ module Api
       end
 
       def registrations_per_day
-        data = User.group("DATE(created_at)")
-                      .order("DATE(created_at)")
-                      .count
-        render json: data
+        begin
+          data = User.group_by_day(:created_at, time_zone: "America/Bogota")
+                    .count
+
+          # Manejo de datos vacíos
+          if data.empty?
+            Rails.logger.info "No hay registros de usuarios para mostrar."
+            render json: { message: "No hay usuarios registrados disponibles.", data: {} }, status: :ok
+            return
+          end
+
+          formatted_data = data.transform_keys { |date| date.iso8601 rescue nil }.compact
+          render json: formatted_data
+        rescue => e
+          Rails.logger.error "Error en registrations_per_day: #{e.message}"
+          render json: { error: "Error interno: #{e.message}" }, status: :internal_server_error
+        end
       end
       
       private
