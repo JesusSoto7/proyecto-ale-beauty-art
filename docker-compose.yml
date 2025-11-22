@@ -59,7 +59,7 @@ services:
     command: npm run dev
     volumes:
       - ./FrontendReact/ale-beauty-react:/app
-      - /app/node_modules
+      - node_modules_frontend:/app/node_modules
     ports:
       - '3000:3000'
     stdin_open: true
@@ -81,7 +81,7 @@ services:
     command: npm run dev -- --host
     volumes:
       - ./Dashboard/ale-beauty-dashboard:/app
-      - /app/node_modules
+      - node_modules_dashboard:/app/node_modules
     ports:
       - '5173:5173'
     stdin_open: true
@@ -97,3 +97,5 @@ services:
 
 volumes:
   db_data:
+  node_modules_dashboard:
+  node_modules_frontend:
