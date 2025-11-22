@@ -96,6 +96,22 @@
     "added_snackbar": "Product added",
     "favorite_add": "Add to favorites",
     "favorite_remove": "Remove from favorites"
+    ,
+    "related_products": "Related products",
+    "ratings_summary": "Ratings summary",
+    "reviews": "Reviews",
+    "rate": "Rate",
+    "write_review_title": "Write a review",
+    "write_review_hint": "Write your opinion here...",
+    "send": "Send",
+    "no_reviews_yet": "There are no reviews for this product yet.",
+    "must_purchase_to_review": "You must purchase the product to leave a review",
+    "please_write_comment": "Please write a comment",
+    "rating_sent": "Rating sent",
+    "login_required": "You must log in to leave a review",
+    "error_sending_rating": "Error sending rating: {detail}",
+    "reviews_count_one": "(1 review)",
+    "reviews_count": "({count} reviews)"
   },
   "forgot_password": {
     "title": "Recover password",

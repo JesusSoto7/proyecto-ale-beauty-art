@@ -95,6 +95,22 @@
     "added_snackbar": "Producto Agregado",
     "favorite_add": "Agregar a favoritos",
     "favorite_remove": "Quitar de favoritos"
+    ,
+    "related_products": "Productos relacionados",
+    "ratings_summary": "Calificaciones generales",
+    "reviews": "Reseñas",
+    "rate": "Calificar",
+    "write_review_title": "Escribe una reseña",
+    "write_review_hint": "Escribe tu opinión aquí...",
+    "send": "Enviar",
+    "no_reviews_yet": "Aún no hay calificaciones para este producto.",
+    "must_purchase_to_review": "Debes comprar el producto para dejar una calificación",
+    "please_write_comment": "Por favor escribe un comentario",
+    "rating_sent": "Calificación enviada",
+    "login_required": "Debes iniciar sesión para dejar una calificación",
+    "error_sending_rating": "Error enviando calificación: {detail}",
+    "reviews_count_one": "(1 calificación)",
+    "reviews_count": "({count} calificaciones)"
   },
   "forgot_password": {
     "title": "Recuperar contraseña",

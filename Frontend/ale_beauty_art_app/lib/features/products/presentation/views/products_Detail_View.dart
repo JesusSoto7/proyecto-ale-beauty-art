@@ -537,8 +537,8 @@ class _ProductDetailViewState extends State<ProductDetailView> {
                   const SizedBox(height: 28),
 
                   // Related products (fetched by subcategory)
-                  const Text('Productos relacionados', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-                  const SizedBox(height: 12),
+                  Text('product_detail.related_products'.tr(), style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                  const SizedBox(height: 18),
                   // Hacer los productos relacionados un poco más grandes y flexibles para evitar overflow
                   SizedBox(
                     height: 190,
@@ -547,19 +547,45 @@ class _ProductDetailViewState extends State<ProductDetailView> {
                             scrollDirection: Axis.horizontal,
                             itemBuilder: (context, index) => Container(
                               width: 150,
+                              height: 190,
                               decoration: BoxDecoration(
                                 color: Colors.white,
                                 borderRadius: BorderRadius.circular(12),
-                                boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.04), blurRadius: 6)],
+                                boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.06), blurRadius: 6)],
                               ),
                               child: Shimmer.fromColors(
                                 baseColor: Colors.grey.shade300,
                                 highlightColor: Colors.grey.shade100,
                                 child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Container(height: 120, color: Colors.grey[300]),
-                                    const SizedBox(height: 8),
-                                    Container(height: 12, width: 100, color: Colors.grey[300]),
+                                    // Imagen (skeleton)
+                                    Container(
+                                      height: 120,
+                                      width: double.infinity,
+                                      decoration: const BoxDecoration(
+                                        borderRadius: BorderRadius.only(topLeft: Radius.circular(12), topRight: Radius.circular(12)),
+                                      ),
+                                      child: Container(color: Colors.grey[300]),
+                                    ),
+                                    // Texto: título (2 líneas aprox.)
+                                    Padding(
+                                      padding: const EdgeInsets.fromLTRB(10, 8, 10, 0),
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Container(height: 14, width: 110, color: Colors.grey[300]),
+                                          const SizedBox(height: 6),
+                                          Container(height: 12, width: 70, color: Colors.grey[300]),
+                                        ],
+                                      ),
+                                    ),
+                                    const Spacer(),
+                                    // Precio (skeleton)
+                                    Padding(
+                                      padding: const EdgeInsets.fromLTRB(10, 0, 10, 10),
+                                      child: Container(height: 14, width: 60, color: Colors.grey[300]),
+                                    ),
                                   ],
                                 ),
                               ),
@@ -682,7 +708,7 @@ class _ProductDetailViewState extends State<ProductDetailView> {
                   // Calificaciones generales
                   const Divider(),
                   const SizedBox(height: 12),
-                  const Text('Calificaciones generales', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                  Text('product_detail.ratings_summary'.tr(), style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
                   const SizedBox(height: 8),
                   Row(
                     children: [
@@ -694,7 +720,9 @@ class _ProductDetailViewState extends State<ProductDetailView> {
                       ),
                       const SizedBox(width: 8),
                       Text(
-                        _reviewCount == 1 ? '(1 calificación)' : '(${_reviewCount} calificaciones)',
+                        _reviewCount == 1
+                            ? 'product_detail.reviews_count_one'.tr()
+                            : 'product_detail.reviews_count'.tr(namedArgs: {'count': _reviewCount.toString()}),
                         style: const TextStyle(color: Colors.grey, fontSize: 16),
                       ),
                     ],
@@ -761,14 +789,14 @@ class _ProductDetailViewState extends State<ProductDetailView> {
                           }
 
                           if (!_hasPurchased) {
-                            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Debes comprar el producto para dejar una calificación')));
+                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('product_detail.must_purchase_to_review'.tr())));
                             return;
                           }
 
                           setState(() => _showReviewForm = true);
                         },
                         style: ElevatedButton.styleFrom(backgroundColor: AppColors.primaryPink),
-                        child: Text(_showReviewForm ? 'Cancelar' : 'Calificar', style: const TextStyle(color: Colors.white)),
+                        child: Text(_showReviewForm ? 'common.cancel'.tr() : 'product_detail.rate'.tr(), style: const TextStyle(color: Colors.white)),
                       ),
                     ),
 
@@ -779,7 +807,7 @@ class _ProductDetailViewState extends State<ProductDetailView> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const Text('Escribe una reseña', style: TextStyle(fontWeight: FontWeight.bold)),
+                            Text('product_detail.write_review_title'.tr(), style: const TextStyle(fontWeight: FontWeight.bold)),
                             const SizedBox(height: 8),
                             Row(
                               children: List.generate(5, (i) {
@@ -799,11 +827,11 @@ class _ProductDetailViewState extends State<ProductDetailView> {
                             TextField(
                               controller: _reviewController,
                               maxLines: 3,
-                              decoration: const InputDecoration(
-                                hintText: 'Escribe tu opinión aquí...',
-                                border: OutlineInputBorder(),
+                              decoration: InputDecoration(
+                                hintText: 'product_detail.write_review_hint'.tr(),
+                                border: const OutlineInputBorder(),
                                 isDense: true,
-                                contentPadding: EdgeInsets.all(10),
+                                contentPadding: const EdgeInsets.all(10),
                               ),
                             ),
                             const SizedBox(height: 8),
@@ -817,7 +845,7 @@ class _ProductDetailViewState extends State<ProductDetailView> {
                                   ),
                                   child: _submittingReview
                                       ? const SizedBox(width: 18, height: 18, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))
-                                      : const Text('Enviar', style: TextStyle(color: Colors.white)),
+                                      : Text('product_detail.send'.tr(), style: const TextStyle(color: Colors.white)),
                                 ),
                               ],
                             ),
@@ -828,7 +856,7 @@ class _ProductDetailViewState extends State<ProductDetailView> {
                   ],
                   // Comentarios / Reseñas
                   const SizedBox(height: 8),
-                  const Text('Reseñas', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                  Text('product_detail.reviews'.tr(), style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
                   const SizedBox(height: 8),
                   // Reviews dynamic content
                   if (_loadingReviews)
@@ -839,7 +867,7 @@ class _ProductDetailViewState extends State<ProductDetailView> {
                   else if (_reviews.isEmpty)
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 12),
-                      child: Text('Aún no hay calificaciones para este producto.', style: TextStyle(color: Colors.grey[600])),
+                      child: Text('product_detail.no_reviews_yet'.tr(), style: TextStyle(color: Colors.grey[600])),
                     )
                   else
                     ..._reviews.map((r) {
