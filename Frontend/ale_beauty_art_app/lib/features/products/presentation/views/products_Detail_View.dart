@@ -534,18 +534,19 @@ class _ProductDetailViewState extends State<ProductDetailView> {
                       height: 1.55,
                     ),
                   ),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 28),
 
                   // Related products (fetched by subcategory)
                   const Text('Productos relacionados', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
                   const SizedBox(height: 12),
+                  // Hacer los productos relacionados un poco más grandes y flexibles para evitar overflow
                   SizedBox(
-                    height: 150,
+                    height: 190,
                     child: _relatedLoading
                         ? ListView.separated(
                             scrollDirection: Axis.horizontal,
                             itemBuilder: (context, index) => Container(
-                              width: 120,
+                              width: 150,
                               decoration: BoxDecoration(
                                 color: Colors.white,
                                 borderRadius: BorderRadius.circular(12),
@@ -556,9 +557,9 @@ class _ProductDetailViewState extends State<ProductDetailView> {
                                 highlightColor: Colors.grey.shade100,
                                 child: Column(
                                   children: [
-                                    Container(height: 86, color: Colors.grey[300]),
+                                    Container(height: 120, color: Colors.grey[300]),
                                     const SizedBox(height: 8),
-                                    Container(height: 12, width: 80, color: Colors.grey[300]),
+                                    Container(height: 12, width: 100, color: Colors.grey[300]),
                                   ],
                                 ),
                               ),
@@ -566,100 +567,116 @@ class _ProductDetailViewState extends State<ProductDetailView> {
                             separatorBuilder: (_, __) => const SizedBox(width: 12),
                             itemCount: 3,
                           )
-                        : ListView.separated(
-                            scrollDirection: Axis.horizontal,
-                            itemBuilder: (context, index) {
-                              final p = _relatedProducts[index];
-                              final img = p.subCategoryImagenUrl ?? p.imagenUrl;
-                              return Padding(
-                                padding: EdgeInsets.only(right: index == _relatedProducts.length - 1 ? 0 : 12),
-                                child: GestureDetector(
-                                  onTap: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(builder: (_) => ProductDetailView(product: p)),
-                                    );
-                                  },
-                                  child: Container(
-                                    width: 120,
-                                    height: 150,
-                                    decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      borderRadius: BorderRadius.circular(12),
-                                      boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.06), blurRadius: 6)],
-                                    ),
-                                    child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        // Image area with discount badge and favorite button
-                                        Container(
-                                          height: 86,
-                                          decoration: const BoxDecoration(
-                                            borderRadius: BorderRadius.only(topLeft: Radius.circular(12), topRight: Radius.circular(12)),
-                                          ),
-                                          child: Stack(
-                                            children: [
-                                              ClipRRect(
-                                                borderRadius: const BorderRadius.only(topLeft: Radius.circular(12), topRight: Radius.circular(12)),
-                                                child: img != null
-                                                    ? Image.network(img, height: 86, width: 120, fit: BoxFit.cover)
-                                                    : Container(height: 86, color: Colors.grey[200], child: const Icon(Icons.image, color: Colors.grey)),
+                        : LayoutBuilder(
+                            builder: (context, constraints) {
+                              // Use available height to size image/text so price is visible and no overflow.
+                              final itemWidth = 150.0;
+                              return ListView.separated(
+                                padding: const EdgeInsets.symmetric(horizontal: 4),
+                                scrollDirection: Axis.horizontal,
+                                itemBuilder: (context, index) {
+                                  final p = _relatedProducts[index];
+                                  final img = p.subCategoryImagenUrl ?? p.imagenUrl;
+                                  return Padding(
+                                    padding: EdgeInsets.only(right: index == _relatedProducts.length - 1 ? 8 : 12),
+                                    child: GestureDetector(
+                                      onTap: () {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(builder: (_) => ProductDetailView(product: p)),
+                                        );
+                                      },
+                                      child: Container(
+                                        width: itemWidth,
+                                        height: 190,
+                                        decoration: BoxDecoration(
+                                          color: Colors.white,
+                                          borderRadius: BorderRadius.circular(12),
+                                          boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.06), blurRadius: 6)],
+                                        ),
+                                        child: Column(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            // Image area
+                                            Container(
+                                              height: 120,
+                                              width: double.infinity,
+                                              decoration: const BoxDecoration(
+                                                borderRadius: BorderRadius.only(topLeft: Radius.circular(12), topRight: Radius.circular(12)),
                                               ),
-                                              if (p.tieneDescuento)
-                                                Positioned(
-                                                  top: 8,
-                                                  left: 8,
-                                                  child: Container(
-                                                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
-                                                    decoration: BoxDecoration(
-                                                      gradient: const LinearGradient(colors: [Color.fromARGB(255, 197, 78, 118), Color.fromARGB(255, 218, 55, 106)]),
-                                                      borderRadius: BorderRadius.circular(8),
-                                                    ),
-                                                    child: Text('-${p.porcentajeDescuento}%', style: const TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.bold)),
+                                              child: Stack(
+                                                fit: StackFit.expand,
+                                                children: [
+                                                  ClipRRect(
+                                                    borderRadius: const BorderRadius.only(topLeft: Radius.circular(12), topRight: Radius.circular(12)),
+                                                    child: img != null
+                                                        ? Image.network(img, fit: BoxFit.cover)
+                                                        : Container(
+                                                            color: Colors.grey[100],
+                                                            child: const Center(child: Icon(Icons.image, color: Colors.grey, size: 36)),
+                                                          ),
                                                   ),
-                                                ),
-                                              Positioned(
-                                                top: 6,
-                                                right: 6,
-                                                child: Container(
-                                                  decoration: BoxDecoration(color: Colors.white, shape: BoxShape.circle, boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.08), blurRadius: 6)]),
-                                                  child: FavoriteToggleButton(productId: p.id, size: 18),
-                                                ),
+                                                  if (p.tieneDescuento)
+                                                    Positioned(
+                                                      top: 10,
+                                                      left: 10,
+                                                      child: Container(
+                                                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+                                                        decoration: BoxDecoration(
+                                                          gradient: const LinearGradient(colors: [Color.fromARGB(255, 197, 78, 118), Color.fromARGB(255, 218, 55, 106)]),
+                                                          borderRadius: BorderRadius.circular(10),
+                                                          boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.12), blurRadius: 6, offset: const Offset(0, 2))],
+                                                        ),
+                                                        child: Text('-${p.porcentajeDescuento}%', style: const TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.bold)),
+                                                      ),
+                                                    ),
+                                                  Positioned(
+                                                    top: 8,
+                                                    right: 8,
+                                                    child: Container(
+                                                      decoration: BoxDecoration(color: Colors.white, shape: BoxShape.circle, boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.08), blurRadius: 6)]),
+                                                      child: FavoriteToggleButton(productId: p.id, size: 18),
+                                                    ),
+                                                  ),
+                                                ],
                                               ),
-                                            ],
-                                          ),
+                                            ),
+                                            // Text area
+                                            Padding(
+                                              padding: const EdgeInsets.fromLTRB(10, 8, 10, 8),
+                                              child: Column(
+                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                children: [
+                                                  SizedBox(
+                                                    width: itemWidth - 20,
+                                                    child: Text(p.nombreProducto, maxLines: 2, overflow: TextOverflow.ellipsis, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w700)),
+                                                  ),
+                                                  const SizedBox(height: 6),
+                                                  if (p.tieneDescuento)
+                                                    Row(
+                                                      children: [
+                                                        Expanded(child: Text(formatPriceCOP(p.precioConMejorDescuento ?? p.precioProducto), style: const TextStyle(color: Color(0xFFD95D85), fontWeight: FontWeight.bold, fontSize: 14))),
+                                                        const SizedBox(width: 6),
+                                                      ],
+                                                    )
+                                                  else
+                                                    Text(formatPriceCOP(p.precioProducto), style: const TextStyle(color: Color(0xFFD95D85), fontWeight: FontWeight.bold, fontSize: 14)),
+                                                ],
+                                              ),
+                                            ),
+                                          ],
                                         ),
-                                        Padding(
-                                            padding: const EdgeInsets.all(6.0),
-                                          child: Column(
-                                            crossAxisAlignment: CrossAxisAlignment.start,
-                                            children: [
-                                              Text(p.nombreProducto, maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600)),
-                                              const SizedBox(height: 4),
-                                              if (p.tieneDescuento)
-                                                Column(
-                                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                                  children: [
-                                                    Text(formatPriceCOP(p.precioProducto), style: TextStyle(color: Colors.grey[500], fontSize: 11, decoration: TextDecoration.lineThrough)),
-                                                    const SizedBox(height: 2),
-                                                    Text(formatPriceCOP(p.precioConMejorDescuento ?? p.precioProducto), style: const TextStyle(color: Color(0xFFD95D85), fontWeight: FontWeight.bold)),
-                                                  ],
-                                                )
-                                              else
-                                                Text(formatPriceCOP(p.precioProducto), style: const TextStyle(color: Color(0xFFD95D85), fontWeight: FontWeight.bold)),
-                                            ],
-                                          ),
-                                        ),
-                                      ],
+                                      ),
                                     ),
-                                  ),
-                                ),
+                                  );
+                                },
+                                separatorBuilder: (_, __) => const SizedBox(width: 12),
+                                itemCount: _relatedProducts.length,
                               );
                             },
-                            separatorBuilder: (_, __) => const SizedBox(width: 12),
-                            itemCount: _relatedProducts.length,
                           ),
                   ),
+                  const SizedBox(height: 12),
                   const SizedBox(height: 24),
 
                   // Calificaciones generales

@@ -26,17 +26,7 @@ class FavoriteToggleButton extends StatefulWidget {
 
 class _FavoriteToggleButtonState extends State<FavoriteToggleButton> {
   bool _busy = false;
-  bool _isFav = false;
-
-  @override
-  void initState() {
-    super.initState();
-    // Inicializar estado local desde FavoriteBloc si ya está cargado
-    final favState = context.read<FavoriteBloc>().state;
-    if (favState is FavoriteSuccess) {
-      _isFav = favState.favorites.any((f) => f.id == widget.productId);
-    }
-  }
+  bool? _optimisticFav;
 
   Future<void> _toggle() async {
     if (_busy) return;
@@ -57,12 +47,18 @@ class _FavoriteToggleButtonState extends State<FavoriteToggleButton> {
       final auth = context.read<AuthBloc>().state as AuthSuccess;
       context.read<FavoriteBloc>().add(UpdateFavoriteToken(auth.token));
 
-      if (_isFav) {
+      // Decide action based on the latest known bloc state (we'll read it now)
+      final favState = context.read<FavoriteBloc>().state;
+      final currentlyFav = favState is FavoriteSuccess && favState.favorites.any((f) => f.id == widget.productId);
+
+      // Set optimistic flag so UI updates immediately
+      if (mounted) setState(() => _optimisticFav = !currentlyFav);
+
+      if (currentlyFav) {
         context.read<FavoriteBloc>().add(RemoveFavorite(widget.productId));
       } else {
         context.read<FavoriteBloc>().add(AddFavorite(widget.productId));
       }
-      if (mounted) setState(() => _isFav = !_isFav);
     } finally {
       if (mounted) setState(() => _busy = false);
     }
@@ -70,20 +66,33 @@ class _FavoriteToggleButtonState extends State<FavoriteToggleButton> {
 
   @override
   Widget build(BuildContext context) {
-    return IconButton(
-      icon: _busy
-          ? SizedBox(
-              width: widget.size,
-              height: widget.size,
-              child: const CircularProgressIndicator(strokeWidth: 2),
-            )
-          : Icon(
-              _isFav ? Icons.favorite : Icons.favorite_border,
-              color: _isFav ? widget.activeColor : widget.inactiveColor,
-              size: widget.size,
-            ),
-      onPressed: _toggle,
-      tooltip: _isFav ? 'Quitar de favoritos' : 'Agregar a favoritos',
+    return BlocConsumer<FavoriteBloc, FavoriteState>(
+      listener: (context, state) {
+        if (state is FavoriteSuccess) {
+          // Clear optimistic flag when real state arrives
+          if (mounted) setState(() => _optimisticFav = null);
+        }
+      },
+      builder: (context, state) {
+        final bool isFavFromBloc = state is FavoriteSuccess && state.favorites.any((f) => f.id == widget.productId);
+        final bool isFav = _optimisticFav ?? isFavFromBloc;
+
+        return IconButton(
+          icon: _busy
+              ? SizedBox(
+                  width: widget.size,
+                  height: widget.size,
+                  child: const CircularProgressIndicator(strokeWidth: 2),
+                )
+              : Icon(
+                  isFav ? Icons.favorite : Icons.favorite_border,
+                  color: isFav ? widget.activeColor : widget.inactiveColor,
+                  size: widget.size,
+                ),
+          onPressed: _toggle,
+          tooltip: isFav ? 'Quitar de favoritos' : 'Agregar a favoritos',
+        );
+      },
     );
   }
 }
