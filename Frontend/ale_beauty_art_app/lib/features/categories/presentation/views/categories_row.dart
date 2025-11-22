@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../../../styles/colors.dart';
+// Removed unused import for AppColors; use direct Colors where needed
 import '../bloc/categories_bloc.dart';
 import '../../../products/presentation/bloc/product_bloc.dart';
 import '../../../products/presentation/views/products_by_category_view.dart';
@@ -30,8 +30,46 @@ class _CategoriesRowViewState extends State<CategoriesRowView> {
     return BlocBuilder<CategoriesBloc, CategoriesState>(
       builder: (context, state) {
         if (state is CategoriesLoadInProgress) {
-          return const Center(
-            child: CircularProgressIndicator(color: AppColors.accentPink),
+          // Mostrar un esqueleto horizontal del mismo alto que la lista final
+          return SizedBox(
+            height: 110,
+            child: ListView.separated(
+              scrollDirection: Axis.horizontal,
+              padding: const EdgeInsets.symmetric(horizontal: 10),
+              itemCount: 5,
+              // Leave spacing to each item's margin so distances match real items
+              separatorBuilder: (_, __) => const SizedBox(width: 0),
+              itemBuilder: (context, index) {
+                return Container(
+                  width: 90,
+                  // Match the real item horizontal margin to keep alignment
+                  margin: const EdgeInsets.symmetric(horizontal: 8),
+                  child: Column(
+                    children: [
+                      // placeholder circular
+                      Container(
+                        width: 64,
+                        height: 64,
+                        decoration: BoxDecoration(
+                          color: Colors.grey.shade200,
+                          shape: BoxShape.circle,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      // placeholder text bar
+                      Container(
+                        height: 12,
+                        width: 70,
+                        decoration: BoxDecoration(
+                          color: Colors.grey.shade200,
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              },
+            ),
           );
         } else if (state is CategoriesLoadSuccess) {
           final categories = state.categories;

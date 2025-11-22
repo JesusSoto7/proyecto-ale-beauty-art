@@ -332,7 +332,10 @@ class _PaymentPageState extends State<PaymentPage> {
               ),
               onPressed: () => Navigator.pop(context),
             ),
-            systemOverlayStyle: SystemUiOverlayStyle.dark,
+            systemOverlayStyle: const SystemUiOverlayStyle(
+              statusBarIconBrightness: Brightness.light,
+              statusBarBrightness: Brightness.dark,
+            ),
           ),
         ),
       ),

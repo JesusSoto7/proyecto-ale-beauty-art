@@ -54,11 +54,11 @@ class InitialView extends StatelessWidget {
       child: Stack(
         children: [
           Scaffold(
-            extendBody: true, // Permite pintar detrás del bottom nav
+            extendBody: true, // Mantener el body extendido para que el bottom nav quede encima
             backgroundColor: const Color.fromRGBO(209, 112, 143, 1),
             body: SafeArea(
               top: true,
-              bottom: false,
+              bottom: true,
               child: BlocBuilder<NavigationBloc, NavigationState>(
                 builder: (context, state) {
                   final index = state is NavigationUpdated ? state.selectedIndex : 0;
@@ -71,11 +71,8 @@ class InitialView extends StatelessWidget {
               ),
             ),
             bottomNavigationBar: _buildBottomNav(context, currentLocale),
-          ),
-          Positioned(
-            bottom: 90,
-            right: 24,
-            child: FloatingActionButton(
+            floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+            floatingActionButton: FloatingActionButton(
               backgroundColor: const Color(0xFFD95D85),
               child: const Icon(Icons.chat, color: Colors.white),
               onPressed: () {
@@ -91,6 +88,7 @@ class InitialView extends StatelessWidget {
               },
             ),
           ),
+          
         ],
       ),
     );
@@ -163,7 +161,8 @@ class InitialView extends StatelessWidget {
           Container(
             width: double.infinity,
             constraints: BoxConstraints(
-              minHeight: screenHeight * 0.6,
+              // Make the white container reach near the bottom so nav rounded corners don't reveal scaffold background
+              minHeight: screenHeight - 140,
             ),
             decoration: const BoxDecoration(
               color: Colors.white,
@@ -173,13 +172,16 @@ class InitialView extends StatelessWidget {
               ),
             ),
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 30),
+              padding: EdgeInsets.fromLTRB(20, 30, 20, MediaQuery.of(context).padding.bottom + 16),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _sectionHeader("home.popular_products".tr(), () {}),
+                  _sectionHeader("home.popular_products".tr(), () {
+                    // Cambiar a la pestaña 'Productos' en la barra de navegación
+                    context.read<NavigationBloc>().add(NavigationTabChanged(1));
+                  }),
                   const SizedBox(height: 20),
-                  const SizedBox(height: 280, child: ProductsCarousel()),
+                  const SizedBox(height: 200, child: ProductsCarousel(compact: true)),
                 ],
               ),
             ),
@@ -228,12 +230,12 @@ class InitialView extends StatelessWidget {
       'nav.profile'.tr(),
     ];
 
-  return ClipRRect(
-      borderRadius: const BorderRadius.only(
-        topLeft: Radius.circular(25),
-        topRight: Radius.circular(25),
-      ),
-  child: Container(
+    final double bottomInset = MediaQuery.of(context).padding.bottom;
+    const double baseNavHeight = 70; // base visual height for the nav area
+
+    return SizedBox(
+      height: bottomInset + baseNavHeight,
+      child: Container(
         decoration: BoxDecoration(
           color: Colors.white,
           boxShadow: [
@@ -243,18 +245,21 @@ class InitialView extends StatelessWidget {
             ),
           ],
         ),
-  child: SafeArea(
+        child: SafeArea(
           top: false,
+          bottom: false, // allow background to extend into system gesture area
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+            // push the interactive content above the gesture area while keeping background full-height
+            padding: EdgeInsets.fromLTRB(12, 6, 12, bottomInset + 6),
             child: BlocBuilder<NavigationBloc, NavigationState>(
               builder: (context, navState) {
                 final selectedIndex = navState is NavigationUpdated ? navState.selectedIndex : 0;
 
                 return GNav(
+                  selectedIndex: selectedIndex,
                   gap: 6,
                   iconSize: 22,
-                  backgroundColor: Colors.transparent,
+                  backgroundColor: Colors.white,
                   color: Colors.grey[600],
                   activeColor: Colors.white,
                   tabBackgroundGradient: const LinearGradient(

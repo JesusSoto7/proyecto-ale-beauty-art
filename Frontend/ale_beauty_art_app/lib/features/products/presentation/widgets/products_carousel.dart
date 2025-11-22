@@ -8,7 +8,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class ProductsCarousel extends StatefulWidget {
-  const ProductsCarousel({super.key});
+  final bool compact;
+  const ProductsCarousel({super.key, this.compact = false});
 
   @override
   State<ProductsCarousel> createState() => _ProductsCarouselState();
@@ -59,8 +60,16 @@ class _ProductsCarouselState extends State<ProductsCarousel> {
             _productosDestacados = shuffled.take(6).toList();
           }
 
+          final bool compact = widget.compact;
+          // Reduced sizes to avoid small overflows on some screens
+          final double carouselHeight = compact ? 196 : 236;
+          final double cardHeight = compact ? 186 : 218;
+          final double imageHeight = compact ? 112 : 130;
+          final double screenW = MediaQuery.of(context).size.width;
+          final double cardWidth = screenW * (compact ? 0.42 : 0.42);
+
           return SizedBox(
-            height: 270, // Aumentado ligeramente
+            height: carouselHeight, // Limitar altura total del carrusel
             child: Stack(
               alignment: Alignment.center,
               children: [
@@ -74,7 +83,7 @@ class _ProductsCarouselState extends State<ProductsCarousel> {
                     final product = _productosDestacados[index];
 
                     return Container(
-                      width: 155,
+                      width: cardWidth,
                       margin: const EdgeInsets.symmetric(
                         horizontal: 8,
                         vertical: 6, // 🆕 Margen vertical para evitar corte
@@ -90,6 +99,7 @@ class _ProductsCarouselState extends State<ProductsCarousel> {
                           );
                         },
                         child: Container(
+                          height: cardHeight, // Limitar altura de la tarjeta
                           decoration: BoxDecoration(
                             color: Colors.white,
                             borderRadius: BorderRadius.circular(18),
@@ -112,7 +122,7 @@ class _ProductsCarouselState extends State<ProductsCarousel> {
                             children: [
                               // Imagen con badge de descuento y favorito
                               Container(
-                                height: 155, // Aumentado de 150
+                                height: imageHeight,
                                 decoration: const BoxDecoration(
                                   borderRadius: BorderRadius.only(
                                     topLeft: Radius.circular(18),
@@ -139,11 +149,9 @@ class _ProductsCarouselState extends State<ProductsCarousel> {
                                                     .cover, // 🔥 Cambiado a cover
                                                 width: double.infinity,
                                                 height: double.infinity,
-                                                errorBuilder: (_, __, ___) =>
-                                                    Center(
+                                                errorBuilder: (_, __, ___) => Center(
                                                   child: Icon(
-                                                    Icons
-                                                        .image_not_supported_outlined,
+                                                    Icons.image_not_supported_outlined,
                                                     size: 45,
                                                     color: Colors.grey[300],
                                                   ),
@@ -156,9 +164,8 @@ class _ProductsCarouselState extends State<ProductsCarousel> {
                                                   color: Colors.grey[300],
                                                 ),
                                               ),
-                                      ),
+                                                    ),
                                     ),
-
                                     // 🎉 Badge de descuento compacto
                                     if (product.tieneDescuento)
                                       Positioned(
@@ -240,12 +247,13 @@ class _ProductsCarouselState extends State<ProductsCarousel> {
                                 ),
                               ),
 
-                              // Información del producto con fondo blanco
-                              Expanded(
+                              // Información del producto con fondo blanco (flexible para evitar overflow)
+                              Flexible(
+                                fit: FlexFit.loose,
                                 child: Container(
                                   width: double.infinity,
                                   padding:
-                                      const EdgeInsets.fromLTRB(12, 8, 12, 12),
+                                      const EdgeInsets.fromLTRB(12, 6, 12, 6),
                                   decoration: const BoxDecoration(
                                     color: Colors.white,
                                     borderRadius: BorderRadius.only(
@@ -257,26 +265,35 @@ class _ProductsCarouselState extends State<ProductsCarousel> {
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
+                                        MainAxisAlignment.start,
+                                    mainAxisSize: MainAxisSize.min,
                                     children: [
-                                      // Nombre del producto
-                                      Text(
-                                        product.nombreProducto,
-                                        style: const TextStyle(
-                                          fontWeight: FontWeight.w600,
-                                          fontSize: 13,
-                                          color: Color(0xFF2D2D2D),
-                                          height: 1.2,
+                                      // Nombre del producto (máximo 2 líneas)
+                                      Flexible(
+                                        fit: FlexFit.loose,
+                                        child: Align(
+                                          alignment: Alignment.topLeft,
+                                          child: Text(
+                                            product.nombreProducto,
+                                            style: const TextStyle(
+                                              fontWeight: FontWeight.w600,
+                                              fontSize: 13,
+                                              color: Color(0xFF2D2D2D),
+                                              height: 1.2,
+                                            ),
+                                            maxLines: 2,
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
                                         ),
-                                        maxLines: 2,
-                                        overflow: TextOverflow.ellipsis,
                                       ),
+                                      const SizedBox(height: 4),
 
                                       // Precios
                                       if (product.tieneDescuento)
                                         Column(
                                           crossAxisAlignment:
                                               CrossAxisAlignment.start,
+                                          mainAxisSize: MainAxisSize.min,
                                           children: [
                                             // Precio original tachado
                                             Text(
@@ -322,6 +339,7 @@ class _ProductsCarouselState extends State<ProductsCarousel> {
                                           maxLines: 1,
                                           overflow: TextOverflow.ellipsis,
                                         ),
+                                      const SizedBox(height: 6),
                                     ],
                                   ),
                                 ),

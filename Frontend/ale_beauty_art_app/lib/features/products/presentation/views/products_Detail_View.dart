@@ -13,6 +13,8 @@ import 'package:shimmer/shimmer.dart';
 import 'package:ale_beauty_art_app/styles/colors.dart';
 import 'package:ale_beauty_art_app/core/utils/formatters.dart';
 import 'package:ale_beauty_art_app/features/favorites/presentation/bloc/favorite_bloc.dart';
+import 'package:ale_beauty_art_app/core/http/custom_http_client.dart';
+import 'dart:convert';
 
 class ProductDetailView extends StatefulWidget {
   final Product product;
@@ -25,6 +27,43 @@ class ProductDetailView extends StatefulWidget {
 
 class _ProductDetailViewState extends State<ProductDetailView> {
   bool _isImageLoaded = false;
+  bool _loadingReviews = true;
+  List<Map<String, dynamic>> _reviews = [];
+  bool _relatedLoading = true;
+  List<Product> _relatedProducts = [];
+  // Review submission state
+  final TextEditingController _reviewController = TextEditingController();
+  int _newRating = 5;
+  bool _submittingReview = false;
+
+  Future<void> _fetchReviews() async {
+    setState(() => _loadingReviews = true);
+    try {
+      final res = await CustomHttpClient.getRequest(
+        '/api/v1/products/${widget.product.id}/reviews',
+        headers: const {'Content-Type': 'application/json'},
+      );
+
+      if (res.statusCode == 200) {
+        final List<dynamic> data = jsonDecode(res.body);
+        setState(() {
+          _reviews = data.map((e) => e as Map<String, dynamic>).toList();
+          _loadingReviews = false;
+        });
+      } else {
+        setState(() {
+          _reviews = [];
+          _loadingReviews = false;
+        });
+      }
+    } catch (e) {
+      print('Error fetching reviews: $e');
+      setState(() {
+        _reviews = [];
+        _loadingReviews = false;
+      });
+    }
+  }
 
   void _markImageLoaded() {
     if (!_isImageLoaded && mounted) {
@@ -38,11 +77,105 @@ class _ProductDetailViewState extends State<ProductDetailView> {
   void initState() {
     super.initState();
     // Ya no disparamos eventos al ProductBloc; usamos el producto recibido
+    // Cargar reseñas del backend
+    _fetchReviews();
+    _fetchRelatedProducts();
+  }
+
+  Future<void> _fetchRelatedProducts() async {
+    setState(() => _relatedLoading = true);
+    try {
+      final res = await CustomHttpClient.getRequest(
+        '/api/v1/products?sub_category_id=${widget.product.subCategoryId}',
+        headers: const {'Content-Type': 'application/json'},
+      );
+
+      if (res.statusCode == 200) {
+        final List<dynamic> data = jsonDecode(res.body);
+        setState(() {
+          _relatedProducts = data
+              .map((e) => Product.fromJson(e as Map<String, dynamic>))
+              .where((p) => p.id != widget.product.id)
+              .toList();
+          _relatedLoading = false;
+        });
+      } else {
+        setState(() {
+          _relatedProducts = [];
+          _relatedLoading = false;
+        });
+      }
+    } catch (e) {
+      print('Error fetching related products: $e');
+      setState(() {
+        _relatedProducts = [];
+        _relatedLoading = false;
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    _reviewController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _submitReview() async {
+    if (_submittingReview) return;
+    final authState = context.read<AuthBloc>().state;
+    // If not logged in, ask to login first
+    if (authState is! AuthSuccess) {
+      final result = await Navigator.push(
+        context,
+        MaterialPageRoute(builder: (_) => const LoginPage()),
+      );
+      if (result != true) return; // user cancelled
+    }
+
+    if (_reviewController.text.trim().isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Por favor escribe un comentario')));
+      return;
+    }
+
+    setState(() => _submittingReview = true);
+    try {
+      final body = {
+        'review': {
+          'rating': _newRating,
+          'comentario': _reviewController.text.trim(),
+        }
+      };
+
+      final resp = await CustomHttpClient.postRequest(
+        '/api/v1/products/${widget.product.id}/reviews',
+        body,
+        headers: {'Content-Type': 'application/json'},
+      );
+
+      if (resp.statusCode == 201 || resp.statusCode == 200) {
+        // Refrescar reseñas
+        _reviewController.clear();
+        await _fetchReviews();
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Reseña enviada')));
+      } else if (resp.statusCode == 401) {
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Debes iniciar sesión para dejar una reseña')));
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error enviando reseña: ${resp.body}')));
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error de red: $e')));
+    } finally {
+      if (mounted) setState(() => _submittingReview = false);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     final product = widget.product;
+    final int _reviewCount = _reviews.length;
+    final double _averageRating = _reviewCount > 0
+        ? (_reviews.map((r) => (r['rating'] as num).toDouble()).reduce((a, b) => a + b) / _reviewCount)
+        : 0.0;
     // Hacer la imagen de cabecera más larga hacia abajo (aprox. 60% de alto de pantalla)
     final double headerHeight = MediaQuery.of(context).size.height * 0.6;
     return Scaffold(
@@ -169,19 +302,21 @@ class _ProductDetailViewState extends State<ProductDetailView> {
                 ],
               ),
             ),
-            systemOverlayStyle: SystemUiOverlayStyle.light,
+            systemOverlayStyle: const SystemUiOverlayStyle(
+              statusBarIconBrightness: Brightness.dark,
+              statusBarBrightness: Brightness.light,
+            ),
           ),
+          // Single vertical scroll: Details -> Related -> Reviews
           SliverToBoxAdapter(
             child: Padding(
-              padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+              padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Información sin contenedor (estilo limpio)
-                  // Badge de categoría arriba, pequeño
+                  // Category badge
                   Container(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 10, vertical: 4),
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                     decoration: BoxDecoration(
                       color: const Color(0xFFFFEEF3),
                       borderRadius: BorderRadius.circular(8),
@@ -195,7 +330,7 @@ class _ProductDetailViewState extends State<ProductDetailView> {
                       ),
                     ),
                   ),
-                  const SizedBox(height: 6),
+                  const SizedBox(height: 10),
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -229,7 +364,203 @@ class _ProductDetailViewState extends State<ProductDetailView> {
                       height: 1.55,
                     ),
                   ),
-                  const SizedBox(height: 64),
+                  const SizedBox(height: 20),
+
+                  // Related products (fetched by subcategory)
+                  const Text('Productos relacionados', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                  const SizedBox(height: 12),
+                  SizedBox(
+                    height: 140,
+                    child: _relatedLoading
+                        ? ListView.separated(
+                            scrollDirection: Axis.horizontal,
+                            itemBuilder: (context, index) => Container(
+                              width: 120,
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(12),
+                                boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.04), blurRadius: 6)],
+                              ),
+                              child: Shimmer.fromColors(
+                                baseColor: Colors.grey.shade300,
+                                highlightColor: Colors.grey.shade100,
+                                child: Column(
+                                  children: [
+                                    Container(height: 86, color: Colors.grey[300]),
+                                    const SizedBox(height: 8),
+                                    Container(height: 12, width: 80, color: Colors.grey[300]),
+                                  ],
+                                ),
+                              ),
+                            ),
+                            separatorBuilder: (_, __) => const SizedBox(width: 12),
+                            itemCount: 3,
+                          )
+                        : ListView.separated(
+                            scrollDirection: Axis.horizontal,
+                            itemBuilder: (context, index) {
+                              final p = _relatedProducts[index];
+                              final img = p.subCategoryImagenUrl ?? p.imagenUrl;
+                              return Padding(
+                                padding: EdgeInsets.only(right: index == _relatedProducts.length - 1 ? 0 : 12),
+                                child: GestureDetector(
+                                  onTap: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(builder: (_) => ProductDetailView(product: p)),
+                                    );
+                                  },
+                                  child: Container(
+                                    width: 120,
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(12),
+                                      boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.06), blurRadius: 6)],
+                                    ),
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        ClipRRect(
+                                          borderRadius: const BorderRadius.only(topLeft: Radius.circular(12), topRight: Radius.circular(12)),
+                                          child: img != null
+                                              ? Image.network(img, height: 86, width: 120, fit: BoxFit.cover)
+                                              : Container(height: 86, color: Colors.grey[200], child: const Icon(Icons.image, color: Colors.grey)),
+                                        ),
+                                        Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: Column(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: [
+                                              Text(p.nombreProducto, maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600)),
+                                              const SizedBox(height: 4),
+                                              Text(formatPriceCOP(p.precioProducto), style: TextStyle(fontSize: 12, color: Colors.grey[700])),
+                                            ],
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              );
+                            },
+                            separatorBuilder: (_, __) => const SizedBox(width: 12),
+                            itemCount: _relatedProducts.length,
+                          ),
+                  ),
+                  const SizedBox(height: 24),
+
+                  // Reviews section
+                  const Divider(),
+                  const SizedBox(height: 12),
+                  Row(
+                    children: [
+                      const Icon(Icons.star, color: Color(0xFFFFC107), size: 28),
+                      const SizedBox(width: 8),
+                      Text(
+                        _reviewCount > 0 ? _averageRating.toStringAsFixed(1) : '—',
+                        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                      ),
+                      const SizedBox(width: 8),
+                      Text('(${_reviewCount} reseñas)', style: const TextStyle(color: Colors.grey, fontSize: 16)),
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+                  // Review submission form
+                  Card(
+                    margin: const EdgeInsets.only(bottom: 12),
+                    child: Padding(
+                      padding: const EdgeInsets.all(12.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text('Escribe una reseña', style: TextStyle(fontWeight: FontWeight.bold)),
+                          const SizedBox(height: 8),
+                          Row(
+                            children: List.generate(5, (i) {
+                              final idx = i + 1;
+                              return IconButton(
+                                padding: EdgeInsets.zero,
+                                constraints: const BoxConstraints(),
+                                icon: Icon(
+                                  idx <= _newRating ? Icons.star : Icons.star_border,
+                                  color: const Color(0xFFFFC107),
+                                ),
+                                onPressed: () => setState(() => _newRating = idx),
+                              );
+                            }),
+                          ),
+                          const SizedBox(height: 6),
+                          TextField(
+                            controller: _reviewController,
+                            maxLines: 3,
+                            decoration: const InputDecoration(
+                              hintText: 'Escribe tu opinión aquí...',
+                              border: OutlineInputBorder(),
+                              isDense: true,
+                              contentPadding: EdgeInsets.all(10),
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              ElevatedButton(
+                                onPressed: _submittingReview ? null : _submitReview,
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: const Color(0xFFD95D85),
+                                ),
+                                child: _submittingReview
+                                    ? const SizedBox(width: 18, height: 18, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))
+                                    : const Text('Enviar'),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  // Reviews dynamic content
+                  if (_loadingReviews)
+                    const Center(child: Padding(
+                      padding: EdgeInsets.symmetric(vertical: 20),
+                      child: CircularProgressIndicator(),
+                    ))
+                  else if (_reviews.isEmpty)
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                      child: Text('Aún no hay reseñas para este producto.', style: TextStyle(color: Colors.grey[600])),
+                    )
+                  else
+                    ..._reviews.map((r) {
+                      final user = r['user'] as Map<String, dynamic>? ?? {};
+                      final nombre = user['nombre'] ?? 'Usuario';
+                      final double rating = (r['rating'] as num?)?.toDouble() ?? 0.0;
+                      final comentario = r['comentario'] ?? '';
+                      final int starCount = rating.round().clamp(0, 5);
+                      return Card(
+                        margin: const EdgeInsets.only(bottom: 12),
+                        child: ListTile(
+                          isThreeLine: comentario.isNotEmpty,
+                          leading: CircleAvatar(child: Text((nombre as String).isNotEmpty ? nombre[0].toUpperCase() : '?')),
+                          title: Text(nombre),
+                          subtitle: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const SizedBox(height: 6),
+                              Row(
+                                children: List.generate(5, (i) => Icon(i < starCount ? Icons.star : Icons.star_border, size: 14, color: const Color(0xFFFFC107))),
+                              ),
+                              if (comentario.isNotEmpty) ...[
+                                const SizedBox(height: 8),
+                                Text(comentario),
+                              ],
+                            ],
+                          ),
+                        ),
+                      );
+                    }).toList(),
+                  // Ajustar espacio inferior para evitar overflow por el bottomNavigationBar
+                  SizedBox(height: MediaQuery.of(context).padding.bottom + 16),
                 ],
               ),
             ),
@@ -597,3 +928,5 @@ class _FavoriteButtonState extends State<_FavoriteButton> {
     );
   }
 }
+
+// Note: TabBar removed — single vertical scroll layout used instead.

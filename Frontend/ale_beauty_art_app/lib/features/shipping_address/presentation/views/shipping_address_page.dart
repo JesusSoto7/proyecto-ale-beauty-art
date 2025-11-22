@@ -50,7 +50,10 @@ class ShippingAddressPage extends StatelessWidget {
               ),
               onPressed: () => Navigator.pop(context),
             ),
-            systemOverlayStyle: SystemUiOverlayStyle.dark,
+            systemOverlayStyle: const SystemUiOverlayStyle(
+              statusBarIconBrightness: Brightness.light,
+              statusBarBrightness: Brightness.dark,
+            ),
           ),
         ),
       ),

@@ -129,7 +129,10 @@ class _OrderPageViewState extends State<OrderPageView> {
             backgroundColor: Colors.white,
             elevation: 0,
             centerTitle: true,
-            systemOverlayStyle: SystemUiOverlayStyle.dark,
+            systemOverlayStyle: const SystemUiOverlayStyle(
+              statusBarIconBrightness: Brightness.light,
+              statusBarBrightness: Brightness.dark,
+            ),
             leading: IconButton(
               icon: const Icon(
                 Icons.arrow_back_ios_new_rounded,
