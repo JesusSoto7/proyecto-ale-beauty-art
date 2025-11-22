@@ -452,7 +452,7 @@ class _ProductDetailViewState extends State<ProductDetailView> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Category badge
+                  // Category / Subcategory badge (e.g. Labiales/Rojos)
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                     decoration: BoxDecoration(
@@ -460,7 +460,7 @@ class _ProductDetailViewState extends State<ProductDetailView> {
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Text(
-                      product.nombreCategoria,
+                      '${product.nombreCategoria}/${product.nombreSubCategoria}',
                       style: const TextStyle(
                         color: Color(0xFFD95D85),
                         fontWeight: FontWeight.w600,
@@ -483,13 +483,45 @@ class _ProductDetailViewState extends State<ProductDetailView> {
                         ),
                       ),
                       const SizedBox(width: 12),
-                      Text(
-                        formatPriceCOP(product.precioProducto),
-                        style: const TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.w800,
-                          color: Color(0xFFD95D85),
-                        ),
+                      // Price area: show discount badge + crossed original price when applicable
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          if (product.tieneDescuento) 
+                            Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text(
+                                  formatPriceCOP(product.precioProducto),
+                                  style: TextStyle(
+                                    color: Colors.grey[500],
+                                    fontSize: 13,
+                                    decoration: TextDecoration.lineThrough,
+                                  ),
+                                ),
+                                const SizedBox(width: 8),
+                                Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+                                  decoration: BoxDecoration(
+                                    gradient: const LinearGradient(colors: [Color.fromARGB(255, 197, 78, 118), Color.fromARGB(255, 218, 55, 106)]),
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  child: Text('-${product.porcentajeDescuento}%', style: const TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.bold)),
+                                ),
+                              ],
+                            ),
+
+                          const SizedBox(height: 4),
+
+                          Text(
+                            formatPriceCOP(product.precioConMejorDescuento ?? product.precioProducto),
+                            style: const TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.w800,
+                              color: Color(0xFFD95D85),
+                            ),
+                          ),
+                        ],
                       ),
                     ],
                   ),
