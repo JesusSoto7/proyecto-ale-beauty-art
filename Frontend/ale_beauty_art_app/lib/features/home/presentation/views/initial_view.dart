@@ -138,7 +138,7 @@ class InitialView extends StatelessWidget {
             ),
           ),
 
-          const SizedBox(height: 25),
+          const SizedBox(height: 28),
 
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -161,7 +161,7 @@ class InitialView extends StatelessWidget {
             ),
           ),
 
-          const SizedBox(height: 25),
+          const SizedBox(height: 28),
 
           const CategoriesRowView(),
 

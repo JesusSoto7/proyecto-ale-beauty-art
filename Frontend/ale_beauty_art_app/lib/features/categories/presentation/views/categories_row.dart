@@ -35,13 +35,13 @@ class _CategoriesRowViewState extends State<CategoriesRowView> {
             height: 110,
             child: ListView.separated(
               scrollDirection: Axis.horizontal,
-              padding: const EdgeInsets.symmetric(horizontal: 10),
+              padding: const EdgeInsets.fromLTRB(16, 14, 16, 0),
               itemCount: 5,
               // Leave spacing to each item's margin so distances match real items
               separatorBuilder: (_, __) => const SizedBox(width: 0),
               itemBuilder: (context, index) {
                 return Container(
-                  width: 90,
+                  width:80,
                   // Match the real item horizontal margin to keep alignment
                   margin: const EdgeInsets.symmetric(horizontal: 8),
                   child: Column(
@@ -59,7 +59,7 @@ class _CategoriesRowViewState extends State<CategoriesRowView> {
                       // placeholder text bar
                       Container(
                         height: 12,
-                        width: 70,
+                        width:90,
                         decoration: BoxDecoration(
                           color: Colors.grey.shade200,
                           borderRadius: BorderRadius.circular(6),
@@ -79,7 +79,7 @@ class _CategoriesRowViewState extends State<CategoriesRowView> {
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
               itemCount: categories.length,
-              padding: const EdgeInsets.symmetric(horizontal: 10),
+              padding: const EdgeInsets.fromLTRB(16, 14, 16, 0),
               itemBuilder: (context, index) {
                 final category = categories[index];
                 final isSelected = selectedCategoryId == category.id;
@@ -115,7 +115,7 @@ class _CategoriesRowViewState extends State<CategoriesRowView> {
                     }
                   },
                   child: Container(
-                    width: 90,
+                    width:80,
                     margin: const EdgeInsets.symmetric(horizontal: 8),
                     child: Column(
                       children: [
@@ -139,9 +139,7 @@ class _CategoriesRowViewState extends State<CategoriesRowView> {
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             fontSize: 13,
-                            color: isSelected
-                                ? const Color(0xFFD95D85)
-                                : Colors.black87,
+                            color: Colors.white,
                             fontWeight:
                                 isSelected ? FontWeight.bold : FontWeight.w500,
                           ),
