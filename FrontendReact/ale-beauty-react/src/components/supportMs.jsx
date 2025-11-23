@@ -5,73 +5,47 @@ import InstagramIcon from "@mui/icons-material/Instagram";
 import TwitterIcon from "@mui/icons-material/Twitter";
 import PinterestIcon from "@mui/icons-material/Pinterest";
 
-const USER_PROFILE_URL = "https://localhost:4000/api/v1/me"
 
 export default function SupportMs() {
 
-    const [name, setName] = useState("");
-    const [last_name, setLastName] = useState("");
-    const [email, setEmail] = useState("");
-    const [subject, setSubject] = useState("");
+    const [orders, setOrders] = useState([]);
+    const [orderId, setOrderId] = useState("");
     const [message_text, setMessageText] = useState("");
-    const [loadingUser, setLoadingUser] = useState(true);
     const token = localStorage.getItem("token");
-    
+
+    // Cargar órdenes
     useEffect(() => {
-        fetch(USER_PROFILE_URL, {
+        fetch("https://localhost:4000/api/v1/orders", {
         headers: { "Authorization": `Bearer ${token}` }
         })
-        .then(res => {
-            if (!res.ok) {
-            throw new Error('Failed to fetch user data');
-            }
-            return res.json();
-        })
-        .then(userData => {
-            // Establecer los estados del formulario con los datos del usuario
-            setName(userData.nombre || '');
-            setLastName(userData.apellido || '');
-            setEmail(userData.email || '');
-        })
-        .catch(err => {
-            console.error("Error fetching user data for support form:", err);
-        })
-        .finally(() => {
-            setLoadingUser(false);
-        });
+        .then(res => res.json())
+        .then(data => setOrders(data.orders || []))
+        .catch(err => console.error("Error cargando órdenes:", err));
     }, []);
 
     const handleSubmit = async (e) => {
-    e.preventDefault();
+        e.preventDefault();
 
-    const formData = { name, last_name, email, subject, message_text };
-
-    const payload = {
+        const payload = {
         support_message: {
-        name,
-        last_name,
-        email,
-        subject,
-        message_text
+            order_id: orderId,
+            message_text
         }
+        };
+
+        const res = await fetch("https://localhost:4000/api/v1/support_messages", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
+        },
+        body: JSON.stringify(payload)
+        });
+
+        const data = await res.json();
+        alert(data.message || "Enviado correctamente");
     };
 
-    
-
-    const res = await fetch("https://localhost:4000/api/v1/support_messages", {
-    method: "POST",
-    headers: {
-        "Content-Type": "application/json",
-        "access-token": token,
-        "token-type": "Bearer"
-    },
-    body: JSON.stringify({ support_message: formData }),
-    });
-
-
-    const data = await res.json();
-    alert(data.message || "Enviado");
-    };
 
     return (
         <div className="support-container">
@@ -131,19 +105,36 @@ export default function SupportMs() {
         {/* Right side form */}
         <div className="support-form-container">
             <form className="support-form" onSubmit={handleSubmit}>
-                <div className="input-row">
-                {/* El valor del input está controlado por el estado, que ahora inicializa con los datos del usuario */}
-                <input type="text" placeholder="Name*" value={name} onChange={(e) => setName(e.target.value)} style={{background: "#e0f4ff"}}/>
-                <input type="text" placeholder="Last name*" value={last_name} onChange={(e) => setLastName(e.target.value)} style={{background: "#e0f4ff"}} />
-                </div>
+            
+            <select
+                value={orderId}
+                onChange={(e) => setOrderId(e.target.value)}
+                className="full-width"
+                style={{ background: "#e0f4ff", padding: "10px", borderRadius: "5px", border: "1px solid #ccc" }}
+            >
+                <option value="">Selecciona tu número de orden*</option>
+                {orders.map(order => (
+                <option key={order.id} value={order.id}>
+                    {order.numero_de_orden} — ${order.pago_total}
+                </option>
+                ))}
+            </select>
 
-                <input type="email" placeholder="Email*" value={email} onChange={(e) => setEmail(e.target.value)} className="full-width" autoComplete="email" style={{background: "#e0f4ff"}} />
-                <input type="text" placeholder="Asunto*" value={subject} onChange={(e) => setSubject(e.target.value)} className="full-width" style={{background: "#e0f4ff", width: "50%"}} />
-                <textarea placeholder="Your message*" value={message_text} onChange={(e) => setMessageText(e.target.value)} rows="10" style={{background: "#e0f4ff"}}></textarea>
+            <textarea
+                placeholder="Tu mensaje*"
+                value={message_text}
+                onChange={(e) => setMessageText(e.target.value)}
+                rows="10"
+                style={{ background: "#e0f4ff" }}
+            ></textarea>
 
-                <button type="submit" className="send-btn">Send message</button>
+            <button type="submit" className="send-btn">
+                Send message
+            </button>
+
             </form>
         </div>
+
         </div>
     );
 }

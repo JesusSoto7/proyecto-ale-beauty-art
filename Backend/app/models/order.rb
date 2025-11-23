@@ -11,6 +11,7 @@ class Order < ApplicationRecord
   belongs_to :user, optional: true
   belongs_to :payment_method, optional: true
   has_many :order_details, dependent: :destroy
+  has_many :support_messages, dependent: :destroy
   before_validation :generar_numero_de_orden, on: :create
   belongs_to :shipping_address, optional: true
   has_one_attached :invoice_pdf
