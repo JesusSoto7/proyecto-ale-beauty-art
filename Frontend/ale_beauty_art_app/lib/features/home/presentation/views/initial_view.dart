@@ -190,7 +190,7 @@ class InitialView extends StatelessWidget {
                     // Cambiar a la pestaña 'Productos' en la barra de navegación
                     context.read<NavigationBloc>().add(NavigationTabChanged(1));
                   }),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 24),
                   const SizedBox(height: 200, child: ProductsCarousel(compact: true)),
                   const SizedBox(height: 24),
                   // Header for Top Rated (no "see more")
@@ -201,8 +201,8 @@ class InitialView extends StatelessWidget {
                       color: Colors.black87,
                     ),
                   ),
-                  const SizedBox(height: 12),
-                  const SizedBox(height: 170, child: TopRatedProducts()),
+                  const SizedBox(height: 24),
+                  const SizedBox(height: 190, child: TopRatedProducts()),
                 ],
               ),
             ),

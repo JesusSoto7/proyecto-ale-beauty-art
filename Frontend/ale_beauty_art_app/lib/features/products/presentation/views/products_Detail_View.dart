@@ -41,6 +41,7 @@ class _ProductDetailViewState extends State<ProductDetailView> {
   bool _submittingReview = false;
 
   Future<void> _fetchReviews() async {
+    if (!mounted) return;
     setState(() => _loadingReviews = true);
     try {
       final res = await CustomHttpClient.getRequest(
@@ -50,11 +51,13 @@ class _ProductDetailViewState extends State<ProductDetailView> {
 
       if (res.statusCode == 200) {
         final List<dynamic> data = jsonDecode(res.body);
+        if (!mounted) return;
         setState(() {
           _reviews = data.map((e) => e as Map<String, dynamic>).toList();
           _loadingReviews = false;
         });
       } else {
+        if (!mounted) return;
         setState(() {
           _reviews = [];
           _loadingReviews = false;
@@ -62,6 +65,7 @@ class _ProductDetailViewState extends State<ProductDetailView> {
       }
     } catch (e) {
       print('Error fetching reviews: $e');
+      if (!mounted) return;
       setState(() {
         _reviews = [];
         _loadingReviews = false;
@@ -215,6 +219,7 @@ class _ProductDetailViewState extends State<ProductDetailView> {
   }
 
   Future<void> _fetchRelatedProducts() async {
+    if (!mounted) return;
     setState(() => _relatedLoading = true);
     try {
       final res = await CustomHttpClient.getRequest(
@@ -224,6 +229,7 @@ class _ProductDetailViewState extends State<ProductDetailView> {
 
       if (res.statusCode == 200) {
         final List<dynamic> data = jsonDecode(res.body);
+        if (!mounted) return;
         setState(() {
           _relatedProducts = data
               .map((e) => Product.fromJson(e as Map<String, dynamic>))
@@ -232,6 +238,7 @@ class _ProductDetailViewState extends State<ProductDetailView> {
           _relatedLoading = false;
         });
       } else {
+        if (!mounted) return;
         setState(() {
           _relatedProducts = [];
           _relatedLoading = false;
@@ -239,6 +246,7 @@ class _ProductDetailViewState extends State<ProductDetailView> {
       }
     } catch (e) {
       print('Error fetching related products: $e');
+      if (!mounted) return;
       setState(() {
         _relatedProducts = [];
         _relatedLoading = false;
