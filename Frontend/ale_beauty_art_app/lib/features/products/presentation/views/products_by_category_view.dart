@@ -37,12 +37,15 @@ class ProductsByCategoryView extends StatelessWidget {
             backgroundColor: Colors.white,
             elevation: 0,
             centerTitle: true,
-            systemOverlayStyle: SystemUiOverlayStyle.dark,
+            systemOverlayStyle: const SystemUiOverlayStyle(
+              statusBarIconBrightness: Brightness.light,
+              statusBarBrightness: Brightness.dark,
+            ),
             leading: IconButton(
               icon: const Icon(
                 Icons.arrow_back_ios_new_rounded,
                 size: 20,
-                color: Color(0xFFD95D85),
+                color: Colors.black87,
               ),
               onPressed: () => Navigator.pop(context),
             ),

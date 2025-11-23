@@ -10,6 +10,8 @@ import 'package:ale_beauty_art_app/features/orders/presentation/bloc/order_bloc.
 import 'package:ale_beauty_art_app/features/profile/presentation/bloc/profile_bloc.dart';
 import 'package:ale_beauty_art_app/features/shipping_address/presentation/bloc/shipping_address_bloc.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'dart:io' show Platform;
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ale_beauty_art_app/features/home/presentation/bloc/home_bloc.dart';
 import 'package:ale_beauty_art_app/features/products/presentation/bloc/product_bloc.dart';
@@ -32,8 +34,71 @@ void main() async {
   );
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    // Ensure system navigation bar matches the app bottom nav across the whole app (Android).
+    // Call after first frame to avoid being overridden by other widgets that run during build.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (Platform.isAndroid) {
+        // Draw edge-to-edge and set nav bar to a light grey so the system
+        // navigation buttons don't appear fully white on devices using button
+        // navigation. Also disable contrast enforcement on Android 15+.
+        SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+        SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+          // Use a slightly darker gray so system navigation icons appear more 'gray' visually
+          systemNavigationBarColor: Color(0xFFE0E0E0),
+          systemNavigationBarIconBrightness: Brightness.dark,
+          systemNavigationBarDividerColor: Color(0xFFE0E0E0),
+          systemNavigationBarContrastEnforced: false,
+        ));
+      } else {
+        SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+          systemNavigationBarColor: Colors.white,
+          systemNavigationBarIconBrightness: Brightness.dark,
+          systemNavigationBarDividerColor: Colors.white,
+        ));
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+    if (state == AppLifecycleState.resumed) {
+      // Reapply system UI style when the app resumes (some OEMs may reset it).
+      if (Platform.isAndroid) {
+        SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+        SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+          systemNavigationBarColor: Color(0xFFE0E0E0),
+          systemNavigationBarIconBrightness: Brightness.dark,
+          systemNavigationBarDividerColor: Color(0xFFE0E0E0),
+          systemNavigationBarContrastEnforced: false,
+        ));
+      } else {
+        SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+          systemNavigationBarColor: Colors.white,
+          systemNavigationBarIconBrightness: Brightness.dark,
+          systemNavigationBarDividerColor: Colors.white,
+        ));
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -75,9 +140,58 @@ class MyApp extends StatelessWidget {
         supportedLocales: context.supportedLocales,
         localizationsDelegates: context.localizationDelegates,
         title: 'app_name'.tr(),
+        theme: ThemeData(
+          // Ensure AppBars do not override the system navigation bar color
+          appBarTheme: const AppBarTheme(
+            systemOverlayStyle: SystemUiOverlayStyle(
+              systemNavigationBarColor: Color(0xFFE0E0E0),
+              systemNavigationBarIconBrightness: Brightness.dark,
+              systemNavigationBarDividerColor: Color(0xFFE0E0E0),
+            ),
+          ),
+        ),
         home: const InitialView(), // Solo muestra la vista inicial
+        navigatorObservers: [_SystemUiNavigatorObserver()],
       ),
     );
+  }
+
+}
+
+class _SystemUiNavigatorObserver extends NavigatorObserver {
+  void _applyStyle() {
+    if (Platform.isAndroid) {
+      SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+        systemNavigationBarColor: Color(0xFFE0E0E0),
+        systemNavigationBarIconBrightness: Brightness.dark,
+        systemNavigationBarDividerColor: Color(0xFFE0E0E0),
+        systemNavigationBarContrastEnforced: false,
+      ));
+    } else {
+      SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+        systemNavigationBarColor: Colors.white,
+        systemNavigationBarIconBrightness: Brightness.dark,
+        systemNavigationBarDividerColor: Colors.white,
+      ));
+    }
+  }
+
+  @override
+  void didPush(Route<dynamic> route, Route<dynamic>? previousRoute) {
+    super.didPush(route, previousRoute);
+    _applyStyle();
+  }
+
+  @override
+  void didPop(Route<dynamic> route, Route<dynamic>? previousRoute) {
+    super.didPop(route, previousRoute);
+    _applyStyle();
+  }
+
+  @override
+  void didReplace({Route<dynamic>? newRoute, Route<dynamic>? oldRoute}) {
+    super.didReplace(newRoute: newRoute, oldRoute: oldRoute);
+    _applyStyle();
   }
 }
 

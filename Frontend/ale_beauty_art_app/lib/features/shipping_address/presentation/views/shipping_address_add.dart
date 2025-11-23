@@ -211,7 +211,10 @@ class _ShippingAddressFormPageState extends State<ShippingAddressAdd> {
               ),
               onPressed: () => Navigator.pop(context),
             ),
-            systemOverlayStyle: SystemUiOverlayStyle.dark,
+            systemOverlayStyle: const SystemUiOverlayStyle(
+              statusBarIconBrightness: Brightness.light,
+              statusBarBrightness: Brightness.dark,
+            ),
           ),
         ),
       ),

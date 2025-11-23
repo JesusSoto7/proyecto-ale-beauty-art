@@ -119,7 +119,7 @@ class _OrderPageViewState extends State<OrderPageView> {
             color: Colors.white,
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.08),
+                color: Colors.black.withOpacity(0.20),
                 blurRadius: 12,
                 offset: const Offset(0, 3),
               ),
@@ -129,12 +129,15 @@ class _OrderPageViewState extends State<OrderPageView> {
             backgroundColor: Colors.white,
             elevation: 0,
             centerTitle: true,
-            systemOverlayStyle: SystemUiOverlayStyle.dark,
+            systemOverlayStyle: const SystemUiOverlayStyle(
+              statusBarIconBrightness: Brightness.light,
+              statusBarBrightness: Brightness.dark,
+            ),
             leading: IconButton(
               icon: const Icon(
                 Icons.arrow_back_ios_new_rounded,
                 size: 20,
-                color: Color(0xFFD95D85),
+                color: Colors.black87,
               ),
               onPressed: () => Navigator.pop(context),
             ),

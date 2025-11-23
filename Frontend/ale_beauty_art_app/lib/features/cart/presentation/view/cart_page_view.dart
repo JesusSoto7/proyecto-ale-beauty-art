@@ -72,7 +72,10 @@ class _CartPageViewState extends State<CartPageView> {
               ),
               onPressed: () => Navigator.pop(context),
             ),
-            systemOverlayStyle: SystemUiOverlayStyle.dark,
+            systemOverlayStyle: const SystemUiOverlayStyle(
+              statusBarIconBrightness: Brightness.light,
+              statusBarBrightness: Brightness.dark,
+            ),
           ),
         ),
       ),

@@ -4,6 +4,7 @@
     "ok": "Aceptar",
     "cancel": "Cancelar",
     "error": "Error",
+    "save": "Guardar",
     "select_language": "Seleccionar idioma",
     "english": "Inglés",
     "spanish": "Español",
@@ -19,16 +20,24 @@
     "logout": "Cerrar Sesión",
     "logout_success": "Sesión cerrada",
     "login": "Iniciar Sesión",
+    "my_account": "Mi perfil",
     "my_orders": "Mis pedidos",
     "favorites": "Favoritos",
-    "my_addresses": "Mis direcciones"
+    "my_addresses": "Mis direcciones",
+    "details": "Detalles de la cuenta",
+    "phone": "Teléfono",
+    "edit": "Editar",
+    "first_name": "Nombre",
+    "last_name": "Apellido",
+    "email": "Correo electrónico",
+    "updated_success": "Datos actualizados"
   },
   "nav": {
     "home": "Inicio",
     "products": "Productos",
     "categories": "Categorías",
     "cart": "Carrito",
-    "profile": "Perfil"
+    "profile": "Cuenta"
   },
   "products": {
     "filters": "Filtros",
@@ -53,7 +62,8 @@
     }
   },
   "home": {
-    "popular_products": "Productos populares"
+    "popular_products": "Productos populares",
+    "top_rated": "Los más valorados"
   },
   "search": {
     "placeholder": "Buscar productos"
@@ -86,6 +96,22 @@
     "added_snackbar": "Producto Agregado",
     "favorite_add": "Agregar a favoritos",
     "favorite_remove": "Quitar de favoritos"
+    ,
+    "related_products": "Productos relacionados",
+    "ratings_summary": "Calificaciones generales",
+    "reviews": "Reseñas",
+    "rate": "Calificar",
+    "write_review_title": "Escribe una reseña",
+    "write_review_hint": "Escribe tu opinión aquí...",
+    "send": "Enviar",
+    "no_reviews_yet": "Aún no hay calificaciones para este producto.",
+    "must_purchase_to_review": "Debes comprar el producto para dejar una calificación",
+    "please_write_comment": "Por favor escribe un comentario",
+    "rating_sent": "Calificación enviada",
+    "login_required": "Debes iniciar sesión para dejar una calificación",
+    "error_sending_rating": "Error enviando calificación: {detail}",
+    "reviews_count_one": "(1 calificación)",
+    "reviews_count": "({count} calificaciones)"
   },
   "forgot_password": {
     "title": "Recuperar contraseña",
@@ -120,6 +146,7 @@
     "forgot_password": "¿Olvidaste tu contraseña?",
     "fill_all_fields": "Completa todos los campos"
   },
+  
   "favorites": {
     "title": "Mis Favoritos",
     "empty": "No tienes productos favoritos."

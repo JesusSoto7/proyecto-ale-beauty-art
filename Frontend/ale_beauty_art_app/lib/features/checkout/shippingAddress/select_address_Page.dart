@@ -78,7 +78,10 @@ class _SelectAddressPageState extends State<SelectAddressPage> {
               ),
               onPressed: () => Navigator.pop(context),
             ),
-            systemOverlayStyle: SystemUiOverlayStyle.dark,
+            systemOverlayStyle: const SystemUiOverlayStyle(
+              statusBarIconBrightness: Brightness.light,
+              statusBarBrightness: Brightness.dark,
+            ),
           ),
         ),
       ),
