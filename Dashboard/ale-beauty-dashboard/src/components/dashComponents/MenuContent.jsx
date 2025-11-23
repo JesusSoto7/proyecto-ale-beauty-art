@@ -36,6 +36,8 @@ export default function MenuContent() {
     { text: 'Usuarios', icon: <PeopleRoundedIcon />, path: `/${lang}/home/usuarios` },
     { text: 'Ordenes', icon: <TfiReceipt />, path: `/${lang}/home/orders` },
     { text: 'Notificaciones', icon: <CircleNotificationsIcon />, path: `/${lang}/home/notificaciones` },
+    { text: 'Ver Mensajes', icon: <CircleNotificationsIcon />, path: `/${lang}/home/support-messages` },
+
   ];
 
   const secondaryListItems = [

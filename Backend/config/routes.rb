@@ -18,6 +18,9 @@ Rails.application.routes.draw do
 
       get "my_reviews", to: "reviews#my_reviews"
 
+      # support ms
+      resources :support_messages, only: [:create, :index]
+
       # Carrito
       get "cart", to: "cart#show"
       post 'cart/add_product', to: 'cart#add_product'        
