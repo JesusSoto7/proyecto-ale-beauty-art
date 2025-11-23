@@ -13,35 +13,39 @@ export default function SupportMs() {
     const [loadingOrders, setloadingOrders] = useState(true);
     const [message_text, setMessageText] = useState("");
     const token = localStorage.getItem("token");
+    const [subject, setSubject] = useState("");
+
 
     // Cargar órdenes
     useEffect(() => {
-        fetch("https://localhost:4000/api/v1/my_orders", {
+    fetch("https://localhost:4000/api/v1/my_orders", {
         headers: { "Authorization": `Bearer ${token}` }
-        })
+    })
         .then(res => res.json())
         .then(data => {
-            if(Array.isArray(data)){
-                setOrders(data);
-            } else if (Array.isArray(data.orders)) {
-                setOrders(data.orders);
-            } else {
-                setOrders([]);
-            }
+        if (Array.isArray(data)) {
+            setOrders(data);
+        } else if (Array.isArray(data.orders)) {
+            setOrders(data.orders);
+        } else {
+            setOrders([]);
+        }
         })
-        .then(data => setOrders(data.orders || []))
         .catch(err => console.error("Error cargando órdenes:", err))
         .finally(() => setloadingOrders(false));
     }, [token]);
+
 
     const handleSubmit = async (e) => {
         e.preventDefault();
 
         const payload = {
-        support_message: {
-            order_id: orderId,
-            message_text
-        }
+            support_message: {
+                order_id: orderId,
+                subject,
+                message_text
+            }
+
         };
 
         const res = await fetch("https://localhost:4000/api/v1/support_messages", {
@@ -54,6 +58,7 @@ export default function SupportMs() {
         });
 
         const data = await res.json();
+        
         alert(data.message || "Enviado correctamente");
     };
 
@@ -131,6 +136,16 @@ export default function SupportMs() {
                         </option>
                     ))}
                 </select>
+
+                <input
+                    type="text"
+                    placeholder="Asunto"
+                    value={subject}
+                    onChange={(e) => setSubject(e.target.value)}
+                    className="full-width"
+                    style={{ background: "#e0f4ff" }}
+                />
+
 
             <textarea
                 placeholder="Tu mensaje*"
