@@ -268,6 +268,7 @@ function ShippingAddressForm({ onSuccess, initialData, variant = "default" }) {
               onChange={handleChange}
               required={["nombre", "apellido", "telefono", "direccion"].includes(field.name)}
               sx={inputStyles}
+              inputProps={ field.name === "codigo_postal" ? { maxLength: 6, minLength: 6 } : {} }
             />
           ))}
 

@@ -1,0 +1,13 @@
+<h1>Hola <%= @message.name %>,</h1>
+
+<p>Hemos procesado tu solicitud de soporte con el asunto: <strong><%= @message.subject %></strong>.</p>
+
+<div style="border: 1px solid #ddd; padding: 15px; margin: 20px 0; background-color: #f9f9f9;">
+  <h3>Nuestra Respuesta:</h3>
+  <p><%= simple_format(@reply_content) %></p>
+</div>
+
+<p>Si tienes alguna otra pregunta, no dudes en contactarnos.</p>
+
+<p>Saludos,<br>
+Equipo de Soporte Ale Beauty</p>

@@ -1,0 +1,2 @@
+class SupportMessage < ApplicationRecord
+end

@@ -17,14 +17,14 @@ export default function Footer() {
           <ul>
             <li><a href={`/${lang}/about`}>{t("footer.information.about")}</a></li>
             <li><a href={`/${lang}/terms`}>{t("footer.information.terms")}</a></li>
-            <li><a href="#">{t("footer.information.privacy")}</a></li>
+            <li><a href={`/${lang}/privacy-policy`}>{t("footer.information.privacy")}</a></li>
           </ul>
         </div>
 
         <div className="footer-section">
           <h3>{t("footer.contact.title")}</h3>
           <ul>
-            <li><i className="fas fa-phone"></i> +57 123 456 7890</li>
+            <li><i className="fas fa-phone"></i> +57 302 2880520</li>
             <li><i className="fas fa-envelope"></i> alebeautyart@gmail.com</li>
             <li><i className="fas fa-map-marker-alt"></i> Barranquilla, Colombia</li>
           </ul>

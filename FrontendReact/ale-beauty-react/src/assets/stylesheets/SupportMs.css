@@ -1,0 +1,150 @@
+.support-container {
+  display: flex;
+  justify-content: space-between;
+  gap: 40px;
+  padding: 50px 5%;
+  font-family: Arial, sans-serif;
+}
+
+.support-info {
+  width: 45%;
+  padding: 15px;
+}
+
+.support-info h2 {
+  font-size: 32px;
+  font-weight: 700;
+  color: #0b2545;
+}
+
+.support-description {
+  margin-top: 10px;
+  font-size: 15px;
+  color: #4a5568;
+  line-height: 1.6;
+}
+
+.support-section {
+  margin-top: 25px;
+}
+
+.support-section h4 {
+  margin-bottom: 5px;
+  color: #0b2545;
+  font-size: 18px;
+}
+
+.support-link {
+  color: #0077cc;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.support-link:hover {
+  text-decoration: underline;
+}
+
+/* RIGHT SIDE FORM */
+.support-form-container {
+  width: 50%;
+  padding: 30px;
+  border-radius: 16px;
+}
+
+.support-form input,
+.support-form textarea {
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: 12px;
+  border: none;
+  outline: none;
+  margin-bottom: 15px;
+  font-size: 14px;
+}
+
+.input-row {
+  display: flex;
+  gap: 12px;
+}
+
+.full-width {
+  width: 100%;
+}
+
+textarea {
+  resize: none;
+  border: #0b2545 1px solid;
+}
+
+.send-btn {
+  width: 100%;
+  padding: 14px;
+  border: none;
+  background-color: #df6897;
+  color: white;
+  font-size: 15px;
+  font-weight: bold;
+  border-radius: 30px;
+  cursor: pointer;
+  margin-top: 10px;
+  transition: 0.3s ease;
+}
+
+.send-btn:hover {
+  background-color: #bf507a;
+}
+
+/* Title */
+.title-touch {
+  font-size: 50px ;
+  font-weight: 600;
+  margin-bottom: 30px;
+  margin-left: 9px;
+  color: #000;
+}
+
+/* Container for each section */
+.info-block {
+  margin-bottom: 25px;
+}
+
+/* Label tipo "Email:", "Phone:" */
+.label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #df6897;
+  margin-bottom: 4px;
+}
+
+/* Valores tipo correo, teléfono, dirección */
+.value {
+  font-size: 18px;
+  color: #000;
+  line-height: 1.5;
+  margin-left: 15px;
+}
+
+/* Redes sociales */
+.social-section {
+  margin-top: 30px;
+}
+
+.social-icons {
+  display: flex;
+  gap: 12px;
+  margin-top: 10px;
+  margin-left: 15px;
+}
+
+/* círculos negros estilo ícono */
+.circle {
+  width: 32px;
+  height: 32px;
+  padding-left: 3px;
+  padding-top: 3px;
+  background: #df6897;
+  border-radius: 50%;
+}
+.circle:hover {
+  background: #bf507a;
+}

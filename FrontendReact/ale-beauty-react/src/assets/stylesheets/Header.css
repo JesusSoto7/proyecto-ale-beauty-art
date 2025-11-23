@@ -1,6 +1,6 @@
 /* Oculta la barra de scroll horizontal global sin afectar el scroll interno de carruseles */
 html, body {
-  overflow-x: hidden !important;
+  /* overflow-x: hidden !important; */
 }
 @media (max-width: 1280px) {
   .user-options {

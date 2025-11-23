@@ -154,15 +154,6 @@ export default function Perfil() {
                   >
                     {t("profile.edit")}
                   </button>
-                  <button
-                    className="btn btn-outline-danger ms-2 px-4 py-2"
-                    onClick={() => {
-                      localStorage.removeItem("token");
-                      window.location.href =`/${lang}/login`;
-                    }}
-                  >
-                    {t("profile.logout")}
-                  </button>
                 </div>
               </>
             ) : (

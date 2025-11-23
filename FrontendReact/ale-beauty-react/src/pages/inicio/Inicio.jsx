@@ -94,7 +94,7 @@ function Inicio() {
         onAddToCart={addToCart}
         productRatings={productRatings}
         t={t}
-        skeletonCount={4}
+        skeletonCount={6}
       />
 
       <div style={{ margin: 0, padding: 0, width: "100%" }}>
