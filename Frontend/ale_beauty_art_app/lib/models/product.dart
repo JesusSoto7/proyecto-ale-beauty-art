@@ -14,6 +14,9 @@ class Product extends Equatable {
   final String? imagenUrl;
   // Imagen asociada a la subcategoría (si el backend la entrega en sub_category.imagen_url)
   final String? subCategoryImagenUrl;
+  final String? slug;
+  final double? averageRating;
+  final int? reviewsCount;
 
   final Discount? discount;
   final Discount? mejorDescuentoParaPrecio;
@@ -30,6 +33,9 @@ class Product extends Equatable {
     required this.categoryId,
     required this.nombreCategoria,
     required this.imagenUrl,
+    this.slug,
+    this.averageRating,
+    this.reviewsCount,
     this.subCategoryImagenUrl,
     this.discount,
     this.mejorDescuentoParaPrecio,
@@ -51,6 +57,7 @@ class Product extends Equatable {
       nombreCategoria: category['nombre_categoria'] ?? '',
       precioProducto: json['precio_producto'] ?? 0,
       imagenUrl: json['imagen_url'],
+      slug: json['slug']?.toString(),
       // Intentar mapear imagen de subcategoría si viene del backend
       subCategoryImagenUrl: subCategory['imagen_url'] ?? subCategory['imagen'],
       // 🆕 Parsear descuentos
@@ -63,6 +70,21 @@ class Product extends Equatable {
           ? (json['precio_con_mejor_descuento'] is String
               ? double.tryParse(json['precio_con_mejor_descuento'])
               : (json['precio_con_mejor_descuento'] as num?)?.toDouble())
+          : null,
+        // ratings (optional)
+        averageRating: json['average_rating'] != null
+          ? (json['average_rating'] is String
+            ? double.tryParse(json['average_rating'])
+            : (json['average_rating'] as num?)?.toDouble())
+          : (json['average'] != null
+            ? (json['average'] is String
+              ? double.tryParse(json['average'])
+              : (json['average'] as num?)?.toDouble())
+            : null),
+        reviewsCount: json['reviews_count'] != null
+          ? (json['reviews_count'] is String
+            ? int.tryParse(json['reviews_count'])
+            : (json['reviews_count'] as num?)?.toInt())
           : null,
     );
   }
@@ -78,6 +100,7 @@ class Product extends Equatable {
         'sub_category': {'nombre': nombreSubCategoria},
         'category': {'nombre_categoria': nombreCategoria},
         'imagen_url': imagenUrl,
+        if (slug != null) 'slug': slug,
         if (subCategoryImagenUrl != null)
           'sub_category_imagen_url': subCategoryImagenUrl,
         if (discount != null) 'discount': discount!.toJson(),
@@ -85,6 +108,8 @@ class Product extends Equatable {
           'mejor_descuento_para_precio': mejorDescuentoParaPrecio!.toJson(),
         if (precioConMejorDescuento != null)
           'precio_con_mejor_descuento': precioConMejorDescuento,
+        if (averageRating != null) 'average_rating': averageRating,
+        if (reviewsCount != null) 'reviews_count': reviewsCount,
       };
 
   // 🆕 Método helper para saber si tiene descuento activo
@@ -112,7 +137,10 @@ class Product extends Equatable {
         categoryId,
         nombreCategoria,
         imagenUrl,
-    subCategoryImagenUrl,
+    slug,
+      averageRating,
+      reviewsCount,
+      subCategoryImagenUrl,
         discount,
         mejorDescuentoParaPrecio,
         precioConMejorDescuento,

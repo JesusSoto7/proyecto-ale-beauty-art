@@ -98,6 +98,41 @@ class Api::V1::ProductsController < Api::V1::BaseController
     render json: @products.as_json(methods: [:imagen_url, :mejor_descuento_para_precio, :precio_con_mejor_descuento])
   end
 
+  # GET /api/v1/products/top_rated?limit=5&sub_category_id=...
+  def top_rated
+    limit = params[:limit].to_i
+    limit = 5 if limit <= 0
+
+    products = Product.with_attached_imagen
+    products = products.where(sub_category_id: params[:sub_category_id]) if params[:sub_category_id].present?
+
+    # Aggregate reviews: average rating and count, order by average desc
+    products = products.left_joins(:reviews)
+                       .select('products.*, COALESCE(AVG(reviews.rating), 0) AS average_rating, COUNT(reviews.id) AS reviews_count')
+                       .group('products.id')
+                       .having('COUNT(reviews.id) > 0')
+                       .order('average_rating DESC')
+                       .limit(limit)
+
+    result = products.map do |p|
+      p.as_json(
+        include: {
+          sub_category: {
+            only: [:id, :nombre],
+            include: { category: { only: [:id, :nombre_categoria] } }
+          },
+          discount: { only: [:id, :nombre, :descripcion, :tipo, :valor, :fecha_inicio, :fecha_fin, :activo] }
+        },
+        methods: [:slug, :imagen_url, :mejor_descuento_para_precio, :precio_con_mejor_descuento]
+      ).merge(
+        average_rating: p.read_attribute(:average_rating).to_f,
+        reviews_count: p.read_attribute(:reviews_count).to_i
+      )
+    end
+
+    render json: result, status: :ok
+  end
+
   private
 
   def set_product

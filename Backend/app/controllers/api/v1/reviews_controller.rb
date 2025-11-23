@@ -50,7 +50,11 @@ class Api::V1::ReviewsController < Api::V1::BaseController
   private
 
   def set_product
-    @product = Product.find_by!(slug: params[:product_slug])
+    # Preferir búsqueda por slug (rutas amigables). Si no existe, intentar por id
+    identifier = params[:product_slug] || params[:product_id] || params[:id]
+    @product = Product.find_by(slug: identifier)
+    @product ||= Product.find_by(id: identifier)
+    raise ActiveRecord::RecordNotFound unless @product
   end
 
   def review_params

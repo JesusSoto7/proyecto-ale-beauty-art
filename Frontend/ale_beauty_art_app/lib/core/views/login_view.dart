@@ -91,8 +91,8 @@ class _LoginPageState extends State<LoginPage> {
                 child: AnimatedContainer(
                   duration: const Duration(milliseconds: 180),
                   curve: Curves.easeOut,
-                  margin: EdgeInsets.only(
-                      bottom: bottomInset > 0 ? bottomInset - 10 : 24,
+                    margin: EdgeInsets.only(
+                      bottom: bottomInset > 0 ? bottomInset - 10 : 56,
                       left: 16,
                       right: 16),
                   padding: const EdgeInsets.fromLTRB(20, 22, 20, 16),
@@ -187,25 +187,43 @@ class _LoginPageState extends State<LoginPage> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Row(
-                              children: [
-                                Checkbox(
-                                  value: rememberMe,
-                                  onChanged: (value) => setState(
-                                      () => rememberMe = value ?? false),
-                                ),
-                                Text("login.remember_me".tr()),
-                              ],
+                            Flexible(
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Checkbox(
+                                    value: rememberMe,
+                                    onChanged: (value) => setState(
+                                        () => rememberMe = value ?? false),
+                                  ),
+                                  Flexible(
+                                    child: Text(
+                                      "login.remember_me".tr(),
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
-                            TextButton(
-                              onPressed: () {
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (_) =>
-                                            const ForgotPasswordPage()));
-                              },
-                              child: Text("login.forgot_password".tr()),
+                            Flexible(
+                              child: Align(
+                                alignment: Alignment.centerRight,
+                                child: TextButton(
+                                  onPressed: () {
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (_) =>
+                                                const ForgotPasswordPage()));
+                                  },
+                                  child: Text(
+                                    "login.forgot_password".tr(),
+                                    textAlign: TextAlign.right,
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                              ),
                             ),
                           ],
                         ),
