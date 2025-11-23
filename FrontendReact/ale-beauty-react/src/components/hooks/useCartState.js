@@ -15,6 +15,7 @@ const mapGuestToCart = () => {
       precio_con_mejor_descuento: Number(i.price || 0),
       cantidad: Number(i.quantity || 1),
       imagen_url: i.image || null,
+      stock: Number(i.stock || 1),
     })),
   };
 };
@@ -70,6 +71,11 @@ export const useCartState = (token, t) => {
       })
       .finally(() => setLoading(false));
   }, [token, t]);
+
+  useEffect(() => {
+    const interval = setInterval(fetchCart, 10000); // cada 10 segundos
+    return () => clearInterval(interval);
+  }, [fetchCart]);
 
   useEffect(() => {
     fetchCart();

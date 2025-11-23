@@ -19,6 +19,10 @@ module Api
         cart_product.cantidad ||= 0
         cart_product.cantidad += 1
 
+        if cart_product.cantidad > product.stock
+          return render json: { error: "Stock insuficiente", cart: cart_json(cart) }, status: :unprocessable_entity
+        end
+
         if cart_product.save
           render json: { message: "Producto añadido", cart: cart_json(cart) }
         else

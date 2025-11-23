@@ -51,6 +51,54 @@ export const useProducts = (showAlert) => {
     }
   }, [token]);
 
+  const refreshProducts = useCallback(async () => {
+    if (!token) return;
+
+    try {
+      const response = await fetch("https://localhost:4000/api/v1/products", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      const data = await response.json();
+      setProducts(Array.isArray(data) ? data : []);
+    } catch (error) {
+      console.error("Error refrescando productos:", error);
+    }
+  }, [token]);
+
+  const reduceStock = useCallback(
+    async (productId, cantidad) => {
+      try {
+        const response = await fetch(
+          `https://localhost:4000/api/v1/products/${productId}/reduce_stock`,
+          {
+            method: "PATCH",
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ cantidad }),
+          }
+        );
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          showAlert(`Error: ${errorData.error || response.statusText}`, "error");
+          return false;
+        }
+
+        await refreshProducts(); // Refrescar productos en el dashboard
+        showAlert("Stock actualizado correctamente", "success");
+        return true;
+      } catch (error) {
+        console.error("Error reduciendo stock:", error);
+        showAlert("Error al actualizar el stock", "error");
+        return false;
+      }
+    },
+    [token, refreshProducts, showAlert]
+  );
+
   const fetchDiscounts = useCallback(async () => {
     if (!token) return;
 
@@ -159,6 +207,8 @@ export const useProducts = (showAlert) => {
 
   return {
     products,
+    reduceStock,
+    refreshProducts,
     categories,
     discounts,
     isLoading,

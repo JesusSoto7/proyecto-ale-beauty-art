@@ -47,6 +47,7 @@ const ProductTable = () => {
     createProduct,
     updateProduct,
     deleteProduct,
+    reduceStock,
   } = useProducts(showAlert);
 
   const columns = useProductColumns({ categories, discounts, isDark, token });
@@ -83,6 +84,13 @@ const ProductTable = () => {
   const closeModal = useCallback(() => {
     setModalState({ open: false, mode: null, product: null });
   }, []);
+
+  const handleReduceStock = useCallback(async (productId, cantidad) => {
+    const success = await reduceStock(productId, cantidad);
+    if (!success) {
+      console.error("Error al reducir el stock del producto.");
+    }
+  }, [reduceStock]);
 
   const commonSurface = {
     bgcolor: "background.paper",
