@@ -5,6 +5,8 @@ import InstagramIcon from "@mui/icons-material/Instagram";
 import TwitterIcon from "@mui/icons-material/Twitter";
 import PinterestIcon from "@mui/icons-material/Pinterest";
 
+const USER_PROFILE_URL = "https://localhost:4000/api/v1/me"
+
 export default function SupportMs() {
 
     const [name, setName] = useState("");
@@ -12,9 +14,37 @@ export default function SupportMs() {
     const [email, setEmail] = useState("");
     const [subject, setSubject] = useState("");
     const [message_text, setMessageText] = useState("");
+    const [loadingUser, setLoadingUser] = useState(true);
+    const token = localStorage.getItem("token");
+    
+    useEffect(() => {
+        fetch(USER_PROFILE_URL, {
+        headers: { "Authorization": `Bearer ${token}` }
+        })
+        .then(res => {
+            if (!res.ok) {
+            throw new Error('Failed to fetch user data');
+            }
+            return res.json();
+        })
+        .then(userData => {
+            // Establecer los estados del formulario con los datos del usuario
+            setName(userData.nombre || '');
+            setLastName(userData.apellido || '');
+            setEmail(userData.email || '');
+        })
+        .catch(err => {
+            console.error("Error fetching user data for support form:", err);
+        })
+        .finally(() => {
+            setLoadingUser(false);
+        });
+    }, []);
 
     const handleSubmit = async (e) => {
     e.preventDefault();
+
+    const formData = { name, last_name, email, subject, message_text };
 
     const payload = {
         support_message: {
@@ -26,7 +56,7 @@ export default function SupportMs() {
         }
     };
 
-    const token = localStorage.getItem("token");
+    
 
     const res = await fetch("https://localhost:4000/api/v1/support_messages", {
     method: "POST",
@@ -35,7 +65,7 @@ export default function SupportMs() {
         "access-token": token,
         "token-type": "Bearer"
     },
-    body: JSON.stringify(payload)
+    body: JSON.stringify({ support_message: formData }),
     });
 
 
@@ -101,16 +131,17 @@ export default function SupportMs() {
         {/* Right side form */}
         <div className="support-form-container">
             <form className="support-form" onSubmit={handleSubmit}>
-            <div className="input-row">
+                <div className="input-row">
+                {/* El valor del input está controlado por el estado, que ahora inicializa con los datos del usuario */}
                 <input type="text" placeholder="Name*" value={name} onChange={(e) => setName(e.target.value)} style={{background: "#e0f4ff"}}/>
                 <input type="text" placeholder="Last name*" value={last_name} onChange={(e) => setLastName(e.target.value)} style={{background: "#e0f4ff"}} />
-            </div>
+                </div>
 
-            <input type="email" placeholder="Email*" value={email} onChange={(e) => setEmail(e.target.value)} className="full-width" autoComplete="email" style={{background: "#e0f4ff"}} />
-            <input type="text" placeholder="Asunto*" value={subject} onChange={(e) => setSubject(e.target.value)} className="full-width" style={{background: "#e0f4ff", width: "50%"}} />
-            <textarea placeholder="Your message*" value={message_text} onChange={(e) => setMessageText(e.target.value)} rows="10" style={{background: "#e0f4ff"}}></textarea>
+                <input type="email" placeholder="Email*" value={email} onChange={(e) => setEmail(e.target.value)} className="full-width" autoComplete="email" style={{background: "#e0f4ff"}} />
+                <input type="text" placeholder="Asunto*" value={subject} onChange={(e) => setSubject(e.target.value)} className="full-width" style={{background: "#e0f4ff", width: "50%"}} />
+                <textarea placeholder="Your message*" value={message_text} onChange={(e) => setMessageText(e.target.value)} rows="10" style={{background: "#e0f4ff"}}></textarea>
 
-            <button type="submit" className="send-btn">Send message</button>
+                <button type="submit" className="send-btn">Send message</button>
             </form>
         </div>
         </div>

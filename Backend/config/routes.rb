@@ -19,7 +19,16 @@ Rails.application.routes.draw do
       get "my_reviews", to: "reviews#my_reviews"
 
       # support ms
-      resources :support_messages, only: [:create, :index]
+      resources :support_messages, only: [:index, :create] do
+        member do
+          # Define el endpoint para la respuesta: POST /api/v1/support_messages/:id/reply
+          post :reply 
+        end
+        collection do
+          # Nueva ruta: GET /api/v1/support_messages/pending_count
+          get :pending_count 
+        end
+      end
 
       # Carrito
       get "cart", to: "cart#show"
