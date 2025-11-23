@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:ale_beauty_art_app/core/http/custom_http_client.dart';
-import 'package:ale_beauty_art_app/core/views/loading_view.dart';
+import 'package:ale_beauty_art_app/features/products/presentation/widgets/product_skeleton.dart';
 import 'package:ale_beauty_art_app/features/products/presentation/views/products_Detail_View.dart';
 import 'package:ale_beauty_art_app/models/product.dart';
 import 'package:flutter/material.dart';
@@ -64,7 +64,7 @@ class _TopRatedProductsState extends State<TopRatedProducts> {
 
   @override
   Widget build(BuildContext context) {
-    if (_loading) return SizedBox(height: 200, child: Padding(padding: const EdgeInsets.only(bottom: 12), child: LoadingView()));
+    if (_loading) return ProductsSkeletonCarousel(itemCount: widget.displayCount, compact: true);
 
     if (_serverProducts.isEmpty) return const SizedBox.shrink();
 

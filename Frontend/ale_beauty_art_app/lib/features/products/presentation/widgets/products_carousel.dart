@@ -1,5 +1,5 @@
 import 'package:ale_beauty_art_app/core/utils/formatters.dart';
-import 'package:ale_beauty_art_app/core/views/loading_view.dart';
+import 'package:ale_beauty_art_app/features/products/presentation/widgets/product_skeleton.dart';
 import 'package:ale_beauty_art_app/features/products/presentation/bloc/product_bloc.dart';
 import 'package:ale_beauty_art_app/features/products/presentation/views/products_Detail_View.dart';
 import 'package:ale_beauty_art_app/features/products/presentation/widgets/favorite_toggle_button.dart';
@@ -374,7 +374,8 @@ class _ProductsCarouselState extends State<ProductsCarousel> {
             ),
           );
         } else if (state is ProductLoadInProgress) {
-          return const LoadingView();
+          final bool compact = widget.compact;
+          return ProductsSkeletonCarousel(itemCount: 6, compact: compact);
         } else {
           return const Text('No se pudieron cargar los productos.');
         }

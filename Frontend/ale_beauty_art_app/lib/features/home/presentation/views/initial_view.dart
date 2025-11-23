@@ -202,7 +202,7 @@ class InitialView extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 24),
-                  const SizedBox(height: 190, child: TopRatedProducts()),
+                  const SizedBox(height: 210, child: TopRatedProducts()),
                 ],
               ),
             ),

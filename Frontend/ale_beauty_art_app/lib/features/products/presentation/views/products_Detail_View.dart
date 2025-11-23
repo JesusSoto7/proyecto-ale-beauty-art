@@ -423,8 +423,6 @@ class _ProductDetailViewState extends State<ProductDetailView> {
                             ),
                     ),
                   ),
-                  // Eliminado el botón flotante de favorito (ahora está en el AppBar)
-                  // Degradado sutil arriba para que la flecha sea visible
                   Positioned(
                     top: 0,
                     left: 0,
