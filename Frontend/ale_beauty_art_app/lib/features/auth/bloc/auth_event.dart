@@ -25,6 +25,14 @@ class RegisterSubmitted extends AuthEvent {
 
 class LogoutRequested extends AuthEvent {}
 
+class UpdateProfileSubmitted extends AuthEvent {
+  final String nombre;
+  final String apellido;
+  final String email;
+  final String? telefono;
+  UpdateProfileSubmitted({required this.nombre, required this.apellido, required this.email, this.telefono});
+}
+
 // Nuevos eventos para password
 class ForgotPasswordSubmitted extends AuthEvent {
   final String email;

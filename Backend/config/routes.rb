@@ -47,6 +47,7 @@ Rails.application.routes.draw do
         
         collection do
           get :novedades
+          get :top_rated
         end
         
         resources :reviews, only: [:index, :create, :update, :destroy]

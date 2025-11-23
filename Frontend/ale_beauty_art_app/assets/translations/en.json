@@ -4,6 +4,7 @@
     "ok": "OK",
     "cancel": "Cancel",
     "error": "Error",
+    "save": "Save",
     "select_language": "Select language",
     "english": "English",
     "spanish": "Spanish",
@@ -19,16 +20,25 @@
     "logout": "Log out",
     "logout_success": "Logged out",
     "login": "Log in",
+    "my_account": "My profile",
     "my_orders": "My orders",
     "favorites": "Favorites",
     "my_addresses": "My addresses"
+    ,
+    "details": "Account details",
+    "phone": "Phone",
+    "edit": "Edit",
+    "first_name": "First name",
+    "last_name": "Last name",
+    "email": "Email",
+    "updated_success": "Details updated"
   },
   "nav": {
     "home": "Home",
     "products": "Products",
     "categories": "Categories",
     "cart": "Cart",
-    "profile": "Profile"
+    "profile": "Account"
   },
   "products": {
     "filters": "Filters",
@@ -53,7 +63,8 @@
     }
   },
   "home": {
-    "popular_products": "Popular products"
+    "popular_products": "Popular products",
+    "top_rated": "Top rated"
   },
   "search": {
     "placeholder": "Search products"
@@ -86,6 +97,22 @@
     "added_snackbar": "Product added",
     "favorite_add": "Add to favorites",
     "favorite_remove": "Remove from favorites"
+    ,
+    "related_products": "Related products",
+    "ratings_summary": "Ratings summary",
+    "reviews": "Reviews",
+    "rate": "Rate",
+    "write_review_title": "Write a review",
+    "write_review_hint": "Write your opinion here...",
+    "send": "Send",
+    "no_reviews_yet": "There are no reviews for this product yet.",
+    "must_purchase_to_review": "You must purchase the product to leave a review",
+    "please_write_comment": "Please write a comment",
+    "rating_sent": "Rating sent",
+    "login_required": "You must log in to leave a review",
+    "error_sending_rating": "Error sending rating: {detail}",
+    "reviews_count_one": "(1 review)",
+    "reviews_count": "({count} reviews)"
   },
   "forgot_password": {
     "title": "Recover password",
@@ -120,6 +147,7 @@
     "forgot_password": "Forgot your password?",
     "fill_all_fields": "Please complete all fields"
   },
+  
   "favorites": {
     "title": "My Favorites",
     "empty": "You don't have favorite products."
