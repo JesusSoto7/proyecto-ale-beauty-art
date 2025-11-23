@@ -20,7 +20,10 @@ module Api
         cart_product.cantidad += 1
 
         if cart_product.cantidad > product.stock
-          return render json: { error: "Stock insuficiente", cart: cart_json(cart) }, status: :unprocessable_entity
+          return render json: {
+            error: "Stock insuficiente para el producto #{product.nombre_producto}",
+            cart: cart_json(cart)
+          }, status: :unprocessable_entity
         end
 
         if cart_product.save
@@ -61,6 +64,7 @@ module Api
               nombre_producto: product.nombre_producto,
               cantidad: cp.cantidad,
               precio_producto: product.precio_producto,
+              stock: product.stock,
               imagen_url: product.imagen.attached? ? url_for(product.imagen) : nil,
               precio_con_mejor_descuento: precio_con_descuento,
               mejor_descuento_para_precio: mejor_descuento,

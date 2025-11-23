@@ -139,10 +139,9 @@ function Cart() {
 
       if (response.ok) {
         const data = await response.json();
-        setCart(data.cart); // Actualizar carrito con respuesta del backend
+        setCart(data.cart); // Actualiza el carrito completo desde el backend
       } else {
         const errorData = await response.json();
-        // Actualizar el carrito incluso en caso de error
         setCart((prevCart) => errorData.cart || prevCart);
         console.warn(errorData.error || "Error al actualizar producto");
       }
@@ -530,7 +529,7 @@ function Cart() {
                   <IconButton
                     variant="outlined"
                     size="sm"
-                    disabled={updating || product.cantidad >= product.stock} // Bloqueado cuando cantidad >= stock
+                    disabled={updating || product.cantidad >= product.stock}
                     onClick={() => updateQuantity(product.product_id, true)}
                     sx={{
                       borderRadius: 'md',
