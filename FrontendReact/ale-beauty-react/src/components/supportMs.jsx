@@ -10,18 +10,29 @@ export default function SupportMs() {
 
     const [orders, setOrders] = useState([]);
     const [orderId, setOrderId] = useState("");
+    const [loadingOrders, setloadingOrders] = useState(true);
     const [message_text, setMessageText] = useState("");
     const token = localStorage.getItem("token");
 
     // Cargar órdenes
     useEffect(() => {
-        fetch("https://localhost:4000/api/v1/orders", {
+        fetch("https://localhost:4000/api/v1/my_orders", {
         headers: { "Authorization": `Bearer ${token}` }
         })
         .then(res => res.json())
+        .then(data => {
+            if(Array.isArray(data)){
+                setOrders(data);
+            } else if (Array.isArray(data.orders)) {
+                setOrders(data.orders);
+            } else {
+                setOrders([]);
+            }
+        })
         .then(data => setOrders(data.orders || []))
-        .catch(err => console.error("Error cargando órdenes:", err));
-    }, []);
+        .catch(err => console.error("Error cargando órdenes:", err))
+        .finally(() => setloadingOrders(false));
+    }, [token]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -106,19 +117,20 @@ export default function SupportMs() {
         <div className="support-form-container">
             <form className="support-form" onSubmit={handleSubmit}>
             
-            <select
-                value={orderId}
-                onChange={(e) => setOrderId(e.target.value)}
-                className="full-width"
-                style={{ background: "#e0f4ff", padding: "10px", borderRadius: "5px", border: "1px solid #ccc" }}
-            >
-                <option value="">Selecciona tu número de orden*</option>
-                {orders.map(order => (
-                <option key={order.id} value={order.id}>
-                    {order.numero_de_orden} — ${order.pago_total}
-                </option>
-                ))}
-            </select>
+                <select
+                    value={orderId}
+                    onChange={(e) => setOrderId(e.target.value)}
+                    className="full-width"
+                    style={{ background: "#e0f4ff" }}
+                    >
+                    <option value="">Seleccione número de orden</option>
+
+                    {orders.map(order => (
+                        <option key={order.id} value={order.id}>
+                        {order.numero_de_orden} — {order.status}
+                        </option>
+                    ))}
+                </select>
 
             <textarea
                 placeholder="Tu mensaje*"
