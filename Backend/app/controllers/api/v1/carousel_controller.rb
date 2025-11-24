@@ -33,7 +33,7 @@ module Api
           next unless att&.blob&.image?
           {
             id: att.id,
-            url: variant_url(att, width: 1280, height: 720, quality: 85)
+            url: variant_url(att, height: 720, quality: 85)
           }
         end.compact
 
@@ -145,8 +145,8 @@ module Api
         Rails.logger.error("save_order_list error: #{e.class} #{e.message}")
       end
 
-      def variant_url(attachment, width:, height:, quality: 85)
-        variant = attachment.variant(resize_to_fill: [width, height], saver: { quality: quality }).processed
+      def variant_url(attachment, height:, quality: 85)
+        variant = attachment.variant(resize_to_fill: [height], saver: { quality: quality }).processed
         rails_blob_url(variant, host: request.base_url, disposition: "inline")
       rescue => e
         Rails.logger.error("variant_url error: #{e.class} #{e.message}")

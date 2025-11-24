@@ -22,6 +22,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 
 export default function Header() {
   const [user, setUser] = useState(null);
+  const [pendingMessagesCount, setPendingMessagesCount] = useState(0);
   const [anchorEl, setAnchorEl] = useState(null);
   const navigate = useNavigate();
   const { lang } = useParams();
@@ -35,6 +36,9 @@ export default function Header() {
       .then(res => res.json())
       .then(data => setUser(data))
       .catch(err => console.error(err));
+
+      fetchPendingCount();
+
   }, []);
 
   const open = Boolean(anchorEl);
@@ -45,6 +49,31 @@ export default function Header() {
     lang && ['es', 'en'].includes(lang)
       ? lang
       : ((navigator.language || 'es').startsWith('es') ? 'es' : 'en');
+
+
+  const fetchPendingCount = async () => {
+    const token = localStorage.getItem("token");
+    if (!token) return;
+
+    try {
+      // **IMPORTANTE:** Ajusta la URL si es diferente a localhost:4000
+      const res = await fetch("https://localhost:4000/api/v1/support_messages/pending_count", {
+        headers: { "Authorization": `Bearer ${token}` }
+      });
+
+      if (!res.ok) {
+        // Manejar 401/403 si el usuario no es admin o el token falla
+        console.error("Error al obtener conteo de mensajes pendientes:", res.status);
+        return;
+      }
+
+      const data = await res.json();
+      setPendingMessagesCount(data.pending_count || 0);
+
+    } catch (err) {
+      console.error("Error de red al obtener conteo:", err);
+    }
+  };
 
   return (
     <Box
@@ -110,8 +139,10 @@ export default function Header() {
         <ColorModeIconDropdown />
 
         {/* Notificaciones */}
+        
         <IconButton
           aria-label="notifications"
+          onClick={() => navigate(`/${lang}/home/support-messages`)}
           sx={{
             bgcolor: (theme) => theme.palette.mode === 'dark' ? 'grey.900' : 'grey.100',
             width: 40,
@@ -121,7 +152,7 @@ export default function Header() {
           }}
         >
           <Badge
-            badgeContent={4}
+            badgeContent={pendingMessagesCount}
             color="error"
             sx={{
               '& .MuiBadge-badge': {

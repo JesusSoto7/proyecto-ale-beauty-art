@@ -1,0 +1,153 @@
+/* Background general */
+.pageWrap {
+  min-height: 100vh;
+  background: #e9f0f6;
+  font-family: Inter, system-ui, sans-serif;
+  color: #1b1f23;
+}
+
+/* Top bar */
+.topbar {
+  height: 68px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 2.5rem;
+  background: transparent;
+}
+.logo {
+  font-weight: 700;
+  font-size: 1.05rem;
+}
+
+
+.cta {
+  background: #2463ff;
+  color: #fff;
+  border: none;
+  padding: 0.45rem 0.9rem;
+  border-radius: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(36,99,255,0.18);
+}
+
+/* Layout principal */
+.cardPP {
+    display: flex;
+  background: #fff;
+  border-radius: 10px;
+  border: 1px solid rgba(15,23,42,0.04);
+  box-shadow: 0 6px 20px rgba(17,24,39,0.06);
+  padding: 1.0rem;
+  width: 50%;
+  justify-content: center;
+}
+
+.cardInner {
+  display: flex;
+  grid-template-columns: 1fr 420px;
+  gap: 2.5rem;
+  padding: 2.2rem 2.6rem;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Columna de texto */
+.content {
+  max-width: 680px;
+}
+
+.backLink {
+  display: inline-block;
+  margin-bottom: 0.6rem;
+  color: #2b6cb0;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.pageWrap .title {
+  font-size: 2rem;
+  margin: 2rem 0 0.25rem 0;
+  font-weight: 700;
+}
+
+.updated {
+  color: #6b7280;
+  font-size: 0.95rem;
+  margin-bottom: 1rem;
+}
+
+.lead {
+  color: #374151;
+  line-height: 1.7;
+  font-size: 0.98rem;
+  margin-bottom: 1.2rem;
+}
+
+/* Secciones */
+.sectionWrap {
+  margin-top: 1.2rem;
+}
+
+.sectionWrap h5 {
+    font-size: 1.4rem;
+    font-weight: 700;
+    margin-bottom: 0.6rem;
+    color: #0f172a;
+    font-family:  'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.sectionWrap h3 {
+  font-size: 1.0rem;
+  margin: 0.6rem 0 0.35rem 0;
+}
+
+.sectionWrap p,
+.sectionWrap li {
+  color: #4b5563 !important;
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+.sectionWrap ul {
+  padding-left: 1.05rem;
+  margin: 0.35rem 0 1rem;
+}
+
+/* Imagen derecha */
+.illustrationWrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.illustration {
+  max-width: 70%;
+  height: auto;
+  border-radius: 6px;
+  background: #fff;
+  box-shadow: 0 6px 20px rgba(17,24,39,0.04);
+}
+
+/* Responsive */
+@media (max-width: 1580px) {
+  .cardInner {
+    grid-template-columns: 1fr;
+    padding: 1.6rem;
+  }
+    .cardPP {
+        width: 60%;
+    }
+  /* .illustrationWrap {
+    margin-top: 1rem;
+  } */
+}
+
+@media (max-width:1250px) {
+    .title {
+        font-size: 1.5rem;
+    }
+    .cardPP {
+        width: 100%;
+    }
+}

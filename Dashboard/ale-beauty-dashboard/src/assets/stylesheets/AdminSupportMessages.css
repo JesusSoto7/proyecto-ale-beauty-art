@@ -1,0 +1,386 @@
+/* admin-support-layout: Contenedor principal para las dos columnas */
+.admin-support-layout {
+  display: flex; /* Usa flexbox para las columnas */
+  height: calc(100vh - 80px); /* Ajusta la altura según tu layout general, restando quizás un header */
+  max-width: 1400px; /* Ancho máximo para el layout completo */
+  margin: 0 auto;
+  gap: 20px; /* Espacio entre las columnas */
+  padding: 20px;
+  background-color: #f8f8f8;
+  border-radius: 15px;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+}
+
+/* admin-support-panel-left: Panel de la lista de mensajes */
+.admin-support-panel-left {
+  flex: 1; /* Ocupa el 1/3 del espacio */
+  max-width: 400px; /* Limita el ancho para que el panel de detalles sea más grande */
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  overflow: hidden; /* Para contener el scroll */
+}
+
+.admin-support-title {
+  font-size: 1.8em; /* Ajustado para el sidebar */
+  color: #333;
+  margin-bottom: 25px;
+  text-align: left;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #eee;
+}
+
+.message-list-scrollable {
+  flex-grow: 1; /* Permite que la lista ocupe el espacio restante */
+  overflow-y: auto; /* Hace que la lista de mensajes sea scrollable */
+  padding-right: 10px; /* Espacio para la barra de scroll */
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+/* Ocultar scrollbar para Chrome, Safari y Opera */
+.message-list-scrollable::-webkit-scrollbar {
+  display: none;
+}
+
+
+.no-messages-text {
+  text-align: center;
+  color: #888;
+  font-size: 1em;
+  padding: 20px;
+  background-color: #f0f0f0;
+  border-radius: 8px;
+  margin-top: 20px;
+}
+
+/* message-card: Estilos para las tarjetas de mensaje en la lista */
+.message-card {
+  background-color: #fff;
+  padding: 15px;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  transition: all 0.2s ease;
+  cursor: pointer;
+  border: 1px solid #f0f0f0; /* Borde más sutil por defecto */
+  margin-bottom: 12px;
+}
+
+.message-card:last-child {
+  margin-bottom: 0;
+}
+
+.message-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.message-card-selected {
+  border-color: #6a0dad; /* Borde morado para el seleccionado */
+  box-shadow: 0 3px 10px rgba(106, 13, 173, 0.15);
+  background-color: #fcf9ff; /* Fondo ligeramente diferente para el seleccionado */
+}
+
+.message-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+  gap: 12px;
+}
+
+.message-icon {
+  width: 40px; /* Más pequeño para el sidebar */
+  height: 40px;
+  border-radius: 50%;
+  background-color: #e0e0e0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.2em; /* Más pequeño */
+  font-weight: bold;
+  color: #555;
+  flex-shrink: 0;
+}
+
+.message-info {
+  flex-grow: 1;
+}
+
+.message-title {
+  font-size: 1.1em;
+  font-weight: 600;
+  color: #333;
+  margin: 0;
+}
+
+.message-subtitle {
+  font-size: 0.85em;
+  color: #777;
+  margin: 0;
+}
+
+.message-meta {
+  display: flex;
+  align-items: center;
+}
+
+.message-date {
+  font-size: 0.8em;
+  color: #999;
+  white-space: nowrap;
+}
+
+.message-subject {
+  font-size: 0.95em;
+  color: #444;
+  margin-top: 5px;
+  margin-bottom: 5px; /* Espacio para la preview */
+}
+
+.message-preview {
+  font-size: 0.85em;
+  color: #777;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis; /* Añade puntos suspensivos si el texto es muy largo */
+}
+
+/* admin-support-panel-right: Panel de detalles del mensaje */
+.admin-support-panel-right {
+  flex: 2; /* Ocupa los 2/3 restantes del espacio */
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  padding: 30px;
+  display: flex;
+  flex-direction: column;
+}
+
+.no-message-selected {
+  text-align: center;
+  color: #aaa;
+  font-size: 1.2em;
+  margin-top: 100px; /* Centra un poco el mensaje */
+}
+.no-message-selected span {
+  font-size: 2em;
+  display: block;
+  margin-top: 15px;
+}
+
+.message-details-card {
+  flex-grow: 1; /* Permite que la tarjeta ocupe el espacio */
+  display: flex;
+  flex-direction: column;
+  height: 100%; /* Asegura que la tarjeta de detalles llene el panel */
+}
+
+.details-header {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #eee;
+  margin-bottom: 25px;
+}
+
+.details-icon {
+  width: 60px; /* Más grande para los detalles */
+  height: 60px;
+  border-radius: 50%;
+  background-color: #e0e0e0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.8em;
+  font-weight: bold;
+  color: #555;
+  flex-shrink: 0;
+}
+
+.details-info {
+  flex-grow: 1;
+}
+
+.details-info h2 {
+  font-size: 1.6em;
+  color: #333;
+  margin: 0;
+}
+
+.details-email {
+  font-size: 1em;
+  color: #777;
+  margin: 5px 0 0 0;
+}
+
+.details-date {
+  font-size: 0.9em;
+  color: #999;
+  white-space: nowrap;
+}
+
+.details-section {
+  margin-bottom: 20px;
+}
+
+.details-section h3 {
+  font-size: 1.1em;
+  color: #333;
+  margin-bottom: 8px;
+  font-weight: bold;
+}
+
+.details-section p {
+  font-size: 1em;
+  color: #555;
+  line-height: 1.6;
+}
+
+.message-text-section {
+  flex-grow: 1; /* Permite que el mensaje ocupe el espacio restante */
+  overflow-y: auto; /* Scroll para el contenido del mensaje */
+  padding-right: 10px; /* Espacio para la barra de scroll */
+  margin-bottom: 25px;
+}
+.message-text-section::-webkit-scrollbar {
+  display: none;
+}
+.message-text-section {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+
+/* Sección de respuesta */
+.reply-section {
+  margin-top: auto; /* Empuja la sección de respuesta hacia abajo */
+  padding-top: 20px;
+  border-top: 1px solid #eee;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.reply-textarea {
+  width: 100%;
+  min-height: 100px;
+  padding: 15px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 1em;
+  font-family: Arial, sans-serif;
+  resize: vertical; /* Permite redimensionar verticalmente */
+  outline: none;
+  transition: border-color 0.2s ease;
+}
+
+.reply-textarea:focus {
+  border-color: #6a0dad;
+  box-shadow: 0 0 0 3px rgba(106, 13, 173, 0.2);
+}
+
+.reply-button {
+  background-color: #6a0dad;
+  color: #fff;
+  padding: 12px 25px;
+  border: none;
+  border-radius: 8px;
+  font-size: 1em;
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.2s ease;
+  align-self: flex-end; /* Alinea el botón a la derecha */
+}
+
+.reply-button:hover {
+  background-color: #5a099a;
+  transform: translateY(-1px);
+}
+
+/* admin-support-panel-left (añadir al final del archivo CSS) */
+
+/* Contenedor del badge para que no afecte el layout (opcional) */
+.message-info {
+  /* ... (estilos existentes) */
+  position: relative; 
+  /* Si decides poner el badge como un tag, puedes usar flex-wrap */
+}
+
+/* Estilos base del badge */
+.status-badge {
+  display: inline-block;
+  font-size: 0.75em; /* Tamaño pequeño */
+  font-weight: bold;
+  padding: 4px 8px;
+  border-radius: 5px;
+  margin-top: 5px; /* Espacio debajo del email */
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Estilo para mensajes RESPONDIDOS (VERDE/ÉXITO) */
+.status-replied {
+  background-color: #e6f7e6; /* Fondo verde claro */
+  color: #38a169; /* Texto verde oscuro */
+  border: 1px solid #38a169;
+}
+
+/* Estilo para mensajes PENDIENTES (ROJO/ADVERTENCIA) */
+.status-pending {
+  background-color: #fff0f5; /* Fondo rojo claro */
+  color: #e53e3e; /* Texto rojo oscuro */
+  border: 1px solid #e53e3e;
+}
+
+/* Estilos para el contenedor general del filtro */
+.message-filter-controls {
+    /* Alineación, para que la etiqueta y el select estén en línea */
+    display: flex;
+    align-items: center;
+    gap: 10px; /* Espacio entre el texto y el desplegable */
+    margin-bottom: 10px; /* Espacio debajo del filtro antes de la lista */
+    padding: 10px 0;
+    /* Puedes añadir un borde o sombra si quieres destacarlo */
+}
+
+/* Estilos para el texto de la etiqueta "Filtrar por estado" */
+.message-filter-controls label {
+    font-size: 14px;
+    color: #444; /* Color oscuro para buena legibilidad */
+    font-weight: 500;
+}
+
+/* Estilos para el elemento SELECT (el desplegable) */
+.message-filter-controls select {
+    padding: 8px 12px;
+    border: 1px solid #ccc;
+    border-radius: 6px; /* Bordes ligeramente redondeados */
+    background-color: #fff;
+    font-size: 14px;
+    cursor: pointer;
+    transition: border-color 0.3s, box-shadow 0.3s;
+    /* Necesitas que se vea ancho, pero no demasiado */
+    min-width: 120px; 
+    appearance: none; /* Eliminar el estilo nativo para mayor control */
+    /* Añadir un ícono de flecha personalizado (opcional, requiere SVG) */
+    /* background-image: url('data:image/svg+xml;...'); */
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    background-size: 12px;
+}
+
+/* Estilos de enfoque (cuando el usuario hace clic o navega con teclado) */
+.message-filter-controls select:focus {
+    border-color: #7B68EE; /* Un color morado brillante, similar al que usas */
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(123, 104, 238, 0.2); /* Un suave brillo morado */
+}
+
+/* Estilos para las opciones (aunque las opciones suelen ser difíciles de estilizar en todos los navegadores) */
+.message-filter-controls option {
+    padding: 10px;
+    background-color: #fff;
+    color: #333;
+}

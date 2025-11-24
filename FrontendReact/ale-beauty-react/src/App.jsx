@@ -50,6 +50,8 @@ import OptionsMenu from "./components/dashComponents/OptionsMenu.jsx";
 import UserProfile from "./components/dashComponents/userPerfil.jsx";
 import GuestCheckout from './components/GuestCheckout/GuestCheckout.jsx';
 import useRecordPageView from './pages/inicio/hooks/useRecordPageView.js';
+import PrivacyPolicy from './components/PrivacyPolicy.jsx';
+import SupportMs from './components/supportMs.jsx';
 
 function Wrapper() {
   const { lang } = useParams();
@@ -99,8 +101,10 @@ function App() {
             <Route path="categoria/:categoryId" element={<CategoryProductsUser />} />
             <Route path="pedidos" element={<Pedidos />} />
             <Route path="pedidos/:id" element={<DetallePedido />} />
+            <Route path="soporte" element={<SupportMs />} />
             <Route path="about" element={<AboutUs />} />
             <Route path="terms" element={<TermsAndConditions />} />
+            <Route path="privacy-policy" element={<PrivacyPolicy />} />
             <Route path="/:lang/categoria/:categorySlug/:subCategorySlug/products" element={<SubCateProd />} />
           </Route>
 

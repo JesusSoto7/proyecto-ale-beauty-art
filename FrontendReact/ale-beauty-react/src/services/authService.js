@@ -1,13 +1,13 @@
 // API Configuration
 const API_BASE_URL = 'https://localhost:4000/api/v1';
 
-export async function register({ email, password, password_confirmation, nombre, apellido }) {
+export async function register({ email, password, password_confirmation, nombre, apellido, telefono }) {
   const response = await fetch(`${API_BASE_URL}/auth/sign_up`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
     },
-    body: JSON.stringify({ email, password, password_confirmation, nombre, apellido })
+    body: JSON.stringify({ email, password, password_confirmation, nombre, apellido, telefono }),
 
   });
 
