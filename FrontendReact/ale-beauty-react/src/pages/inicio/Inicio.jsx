@@ -50,7 +50,7 @@ function Inicio() {
     t
   );
 
-  const memoizedProducts    = useMemo(() => products.slice(0, 9), [products]);
+  const memoizedProducts = useMemo(() => products.slice(0, 9), [products]);
   const memoizedNewProducts = useMemo(() => newProducts, [newProducts]);
 
   useEffect(() => {

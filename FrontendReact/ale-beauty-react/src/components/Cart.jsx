@@ -120,7 +120,7 @@ function Cart() {
 
     const newQuantity = increment ? product.cantidad + 1 : product.cantidad - 1;
 
-    // Enviar la solicitud al backend
+    // Actualizar carrito en autenticación/servidor
     try {
       const url = increment
         ? `${API_BASE}/api/v1/cart/add_product`
@@ -139,11 +139,11 @@ function Cart() {
 
       if (response.ok) {
         const data = await response.json();
-        setCart(data.cart); // Actualiza el carrito completo desde el backend
+        setCart(data.cart); // Actualizar el carrito global
+        // Emitir evento de actualización para reflejar cambios en el Header
+        window.dispatchEvent(new CustomEvent("cartUpdatedCustom", { bubbles: false }));
       } else {
-        const errorData = await response.json();
-        setCart((prevCart) => errorData.cart || prevCart);
-        console.warn(errorData.error || "Error al actualizar producto");
+        console.warn("Error al actualizar producto", await response.json());
       }
     } catch (error) {
       console.error("Error actualizando cantidad del producto:", error);
@@ -157,11 +157,12 @@ function Cart() {
     if (mode === "guest") {
       guestRemoveItem(productId);
       setCart(mapGuestToCart(getGuestCart()));
+      window.dispatchEvent(new CustomEvent("cartUpdatedCustom", { bubbles: false })); // Emitir el evento para reflejar el cambio
       setUpdating(false);
       return;
     }
 
-    // Auth: eliminar todas las unidades (múltiples DELETE como tenías)
+    // Modo autenticado
     try {
       const product = cart.products.find((p) => p.product_id === productId);
       if (!product) throw new Error("Product not found in cart");
@@ -182,7 +183,7 @@ function Cart() {
 
       await Promise.all(removalPromises);
       await loadCart();
-      window.dispatchEvent(new CustomEvent("cartUpdatedCustom", { bubbles: false }));
+      window.dispatchEvent(new CustomEvent("cartUpdatedCustom", { bubbles: false })); // Emitir el evento para reflejar el cambio
     } catch {
       setError(t("cart.updatingError"));
       await loadCart();
@@ -198,11 +199,12 @@ function Cart() {
     if (mode === "guest") {
       guestClearCart();
       setCart({ id: null, products: [] });
+      window.dispatchEvent(new CustomEvent("cartUpdatedCustom", { bubbles: false })); // Emitir el evento para reflejar el cambio
       setUpdating(false);
       return;
     }
 
-    // Auth: repetir remove sobre todos
+    // Modo autenticado
     try {
       const removalPromises = cart.products.flatMap((product) =>
         Array.from({ length: product.cantidad }, () =>
@@ -219,13 +221,11 @@ function Cart() {
           })
         )
       );
-
       await Promise.all(removalPromises);
-      await loadCart();
-      window.dispatchEvent(new CustomEvent("cartUpdatedCustom", { bubbles: false }));
+      setCart({ id: null, products: [] });
+      window.dispatchEvent(new CustomEvent("cartUpdatedCustom", { bubbles: false })); // Emitir el evento para reflejar el cambio
     } catch {
       setError(t("cart.updatingError"));
-      await loadCart();
     } finally {
       setUpdating(false);
     }

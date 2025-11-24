@@ -1,5 +1,5 @@
 {
-"cart": {
+  "cart": {
     "title": "Tu Carrito de Compras",
     "empty": "Tu carrito está vacío",
     "loadingError": "Error al cargar el carrito",
@@ -60,7 +60,7 @@
     "noNeighborhood": "Sin barrio",
     "edit": "Editar"
   },
-   "favorites": {
+  "favorites": {
     "myFavorites": "Mis Favoritos",
     "noFavorites": "No tienes productos favoritos.",
     "addToCart": "Añadir al carrito",
@@ -87,7 +87,7 @@
     "lastUnitsShort": "últimas",
     "soldOutShort": "agot."
   },
-   "footer": {
+  "footer": {
     "information": {
       "title": "Información",
       "about": "Sobre nosotros",
@@ -102,7 +102,7 @@
     },
     "rights": "Tienda de Cosméticos - Todos los derechos reservados"
   },
- "header": {
+  "header": {
     "home": "INICIO",
     "products": "PRODUCTOS",
     "categories": "CATEGORÍAS",
@@ -159,7 +159,7 @@
     "save": "Guardar",
     "cancel": "Cancelar"
   },
-   "register": {
+  "register": {
     "createAccount": "Crear cuenta",
     "firstName": "Nombre",
     "lastName": "Apellido",
@@ -173,7 +173,7 @@
     "registrationSuccess": "Usuario registrado correctamente",
     "cosmeticsImageAlt": "Cosméticos"
   },
-   "shippingAddresses": {
+  "shippingAddresses": {
     "notAuthenticated": "No estás autenticado",
     "loading": "Cargando direcciones...",
     "loadError": "Error al cargar direcciones",
@@ -189,7 +189,7 @@
     "addNewAddress": "Agregar nueva dirección",
     "neighborhood": "Barrio"
   },
-   "shippingAddressForm": {
+  "shippingAddressForm": {
     "notAuthenticated": "No estás autenticado",
     "noToken": "No hay token válido para enviar la solicitud.",
     "unknownError": "Error desconocido",
@@ -254,7 +254,8 @@
     "bannerText6": "Lo mejor para tu rutina de belleza",
     "bannerText7": "Sorpréndete con nuestros lanzamientos",
     "bannerText8": "Encuentra tu color perfecto",
-    "mayInterestYou": "Quizás te puedan interesar:"
+    "mayInterestYou": "Quizás te puedan interesar:",
+    "topRatedProducts": "Productos mejor valorados"
   },
   "orders": {
     "notAuthenticated": "No estás autenticado",
@@ -309,7 +310,6 @@
     "title": "PRODUCTOS",
     "description": "Descubre nuestra amplia selección de productos"
   },
-
   "productDetails": {
     "notAuthenticated": "No está autenticado",
     "favoritesError": "Error cargando favoritos",
@@ -354,7 +354,7 @@
     "sendInstructions": "Enviar instrucciones",
     "backToLogin": "Volver al inicio de sesión"
   },
-   "about": {
+  "about": {
     "companyName": "Ale Beauty Art",
     "heroAlt": "Productos de belleza Ale Beauty Art",
     "heroSubtitle": "Donde la belleza se encuentra con el arte",
@@ -553,9 +553,3 @@
     "lastUpdate": "Última actualización:"
   }
 }
-
-
-
-
-
-

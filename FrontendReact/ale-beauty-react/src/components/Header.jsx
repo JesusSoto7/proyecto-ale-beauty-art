@@ -91,15 +91,15 @@ export default function Header({ loadFavorites }) {
   if (isLt600) searchBarMaxWidth = '240px';
   if (isLt480) searchBarMaxWidth = '205px';
   if (isLt360) searchBarMaxWidth = '180px';
-  
+
   // Estados locales
   const [anchorEl, setAnchorEl] = useState(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = useState(null);
   const [openModal, setOpenModal] = useState(false);
-  
+
   const isMenuOpen = Boolean(anchorEl);
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
-  
+
   // Refs
   const navCategoriesRef = useRef(null);
   const scrollContainerRef = useRef(null);
@@ -108,10 +108,10 @@ export default function Header({ loadFavorites }) {
   // ✅ Custom hooks
   const { cart, cartCount } = useCartState(token, t);
   const { user, handleLogout } = useUserAuth(t);
-  const { 
-    categories, 
-    hoveredNavCategory, 
-    setHoveredNavCategory 
+  const {
+    categories,
+    hoveredNavCategory,
+    setHoveredNavCategory
   } = useCategories();
   const scrolled = useScrollState(100);
   const {
@@ -213,7 +213,7 @@ export default function Header({ loadFavorites }) {
           className="mobile-menu-item"
         >
           <IoPersonCircleSharp />
-          {user ? t('header.profile','Perfil') : t('header.signIn','Iniciar sesión')}
+          {user ? t('header.profile', 'Perfil') : t('header.signIn', 'Iniciar sesión')}
         </MenuItem>
       )}
 
@@ -227,7 +227,7 @@ export default function Header({ loadFavorites }) {
             className="mobile-menu-item"
           >
             <BsBag />
-            {t('header.myOrders','Mis Pedidos')}
+            {t('header.myOrders', 'Mis Pedidos')}
           </MenuItem>
 
           <MenuItem
@@ -237,28 +237,28 @@ export default function Header({ loadFavorites }) {
             className="mobile-menu-item"
           >
             <BsGeoAlt />
-            {t('header.myAddresses','Mis direcciones')}
+            {t('header.myAddresses', 'Mis direcciones')}
           </MenuItem>
         </>
       )}
 
       {/* Carrito (en mid-span también va al menú) */}
       {(!showCart || isDesktopMidSpan) && (
-        <MenuItem 
-          component={Link} 
+        <MenuItem
+          component={Link}
           to={`/${lang}/carrito`}
           onClick={() => setMobileMoreAnchorEl(null)}
           className="mobile-menu-item"
         >
           <BsCart4 />
-          {t('header.cart','Carrito')}
+          {t('header.cart', 'Carrito')}
           <Badge badgeContent={cartCount} color="error" sx={{ marginLeft: 'auto' }} className="mobile-menu-badge" />
         </MenuItem>
       )}
 
       {/* Favoritos (en mid-span también va al menú) */}
       {(!showFavorites || isDesktopMidSpan) && (
-        <MenuItem 
+        <MenuItem
           onClick={() => {
             setOpenModal(true);
             setMobileMoreAnchorEl(null);
@@ -266,7 +266,7 @@ export default function Header({ loadFavorites }) {
           className="mobile-menu-item"
         >
           <BsHeart />
-          {t('header.favorites','Favoritos')}
+          {t('header.favorites', 'Favoritos')}
         </MenuItem>
       )}
 
@@ -296,7 +296,7 @@ export default function Header({ loadFavorites }) {
 
       {/* Notificaciones (en mid-span también va al menú) */}
       {(!showNotifications || isDesktopMidSpan) && (
-        <MenuItem 
+        <MenuItem
           onClick={() => {
             if (hamburgerBtnRef.current) {
               handleOpenNotificationsMenu({ currentTarget: hamburgerBtnRef.current });
@@ -308,7 +308,7 @@ export default function Header({ loadFavorites }) {
           className="mobile-menu-item"
         >
           <BsBell />
-          {t('header.notifications','Notificaciones')}
+          {t('header.notifications', 'Notificaciones')}
           <Badge badgeContent={noLeidas} color="error" sx={{ marginLeft: 'auto' }} className="mobile-menu-badge" />
         </MenuItem>
       )}
@@ -325,11 +325,11 @@ export default function Header({ loadFavorites }) {
               <Link to={`/${lang}/inicio`} style={{ display: 'flex', alignItems: 'center' }}>
                 <img src={logo} alt="Logo" style={{ height: 40, borderRadius: 20 }} />
               </Link>
-              
-              <Typography 
-                variant="h6" 
-                noWrap 
-                component={Link} 
+
+              <Typography
+                variant="h6"
+                noWrap
+                component={Link}
                 to={`/${lang}/inicio`}
                 sx={{
                   display: { xs: 'none', sm: (isLt800 ? 'none' : 'block'), md: 'block' },
@@ -351,13 +351,13 @@ export default function Header({ loadFavorites }) {
             {/* Barra de búsqueda */}
             <Box
               className="search-bar-container"
-              sx={{ 
-                flex: 1, 
+              sx={{
+                flex: 1,
                 maxWidth: searchBarMaxWidth,
-                mx: 3, 
+                mx: 3,
                 minWidth: 0,
                 flexShrink: 1,
-                display: 'flex', 
+                display: 'flex',
                 justifyContent: 'center',
                 pr: isLt800 ? 0.5 : 1,
                 pl: isLt800 ? 0.5 : 1
@@ -395,10 +395,10 @@ export default function Header({ loadFavorites }) {
 
                 {/* Nombre (oculto en mid-span para dejar sólo idioma + perfil) */}
                 {(showUserName || isLarge) && !isDesktopMidSpan && (
-                  <Typography 
-                    component={Link} 
+                  <Typography
+                    component={Link}
                     to={user ? `/${lang}/perfil` : `/${lang}/login`}
-                    sx={{ 
+                    sx={{
                       color: 'black',
                       textDecoration: 'none',
                       fontWeight: 'bold',
@@ -430,7 +430,7 @@ export default function Header({ loadFavorites }) {
                     sx={{ color: "black", "&:hover": { color: pinkTheme.primary } }}
                   >
                     <Badge
-                      badgeContent={cartCount}
+                      badgeContent={cartCount} // Aquí se reflejarán los cambios en tiempo real
                       color="error"
                       overlap="circular"
                       sx={{
@@ -459,7 +459,7 @@ export default function Header({ loadFavorites }) {
                   )}
                   {/* Notificaciones */}
                   <IconButton
-                    sx={{ color: "black", "&:hover": { color: pinkTheme.primary }}}
+                    sx={{ color: "black", "&:hover": { color: pinkTheme.primary } }}
                     onClick={(e) => handleOpenNotificationsMenu(e)}
                   >
                     <Badge
@@ -478,7 +478,7 @@ export default function Header({ loadFavorites }) {
                         },
                       }}
                     >
-                      <BsBell size={22}/>
+                      <BsBell size={22} />
                     </Badge>
                   </IconButton>
                 </Box>
@@ -508,10 +508,10 @@ export default function Header({ loadFavorites }) {
               )}
               {showProfileIcon && !isDesktopMidSpan && perfilIcon}
               {showUserName && (
-                <Typography 
-                  component={Link} 
+                <Typography
+                  component={Link}
                   to={user ? `/${lang}/perfil` : `/${lang}/login`}
-                  sx={{ 
+                  sx={{
                     color: 'black',
                     textDecoration: 'none',
                     fontWeight: 'bold',
@@ -674,12 +674,12 @@ export default function Header({ loadFavorites }) {
         />
 
         {/* Modal de favoritos (single modal now handled inside component) */}
-        <FavoritesModal 
-          open={openModal} 
+        <FavoritesModal
+          open={openModal}
           onClose={() => {
             setOpenModal(false);
             loadFavorites();
-          }} 
+          }}
         />
       </Box>
 
