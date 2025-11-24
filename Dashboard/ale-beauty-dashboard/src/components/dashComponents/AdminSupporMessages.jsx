@@ -120,7 +120,7 @@ export default function AdminSupportMessages() {
                       {msg.order.user.nombre} {msg.order.user.apellido}
                     </h3>
                     <p className="message-subtitle">{msg.order.correo_cliente}</p>
-                    {console.log(msg)}
+                    
                     {msg.replied ? (
                       <span className="status-badge status-replied">
                         RESPONDIDO

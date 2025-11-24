@@ -25,7 +25,7 @@ export default function Footer() {
           <h3>{t("footer.contact.title")}</h3>
           <ul>
             <li><i className="fas fa-phone"></i> +57 302 2880520</li>
-            <li><i className="fas fa-envelope"></i> alebeautyart@gmail.com</li>
+            <li><i className="fas fa-envelope"></i> soporte.alebeauty@gmail.com</li>
             <li><i className="fas fa-map-marker-alt"></i> Barranquilla, Colombia</li>
           </ul>
         </div>

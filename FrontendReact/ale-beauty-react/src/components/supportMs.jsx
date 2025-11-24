@@ -152,7 +152,7 @@ export default function SupportMs() {
             ></textarea>
 
             <button type="submit" className="send-btn">
-                Send message
+                enviar comentario
             </button>
 
             </form>
