@@ -105,7 +105,6 @@ class Api::V1::PaymentsController < Api::V1::BaseController
       description: "Pago",
       installments: params[:installments],
       payment_method_id: params[:payment_method_id],
-      issuer_id: params[:issuer_id],
       payer: {
         email: params[:payer][:email],
         identification: {
