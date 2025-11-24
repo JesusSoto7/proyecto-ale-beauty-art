@@ -21,7 +21,7 @@ class SupportMailer < ApplicationMailer
   def user_confirmation(message)
     @message = message
     mail(
-      to: @message.email,
+      to: @message.order.correo_cliente,
       subject: "Tu mensaje fue recibido - Ale Beauty Art"
     )
   end
@@ -32,9 +32,9 @@ class SupportMailer < ApplicationMailer
     
     # El correo se envía al cliente que originalmente creó el mensaje
     mail(
-      to: @message.email,
+      to: @message.order.correo_cliente,
       from: 'soporte.alebeauty@gmail.com', # ¡El correo de Admin!
-      subject: "Respuesta a tu solicitud de soporte: #{@message.subject}"
+      subject: "Respuesta a tu solicitud de soporte"
     )
   end
 

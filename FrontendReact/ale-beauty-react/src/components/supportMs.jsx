@@ -13,7 +13,6 @@ export default function SupportMs() {
     const [loadingOrders, setloadingOrders] = useState(true);
     const [message_text, setMessageText] = useState("");
     const token = localStorage.getItem("token");
-    const [subject, setSubject] = useState("");
 
 
     // Cargar órdenes
@@ -39,14 +38,20 @@ export default function SupportMs() {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
+        if (!orderId) {
+            alert("Seleccione una orden antes de enviar.");
+            return;
+        }
+
+
         const payload = {
             support_message: {
-                order_id: orderId,
-                subject,
+                order_id: Number(orderId),
                 message_text
             }
-
         };
+
+        console.log("Payload enviado:", payload);
 
         const res = await fetch("https://localhost:4000/api/v1/support_messages", {
         method: "POST",
@@ -74,8 +79,8 @@ export default function SupportMs() {
                     Estamos aquí para ayudarte y brindarte el mejor servicio posible.
                 </p>
 
-                <article style={{display:"flex", gap: 150}}>
-                <div className="info-block">
+                <article className='email-number' style={{display:"flex", gap: 150}}>
+                    <div className="info-block">
                         <p className="label">Email:</p>
                         <p className="value">soporte.alebeauty@gmail.com</p>
                     </div>
@@ -126,7 +131,7 @@ export default function SupportMs() {
                     value={orderId}
                     onChange={(e) => setOrderId(e.target.value)}
                     className="full-width"
-                    style={{ background: "#e0f4ff" }}
+                    style={{ background: "#f8f9f9", height: 45, border: "none", borderRadius: 10, padding: 9 }}
                     >
                     <option value="">Seleccione número de orden</option>
 
@@ -137,22 +142,13 @@ export default function SupportMs() {
                     ))}
                 </select>
 
-                <input
-                    type="text"
-                    placeholder="Asunto"
-                    value={subject}
-                    onChange={(e) => setSubject(e.target.value)}
-                    className="full-width"
-                    style={{ background: "#e0f4ff" }}
-                />
-
 
             <textarea
                 placeholder="Tu mensaje*"
                 value={message_text}
                 onChange={(e) => setMessageText(e.target.value)}
                 rows="10"
-                style={{ background: "#e0f4ff" }}
+                style={{ background: "#f8f9f9" }}
             ></textarea>
 
             <button type="submit" className="send-btn">

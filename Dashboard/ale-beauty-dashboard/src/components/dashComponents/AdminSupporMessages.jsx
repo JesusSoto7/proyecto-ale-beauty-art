@@ -85,9 +85,7 @@ export default function AdminSupportMessages() {
             }
 
             alert("Respuesta enviada con éxito.");
-            setReplyText(""); // Limpiar el área de texto
-            // Opcional: recargar la lista de mensajes si actualizaste el estado
-            // fetchMessages(); 
+            setReplyText("");
 
         } catch (error) {
             console.error("Error al enviar la respuesta:", error);
@@ -96,14 +94,14 @@ export default function AdminSupportMessages() {
     };
 
   return (
-    <div className="admin-support-layout"> {/* Nuevo contenedor para el layout de 2 columnas */}
-      <div className="admin-support-panel-left"> {/* Panel izquierdo para la lista de mensajes */}
+    <div className="admin-support-layout">
+      <div className="admin-support-panel-left">
         <h1 className="admin-support-title">Mensajes de soporte</h1>
 
         {messages.length === 0 ? (
           <p className="no-messages-text">No hay mensajes aún.</p>
         ) : (
-          <div className="message-list-scrollable"> {/* Hace la lista scrollable */}
+          <div className="message-list-scrollable">
             {messages.map((msg) => (
               <div
                 key={msg.id}
@@ -115,14 +113,14 @@ export default function AdminSupportMessages() {
               >
                 <div className="message-header">
                   <div className="message-icon">
-                    {msg.name ? msg.name[0].toUpperCase() : "?"}
+                    {msg.order.user.nombre ? msg.order.user.nombre[0].toUpperCase() : "?"}
                   </div>
                   <div className="message-info">
                     <h3 className="message-title">
-                      {msg.name} {msg.last_name}
+                      {msg.order.user.nombre} {msg.order.user.apellido}
                     </h3>
-                    <p className="message-subtitle">{msg.email}</p>
-
+                    <p className="message-subtitle">{msg.order.correo_cliente}</p>
+                    {console.log(msg)}
                     {msg.replied ? (
                       <span className="status-badge status-replied">
                         RESPONDIDO
@@ -159,11 +157,11 @@ export default function AdminSupportMessages() {
           <div className="message-details-card">
             <div className="details-header">
               <div className="details-icon">
-                {selectedMessage.name ? selectedMessage.name[0].toUpperCase() : "?"}
+                {selectedMessage.order.user.nombre ? selectedMessage.order.user.nombre[0].toUpperCase() : "?"}
               </div>
               <div className="details-info">
-                <h2>{selectedMessage.name} {selectedMessage.last_name}</h2>
-                <p className="details-email">{selectedMessage.email}</p>
+                <h2>{selectedMessage.order.user.nombre} {selectedMessage.order.user.apellido}</h2>
+                <p className="details-email">{selectedMessage.order.correo_cliente}</p>
               </div>
               <span className="details-date">
                 {new Date(selectedMessage.created_at).toLocaleString()}
@@ -171,8 +169,8 @@ export default function AdminSupportMessages() {
             </div>
             
             <div className="details-section">
-              <h3>Asunto:</h3>
-              <p>{selectedMessage.subject}</p>
+              <h3>numero de orden:</h3>
+              <p>{selectedMessage.order.numero_de_orden}</p>
             </div>
 
             <div className="details-section message-text-section">

@@ -5,8 +5,16 @@ class Api::V1::SupportMessagesController < ApplicationController
   
   def index
     @messages = SupportMessage.order(created_at: :desc)
-    render json: @messages
+
+    render json: @messages.to_json(
+      include: {
+        order: {
+          include: :user
+        }
+      }
+    )
   end
+
 
   def create
     @message = SupportMessage.new(support_message_params)
@@ -49,6 +57,6 @@ class Api::V1::SupportMessagesController < ApplicationController
   private
 
   def support_message_params
-    params.require(:support_message).permit(:name, :last_name, :email, :subject, :message_text)
+    params.require(:support_message).permit(:name, :last_name, :email, :subject, :message_text, :order_id)
   end
 end

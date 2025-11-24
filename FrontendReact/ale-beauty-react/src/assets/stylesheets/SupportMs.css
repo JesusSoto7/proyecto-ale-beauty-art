@@ -148,3 +148,25 @@ textarea {
 .circle:hover {
   background: #bf507a;
 }
+
+@media (max-width: 1300px) {
+  .support-container{
+    flex-direction: column;
+  }
+  .support-info{
+    width: 100%;
+  }
+  .support-form-container{
+    width: 100%;
+  }
+
+  .email-number{
+    display: flex;
+    flex-direction: column;
+    gap: 20px !important;
+  }
+
+  .subtitle-touch{
+    width: 80%;
+  }
+}
