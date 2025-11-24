@@ -1,6 +1,7 @@
 import React from 'react';
 import { Menu, MenuItem, Box, Typography } from '@mui/material';
 import { BsPerson, BsBag, BsGeoAlt, BsBoxArrowRight } from 'react-icons/bs';
+import SupportAgentIcon from '@mui/icons-material/SupportAgent';
 
 export default function UserMenu({ 
   anchorEl, 
@@ -78,6 +79,19 @@ export default function UserMenu({
           <Typography variant="body1" sx={{ fontWeight: 500 }}>{t('header.myAddresses')}</Typography>
           <Typography variant="caption" sx={{ color: 'text.secondary' }}>
             {t("header.manageYourAddresses")}
+          </Typography>
+        </Box>
+      </MenuItem>
+
+      <MenuItem 
+        onClick={() => go(`/${lang}/soporte`)}
+        sx={{ py: 1.5, display: 'flex', alignItems: 'center' }}
+      >
+        <SupportAgentIcon style={{ marginRight: '12px', color: pinkTheme.primary, fontSize: '20px' }} />
+        <Box>
+          <Typography variant="body1" sx={{ fontWeight: 500 }}>¿necesitas ayuda?</Typography>
+          <Typography variant="caption" sx={{ color: 'text.secondary' }}>
+            Contacta con nuestro soporte
           </Typography>
         </Box>
       </MenuItem>

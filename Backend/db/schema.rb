@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_11_01_182459) do
+ActiveRecord::Schema[8.0].define(version: 2025_11_22_230516) do
   create_table "active_storage_attachments", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
@@ -225,6 +225,16 @@ ActiveRecord::Schema[8.0].define(version: 2025_11_01_182459) do
     t.index ["slug"], name: "index_sub_categories_on_slug", unique: true
   end
 
+  create_table "support_messages", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.bigint "order_id", null: false
+    t.text "message_text", null: false
+    t.boolean "replied", default: false, null: false
+    t.string "ip_address"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["order_id"], name: "index_support_messages_on_order_id"
+  end
+
   create_table "user_notifications", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.bigint "user_id", null: false
     t.bigint "notification_message_id", null: false
@@ -280,6 +290,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_11_01_182459) do
   add_foreign_key "shipping_addresses", "neighborhoods"
   add_foreign_key "shipping_addresses", "users"
   add_foreign_key "sub_categories", "categories"
+  add_foreign_key "support_messages", "orders"
   add_foreign_key "user_notifications", "notification_messages"
   add_foreign_key "user_notifications", "users"
 end
