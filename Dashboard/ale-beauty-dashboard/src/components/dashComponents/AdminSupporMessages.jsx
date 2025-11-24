@@ -5,10 +5,11 @@ export default function AdminSupportMessages() {
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(true);
   const [replyText, setReplyText] = useState("");
+  const [filterStatus, setFilterStatus] = useState('all');
   // Almacena el objeto completo del mensaje seleccionado, no solo el ID
   const [selectedMessage, setSelectedMessage] = useState(null);
 
-  const fetchMessages = async () => {
+  const fetchMessages = async (status = 'all') => {
     const token = localStorage.getItem("token");
 
     if (!token) {
@@ -18,7 +19,9 @@ export default function AdminSupportMessages() {
     }
 
     try {
-      const res = await fetch("https://localhost:4000/api/v1/support_messages", {
+      const url = `https://localhost:4000/api/v1/support_messages?status=${status}`;
+
+      const res = await fetch(url, {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
@@ -44,8 +47,8 @@ export default function AdminSupportMessages() {
   };
 
   useEffect(() => {
-    fetchMessages();
-  }, []);
+    fetchMessages(filterStatus);
+  }, [filterStatus]);
 
   if (loading) {
     return (
@@ -97,7 +100,18 @@ export default function AdminSupportMessages() {
     <div className="admin-support-layout">
       <div className="admin-support-panel-left">
         <h1 className="admin-support-title">Mensajes de soporte</h1>
-
+        <div className="message-filter-controls">
+          <label htmlFor="status-filter">Filtrar por estado:</label>
+            <select
+              id="status-filter"
+              value={filterStatus}
+              onChange={(e) => setFilterStatus(e.target.value)} // Esto dispara el useEffect
+            >
+              <option value="all">Todos</option>
+              <option value="pending">Pendiente</option>
+              <option value="replied">Respondido</option>
+            </select>
+        </div>
         {messages.length === 0 ? (
           <p className="no-messages-text">No hay mensajes aún.</p>
         ) : (

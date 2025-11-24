@@ -333,3 +333,54 @@
   color: #e53e3e; /* Texto rojo oscuro */
   border: 1px solid #e53e3e;
 }
+
+/* Estilos para el contenedor general del filtro */
+.message-filter-controls {
+    /* Alineación, para que la etiqueta y el select estén en línea */
+    display: flex;
+    align-items: center;
+    gap: 10px; /* Espacio entre el texto y el desplegable */
+    margin-bottom: 10px; /* Espacio debajo del filtro antes de la lista */
+    padding: 10px 0;
+    /* Puedes añadir un borde o sombra si quieres destacarlo */
+}
+
+/* Estilos para el texto de la etiqueta "Filtrar por estado" */
+.message-filter-controls label {
+    font-size: 14px;
+    color: #444; /* Color oscuro para buena legibilidad */
+    font-weight: 500;
+}
+
+/* Estilos para el elemento SELECT (el desplegable) */
+.message-filter-controls select {
+    padding: 8px 12px;
+    border: 1px solid #ccc;
+    border-radius: 6px; /* Bordes ligeramente redondeados */
+    background-color: #fff;
+    font-size: 14px;
+    cursor: pointer;
+    transition: border-color 0.3s, box-shadow 0.3s;
+    /* Necesitas que se vea ancho, pero no demasiado */
+    min-width: 120px; 
+    appearance: none; /* Eliminar el estilo nativo para mayor control */
+    /* Añadir un ícono de flecha personalizado (opcional, requiere SVG) */
+    /* background-image: url('data:image/svg+xml;...'); */
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    background-size: 12px;
+}
+
+/* Estilos de enfoque (cuando el usuario hace clic o navega con teclado) */
+.message-filter-controls select:focus {
+    border-color: #7B68EE; /* Un color morado brillante, similar al que usas */
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(123, 104, 238, 0.2); /* Un suave brillo morado */
+}
+
+/* Estilos para las opciones (aunque las opciones suelen ser difíciles de estilizar en todos los navegadores) */
+.message-filter-controls option {
+    padding: 10px;
+    background-color: #fff;
+    color: #333;
+}

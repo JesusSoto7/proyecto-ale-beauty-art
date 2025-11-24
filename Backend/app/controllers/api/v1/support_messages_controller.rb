@@ -3,17 +3,27 @@ class Api::V1::SupportMessagesController < ApplicationController
   skip_before_action :authenticate_user!, only: [:create, :index, :reply, :pending_count]
   # before_action :authenticate_user!, only: [:index, :reply, :pending_count]
   
-  def index
-    @messages = SupportMessage.order(created_at: :desc)
+def index
+  status_filter = params[:status]
+  messages = SupportMessage.includes(order: :user)
 
-    render json: @messages.to_json(
-      include: {
-        order: {
-          include: :user
-        }
-      }
-    )
+  if status_filter == 'pending'
+    messages = messages.where(replied: false)
+  elsif status_filter == 'replied'
+    messages = messages.where(replied: true)
   end
+
+
+  @messages = messages.order(created_at: :desc)
+
+  render json: @messages.to_json(
+    include: {
+      order: {
+         include: :user
+      }
+    }
+  )
+end
 
 
   def create
