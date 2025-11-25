@@ -208,10 +208,10 @@ export default function DetallePedido() {
           <strong>{t("orderDetail.orderNumber")}:</strong>{" "}
           {pedido.numero_de_orden ?? pedido.id}
         </p>
-        <p style={{ display: "flex", alignItems: "center", gap: 8 }}>
+        <span style={{ display: "inline-flex", alignItems: "center", gap: 8 }}>
           <strong>{t("Estado")}:</strong>{" "}
           <Chip size="small" label={(status || "—").toUpperCase()} {...statusChipProps(status)} />
-        </p>
+        </span>
       </div>
 
       <Box sx={{ p: 2, mb: 2, border: "1px solid #eee", borderRadius: 2 }}>

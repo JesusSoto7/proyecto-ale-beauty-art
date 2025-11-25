@@ -91,7 +91,7 @@ Rails.application.routes.draw do
       
       resources :payment_methods, only: [:index]
 
-      resources :orders, only: [:create, :index], param: :numero_de_orden do
+      resources :orders, only: [:create, :index] do
         collection do
           get 'by_payment/:payment_id', to: 'orders#by_payment'
         end
@@ -100,6 +100,7 @@ Rails.application.routes.draw do
         end
       end
       get "/my_orders", to: "orders#ordenes"
+      get '/orders/by_number/:numero_de_orden', to: 'orders#by_number'
       get "/my_orders/:numero_de_orden", to: "orders#show"
 
       get 'analytics/product_funnel_per_day', to: 'analytics#product_funnel_per_day'

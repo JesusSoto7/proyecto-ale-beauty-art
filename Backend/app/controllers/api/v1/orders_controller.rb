@@ -61,6 +61,15 @@ class Api::V1::OrdersController < Api::V1::BaseController
     }
   end
 
+  def by_number
+    order = Order.find_by(numero_de_orden: params[:numero_de_orden])
+    if order
+      # Renderiza la orden, con las precauciones de seguridad.
+      render json: order.slice(:id, :numero_de_orden, :status, :pago_total, :fecha_pago)
+    else
+      render json: { error: 'Orden no encontrada' }, status: :not_found
+    end
+  end
   def ordenes
 
     visible_statuses = [:pagada, :preparando, :enviado, :entregado]
