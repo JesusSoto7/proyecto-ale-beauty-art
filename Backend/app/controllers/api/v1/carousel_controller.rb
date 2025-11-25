@@ -33,13 +33,13 @@ module Api
           next unless att&.blob&.image?
           {
             id: att.id,
-            url: variant_url(att, height: 720, quality: 85)
+            url: variant_url(att, width: 1280, height: 450, quality: 85)
           }
         end.compact
 
         # Opcional: evita caching en desarrollo
         # response.set_header('Cache-Control', 'no-store')
-
+        response.set_header('Cache-Control', 'max-age=86400, must-revalidate')
         render json: images
       end
 
@@ -145,8 +145,20 @@ module Api
         Rails.logger.error("save_order_list error: #{e.class} #{e.message}")
       end
 
-      def variant_url(attachment, height:, quality: 85)
-        variant = attachment.variant(resize_to_fill: [height], saver: { quality: quality }).processed
+      def variant_url(attachment, width: nil, height: nil, quality: 85)
+        # Detecta tipo de dispositivo (simple simulación)
+        is_mobile = request.user_agent&.include?("Mobile")
+
+        # Ajusta tamaños basados en el dispositivo
+        size = if width && height
+          [width, height]
+        elsif is_mobile
+          [720, 300] # Tamaño predeterminado para dispositivos móviles
+        else
+          [1280, 450] # Tamaño predeterminado para dispositivos desktop
+        end
+
+        variant = attachment.variant(resize_to_fill: size, saver: { quality: quality }).processed
         rails_blob_url(variant, host: request.base_url, disposition: "inline")
       rescue => e
         Rails.logger.error("variant_url error: #{e.class} #{e.message}")

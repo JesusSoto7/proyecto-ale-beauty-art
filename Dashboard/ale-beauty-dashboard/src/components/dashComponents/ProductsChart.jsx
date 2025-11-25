@@ -141,16 +141,19 @@ export default function ProductsChart() {
     if (!token) return;
     setLoading(true);
     setError(null);
+
     try {
       const url = buildUrl();
       const res = await fetch(url, { headers: { Authorization: `Bearer ${token}` } });
       const contentType = res.headers.get('content-type') || '';
       let data = null;
+
       try {
         data = contentType.includes('application/json') ? await res.json() : await res.text();
       } catch {
         data = null;
       }
+
       if (!res.ok || typeof data !== 'object' || data === null) {
         const message =
           (data && (data.error || data.message)) ||
@@ -159,16 +162,33 @@ export default function ProductsChart() {
         throw Object.assign(new Error(message), { status: res.status });
       }
 
+      // Asegurarse de incluir el día actual si falta
       const rawLabels = Array.isArray(data.labels) ? data.labels : [];
+      const currentDay = new Date().toISOString().slice(0, 10);
+      if (!rawLabels.includes(currentDay)) {
+        rawLabels.push(currentDay); // Añadir día actual
+      }
+
       const formattedLabels = formatXAxisLabels(rawLabels);
       const values = data.values || {};
+
+      // Asegúrate de extender valores para el día actual
+      const extendValuesToToday = (key) => {
+        const existing = Array.isArray(values[key]) ? values[key] : [];
+        if (existing.length < rawLabels.length) {
+          const difference = rawLabels.length - existing.length;
+          return [...existing, ...Array(difference).fill(0)];
+        }
+        return existing;
+      };
+
       setChartData({
         rawLabels,
         labels: formattedLabels,
         values: {
-          view_item: Array.isArray(values.view_item) ? values.view_item : [],
-          add_to_cart: Array.isArray(values.add_to_cart) ? values.add_to_cart : [],
-          purchase: Array.isArray(values.purchase) ? values.purchase : [],
+          view_item: extendValuesToToday('view_item'),
+          add_to_cart: extendValuesToToday('add_to_cart'),
+          purchase: extendValuesToToday('purchase'),
         },
         start_date: data.start_date,
         end_date: data.end_date,
@@ -184,6 +204,7 @@ export default function ProductsChart() {
         label: null,
       });
       setError(e);
+
       if (e.status === 401) {
         const lang = location.pathname.split('/')[1] || 'es';
         localStorage.removeItem('token');

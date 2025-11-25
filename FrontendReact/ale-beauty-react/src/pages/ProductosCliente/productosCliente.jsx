@@ -19,7 +19,7 @@ const normalizeToken = (raw) => (raw && raw !== "null" && raw !== "undefined" ? 
 
 function ProductosCliente() {
   const [products, setProducts] = useState([]);
-  const [categories, setCategories] = useState([]); 
+  const [categories, setCategories] = useState([]);
   const [token, setToken] = useState(() => localStorage.getItem("token"));
   const [cart, setCart] = useState(null);
   const { favoriteIds, loadFavorites } = useOutletContext();
@@ -56,7 +56,7 @@ function ProductosCliente() {
     return () => window.removeEventListener("storage", handler);
   }, []);
 
-useEffect(() => {
+  useEffect(() => {
     const loadData = async () => {
       try {
         setLoading(true);
@@ -130,9 +130,23 @@ useEffect(() => {
     setCurrentPage(1);
   }, [selectedCategory, selectedSubcategory, priceRange, selectedRatings, sortOrder]);
 
+  useEffect(() => {
+    if (products && products.length > 0) {
+      window.gtag && window.gtag('event', 'view_item_list', {
+        items: products.map((prod) => ({
+          item_id: prod.id,
+          item_name: prod.nombre_producto,
+          price: prod.precio_producto,
+          item_category: categories.find((cat) => String(cat.id_categoria || cat.id) === String(prod.category_id))?.nombre_categoria || '',
+          item_variant: prod.sku || '',
+        }))
+      });
+    }
+  }, [products, categories]);
+
   const getSubcategoriesForCategory = (categoryId) => {
     if (categoryId === "Todos") return [];
-    const category = categories.find(c => 
+    const category = categories.find(c =>
       String(c.id_categoria || c.id) === String(categoryId)
     );
     return category?.sub_categories || [];
@@ -224,8 +238,8 @@ useEffect(() => {
   };
 
   const handleRatingChange = (rating) => {
-    setSelectedRatings(prev => 
-      prev.includes(rating) 
+    setSelectedRatings(prev =>
+      prev.includes(rating)
         ? prev.filter(item => item !== rating)
         : [...prev, rating]
     );
@@ -237,7 +251,7 @@ useEffect(() => {
       <Typography variant="h6" className="prodcli-sidebar-title">
         {t('filters.title')}
       </Typography>
-      
+
       <div className="prodcli-sidebar-section">
         <Typography variant="subtitle1" className="prodcli-sidebar-subtitle">
           {t('filters.categories')}
@@ -373,7 +387,7 @@ useEffect(() => {
       </div>
 
       {(selectedCategory !== "Todos" || selectedSubcategory !== "Todos" || sortOrder || priceRange.min || priceRange.max || selectedRatings.length > 0) && (
-        <button 
+        <button
           onClick={handleClearAllFilters}
           className="prodcli-clearbtn"
         >
@@ -383,7 +397,7 @@ useEffect(() => {
     </>
   );
 
-const toggleFavorite = async (productId) => {
+  const toggleFavorite = async (productId) => {
     // Evita 401: no llames a favoritos sin token
     if (!token) {
       addAlert(t("productDetails.loginToFavorite") || "Inicia sesión para gestionar favoritos", "info", 3500);
@@ -404,7 +418,7 @@ const toggleFavorite = async (productId) => {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${token}` 
+            Authorization: `Bearer ${token}`
           },
           body: JSON.stringify({ product_id: productId }),
         });
@@ -424,55 +438,63 @@ const toggleFavorite = async (productId) => {
     const product = typeof item === "object" ? item : products.find((p) => String(p.id) === String(item));
     const productId = product?.id ?? item;
 
-    // Toma SIEMPRE el token más reciente y normalizado
+    // Reportar `add_to_cart` a Google Analytics
+    if (product) {
+      window.gtag && window.gtag('event', 'add_to_cart', {
+        currency: 'COP', // Cambia a la moneda que estés usando
+        items: [{
+          item_id: product.id,
+          item_name: product.nombre_producto,
+          price: product.precio_producto,
+          item_category: categories.find((cat) => String(cat.id_categoria || cat.id) === String(product.category_id))?.nombre_categoria || '',
+          item_variant: product.sku || '',
+          quantity: 1, // Ajusta cantidad según lógica del carrito
+        }]
+      });
+    }
+
+    // Actualizar carrito (Invitado o Autenticado)
     const tok = normalizeToken(localStorage.getItem("token") || token);
 
-    // Invitado
     if (!tok) {
+      // Lógica para usuario invitado
       window.dispatchEvent(new CustomEvent("cartUpdatedOptimistic", { bubbles: false }));
-      if (product) {
-        addGuestItem(product, 1); // emite guestCartUpdated internamente
-      }
+      if (product) addGuestItem(product, 1); // emite `guestCartUpdated`
       window.dispatchEvent(new CustomEvent("cartUpdatedCustom", { bubbles: false }));
       addAlert(t("productDetails.addedToCart") || "Se agregó al carrito", "success", 3500);
       return;
     }
 
-    // Autenticado
-    window.dispatchEvent(new CustomEvent("cartUpdatedOptimistic", { 
-      bubbles: false, 
-      detail: { productId, action: 'add' } 
+    // Lógica para usuario autenticado
+    window.dispatchEvent(new CustomEvent("cartUpdatedOptimistic", {
+      bubbles: false,
+      detail: { productId, action: 'add' },
     }));
 
     fetch(`${API_BASE}/api/v1/cart/add_product`, {
       method: "POST",
-      headers: { 
+      headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${tok}` 
+        Authorization: `Bearer ${tok}`,
       },
       body: JSON.stringify({ product_id: productId }),
     })
-      .then(async (res) => {
-        // Si falla, forzamos la ruta de fallo (para que el contador revierta)
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        try { return await res.json(); } catch { return {}; }
-      })
+      .then(res => res.json())
       .then((data) => {
         const serverCart = data?.cart || data;
         if (serverCart?.products) {
           setCart(serverCart);
           window.dispatchEvent(new CustomEvent("cartUpdatedCustom", { bubbles: false }));
-          addAlert("Se agregó al carrito", "success", 3500);
+          addAlert(t("productDetails.addedToCart") || "Se agregó al carrito", "success", 3500);
         } else {
-          // Si la API no trae el carrito como esperamos, al menos refresca
           window.dispatchEvent(new CustomEvent("cartUpdatedCustom", { bubbles: false }));
         }
       })
       .catch(() => {
         addAlert(t('productDetails.cartAddError') || "No se pudo agregar al carrito", "error", 3500);
-        window.dispatchEvent(new CustomEvent("cartUpdateFailed", { 
+        window.dispatchEvent(new CustomEvent("cartUpdateFailed", {
           bubbles: false,
-          detail: { productId, action: 'add' }
+          detail: { productId, action: 'add' },
         }));
       });
   };
@@ -574,16 +596,16 @@ const toggleFavorite = async (productId) => {
                 />
               ))}
             </div>
-            
+
             {filteredProducts.length === 0 && (
               <div className="prodcli-empty">
                 <p>{t('products.noProducts')}</p>
                 <p>
-                  {selectedCategory !== "Todos" || selectedSubcategory !== "Todos" 
-                    ? t('products.noProductsFilter') 
+                  {selectedCategory !== "Todos" || selectedSubcategory !== "Todos"
+                    ? t('products.noProductsFilter')
                     : t('products.tryOtherFilters')}
                 </p>
-                <button 
+                <button
                   onClick={handleClearAllFilters}
                   className="prodcli-clearbtn"
                 >
@@ -595,14 +617,14 @@ const toggleFavorite = async (productId) => {
             {/* ✅ COMPONENTE DE PAGINACIÓN CON FLECHAS */}
             {totalPages > 1 && (
               <div className="prodcli-pagination">
-                <button 
-                  onClick={prevPage} 
+                <button
+                  onClick={prevPage}
                   disabled={currentPage === 1}
                   className="prodcli-page-btn"
                 >
                   ←
                 </button>
-                
+
                 <div className="prodcli-page-numbers">
                   {Array.from({ length: totalPages }, (_, i) => i + 1).map(number => (
                     <button
@@ -614,9 +636,9 @@ const toggleFavorite = async (productId) => {
                     </button>
                   ))}
                 </div>
-                
-                <button 
-                  onClick={nextPage} 
+
+                <button
+                  onClick={nextPage}
                   disabled={currentPage === totalPages}
                   className="prodcli-page-btn"
                 >
@@ -636,7 +658,7 @@ const toggleFavorite = async (productId) => {
       >
         <Box sx={{ width: 320, p: 2 }} role="presentation">
           <FiltersPanel />
-          <button 
+          <button
             onClick={() => setFiltersOpen(false)}
             className="prodcli-clearbtn"
             style={{ marginTop: 12 }}

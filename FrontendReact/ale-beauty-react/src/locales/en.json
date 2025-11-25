@@ -13,7 +13,8 @@
     "buy": "Checkout Now",
     "clearAll": "Clear All",
     "items": "items",
-    "set": "Color"
+    "set": "Color",
+    "outOfStock": "Out of Stock"
   },
   "categoryProducts": {
     "notAuth": "Not authenticated",
@@ -255,7 +256,8 @@
     "bannerText7": "Be surprised by our launches",
     "bannerText8": "Find your perfect color",
     "mayInterestYou": "You might be interested in:",
-    "topRatedProducts": "Top Rated Products"
+    "topRatedProducts": "Top Rated Products",
+    "outOfStock": "Out of Stock"
   },
   "orders": {
     "notAuthenticated": "You are not authenticated",
@@ -333,7 +335,8 @@
     "relatedproducts": "Related Products",
     "submitReview": "Submit Review",
     "writeReview": "Write your review",
-    "inStock": "In Stock"
+    "inStock": "In Stock",
+    "outOfStock": "Out of Stock"
   },
   "about": {
     "companyName": "Ale Beauty Art",

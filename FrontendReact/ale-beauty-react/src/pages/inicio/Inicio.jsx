@@ -15,8 +15,8 @@ import { useFavoriteActions } from './hooks/useFavoriteActions';
 import useRecordPageView from './hooks/useRecordPageView.js';
 import { useTranslation } from 'react-i18next';
 
-import HomeCarousel from '../../components/InicioCarousel.jsx';
 import ProductsStrip from '../../components/ProductsStrip.jsx';
+import InicioCarousel from '../../components/InicioCarousel.jsx';
 
 function Inicio() {
   useRecordPageView();
@@ -74,7 +74,7 @@ function Inicio() {
 
   return (
     <div>
-      <HomeCarousel
+      <InicioCarousel
         homeLoading={homeLoading}
         carouselLoading={carouselLoading}
         carouselError={carouselError}
