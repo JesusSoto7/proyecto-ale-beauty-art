@@ -956,7 +956,7 @@ class _ProductDetailViewState extends State<ProductDetailView> {
 
       // Botones
       bottomNavigationBar: SafeArea(
-        minimum: const EdgeInsets.symmetric(horizontal: 24, vertical: 22),
+        minimum: const EdgeInsets.symmetric(horizontal: 24, vertical: 10),
         child: LayoutBuilder(
           builder: (context, constraints) {
             // Siempre mostrar los dos botones lado a lado. Ajustar estilo si el ancho es reducido.
@@ -1128,7 +1128,7 @@ class _ProductDetailViewState extends State<ProductDetailView> {
             return Row(
               children: [
                 Expanded(child: addButton),
-                const SizedBox(width: 12),
+                const SizedBox(width: 22),
                 Expanded(child: buyButton),
               ],
             );
@@ -1148,7 +1148,7 @@ extension on _ProductDetailViewState {
     bool dense = false,
     String? tooltip,
   }) {
-    final double verticalPad = dense ? 10 : 14;
+    final double verticalPad = dense ? 8 : 12;
     final double horizontalPad = dense ? 14 : 20;
     final double fontSize = dense ? 14 : 15;
     final double iconSize = dense ? 20 : 22;
