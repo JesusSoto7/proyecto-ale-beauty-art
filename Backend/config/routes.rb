@@ -134,6 +134,8 @@ Rails.application.routes.draw do
             get :sales_bounds
           end
         end
+
+        resource :profile, only: [:show, :update]
       end
 
       resources :users, only: [:index, :show, :update, :destroy]
