@@ -9,6 +9,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ale_beauty_art_app/features/auth/bloc/auth_bloc.dart';
 import 'package:ale_beauty_art_app/core/http/custom_http_client.dart';
 import 'package:ale_beauty_art_app/core/views/login_view.dart';
+import 'package:ale_beauty_art_app/core/utils/app_snack_bar.dart';
 
 class HelpView extends StatefulWidget {
   const HelpView({super.key});
@@ -100,7 +101,7 @@ class _HelpViewState extends State<HelpView> {
 
     // El backend requiere `order_id` (columna NOT NULL). Asegurarnos de que se seleccione.
     if (_selectedOrderId == null) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('support.select_order_required'.tr())));
+      showAppSnackBar(context, 'support.select_order_required'.tr());
       return;
     }
 
@@ -118,7 +119,7 @@ class _HelpViewState extends State<HelpView> {
 
       final resp = await client.post(url, headers: {'Content-Type': 'application/json'}, body: jsonEncode(payload));
       if (resp.statusCode == 201 || resp.statusCode == 200) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('support.send_success'.tr())));
+        showAppSnackBar(context, 'support.send_success'.tr());
         _messageCtrl.clear();
         setState(() => _selectedOrderId = null);
       } else {
@@ -128,10 +129,10 @@ class _HelpViewState extends State<HelpView> {
           if (body is Map && body['message'] != null) detail = body['message'].toString();
           else if (body is Map && body['errors'] != null) detail = (body['errors'] as List).join(', ');
         } catch (_) {}
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('support.send_error'.tr() + (detail.isNotEmpty ? ': $detail' : ''))));
+        showAppSnackBar(context, 'support.send_error'.tr() + (detail.isNotEmpty ? ': $detail' : ''));
       }
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('support.send_error'.tr())));
+      showAppSnackBar(context, 'support.send_error'.tr());
     } finally {
       if (mounted) setState(() => _submitting = false);
     }

@@ -3,6 +3,7 @@ import 'package:ale_beauty_art_app/features/auth/bloc/auth_bloc.dart';
 import 'package:ale_beauty_art_app/features/favorites/presentation/bloc/favorite_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:ale_beauty_art_app/core/views/loading_view.dart';
 
 /// Botón reutilizable para marcar/quitar favorito.
 /// Se guía por la implementación de ProductDetailView.
@@ -82,7 +83,7 @@ class _FavoriteToggleButtonState extends State<FavoriteToggleButton> {
               ? SizedBox(
                   width: widget.size,
                   height: widget.size,
-                  child: const CircularProgressIndicator(strokeWidth: 2),
+                  child: LoadingIndicator(size: widget.size),
                 )
               : Icon(
                   isFav ? Icons.favorite : Icons.favorite_border,

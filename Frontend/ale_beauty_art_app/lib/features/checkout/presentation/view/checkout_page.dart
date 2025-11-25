@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ale_beauty_art_app/features/orders/presentation/bloc/order_bloc.dart';
 import 'package:ale_beauty_art_app/features/checkout/payment/presentation/view/payment_page.dart';
+import 'package:ale_beauty_art_app/core/utils/app_snack_bar.dart';
+import 'package:ale_beauty_art_app/core/views/loading_view.dart';
 
 class CheckoutPage extends StatefulWidget {
   final List cartProducts;
@@ -60,8 +62,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
             ),
           );
         } else if (state is OrderError) {
-          ScaffoldMessenger.of(context)
-              .showSnackBar(SnackBar(content: Text(state.message)));
+          showAppSnackBar(context, state.message);
         }
       },
       builder: (context, state) {
@@ -70,10 +71,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
           return const Scaffold(
             backgroundColor: Colors.white,
             body: Center(
-              child: CircularProgressIndicator(
-                color: Color(0xFFD95D85), // Puedes personalizar el color
-                strokeWidth: 4,
-              ),
+              child: LoadingIndicator(size: 36),
             ),
           );
         }

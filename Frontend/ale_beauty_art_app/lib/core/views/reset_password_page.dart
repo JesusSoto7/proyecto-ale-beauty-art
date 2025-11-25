@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:app_links/app_links.dart';
+import 'package:ale_beauty_art_app/core/utils/app_snack_bar.dart';
+import 'package:ale_beauty_art_app/core/views/loading_view.dart';
 
 class ResetPasswordPage extends StatefulWidget {
   const ResetPasswordPage({Key? key}) : super(key: key);
@@ -72,18 +74,15 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
     final confirm = _passwordConfirmController.text.trim();
 
     if (token.isEmpty) {
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text('reset_password.missing_token'.tr())));
+      showAppSnackBar(context, 'reset_password.missing_token'.tr());
       return;
     }
     if (password.length < 6) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text('reset_password.password_min'.tr())));
+      showAppSnackBar(context, 'reset_password.password_min'.tr());
       return;
     }
     if (password != confirm) {
-      ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('reset_password.password_mismatch'.tr())));
+      showAppSnackBar(context, 'reset_password.password_mismatch'.tr());
       return;
     }
 
@@ -106,12 +105,10 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
             setState(() => _loading = false);
 
           if (state is PasswordResetSuccess) {
-            ScaffoldMessenger.of(context)
-                .showSnackBar(SnackBar(content: Text(state.message)));
+            showAppSnackBar(context, state.message);
             Navigator.of(context).pop(); // o navegar al login
           } else if (state is PasswordResetFailure) {
-            ScaffoldMessenger.of(context)
-                .showSnackBar(SnackBar(content: Text(state.message)));
+            showAppSnackBar(context, state.message);
           }
         },
         child: Padding(
@@ -140,7 +137,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
         ElevatedButton(
           onPressed: _loading ? null : _submit,
           child: _loading
-            ? const CircularProgressIndicator()
+            ? const LoadingIndicator(size: 18, color: Colors.white)
             : Text('reset_password.change_password'.tr())),
               ],
             ),

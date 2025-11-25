@@ -12,9 +12,7 @@ class LoadingView extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min, // Para que no ocupe toda la pantalla
           children: [
-            CircularProgressIndicator(
-              color: AppColors.accentPink,
-            ),
+            const LoadingIndicator(),
             const SizedBox(height: 16), // Espacio vertical entre el indicador y el texto
           ],
         ),

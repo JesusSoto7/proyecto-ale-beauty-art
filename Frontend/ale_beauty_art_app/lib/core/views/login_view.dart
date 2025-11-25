@@ -5,6 +5,7 @@ import 'package:ale_beauty_art_app/styles/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:ale_beauty_art_app/core/utils/app_snack_bar.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -26,9 +27,7 @@ class _LoginPageState extends State<LoginPage> {
     if (email.isNotEmpty && password.isNotEmpty) {
       context.read<AuthBloc>().add(LoginSubmitted(email, password));
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('login.fill_all_fields'.tr())),
-      );
+      showAppSnackBar(context, 'login.fill_all_fields'.tr());
     }
   }
 
@@ -42,9 +41,7 @@ class _LoginPageState extends State<LoginPage> {
           if (state is AuthSuccess) {
             Navigator.pop(context, true);
           } else if (state is AuthFailure) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('${state.message}')),
-            );
+            showAppSnackBar(context, state.message);
           }
         },
         builder: (context, state) {
@@ -263,8 +260,8 @@ class _LoginPageState extends State<LoginPage> {
                                         width: 22,
                                         height: 22,
                                         child: CircularProgressIndicator(
-                                            strokeWidth: 2,
-                                            color: Colors.white),
+                                          strokeWidth: 2,
+                                          color: Colors.white),
                                       )
                                     : Text(
                                         "profile.login".tr(),

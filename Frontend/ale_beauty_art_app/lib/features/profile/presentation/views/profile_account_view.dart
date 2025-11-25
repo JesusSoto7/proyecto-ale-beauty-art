@@ -5,6 +5,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/services.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:ale_beauty_art_app/styles/colors.dart';
+import 'package:ale_beauty_art_app/core/utils/app_snack_bar.dart';
+import 'package:ale_beauty_art_app/core/views/loading_view.dart';
 
 class ProfileAccountView extends StatefulWidget {
   const ProfileAccountView({super.key});
@@ -90,7 +92,7 @@ class _ProfileAccountViewState extends State<ProfileAccountView> {
           );
         } else if (state is AuthFailure) {
           setState(() => _saving = false);
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.message)));
+          showAppSnackBar(context, state.message);
         }
       },
       child: Scaffold(
@@ -237,7 +239,7 @@ class _ProfileAccountViewState extends State<ProfileAccountView> {
                     _onSave();
                   },
                   style: ElevatedButton.styleFrom(backgroundColor: AppColors.primaryPink),
-                  child: _saving ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white)) : Text('common.save'.tr(), style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                  child: _saving ? const LoadingIndicator(size: 20, color: Colors.white) : Text('common.save'.tr(), style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
                 ),
               ),
               const SizedBox(width: 12),

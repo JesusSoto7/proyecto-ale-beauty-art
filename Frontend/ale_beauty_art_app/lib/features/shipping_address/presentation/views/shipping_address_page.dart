@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:ale_beauty_art_app/core/views/loading_view.dart';
 import '../bloc/shipping_address_bloc.dart';
 import '../bloc/shipping_address_event.dart';
 import '../bloc/shipping_address_state.dart';
@@ -60,7 +61,7 @@ class ShippingAddressPage extends StatelessWidget {
       body: BlocBuilder<ShippingAddressBloc, ShippingAddressState>(
         builder: (context, state) {
           if (state is ShippingAddressLoading) {
-            return const Center(child: CircularProgressIndicator());
+            return const Center(child: LoadingIndicator());
           } else if (state is ShippingAddressLoaded) {
             if (state.addresses.isEmpty) {
               return Center(
