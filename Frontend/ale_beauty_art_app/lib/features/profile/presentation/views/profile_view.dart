@@ -6,6 +6,7 @@ import 'package:ale_beauty_art_app/features/orders/presentation/views/order_page
 import 'package:ale_beauty_art_app/features/shipping_address/presentation/bloc/shipping_address_bloc.dart';
 import 'package:ale_beauty_art_app/features/shipping_address/presentation/bloc/shipping_address_event.dart';
 import 'package:ale_beauty_art_app/features/shipping_address/presentation/views/shipping_address_page.dart';
+import 'package:ale_beauty_art_app/features/support/presentation/views/help_view.dart';
 import 'package:ale_beauty_art_app/features/profile/presentation/views/profile_account_view.dart';
 import 'package:flutter/material.dart';
 import 'dart:io' show Platform;
@@ -268,6 +269,27 @@ class ProfileView extends StatelessWidget {
                       Navigator.push(
                         context,
                         MaterialPageRoute(builder: (_) => const ShippingAddressPage()),
+                      );
+                    },
+                  ),
+                  // ¿Necesitas ayuda? — abre la página de ayuda
+                  _buildOptionTile(
+                    context,
+                    icon: Icons.help_outline,
+                    title: 'profile.need_help'.tr(),
+                    onTap: () async {
+                      final authState = context.read<AuthBloc>().state;
+                      if (authState is! AuthSuccess) {
+                        final result = await Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (_) => const LoginPage()),
+                        );
+                        if (result != true) return;
+                      }
+
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (_) => const HelpView()),
                       );
                     },
                   ),

@@ -298,4 +298,26 @@
     "empty_title": "No hay subcategorías",
     "empty_subtitle": "Aún no hay subcategorías disponibles\npara esta categoría"
   }
+  ,
+  "support": {
+    "help": "Ayuda",
+    "need_help": "¿Necesitas ayuda?",
+    "help_description": "¿Tienes alguna duda o inconveniente? Envíanos un mensaje y te responderemos pronto.",
+    "contact_email": "Correo electrónico",
+    "contact_email_desc": "soporte.alebeauty@gmail.com",
+    "contact_phone": "Teléfono",
+    "contact_phone_desc": "+57 302 2880520",
+    "chat_support": "Chat de soporte",
+    "chat_support_desc": "Chatea con nuestro equipo",
+    "faq": "Preguntas frecuentes",
+    "faq_q1": "¿Cómo hago un pedido?",
+    "faq_a1": "Busca productos y agrégalos al carrito, luego procede al pago.",
+    "faq_q2": "¿Cuál es el tiempo de entrega?",
+    "faq_a2": "El tiempo de entrega depende de la ubicación del envío.",
+    "select_order": "Seleccione número de orden",
+    "send": "Enviar",
+    "message_required": "Por favor escribe un mensaje",
+    "send_success": "Mensaje enviado correctamente",
+    "send_error": "Error al enviar el mensaje"
+  }
 }
