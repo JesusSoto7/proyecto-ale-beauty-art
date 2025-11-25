@@ -17,6 +17,7 @@
   "profile": {
     "guest": "Invitado",
     "user": "Usuario",
+    "need_help": "¿Necesitas ayuda?",
     "logout": "Cerrar Sesión",
     "logout_success": "Sesión cerrada",
     "login": "Iniciar Sesión",

@@ -17,6 +17,7 @@
   "profile": {
     "guest": "Guest",
     "user": "User",
+    "need_help": "Need help?",
     "logout": "Log out",
     "logout_success": "Logged out",
     "login": "Log in",
