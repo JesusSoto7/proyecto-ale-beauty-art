@@ -310,6 +310,7 @@
     "contact_phone_desc": "+57 302 2880520",
     "address": "Dirección",
     "address_desc": "Atlantico, Rebolo, Cra 29 #17-17\nColombia",
+    "select_order_required": "Por favor selecciona una orden antes de enviar.",
     "chat_support": "Chat de soporte",
     "chat_support_desc": "Chatea con nuestro equipo",
     "faq": "Preguntas frecuentes",

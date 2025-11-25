@@ -43,6 +43,10 @@ class _HelpViewState extends State<HelpView> {
         _fetchOrders();
       }
     });
+    // Listen message changes so button enabled/disabled updates immediately
+    _messageCtrl.addListener(() {
+      if (mounted) setState(() {});
+    });
   }
 
   @override
@@ -95,7 +99,7 @@ class _HelpViewState extends State<HelpView> {
 
     // El backend requiere `order_id` (columna NOT NULL). Asegurarnos de que se seleccione.
     if (_selectedOrderId == null) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Por favor selecciona una orden antes de enviar.')));
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('support.select_order_required'.tr())));
       return;
     }
 
@@ -147,6 +151,7 @@ class _HelpViewState extends State<HelpView> {
       body: SafeArea(
         child: Container(
           width: double.infinity,
+          height: MediaQuery.of(context).size.height,
           decoration: const BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.only(
@@ -213,22 +218,41 @@ class _HelpViewState extends State<HelpView> {
                   key: _formKey,
                   child: Column(
                     children: [
-                      // Sólo selector de orden (si existe) y campo de mensaje
-                      if (_loadingOrders)
-                        const Center(child: Padding(padding: EdgeInsets.symmetric(vertical: 8), child: CircularProgressIndicator()))
-                      else if (_orders.isNotEmpty) ...[
-                        DropdownButtonFormField<int>(
-                          value: _selectedOrderId,
-                          items: _orders.map((o) => DropdownMenuItem<int>(value: o['id'] as int, child: Text(o['numero_de_orden'].toString()))).toList(),
-                          onChanged: (v) => setState(() => _selectedOrderId = v),
-                          decoration: InputDecoration(labelText: 'support.select_order'.tr()),
-                        ),
-                        const SizedBox(height: 8),
-                      ],
+                            // Selector de orden (si existe) y campo de mensaje
+                            if (_loadingOrders)
+                              const Center(child: Padding(padding: EdgeInsets.symmetric(vertical: 8), child: LoadingIndicator()))
+                            else if (_orders.isNotEmpty) ...[
+                              Container(
+                                decoration: BoxDecoration(
+                                  color: const Color(0xFFF9F7FA),
+                                  borderRadius: BorderRadius.circular(12),
+                                  border: Border.all(color: const Color(0xFFEDE7F0)),
+                                ),
+                                padding: const EdgeInsets.symmetric(horizontal: 12),
+                                child: DropdownButtonFormField<int>(
+                                  value: _selectedOrderId,
+                                  items: _orders.map((o) => DropdownMenuItem<int>(value: o['id'] as int, child: Text(o['numero_de_orden'].toString()))).toList(),
+                                  onChanged: (v) => setState(() => _selectedOrderId = v),
+                                  decoration: InputDecoration(
+                                    labelText: 'support.select_order'.tr(),
+                                    border: InputBorder.none,
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(height: 10),
+                            ],
 
                       TextFormField(
                         controller: _messageCtrl,
-                        decoration: InputDecoration(labelText: 'support.help'.tr()),
+                        decoration: InputDecoration(
+                          labelText: 'support.help'.tr(),
+                          hintText: 'support.message_required'.tr(),
+                          filled: true,
+                          fillColor: const Color(0xFFF9F9FB),
+                          enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: Colors.transparent)),
+                          focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: AppColors.primaryPink)),
+                          contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+                        ),
                         maxLines: 6,
                         validator: (v) => (v == null || v.trim().isEmpty) ? 'support.message_required'.tr() : null,
                       ),
@@ -236,9 +260,13 @@ class _HelpViewState extends State<HelpView> {
                       SizedBox(
                         width: double.infinity,
                         child: ElevatedButton(
-                          onPressed: _submitting ? null : _sendMessage,
-                          child: _submitting ? const LoadingView() : Text('support.send'.tr(), style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-                          style: ElevatedButton.styleFrom(backgroundColor: AppColors.primaryPink),
+                          onPressed: (_submitting || _selectedOrderId == null || _messageCtrl.text.trim().isEmpty) ? null : _sendMessage,
+                          child: _submitting ? const LoadingIndicator(size: 18, color: Colors.white) : Text('support.send'.tr(), style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppColors.primaryPink,
+                            padding: const EdgeInsets.symmetric(vertical: 14),
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                          ),
                         ),
                       ),
                     ],
