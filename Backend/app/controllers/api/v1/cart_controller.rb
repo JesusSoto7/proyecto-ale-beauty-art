@@ -65,6 +65,7 @@ module Api
               cantidad: cp.cantidad,
               precio_producto: product.precio_producto,
               stock: product.stock,
+              slug: product.slug,
               imagen_url: product.imagen.attached? ? url_for(product.imagen) : nil,
               precio_con_mejor_descuento: precio_con_descuento,
               mejor_descuento_para_precio: mejor_descuento,

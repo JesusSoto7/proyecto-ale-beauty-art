@@ -2,7 +2,11 @@ class Api::V1::OrdersController < Api::V1::BaseController
   include Rails.application.routes.url_helpers
 
   def show
-    order = current_user.orders.includes(order_details: :product).find(params[:id])
+    order = current_user.orders.includes(order_details: :product).find_by(numero_de_orden: params[:numero_de_orden])
+
+    if order.blank?
+      return render json: { error: "Orden no encontrada" }, status: :not_found
+    end
 
     render json: {
       id: order.id,
@@ -14,12 +18,12 @@ class Api::V1::OrdersController < Api::V1::BaseController
       tarjeta_tipo: order.tarjeta_tipo,
       tarjeta_ultimos4: order.tarjeta_ultimos4,
       payment_method: order.payment_method&.as_json(only: [:id, :nombre_metodo, :codigo]),
-      envio: order.costo_de_envio.to_f, # <- ahora sale de la BD
+      envio: order.costo_de_envio.to_f,
       productos: order.order_details.map do |od|
         product = od.product
         precio_original = product.precio_producto
-        precio_con_descuento = od.precio_unitario 
-        
+        precio_con_descuento = od.precio_unitario
+
         {
           id: od.id,
           product_id: product.id,
@@ -31,7 +35,7 @@ class Api::V1::OrdersController < Api::V1::BaseController
           precio_unitario: precio_con_descuento.to_f,
           imagen_url: product.imagen.attached? ? url_for(product.imagen) : nil,
           tiene_descuento: precio_con_descuento < precio_original,
-          porcentaje_descuento: precio_con_descuento < precio_original ? 
+          porcentaje_descuento: precio_con_descuento < precio_original ?
             (((precio_original - precio_con_descuento) / precio_original) * 100).round : 0,
           descuento: product.mejor_descuento_para_precio(precio_original)&.as_json(
             only: [:id, :nombre, :tipo, :valor, :fecha_inicio, :fecha_fin]
@@ -39,8 +43,6 @@ class Api::V1::OrdersController < Api::V1::BaseController
         }
       end
     }
-  rescue ActiveRecord::RecordNotFound
-    render json: { error: "Orden no encontrada" }, status: :not_found
   end
 
   def index

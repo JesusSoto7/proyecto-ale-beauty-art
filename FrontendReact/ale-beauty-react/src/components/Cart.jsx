@@ -267,8 +267,8 @@ function Cart() {
       .catch(() => setError(t("cart.orderError")));
   };
 
-  const handleProductClick = (productId) => {
-    navigate(`/${lang}/producto/${productId}`);
+  const handleProductClick = (slug) => {
+    navigate(`/${lang}/producto/${slug}`);
   };
 
   // Loading
@@ -446,7 +446,7 @@ function Cart() {
                     minWidth: 0,
                     cursor: 'pointer',
                   }}
-                  onClick={() => handleProductClick(product.product_id)}
+                  onClick={() => handleProductClick(product.slug)}
                 >
                   <Typography level="title-lg" sx={{
                     mb: 1,
