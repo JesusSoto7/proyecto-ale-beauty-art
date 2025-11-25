@@ -1,3 +1,5 @@
+import 'package:ale_beauty_art_app/core/views/loading_view.dart';
+import 'package:ale_beauty_art_app/styles/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:ale_beauty_art_app/styles/text_styles.dart';
@@ -160,6 +162,51 @@ class _HelpViewState extends State<HelpView> {
                 Text('support.need_help'.tr(), style: AppTextStyles.title.copyWith(fontSize: 20)),
                 const SizedBox(height: 12),
                 Text('support.help_description'.tr(), style: const TextStyle(fontSize: 14, color: Colors.black87)),
+                const SizedBox(height: 12),
+
+                // Contact details block
+                Card(
+                  elevation: 0,
+                  color: const Color(0xFFF7F7F7),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 14),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Icon(Icons.email_outlined, size: 18, color: Colors.black54),
+                            const SizedBox(width: 8),
+                            Text('support.contact_email'.tr(), style: const TextStyle(fontWeight: FontWeight.w600)),
+                          ],
+                        ),
+                        const SizedBox(height: 4),
+                        Text('support.contact_email_desc'.tr(), style: const TextStyle(color: Colors.black87)),
+                        const SizedBox(height: 12),
+                        Row(
+                          children: [
+                            Icon(Icons.phone_outlined, size: 18, color: Colors.black54),
+                            const SizedBox(width: 8),
+                            Text('support.contact_phone'.tr(), style: const TextStyle(fontWeight: FontWeight.w600)),
+                          ],
+                        ),
+                        const SizedBox(height: 4),
+                        Text('support.contact_phone_desc'.tr(), style: const TextStyle(color: Colors.black87)),
+                        const SizedBox(height: 12),
+                        Row(
+                          children: [
+                            Icon(Icons.location_on_outlined, size: 18, color: Colors.black54),
+                            const SizedBox(width: 8),
+                            Text('support.address'.tr(), style: const TextStyle(fontWeight: FontWeight.w600)),
+                          ],
+                        ),
+                        const SizedBox(height: 4),
+                        Text('support.address_desc'.tr(), style: const TextStyle(color: Colors.black87)),
+                      ],
+                    ),
+                  ),
+                ),
                 const SizedBox(height: 16),
 
                 Form(
@@ -190,8 +237,8 @@ class _HelpViewState extends State<HelpView> {
                         width: double.infinity,
                         child: ElevatedButton(
                           onPressed: _submitting ? null : _sendMessage,
-                          child: _submitting ? const SizedBox(height: 16, width: 16, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white)) : Text('support.send'.tr()),
-                          style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFD95D85)),
+                          child: _submitting ? const LoadingView() : Text('support.send'.tr(), style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                          style: ElevatedButton.styleFrom(backgroundColor: AppColors.primaryPink),
                         ),
                       ),
                     ],
