@@ -124,7 +124,14 @@ function StatCard({ title, value, interval, trend, data, labels, subtitle, perce
               showTooltip
               xAxis={{
                 scaleType: 'band',
-                data: labels || [],
+                data: labels.map(label => {
+                  try {
+                    return label;
+                  } catch (e) {
+                    console.error(`Error ajustando etiqueta para gráfica: ${label}`, e);
+                    return 'Fecha inválida';
+                  }
+                }),
               }}
               sx={{
                 [`& .${areaElementClasses.root}`]: {

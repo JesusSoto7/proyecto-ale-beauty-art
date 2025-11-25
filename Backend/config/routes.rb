@@ -100,7 +100,8 @@ Rails.application.routes.draw do
         end
       end
       get "/my_orders", to: "orders#ordenes"
-      get "/my_orders/:id", to: "orders#show"
+      get '/orders/by_number/:numero_de_orden', to: 'orders#by_number'
+      get "/my_orders/:numero_de_orden", to: "orders#show"
 
       get 'analytics/product_funnel_per_day', to: 'analytics#product_funnel_per_day'
       get 'analytics/top_3_products', to: 'analytics#top_3_products'
@@ -108,6 +109,7 @@ Rails.application.routes.draw do
       post 'analytics/record_page_view', to: 'analytics#record_page_view'
       get  'analytics/page_views_per_day', to: 'analytics#page_views_per_day'
       get  'analytics/total_page_views', to: 'analytics#total_page_views'
+      get  'analytics/google_page_views', to: 'analytics#google_page_views'
 
       get  "mercadopago/payment_methods", to: "mercadopago#payment_methods"
       get  "mercadopago/pse_banks",       to: "mercadopago#pse_banks"
@@ -133,6 +135,8 @@ Rails.application.routes.draw do
             get :sales_bounds
           end
         end
+
+        resource :profile, only: [:show, :update]
       end
 
       resources :users, only: [:index, :show, :update, :destroy]

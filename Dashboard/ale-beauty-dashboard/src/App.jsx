@@ -30,6 +30,7 @@ import UserFullPerfil from './components/dashComponents/UserFullPerfil';
 import Orders from './page/home/Orders.jsx';
 import Sales from './page/home/Sales.jsx';
 import AdminSupportMessages from "./components/dashComponents/AdminSupporMessages.jsx";
+import AdminProfile from './components/dashComponents/AdminProfile.jsx';
 
 function Wrapper() {
   const { lang } = useParams();
@@ -114,6 +115,7 @@ function App() {
               <Route path="orders" element={<Orders />} />
               <Route path="ventas" element={<Sales />} />
               <Route path="support-messages" element={<AdminSupportMessages />} />
+              <Route path="perfil" element={<AdminProfile />} />
             </Route>
           </Route>
 

@@ -25,6 +25,7 @@ import { useAlert } from "../../components/AlertProvider.jsx";
 import { addItem as addGuestItem } from "../../utils/guestCart";
 import DiscountIcon from '@mui/icons-material/Discount';
 import Tooltip from '@mui/material/Tooltip';
+import ProductCard from "../../components/ProductCard.jsx";
 
 function ProductDetails() {
   const API_BASE = import.meta.env.VITE_API_BASE_URL || "https://localhost:4000";
@@ -34,7 +35,7 @@ function ProductDetails() {
   const { lang } = useParams();
   const navigate = useNavigate();
   const [product, setProduct] = useState(null);
-  const [relatedProducts, setRelatedProducts] = useState(null); 
+  const [relatedProducts, setRelatedProducts] = useState(null);
   const [token, setToken] = useState(() => normalizeToken(localStorage.getItem("token")));
   const [cart, setCart] = useState(null);
   const [error, setError] = useState(null);
@@ -44,9 +45,9 @@ function ProductDetails() {
   const [reviews, setReviews] = useState([]);
   const [productRatings, setProductRatings] = useState({});
 
-  const averageRating = reviews.length > 0 
-  ? reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length 
-  : 0;
+  const averageRating = reviews.length > 0
+    ? reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length
+    : 0;
   const [visibleReviews, setVisibleReviews] = useState(5);
   const [newReview, setNewReview] = useState({ rating: 0, comentario: "" });
   const [imgLoaded, setImgLoaded] = useState(false);
@@ -72,8 +73,8 @@ function ProductDetails() {
       >
         <defs>
           <linearGradient id="heart-gradient" x1="0" y1="0" x2="24" y2="24" gradientUnits="userSpaceOnUse">
-            <stop stopColor="#cf0d5bff"/>
-            <stop offset="1" stopColor="#f7c1dcff"/>
+            <stop stopColor="#cf0d5bff" />
+            <stop offset="1" stopColor="#f7c1dcff" />
           </linearGradient>
         </defs>
         <path
@@ -91,6 +92,20 @@ function ProductDetails() {
     window.addEventListener("storage", onStorage);
     return () => window.removeEventListener("storage", onStorage);
   }, []);
+
+  useEffect(() => {
+    if (relatedProducts && relatedProducts.length > 0) {
+      window.gtag && window.gtag('event', 'view_item_list', {
+        items: relatedProducts.map((rp) => ({
+          item_id: rp.id,
+          item_name: rp.nombre_producto,
+          price: rp.precio_producto,
+          item_category: rp.sub_category?.category?.nombre_categoria,
+          item_variant: rp.sku || '',
+        }))
+      });
+    }
+  }, [relatedProducts]);
 
 
   // Cargar producto + carrito + favoritos
@@ -134,7 +149,7 @@ function ProductDetails() {
       })
         .then((res) => res.ok ? res.json() : Promise.reject())
         .then((data) => setCart(data.cart || data))
-        .catch(() => {});
+        .catch(() => { });
     } else {
       setCart(null);
     }
@@ -143,18 +158,18 @@ function ProductDetails() {
   }, [slug, token, t]);
 
 
-    useEffect(() => {
-      if (!product) return;
-      window.gtag && window.gtag('event', 'view_item', {
-        items: [{
-          item_id: product.id,
-          item_name: product.nombre_producto,
-          price: product.precio_producto,
-          item_category: product.sub_category?.category?.nombre_categoria,
-          item_variant: product.sku || '',
-        }]
-      });
-    }, [product]);
+  useEffect(() => {
+    if (!product) return;
+    window.gtag && window.gtag('event', 'view_item', {
+      items: [{
+        item_id: product.id,
+        item_name: product.nombre_producto,
+        price: product.precio_producto,
+        item_category: product.sub_category?.category?.nombre_categoria,
+        item_variant: product.sku || '',
+      }]
+    });
+  }, [product]);
 
   useEffect(() => {
     if (!product) return;
@@ -173,8 +188,8 @@ function ProductDetails() {
 
     const fetchCanReview = token
       ? fetch(`${API_BASE}/api/v1/products/${slug}/can_review`, { headers })
-          .then((res) => res.ok ? res.json() : { can_review: false })
-          .catch(() => ({ can_review: false }))
+        .then((res) => res.ok ? res.json() : { can_review: false })
+        .catch(() => ({ can_review: false }))
       : Promise.resolve({ can_review: false });
 
     Promise.all([fetchReviews, fetchCanReview])
@@ -207,13 +222,13 @@ function ProductDetails() {
       })
       .catch((err) => console.error(err));
   }, [t]);
-  
+
 
 
   function ProductImage({ product, noImage }) {
     return (
-      <div className="product-image" style={{ 
-        position: "relative", 
+      <div className="product-image" style={{
+        position: "relative",
         maxWidth: "500px",
         borderRadius: "12px",
         overflow: "hidden",
@@ -247,7 +262,7 @@ function ProductDetails() {
   }
 
   if (!product) {
-    return(
+    return (
       <div style={{
         display: "flex",
         flexDirection: "column",
@@ -338,11 +353,11 @@ function ProductDetails() {
     };
 
     return (
-      <p style={{ 
-        lineHeight: "1.6", 
-        fontSize: "16px", 
-        overflowWrap: "anywhere", 
-        marginBottom: "0", 
+      <p style={{
+        lineHeight: "1.6",
+        fontSize: "16px",
+        overflowWrap: "anywhere",
+        marginBottom: "0",
         marginTop: "10px",
         color: "#555"
       }}>
@@ -370,7 +385,7 @@ function ProductDetails() {
     );
   }
 
-  
+
 
   const handleBuyNow = (productId, quantity = 1) => {
     fetch("https://localhost:4000/api/v1/orders", {
@@ -408,52 +423,38 @@ function ProductDetails() {
 
 
   const addToCart = (item) => {
-    const tok = normalizeToken(localStorage.getItem("token") || token);
+    const productId = typeof item === "object" ? item.id : item;
 
-    // item puede ser objeto o id: resuélvelo para guest
-    const prod =
-      typeof item === "object"
-        ? item
-        : (product && String(product.id) === String(item))
-          ? product
-          : (Array.isArray(relatedProducts) ? relatedProducts.find((p) => String(p.id) === String(item)) : null);
-
-    const productId = prod?.id ?? item;
-
-    // Invitado: localStorage + eventos
-    if (!tok) {
-      window.dispatchEvent(new CustomEvent("cartUpdatedOptimistic", { bubbles: false }));
-      if (prod) addGuestItem(prod, 1); // emite guestCartUpdated
-      window.dispatchEvent(new CustomEvent("cartUpdatedCustom", { bubbles: false }));
-      addAlert(t("productDetails.addedToCart") || "Se agregó al carrito", "success", 3500);
-      return;
-    }
-
-    // Autenticado: backend + eventos
-    window.dispatchEvent(new CustomEvent("cartUpdatedOptimistic", { bubbles: false, detail: { productId, action: "add" } }));
+    // Evento Analytics
+    window.gtag && window.gtag('event', 'add_to_cart', {
+      currency: 'COP',
+      items: [{
+        item_id: productId,
+        item_name: item.nombre_producto,
+        price: item.precio_producto,
+        item_category: item.sub_category?.category?.nombre_categoria,
+        item_variant: item.sku || '',
+        quantity: 1,
+      }]
+    });
 
     fetch(`${API_BASE}/api/v1/cart/add_product`, {
       method: "POST",
-      headers: { "Content-Type": "application/json", Authorization: `Bearer ${tok}` },
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
       body: JSON.stringify({ product_id: productId }),
     })
-      .then(async (res) => {
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        try { return await res.json(); } catch { return {}; }
-      })
+      .then(res => res.json())
       .then((data) => {
-        const serverCart = data?.cart || data; // acepta ambos formatos
-        if (serverCart?.products) {
-          setCart(serverCart);
-          window.dispatchEvent(new CustomEvent("cartUpdatedCustom", { bubbles: false }));
-          addAlert(t("productDetails.addedToCart") || "Se agregó al carrito", "success", 3500);
-        } else {
-          window.dispatchEvent(new CustomEvent("cartUpdatedCustom", { bubbles: false }));
+        if (data.cart) {
+          setCart(data.cart);
+          addAlert("Producto añadido al carrito.", "success", 3500);
         }
       })
       .catch(() => {
-        addAlert(t("productDetails.cartAddError") || "No se pudo agregar al carrito", "error", 3500);
-        window.dispatchEvent(new CustomEvent("cartUpdateFailed", { bubbles: false, detail: { productId, action: "add" } }));
+        addAlert("Error al añadir al carrito.", "error", 3500);
       });
   };
 
@@ -581,10 +582,10 @@ function ProductDetails() {
               marginBottom: "8px",
               textAlign: "left"
             }}>{product.sub_category?.category?.nombre_categoria} / {product.sub_category?.nombre}</p>
-            <div style={{ 
-              display: "flex", 
+            <div style={{
+              display: "flex",
               flexDirection: "row",
-              justifyContent: "space-between", 
+              justifyContent: "space-between",
               alignItems: "flex-start",
               marginBottom: "16px",
               width: "100%"
@@ -598,37 +599,37 @@ function ProductDetails() {
                   margin: "0",
                   textAlign: "left"
                 }}>{product.nombre_producto} {discount && (<Tooltip
-                    title={tooltipContent}
-                    placement="right"
-                    componentsProps={{
-                      tooltip: {
-                        sx: {
-                          backgroundColor: 'transparent',
-                          boxShadow: 'none',
-                          padding: 0,
-                        },
+                  title={tooltipContent}
+                  placement="right"
+                  componentsProps={{
+                    tooltip: {
+                      sx: {
+                        backgroundColor: 'transparent',
+                        boxShadow: 'none',
+                        padding: 0,
                       },
+                    },
+                  }}
+                >
+
+                  <DiscountIcon
+                    sx={{
+                      color: "#e91e63",
+                      fontSize: "20px",
+                      marginLeft: "8px"
                     }}
-                  >
-                    
-                    <DiscountIcon
-                      sx={{
-                        color: "#e91e63",
-                        fontSize: "20px",
-                        marginLeft: "8px"
-                      }}
-                    />
-                  </Tooltip>)}
-                  </h2>
+                  />
+                </Tooltip>)}
+                </h2>
               </div>
 
-              <IconButton 
-                id="favBtn" 
+              <IconButton
+                id="favBtn"
                 onClick={() => toggleFavorite(product.id)}
                 sx={{
                   bgcolor: "white",
                   boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
-                  "&:hover": { 
+                  "&:hover": {
                     bgcolor: "grey.50",
                     transform: "scale(1.1)"
                   },
@@ -642,51 +643,48 @@ function ProductDetails() {
                 )}
               </IconButton>
             </div>
-            
+
           </div>
           <div style={{ width: "100%", textAlign: "left" }}>
             <ProductRating value={averageRating} count={reviews.length} />
           </div>
 
           <br></br>
-          
+
           {/* Precio con descuento */}
           <div style={{ marginBottom: "30px", textAlign: "left" }}>
             {priceDiscount && priceDiscount < priceOriginal ? (
               <>
-                <span style={{ 
-                  textDecoration: "line-through", 
-                  color: "#999", 
-                  marginLeft: "4px", 
+                <span style={{
+                  textDecoration: "line-through",
+                  color: "#999",
+                  marginLeft: "4px",
                   fontSize: "18px",
                   fontWeight: "400"
                 }}>
                   {formatCOP(priceOriginal)}
                 </span>
-                <p className="price" style={{ 
-                  color: "#e91e63", 
-                  fontWeight: "700", 
+                <p className="price" style={{
+                  color: "#e91e63",
+                  fontWeight: "700",
                   marginBottom: "4px",
                   fontSize: "28px"
                 }}>
                   {formatCOP(priceDiscount)}
-                  
-                  
+
                   {discount && discount.tipo === "porcentaje" && (
-                    <p style={{ 
-                      color: "#4caf50", 
-                      fontWeight: 600, 
-                      fontSize: "20px", 
+                    <span style={{
+                      color: "#4caf50",
+                      fontWeight: 600,
+                      fontSize: "20px",
                       marginTop: "0",
                       padding: "4px 12px",
                       display: "inline-block"
                     }}>
                       {discount.valor}%
-                    </p>
+                    </span>
                   )}
-
                 </p>
-                
               </>
             ) : (
               <p className="price" style={{
@@ -696,364 +694,404 @@ function ProductDetails() {
               }}>{formatCOP(priceOriginal)}</p>
             )}
           </div>
-
           <div className="actions" style={{
             display: "flex",
             gap: "16px",
             marginTop: "30px"
           }}>
-            <button 
-              onClick={() => handleBuyNow(product.id)}
-              style={{
-                flex: 2,
-                padding: "14px 24px",
-                fontSize: "16px",
-                fontWeight: "600",
-                backgroundColor: "#e91e63",
-                color: "white",
-                border: "none",
-                borderRadius: "8px",
-                cursor: "pointer",
-                transition: "all 0.2s ease",
-                boxShadow: "0 2px 8px rgba(233, 30, 99, 0.3)"
-              }}
-              onMouseOver={(e) => {
-                e.target.style.backgroundColor = "#d81b60";
-                e.target.style.transform = "translateY(-1px)";
-                e.target.style.boxShadow = "0 4px 12px rgba(233, 30, 99, 0.4)";
-              }}
-              onMouseOut={(e) => {
-                e.target.style.backgroundColor = "#e91e63";
-                e.target.style.transform = "translateY(0)";
-                e.target.style.boxShadow = "0 2px 8px rgba(233, 30, 99, 0.3)";
-              }}
-            >
-              {t("productDetails.buy")}
-            </button>
+            {/* Botón "Comprar Ahora" */}
+            {product.stock > 0 ? (
+              <button
+                onClick={() => handleBuyNow(product.id)}
+                style={{
+                  flex: 2,
+                  padding: "14px 24px",
+                  fontSize: "16px",
+                  fontWeight: "600",
+                  backgroundColor: "#e91e63",
+                  color: "white",
+                  border: "none",
+                  borderRadius: "8px",
+                  cursor: "pointer",
+                  transition: "all 0.2s ease",
+                  boxShadow: "0 2px 8px rgba(233, 30, 99, 0.3)"
+                }}
+                onMouseOver={(e) => {
+                  e.target.style.backgroundColor = "#d81b60";
+                  e.target.style.transform = "translateY(-1px)";
+                  e.target.style.boxShadow = "0 4px 12px rgba(233, 30, 99, 0.4)";
+                }}
+                onMouseOut={(e) => {
+                  e.target.style.backgroundColor = "#e91e63";
+                  e.target.style.transform = "translateY(0)";
+                  e.target.style.boxShadow = "0 2px 8px rgba(233, 30, 99, 0.3)";
+                }}
+              >
+                {t("productDetails.buy")}
+              </button>
+            ) : (
+              <button
+                style={{
+                  flex: 2,
+                  padding: "14px 24px",
+                  fontSize: "16px",
+                  fontWeight: "600",
+                  backgroundColor: "#e63946",
+                  color: "white",
+                  border: "none",
+                  borderRadius: "8px",
+                  cursor: "not-allowed",
+                  opacity: 0.7,
+                }}
+                disabled
+              >
+                {t("productDetails.outOfStock") || "Sin stock"}
+              </button>
+            )}
 
-            <button 
-              onClick={() => addToCart(product)}
-              style={{
-                padding: "14px",
-                backgroundColor: "white",
-                border: "2px solid #e91e63",
-                borderRadius: "8px",
-                cursor: "pointer",
-                transition: "all 0.2s ease",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center"
-              }}
-              onMouseOver={(e) => {
-                e.target.style.backgroundColor = "#fff5f7";
-                e.target.style.transform = "scale(1.05)";
-              }}
-              onMouseOut={(e) => {
-                e.target.style.backgroundColor = "white";
-                e.target.style.transform = "scale(1)";
-              }}
-            >
-              <BsCart4 size={24} color="#e91e63" />
-            </button>
+            {/* Botón "Agregar al carrito" */}
+            {product.stock > 0 ? (
+              <button
+                onClick={() => addToCart(product)}
+                style={{
+                  padding: "14px",
+                  backgroundColor: "white",
+                  border: "2px solid #e91e63",
+                  borderRadius: "8px",
+                  cursor: "pointer",
+                  transition: "all 0.2s ease",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center"
+                }}
+                onMouseOver={(e) => {
+                  e.target.style.backgroundColor = "#fff5f7";
+                  e.target.style.transform = "scale(1.05)";
+                }}
+                onMouseOut={(e) => {
+                  e.target.style.backgroundColor = "white";
+                  e.target.style.transform = "scale(1)";
+                }}
+              >
+                <BsCart4 size={24} color="#e91e63" />
+              </button>
+            ) : (
+              <button
+                style={{
+                  padding: "14px",
+                  backgroundColor: "#f8d7da",
+                  border: "2px solid #e63946",
+                  borderRadius: "8px",
+                  cursor: "not-allowed",
+                  opacity: 0.7,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center"
+                }}
+                disabled
+              >
+                {t("productDetails.outOfStock") || "Sin stock"}
+              </button>
+            )}
           </div>
         </div>
       </div>
 
-    <section id="detalles-producto" className="details-reviews-container" style={{
-      backgroundColor: "white",
-      borderRadius: "12px",
-      padding: "32px",
-      boxShadow: "0 2px 16px rgba(0,0,0,0.08)",
-      marginBottom: "60px"
-    }}>
-      <div style={{ 
-        display: 'flex', 
-        flexDirection: 'row', 
-        borderBottom: '2px solid #f0f0f0', 
-        marginBottom: '2rem' 
+      <section id="detalles-producto" className="details-reviews-container" style={{
+        backgroundColor: "white",
+        borderRadius: "12px",
+        padding: "32px",
+        boxShadow: "0 2px 16px rgba(0,0,0,0.08)",
+        marginBottom: "60px"
       }}>
-        <button 
-          className="botonTap"
-          onClick={() => setActiveTab("description")} 
-          style={activeTab === "description" ? activeBtnStyle : inactiveBtnStyle}
-        >
-          {t("productDetails.description")}
-        </button>
+        <div style={{
+          display: 'flex',
+          flexDirection: 'row',
+          borderBottom: '2px solid #f0f0f0',
+          marginBottom: '2rem'
+        }}>
+          <button
+            className="botonTap"
+            onClick={() => setActiveTab("description")}
+            style={activeTab === "description" ? activeBtnStyle : inactiveBtnStyle}
+          >
+            {t("productDetails.description")}
+          </button>
 
-        <button 
-          className="botonTap"
-          onClick={() => setActiveTab("reviews")} 
-          style={activeTab === "reviews" ? activeBtnStyle : inactiveBtnStyle}
-        >
-          {t("productDetails.reviews")} ({reviews.length})
-        </button>
-      </div>
-
-      {activeTab === "description" && (
-        <div className="description-section">
-          <p style={{ 
-            color: '#555',
-            overflowWrap: "anywhere",
-            lineHeight: "1.7",
-            fontSize: "16px"
-          }}>
-            {product.descripcion}
-          </p>
+          <button
+            className="botonTap"
+            onClick={() => setActiveTab("reviews")}
+            style={activeTab === "reviews" ? activeBtnStyle : inactiveBtnStyle}
+          >
+            {t("productDetails.reviews")} ({reviews.length})
+          </button>
         </div>
-      )}
 
-      {activeTab === "reviews" && (
-        <div className="reviews-section">
-          <div id="areaRating" style={{ marginBottom: "32px" }}>
-            <RatingSummary 
-            ratings={ratings} 
-            showReviewForm={showReviewForm} 
-            onOpenReviewForm={handleOpenReviewForm}
-            onCloseReviewForm={handleCloseReviewForm}
-            productName={product.nombre_producto}
-            />
-            
-          </div>
-
-          {showReviewForm && canReview && (
-            <div id="formReviewCard" style={{ 
-              marginTop: "2rem",
-              backgroundColor: "#f8f9fa",
-              padding: "24px",
-              borderRadius: "12px",
-              border: "1px solid #e9ecef"
+        {activeTab === "description" && (
+          <div className="description-section">
+            <p style={{
+              color: '#555',
+              overflowWrap: "anywhere",
+              lineHeight: "1.7",
+              fontSize: "16px"
             }}>
-              <form onSubmit={handleSubmitReview} style={{ gap: 0 }}>
-                <textarea
-                  id="textReview"
-                  placeholder={t("productDetails.writeReview")}
-                  value={newReview.comentario}
-                  onChange={(e) =>
-                    setNewReview({ ...newReview, comentario: e.target.value })
-                  }
-                  rows={4}
-                  style={{ 
-                    width: "100%", 
-                    border: "1px solid #ddd",
-                    borderRadius: "8px",
-                    padding: "16px",
-                    fontSize: "14px",
-                    resize: "vertical",
-                    marginBottom: "16px",
-                    fontFamily: "inherit"
-                  }}
-                />
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                  <Rating
-                    name="new-rating"
-                    value={newReview.rating}
-                    onChange={(e, value) =>
-                      setNewReview({ ...newReview, rating: value })
+              {product.descripcion}
+            </p>
+          </div>
+        )}
+
+        {activeTab === "reviews" && (
+          <div className="reviews-section">
+            <div id="areaRating" style={{ marginBottom: "32px" }}>
+              <RatingSummary
+                ratings={ratings}
+                showReviewForm={showReviewForm}
+                onOpenReviewForm={handleOpenReviewForm}
+                onCloseReviewForm={handleCloseReviewForm}
+                productName={product.nombre_producto}
+              />
+
+            </div>
+
+            {showReviewForm && canReview && (
+              <div id="formReviewCard" style={{
+                marginTop: "2rem",
+                backgroundColor: "#f8f9fa",
+                padding: "24px",
+                borderRadius: "12px",
+                border: "1px solid #e9ecef"
+              }}>
+                <form onSubmit={handleSubmitReview} style={{ gap: 0 }}>
+                  <textarea
+                    id="textReview"
+                    placeholder={t("productDetails.writeReview")}
+                    value={newReview.comentario}
+                    onChange={(e) =>
+                      setNewReview({ ...newReview, comentario: e.target.value })
                     }
-                    sx={{ color: "#e91e63" }}
-                    size="large"
+                    rows={4}
+                    style={{
+                      width: "100%",
+                      border: "1px solid #ddd",
+                      borderRadius: "8px",
+                      padding: "16px",
+                      fontSize: "14px",
+                      resize: "vertical",
+                      marginBottom: "16px",
+                      fontFamily: "inherit"
+                    }}
                   />
-                  <div>
-                    <button 
-                      type="submit" 
-                      id="ReviewUP"
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                    <Rating
+                      name="new-rating"
+                      value={newReview.rating}
+                      onChange={(e, value) =>
+                        setNewReview({ ...newReview, rating: value })
+                      }
+                      sx={{ color: "#e91e63" }}
+                      size="large"
+                    />
+                    <div>
+                      <button
+                        type="submit"
+                        id="ReviewUP"
+                        style={{
+                          backgroundColor: "#e91e63",
+                          color: "white",
+                          border: "none",
+                          padding: "10px 24px",
+                          borderRadius: "6px",
+                          fontWeight: "600",
+                          cursor: "pointer",
+                          transition: "all 0.2s ease"
+                        }}
+                        onMouseOver={(e) => {
+                          e.target.style.backgroundColor = "#d81b60";
+                        }}
+                        onMouseOut={(e) => {
+                          e.target.style.backgroundColor = "#e91e63";
+                        }}
+                      >
+                        {t("productDetails.submitReview")}
+                      </button>
+                    </div>
+                  </div>
+                </form>
+              </div>
+            )}
+
+            <hr style={{ margin: "32px 0", border: "none", borderTop: "1px solid #eee" }} />
+
+            <h3 style={{
+              marginBottom: "24px",
+              color: "#333",
+              fontSize: "20px",
+              fontWeight: "600"
+            }}>
+              {t("productDetails.reviews")} ({reviews.length})
+            </h3>
+
+            {loadingReviews ? (
+              <div style={{ textAlign: "center", padding: "2rem" }}>
+                <CircularProgress sx={{ color: "#e91e63" }} />
+              </div>
+            ) : (
+              <>
+                <div>
+                  {reviews.length === 0 ? (
+                    <div style={{
+                      textAlign: "center",
+                      padding: "40px",
+                      color: "#666"
+                    }}>
+                      <RateReviewIcon sx={{ fontSize: 48, color: "#ddd", mb: 2 }} />
+                      <p style={{ fontSize: "16px" }}>{t("productDetails.noReviews")}</p>
+                    </div>
+                  ) : (
+                    reviews.slice(0, visibleReviews).map((review) => (
+                      <div
+                        key={review.id}
+                        style={{
+                          backgroundColor: "#fafafa",
+                          borderRadius: "12px",
+                          padding: "20px",
+                          marginBottom: "16px",
+                          border: "1px solid #f0f0f0",
+                          transition: "all 0.2s ease"
+                        }}
+                        onMouseOver={(e) => {
+                          e.currentTarget.style.boxShadow = "0 2px 8px rgba(0,0,0,0.05)";
+                        }}
+                        onMouseOut={(e) => {
+                          e.currentTarget.style.boxShadow = "none";
+                        }}
+                      >
+                        <div style={{ display: "flex", alignItems: "flex-start", gap: "16px" }}>
+                          <img
+                            src={review.user?.avatar_url || userFoto}
+                            alt={review.user?.nombre || "Usuario"}
+                            style={{
+                              width: "50px",
+                              height: "50px",
+                              borderRadius: "50%",
+                              objectFit: "cover",
+                              border: "2px solid #fff",
+                              boxShadow: "0 2px 4px rgba(0,0,0,0.1)"
+                            }}
+                          />
+
+                          <div style={{ flex: 1 }}>
+                            <div
+                              style={{
+                                display: "flex",
+                                justifyContent: "space-between",
+                                alignItems: "flex-start",
+                                marginBottom: "8px"
+                              }}
+                            >
+                              <div>
+                                <strong style={{ color: "#222", fontSize: "16px", display: "block" }}>
+                                  {review.user?.nombre || "Usuario"}
+                                </strong>
+                                <p style={{ fontSize: "13px", color: "#888", marginTop: "2px" }}>
+                                  {new Date(review.created_at).toLocaleDateString("es-CO", {
+                                    day: "2-digit",
+                                    month: "long",
+                                    year: "numeric",
+                                  })}
+                                </p>
+                              </div>
+                              <Rating
+                                value={review.rating}
+                                readOnly
+                                sx={{ color: "#e91e63" }}
+                                size="medium"
+                              />
+                            </div>
+
+                            <p
+                              style={{
+                                color: "#444",
+                                fontSize: "15px",
+                                lineHeight: "1.6",
+                                margin: "12px 0 0 0",
+                              }}
+                            >
+                              {review.comentario}
+                            </p>
+
+                          </div>
+                        </div>
+                      </div>
+
+                    ))
+                  )}
+                </div>
+
+                {reviews.length > visibleReviews && (
+                  <div style={{ textAlign: "center", marginTop: "2rem" }}>
+                    <button
+                      onClick={() => setVisibleReviews((prev) => prev + 5)}
                       style={{
                         backgroundColor: "#e91e63",
                         color: "white",
-                        border: "none",
-                        padding: "10px 24px",
+                        padding: "12px 24px",
                         borderRadius: "6px",
+                        border: "none",
                         fontWeight: "600",
                         cursor: "pointer",
                         transition: "all 0.2s ease"
                       }}
                       onMouseOver={(e) => {
                         e.target.style.backgroundColor = "#d81b60";
+                        e.target.style.transform = "translateY(-1px)";
                       }}
                       onMouseOut={(e) => {
                         e.target.style.backgroundColor = "#e91e63";
+                        e.target.style.transform = "translateY(0)";
                       }}
                     >
-                      {t("productDetails.submitReview")}
+                      {t("productDetails.viewMore")} ({reviews.length - visibleReviews} {t("productDetails.more")})
                     </button>
                   </div>
-                </div>
-              </form>
-            </div>
-          )}
+                )}
 
-          <hr style={{ margin: "32px 0", border: "none", borderTop: "1px solid #eee" }}/>
-
-          <h3 style={{ 
-            marginBottom: "24px",
-            color: "#333",
-            fontSize: "20px",
-            fontWeight: "600"
-          }}>
-            {t("productDetails.reviews")} ({reviews.length})
-          </h3>
-
-          {loadingReviews ? (
-            <div style={{ textAlign: "center", padding: "2rem" }}>
-              <CircularProgress sx={{ color: "#e91e63" }} />
-            </div>
-          ) : (
-            <>
-              <div>
-                {reviews.length === 0 ? (
-                  <div style={{
-                    textAlign: "center",
-                    padding: "40px",
-                    color: "#666"
-                  }}>
-                    <RateReviewIcon sx={{ fontSize: 48, color: "#ddd", mb: 2 }} />
-                    <p style={{ fontSize: "16px" }}>{t("productDetails.noReviews")}</p>
-                  </div>
-                ) : (
-                  reviews.slice(0, visibleReviews).map((review) => (
-                    <div
-                      key={review.id}
+                {visibleReviews > 5 && (
+                  <div style={{ textAlign: "center", marginTop: "1rem" }}>
+                    <button
+                      onClick={() => setVisibleReviews(5)}
                       style={{
-                        backgroundColor: "#fafafa",
-                        borderRadius: "12px",
-                        padding: "20px",
-                        marginBottom: "16px",
-                        border: "1px solid #f0f0f0",
+                        backgroundColor: "transparent",
+                        color: "#666",
+                        padding: "8px 16px",
+                        borderRadius: "6px",
+                        border: "1px solid #ddd",
+                        fontWeight: "500",
+                        cursor: "pointer",
                         transition: "all 0.2s ease"
                       }}
                       onMouseOver={(e) => {
-                        e.currentTarget.style.boxShadow = "0 2px 8px rgba(0,0,0,0.05)";
+                        e.target.style.backgroundColor = "#f5f5f5";
                       }}
                       onMouseOut={(e) => {
-                        e.currentTarget.style.boxShadow = "none";
+                        e.target.style.backgroundColor = "transparent";
                       }}
                     >
-                      <div style={{ display: "flex", alignItems: "flex-start", gap: "16px" }}>
-                        <img
-                          src={review.user?.avatar_url || userFoto}
-                          alt={review.user?.nombre || "Usuario"}
-                          style={{
-                            width: "50px",
-                            height: "50px",
-                            borderRadius: "50%",
-                            objectFit: "cover",
-                            border: "2px solid #fff",
-                            boxShadow: "0 2px 4px rgba(0,0,0,0.1)"
-                          }}
-                        />
-
-                        <div style={{ flex: 1 }}>
-                          <div
-                            style={{
-                              display: "flex",
-                              justifyContent: "space-between",
-                              alignItems: "flex-start",
-                              marginBottom: "8px"
-                            }}
-                          >
-                            <div>
-                              <strong style={{ color: "#222", fontSize: "16px", display: "block" }}>
-                                {review.user?.nombre || "Usuario"}
-                              </strong>
-                              <p style={{ fontSize: "13px", color: "#888", marginTop: "2px" }}>
-                                {new Date(review.created_at).toLocaleDateString("es-CO", {
-                                  day: "2-digit",
-                                  month: "long",
-                                  year: "numeric",
-                                })}
-                              </p>
-                            </div>
-                            <Rating 
-                              value={review.rating} 
-                              readOnly 
-                              sx={{ color: "#e91e63" }} 
-                              size="medium" 
-                            />
-                          </div>
-
-                          <p
-                            style={{
-                              color: "#444",
-                              fontSize: "15px",
-                              lineHeight: "1.6",
-                              margin: "12px 0 0 0",
-                            }}
-                          >
-                            {review.comentario}
-                          </p>
-
-                        </div>
-                      </div>
-                    </div>
-
-                  ))
+                      {t("productDetails.viewLess")}
+                    </button>
+                  </div>
                 )}
-              </div>
+              </>
+            )}
+          </div>
+        )}
 
-              {reviews.length > visibleReviews && (
-                <div style={{ textAlign: "center", marginTop: "2rem" }}>
-                  <button 
-                    onClick={() => setVisibleReviews((prev) => prev + 5)} 
-                    style={{ 
-                      backgroundColor: "#e91e63", 
-                      color: "white", 
-                      padding: "12px 24px", 
-                      borderRadius: "6px",
-                      border: "none",
-                      fontWeight: "600",
-                      cursor: "pointer",
-                      transition: "all 0.2s ease"
-                    }}
-                    onMouseOver={(e) => {
-                      e.target.style.backgroundColor = "#d81b60";
-                      e.target.style.transform = "translateY(-1px)";
-                    }}
-                    onMouseOut={(e) => {
-                      e.target.style.backgroundColor = "#e91e63";
-                      e.target.style.transform = "translateY(0)";
-                    }}
-                  >
-                    {t("productDetails.viewMore")} ({reviews.length - visibleReviews} {t("productDetails.more")})
-                  </button>
-                </div>
-              )}
-
-              {visibleReviews > 5 && (
-                <div style={{ textAlign: "center", marginTop: "1rem" }}>
-                  <button 
-                    onClick={() => setVisibleReviews(5)} 
-                    style={{ 
-                      backgroundColor: "transparent", 
-                      color: "#666", 
-                      padding: "8px 16px", 
-                      borderRadius: "6px",
-                      border: "1px solid #ddd",
-                      fontWeight: "500",
-                      cursor: "pointer",
-                      transition: "all 0.2s ease"
-                    }}
-                    onMouseOver={(e) => {
-                      e.target.style.backgroundColor = "#f5f5f5";
-                    }}
-                    onMouseOut={(e) => {
-                      e.target.style.backgroundColor = "transparent";
-                    }}
-                  >
-                    {t("productDetails.viewLess")}
-                  </button>
-                </div>
-              )}
-            </>
-          )}
-        </div>
-      )}
-
-    </section>
+      </section>
 
 
-      {relatedProducts && relatedProducts.length > 0 ?(
+      {relatedProducts && relatedProducts.length > 0 ? (
         <section className="related-products" style={{ marginBottom: "60px" }}>
-          <h3 style={{ 
+          <h3 style={{
             textAlign: "center",
             fontSize: "24px",
             fontWeight: "700",
@@ -1072,205 +1110,27 @@ function ProductDetails() {
               {relatedProducts
                 .filter((rp) => rp.subcategoria_id === product.subcategoria_id)
                 .slice(0, 4)
-                .map((rp) => {
-                  const rpPriceOriginal = rp.precio_producto;
-                  const rpPriceDiscount = rp.precio_con_mejor_descuento;
-                  const rpDiscount = rp.mejor_descuento_para_precio;
-
-                  return (
-                    <div
-                      key={rp.id}
-                      style={{ 
-                        position: "relative",
-                        backgroundColor: "white",
-                        borderRadius: "12px",
-                        overflow: "hidden",
-                        boxShadow: "0 2px 12px rgba(0,0,0,0.1)",
-                        transition: "all 0.3s ease",
-                        width: "250px",
-                        flexShrink: 0,
-                        display: "flex",
-                        flexDirection: "column"
-                      }}
-                      onMouseOver={(e) => {
-                        e.currentTarget.style.transform = "translateY(-4px)";
-                        e.currentTarget.style.boxShadow = "0 8px 24px rgba(0,0,0,0.15)";
-                      }}
-                      onMouseOut={(e) => {
-                        e.currentTarget.style.transform = "translateY(0)";
-                        e.currentTarget.style.boxShadow = "0 2px 12px rgba(0,0,0,0.1)";
-                      }}
-                    >
-                      <IconButton
-                        onClick={() => toggleFavorite(rp.id)}
-                        sx={{
-                          position: "absolute",
-                          top: 8,
-                          right: 8,
-                          bgcolor: "white",
-                          boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
-                          "&:hover": { 
-                            bgcolor: "grey.200",
-                            transform: "scale(1.1)"
-                          },
-                          transition: "all 0.2s ease",
-                          zIndex: 2
-                        }}
-                      >
-                        {favoriteIds.includes(rp.id) ? (
-                          <GradientHeart filled />
-                        ) : (
-                          <GradientHeart filled={false} />
-                        )}
-                      </IconButton>
-
-                      <Link
-                        to={`/${lang}/producto/${rp.slug}`}
-                        style={{ textDecoration: "none", color: "inherit", flex: 1, display: "flex", flexDirection: "column" }}
-                      >
-                        <div style={{
-                          height: "200px",
-                          overflow: "hidden",
-                          position: "relative"
-                        }}>
-                          <img
-                            src={rp.imagen_url || noImage}
-                            alt={rp.nombre_producto}
-                            onError={(e) => {
-                              e.currentTarget.src = noImage;
-                            }}
-                            style={{
-                              width: "100%",
-                              height: "100%",
-                              objectFit: "contain",
-                              transition: "transform 0.3s ease"
-                            }}
-                          />
-                        </div>
-
-                        <div style={{ padding: "16px", flex: 1, display: "flex", flexDirection: "column" }}>
-                          <div style={{
-                            fontSize: "16px",
-                            fontWeight: "600",
-                            color: "#333",
-                            marginBottom: "8px",
-                            lineHeight: "1.4",
-                            minHeight: "44px",
-                            overflow: "hidden",
-                            display: "-webkit-box",
-                            WebkitLineClamp: 2,
-                            WebkitBoxOrient: "vertical"
-                          }}>
-                            {rp.nombre_producto}
-                          </div>
-                          
-                          <div style={{
-                            display: "flex",
-                            justifyContent: "space-between",
-                            alignItems: "center",
-                            marginBottom: "8px"
-                          }}>
-                            <span style={{
-                              fontSize: "18px",
-                              fontWeight: "700"
-                            }}>
-                              {rpPriceDiscount && rpPriceDiscount < rpPriceOriginal ? (
-                                <>
-                                  <span style={{ color: "#e91e63" }}>
-                                    {formatCOP(rpPriceDiscount)}
-                                  </span>
-                                  <span style={{ 
-                                    textDecoration: "line-through", 
-                                    color: "#999", 
-                                    marginLeft: "8px", 
-                                    fontSize: "14px",
-                                    fontWeight: "400"
-                                  }}>
-                                    {formatCOP(rpPriceOriginal)}
-                                  </span>
-                                </>
-                              ) : (
-                                formatCOP(rpPriceOriginal)
-                              )}
-                            </span>
-                            <div style={{ display: "flex", alignItems: "center" }}>
-                              <svg
-                                width="16"
-                                height="16"
-                                viewBox="0 0 24 24"
-                                fill="#FFC107"
-                                xmlns="http://www.w3.org/2000/svg"
-                                style={{
-                                  marginRight: "4px"
-                                }}
-                              >
-                                <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
-                              </svg>
-                              <span style={{
-                                fontSize: "14px",
-                                color: "#666"
-                              }}>
-                                {productRatings[rp.id]?.avg
-                                  ? Number(productRatings[rp.id]?.avg).toFixed(1)
-                                  : "0.0"}
-                              </span>
-                            </div>
-                          </div>
-                          
-                          {/* Mostrar porcentaje si aplica */}
-                          {rpDiscount && rpDiscount.tipo === "porcentaje" && rpPriceDiscount < rpPriceOriginal && (
-                            <div style={{ 
-                              color: "#4caf50", 
-                              fontWeight: 600, 
-                              fontSize: "12px", 
-                              backgroundColor: "#e8f5e8",
-                              padding: "2px 8px",
-                              borderRadius: "8px",
-                              display: "inline-block",
-                              alignSelf: "flex-start",
-                              marginTop: "4px"
-                            }}>
-                              {rpDiscount.valor}% OFF
-                            </div>
-                          )}
-                        </div>
-                      </Link>
-
-                      <div style={{ padding: "0 16px 16px" }}>
-                        <button
-                          onClick={() => addToCart(rp.id)}
-                          style={{
-                            width: "100%",
-                            backgroundColor: "#e91e63",
-                            color: "white",
-                            border: "none",
-                            padding: "10px",
-                            borderRadius: "6px",
-                            fontWeight: "600",
-                            cursor: "pointer",
-                            transition: "all 0.2s ease"
-                          }}
-                          onMouseOver={(e) => {
-                            e.target.style.backgroundColor = "#d81b60";
-                            e.target.style.transform = "translateY(-1px)";
-                          }}
-                          onMouseOut={(e) => {
-                            e.target.style.backgroundColor = "#e91e63";
-                            e.target.style.transform = "translateY(0)";
-                          }}
-                        >
-                          {t("home.addToCart")}
-                        </button>
-                      </div>
-                    </div>
-                  );
-                })}
+                .map((rp) => (
+                  <ProductCard
+                    key={rp.id}
+                    product={rp}
+                    lang={lang}
+                    isFavorite={favoriteIds.includes(rp.id)} // Manejo de favoritos
+                    onToggleFavorite={toggleFavorite} // Acción al presionar el botón de favoritos
+                    onAddToCart={(item) => addToCart(item)} // Acción para agregar al carrito
+                    productRating={{
+                      avg: productRatings[rp.id]?.avg, // Promedio de calificaciones
+                      count: productRatings[rp.id]?.count, // Cantidad de reseñas
+                    }}
+                    t={t} // Traducción
+                  />
+                ))}
             </div>
           </div>
         </section>
       ) : (
         <section className="related-products" style={{ marginBottom: "60px" }}>
-          <h3 style={{ 
+          <h3 style={{
             textAlign: "center",
             fontSize: "24px",
             fontWeight: "700",
@@ -1287,14 +1147,14 @@ function ProductDetails() {
               padding: "0 10px"
             }}>
               {[1, 2, 3, 4].map((skeleton) => (
-                  <div key={skeleton} style={{
-                    backgroundColor: "white",
-                    borderRadius: "12px",
-                    padding: "16px",
-                    boxShadow: "0 2px 12px rgba(0,0,0,0.1)",
-                    width: "250px",
-                    flexShrink: 0
-                  }}>
+                <div key={skeleton} style={{
+                  backgroundColor: "white",
+                  borderRadius: "12px",
+                  padding: "16px",
+                  boxShadow: "0 2px 12px rgba(0,0,0,0.1)",
+                  width: "250px",
+                  flexShrink: 0
+                }}>
                   <div style={{ marginBottom: "12px" }}>
                     <Skeleton variant="rectangular" width={"100%"} height={200} sx={{ borderRadius: "8px" }} />
                   </div>

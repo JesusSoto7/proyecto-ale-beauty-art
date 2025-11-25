@@ -99,6 +99,54 @@ class Api::V1::AnalyticsController < Api::V1::BaseController
     }
   end
 
+
+  def google_page_views
+    property_id = ENV['GA_PROPERTY_ID'].presence || "properties/508198956"
+    credentials_path = ENV['GA_CREDENTIALS_PATH']
+    
+    unless credentials_path && File.exist?(credentials_path)
+      return render json: { error: 'credentials_missing', message: 'GA_CREDENTIALS_PATH inválido' }, status: :internal_server_error
+    end
+
+    analyticsdata = Google::Apis::AnalyticsdataV1beta::AnalyticsDataService.new
+    analyticsdata.authorization = Google::Auth::ServiceAccountCredentials.make_creds(
+      json_key_io: File.open(credentials_path),
+      scope: 'https://www.googleapis.com/auth/analytics.readonly'
+    )
+
+    # Rango de fechas ajustado para incluir la fecha de hoy
+    date_range = Google::Apis::AnalyticsdataV1beta::DateRange.new(
+      start_date: (Date.current - 29).iso8601, # Últimos 30 días contando la fecha actual
+      end_date: Date.current.iso8601
+    )
+
+    metric = Google::Apis::AnalyticsdataV1beta::Metric.new(name: 'screenPageViews')
+    dimension_date = Google::Apis::AnalyticsdataV1beta::Dimension.new(name: 'date')
+    request = Google::Apis::AnalyticsdataV1beta::RunReportRequest.new(
+      date_ranges: [date_range],
+      metrics: [metric],
+      dimensions: [dimension_date]
+    )
+
+    begin
+      response = analyticsdata.run_property_report(property_id, request)
+    rescue => e
+      Rails.logger.error("GA error google_page_views: #{e.class} #{e.message}")
+      return render json: { error: e.message }, status: :bad_gateway
+    end
+
+    # Procesar resultados para el frontend
+    labels = []
+    values = []
+
+    (response.rows || []).each do |row|
+      labels << Date.parse(row.dimension_values[0].value).strftime("%b %d")
+      values << row.metric_values[0].value.to_i
+    end
+
+    render json: { labels: labels, values: values }
+  end
+
   def record_page_view
     date_key = Date.current.to_s # "2025-11-16"
     path = params[:path].presence || "unknown"
@@ -119,44 +167,7 @@ class Api::V1::AnalyticsController < Api::V1::BaseController
     render json: { error: "Error recording view" }, status: :internal_server_error
   end
 
-  # GET /api/v1/analytics/page_views_per_day
-  # Devuelve JSON con fechas (últimos 30 días por ejemplo) => conteo
-  def page_views_per_day
-    unless defined?($redis) && $redis
-      Rails.logger.error("analytics#page_views_per_day: $redis no está inicializado")
-      return render json: { error: "redis_unavailable", message: "$redis no inicializado" }, status: :service_unavailable
-    end
 
-    begin
-      days = params[:days].to_i > 0 ? params[:days].to_i : 30
-      result = {}
-      days.times do |i|
-        d = (Date.current - (days - 1 - i)).to_s
-        key = "page_views:day:#{d}"
-        count = ($redis.get(key) || 0).to_i
-        result[d] = count
-      end
-      render json: result
-    rescue => e
-      Rails.logger.error("analytics#page_views_per_day error: #{e.class} #{e.message}\n#{e.backtrace.join("\n")}")
-      render json: { error: e.class.to_s, message: e.message }, status: :internal_server_error
-    end
-  end
-
-  def total_page_views
-    unless defined?($redis) && $redis
-      Rails.logger.error("analytics#total_page_views: $redis no está inicializado")
-      return render json: { error: "redis_unavailable", message: "$redis no inicializado" }, status: :service_unavailable
-    end
-
-    begin
-      total = ($redis.get("page_views:total") || 0).to_i
-      render json: { total_page_views: total }
-    rescue => e
-      Rails.logger.error("analytics#total_page_views error: #{e.class} #{e.message}\n#{e.backtrace.join("\n")}")
-      render json: { error: e.class.to_s, message: e.message }, status: :internal_server_error
-    end
-  end
 =begin 
   def top_3_products
     property_id = "properties/508198956"

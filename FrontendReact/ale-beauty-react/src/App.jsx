@@ -9,18 +9,12 @@ import LayoutInicio from './components/Layout';
 import Cart from './components/Cart';
 import ShippingAddress from './components/ShippingAddress';
 import ShippingAddressForm from './components/ShippingAddressForm';
-import Dashboard from './pages/home/Dashboard';
-import DashboardLayout from './components/DashboardLayout';
-import ProductTable from './pages/home/productTable/Productos';
-import Categorias from './pages/home/Categorias';
-import Carousel from './pages/home/Carousel';
 import ProductDetails from './pages/productsDetails/ProductDetails';
 import ProductosCliente from "./pages/ProductosCliente/productosCliente";
 import CheckoutLayout from './components/CheckoutLayout';
 import Checkout from './pages/inicio/Checkout';
 import CheckoutSuccess from './components/CheckoutSuccess';
 import Perfil from './components/perfil'
-import CategoryProducts from "./pages/home/CategoryProducts";
 import CategoryProductsUser from './components/CategoryProductsUser';
 import AboutUs from './components/AboutUs';
 import TermsAndConditions from './components/TermsAndConditions';
@@ -38,16 +32,8 @@ import "./i18n";
 import SubCateProd from './components/SubCateProd';
 
 import { useTranslation } from "react-i18next";
-import ProtectedRoute from './pages/home/ProtectedRoute';
-import Forbidden403 from './pages/home/Forbidden403';
 import Pedidos from './pages/inicio/Pedidos';
 import DetallePedido from './pages/inicio/DetallePedido';
-import SubCategorias from './pages/home/SubCategories';
-import GestionUsuarios from './components/dashComponents/GestionUsuarios';
-import Notificationes from './pages/home/Notifications';
-import CreateDiscount from './pages/home/CreateDiscount';
-import OptionsMenu from "./components/dashComponents/OptionsMenu.jsx";
-import UserProfile from "./components/dashComponents/userPerfil.jsx";
 import GuestCheckout from './components/GuestCheckout/GuestCheckout.jsx';
 import useRecordPageView from './pages/inicio/hooks/useRecordPageView.js';
 import PrivacyPolicy from './components/PrivacyPolicy.jsx';
@@ -118,25 +104,7 @@ function App() {
           <Route path="register" element={<Register />} />
           <Route path="forgot-password" element={<ForgotPassword />} />
           <Route path="reset-password" element={<ResetPassword />} />
-
-          <Route path="home" element={
-            <ProtectedRoute requiredRole="admin">
-              <DashboardLayout />
-            </ProtectedRoute>
-          }>
-            <Route index element={<Dashboard />} />
-            <Route path="products" element={<ProductTable />} />
-            <Route path="categories" element={<Categorias />} />
-            <Route path="categories/:slug" element={<SubCategorias />} />
-            <Route path="categories/:id" element={<CategoryProducts />} />
-            <Route path="carousel" element={<Carousel />} />
-            <Route path="usuarios" element={<GestionUsuarios />} />
-            <Route path="notificaciones" element={<Notificationes />} />
-            <Route path="crear_descuento" element={<CreateDiscount />} />
-            <Route path="user-profile" element={<UserProfile />} />
-          </Route>
         </Route>
-        <Route path="/:lang/403" element={<Forbidden403 />} />
       </Routes>
     </Router>
   );

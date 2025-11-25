@@ -31,7 +31,7 @@ export default function ProductsPageSubCategory() {
   const [productRatings, setProductRatings] = useState({});
   const [subCategory, setSubCategory] = useState(null);
   const { addAlert } = useAlert();
-  
+
   // ✅ ESTADOS PARA PAGINACIÓN
   const [currentPage, setCurrentPage] = useState(1);
   const [productsPerPage] = useState(9);
@@ -101,6 +101,20 @@ export default function ProductsPageSubCategory() {
   }, [token, categorySlug, subCategorySlug]);
 
   useEffect(() => {
+    if (products && products.length > 0) {
+      window.gtag && window.gtag('event', 'view_item_list', {
+        items: products.map((prod) => ({
+          item_id: prod.id,
+          item_name: prod.nombre_producto,
+          price: prod.precio_producto,
+          item_category: subCategory?.nombre || '',
+          item_variant: prod.sku || '',
+        }))
+      });
+    }
+  }, [products, subCategory]);
+
+  useEffect(() => {
     async function fetchSubCategory() {
       try {
         // Subcategoría (público)
@@ -137,7 +151,7 @@ export default function ProductsPageSubCategory() {
       return selectedRatings.includes(productRating);
     });
   }
-  
+
   if (sortOrder === "asc") {
     filteredProducts = [...filteredProducts].sort((a, b) => a.precio_producto - b.precio_producto);
   } else if (sortOrder === "desc") {
@@ -179,7 +193,7 @@ export default function ProductsPageSubCategory() {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${token}` 
+            Authorization: `Bearer ${token}`
           },
           body: JSON.stringify({ product_id: productId }),
         });
@@ -195,52 +209,41 @@ export default function ProductsPageSubCategory() {
   };
 
   const addToCart = (item) => {
-    const product = typeof item === "object" ? item : products.find((p) => p.id === item);
-    const productId = product?.id ?? item;
+    const product = products.find((p) => p.id === item.id);
 
-    // Invitado: no llames backend, guarda en localStorage y actualiza contador
-    if (!token) {
-      window.dispatchEvent(new CustomEvent("cartUpdatedOptimistic", { bubbles: false }));
-      if (product) addGuestItem(product, 1); // emite guestCartUpdated
-      window.dispatchEvent(new CustomEvent("cartUpdatedCustom", { bubbles: false }));
-      addAlert("Se agregó al carrito", "success", 3500);
-      return;
+    // Evento Analytics
+    if (product) {
+      window.gtag && window.gtag('event', 'add_to_cart', {
+        currency: 'COP',
+        items: [{
+          item_id: product.id,
+          item_name: product.nombre_producto,
+          price: product.precio_producto,
+          item_category: subCategory?.nombre || '',
+          item_variant: product.sku || '',
+          quantity: 1,
+        }]
+      });
     }
 
-    // Autenticado: llamar backend con Authorization correcto
-    window.dispatchEvent(new CustomEvent("cartUpdatedOptimistic", { 
-      bubbles: false,
-      detail: { productId, action: 'add' }
-    }));
-
+    // Backend lógica existente
     fetch(`${API_BASE}/api/v1/cart/add_product`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        ...(token ? { Authorization: `Bearer ${token}` } : {})
+        Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify({ product_id: productId }),
+      body: JSON.stringify({ product_id: item.id }),
     })
-      .then((res) => res.json())
-      .then((data) => {
+      .then(res => res.json())
+      .then(data => {
         if (data.cart) {
           setCart(data.cart);
-          window.dispatchEvent(new CustomEvent("cartUpdatedCustom", { bubbles: false }));
-          addAlert("Se agregó al carrito", "success", 3500);
-        } else if (data.errors) {
-          addAlert((t('productDetails.error') || "Error: ") + data.errors.join(", "), "error", 3500);
-          window.dispatchEvent(new CustomEvent("cartUpdateFailed", { 
-            bubbles: false,
-            detail: { productId, action: 'add' }
-          }));
+          addAlert("Producto añadido al carrito.", "success", 3500);
         }
       })
       .catch(() => {
         addAlert(t("productDetails.cartAddError") || "No se pudo agregar al carrito", "error", 3500);
-        window.dispatchEvent(new CustomEvent("cartUpdateFailed", { 
-          bubbles: false,
-          detail: { productId, action: 'add' }
-        }));
       });
   };
 
@@ -248,7 +251,7 @@ export default function ProductsPageSubCategory() {
   const FiltersPanel = () => (
     <>
       <h3>Filtros</h3>
-      
+
       <div className="filter-group">
         <h4>Ordenar por precio</h4>
         <label>
@@ -279,7 +282,7 @@ export default function ProductsPageSubCategory() {
           Mayor a menor
         </label>
       </div>
-      
+
       <div className="filter-group">
         <h4>Rango de precio</h4>
         <div className="price-range">
@@ -302,7 +305,7 @@ export default function ProductsPageSubCategory() {
           />
         </div>
       </div>
-      
+
       <div className="filter-group">
         <h4>Valoración</h4>
         {[4, 3, 2, 1].map((rating) => (
@@ -322,7 +325,7 @@ export default function ProductsPageSubCategory() {
           </label>
         ))}
       </div>
-      
+
       {(sortOrder || priceRange.min || priceRange.max || selectedRatings.length > 0) && (
         <button
           className="clear-filters"
@@ -337,7 +340,7 @@ export default function ProductsPageSubCategory() {
       )}
     </>
   );
-  
+
   if (loading)
     return (
       <div className="loading-container">
@@ -374,7 +377,7 @@ export default function ProductsPageSubCategory() {
             {subCategory ? toTitleCase(subCategory.nombre) : "PRODUCTOS"}
           </h1>
         </div>
-        
+
         <div className="shop-container">
           {/* Sidebar de filtros (visible en desktop) */}
           {!isMdDown && (
@@ -382,7 +385,7 @@ export default function ProductsPageSubCategory() {
               <FiltersPanel />
             </aside>
           )}
-          
+
           {/* ✅ GRID CON PRODUCTCARD Y PAGINACIÓN */}
           <div className="products-main">
             {/* Toggle de filtros en móviles/tablets */}
@@ -415,7 +418,7 @@ export default function ProductsPageSubCategory() {
                 />
               ))}
             </div>
-            
+
             {filteredProducts.length === 0 && (
               <div className="no-products">
                 <p>No se encontraron productos con los filtros seleccionados.</p>
@@ -435,14 +438,14 @@ export default function ProductsPageSubCategory() {
             {/* ✅ PAGINACIÓN - SOLO SI HAY MÁS DE 10 PRODUCTOS */}
             {filteredProducts.length > 10 && (
               <div className="pagination">
-                <button 
-                  onClick={prevPage} 
+                <button
+                  onClick={prevPage}
                   disabled={currentPage === 1}
                   className="page-btn prev-btn"
                 >
                   ←
                 </button>
-                
+
                 <div className="page-numbers">
                   {Array.from({ length: totalPages }, (_, i) => i + 1).map(number => (
                     <button
@@ -454,9 +457,9 @@ export default function ProductsPageSubCategory() {
                     </button>
                   ))}
                 </div>
-                
-                <button 
-                  onClick={nextPage} 
+
+                <button
+                  onClick={nextPage}
                   disabled={currentPage === totalPages}
                   className="page-btn next-btn"
                 >
@@ -477,7 +480,7 @@ export default function ProductsPageSubCategory() {
       >
         <Box sx={{ width: 320, p: 2 }} role="presentation">
           <FiltersPanel />
-          <button 
+          <button
             onClick={() => setFiltersOpen(false)}
             className="prodcli-clearbtn"
             style={{ marginTop: 12 }}

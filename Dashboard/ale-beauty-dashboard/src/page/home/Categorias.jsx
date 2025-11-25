@@ -21,6 +21,7 @@ import {
   Alert,
   Snackbar,
   Tooltip,
+  CircularProgress,
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import EditIcon from "@mui/icons-material/Edit";
@@ -47,6 +48,7 @@ const Categorias = () => {
   const [loading, setLoading] = useState(true);
   const [snackbar, setSnackbar] = useState({ open: false, message: "", severity: "success" });
   const [errors, setErrors] = useState({});
+  const [submitLoading, setSubmitLoading] = useState(false);
 
   const token = localStorage.getItem("token");
 
@@ -109,6 +111,9 @@ const Categorias = () => {
 
     if (!validateForm()) return;
 
+    // Activa el estado de carga
+    setSubmitLoading(true);
+
     const formData = new FormData();
     formData.append("category[nombre_categoria]", nombre);
     if (imagen) formData.append("category[imagen]", imagen);
@@ -133,22 +138,25 @@ const Categorias = () => {
       if (!res.ok) {
         const errorData = await res.json();
         showSnackbar(`Error: ${errorData.error || res.statusText}`, "error");
+        setSubmitLoading(false); // Desactivar la carga en caso de error
         return;
       }
 
-      const categoriaActualizada = await res.json();
-
-      if (categoriaEdit) {
-        setCategorias((prev) =>
-          prev.map((cat) =>
-            cat.id === categoriaActualizada.id ? categoriaActualizada : cat
-          )
-        );
-        showSnackbar("Categoría actualizada correctamente", "success");
-      } else {
-        setCategorias((prev) => [...prev, categoriaActualizada]);
-        showSnackbar("Categoría creada correctamente", "success");
-      }
+      // Una vez creada o actualizada, recarga las categorías del backend
+      showSnackbar("Procesando cambios, un momento...", "success");
+      setTimeout(async () => {
+        try {
+          const categoriasRes = await fetch("https://localhost:4000/api/v1/categories", {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+          const categoriasData = await categoriasRes.json();
+          setCategorias(Array.isArray(categoriasData) ? categoriasData : []);
+          showSnackbar(categoriaEdit ? "Categoría actualizada y cargada correctamente" : "Categoría creada y cargada correctamente", "success");
+        } catch (fetchError) {
+          console.error("Error actualizando categorías desde el servidor tras crear/editar:", fetchError);
+          showSnackbar("Error actualizando la vista tras crear la categoría", "error");
+        }
+      }, 1200);
 
       setNombre("");
       setImagen(null);
@@ -158,6 +166,9 @@ const Categorias = () => {
     } catch (err) {
       console.error("Error:", err);
       showSnackbar("Ocurrió un error procesando la categoría", "error");
+    } finally {
+      // Desactiva la carga al final del proceso
+      setSubmitLoading(false);
     }
   };
 
@@ -661,6 +672,7 @@ const Categorias = () => {
             </Button>
             <Button
               onClick={handleSubmit}
+              disabled={submitLoading} // Desactiva el botón mientras se está cargando
               variant="contained"
               sx={{
                 borderRadius: "8px",
@@ -686,7 +698,14 @@ const Categorias = () => {
                 },
               }}
             >
-              {categoriaEdit ? "Actualizar" : "Crear"}
+              {submitLoading ? (
+                <Stack direction="row" alignItems="center" spacing={1}>
+                  <CircularProgress size={20} sx={{ color: "#fff" }} />
+                  <span>Cargando...</span>
+                </Stack>
+              ) : (
+                categoriaEdit ? "Actualizar" : "Crear"
+              )}
             </Button>
           </DialogActions>
         </Dialog>

@@ -1,4 +1,5 @@
 class Order < ApplicationRecord
+  after_update :reducir_stock_si_pagada
   
   enum :status, {
     pendiente: 0,
@@ -54,5 +55,21 @@ class Order < ApplicationRecord
       tarjeta_tipo: tarjeta_tipo,
       tarjeta_ultimos4: tarjeta_ultimos4
     )
+  end
+
+  private
+
+  def reducir_stock_si_pagada
+    return unless saved_change_to_status? && status == "pagada"
+
+    order_details.includes(:product).each do |detail|
+      product = detail.product
+
+      if product.stock >= detail.cantidad
+        product.update(stock: product.stock - detail.cantidad)
+      else
+        Rails.logger.warn "Stock insuficiente para producto: #{product.nombre_producto} (ID: #{product.id})"
+      end
+    end
   end
 end

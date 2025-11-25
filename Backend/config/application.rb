@@ -18,7 +18,8 @@ module Appsena
     config.autoload_lib(ignore: %w[assets tasks])
     
     config.time_zone = 'America/Bogota'
-    config.active_record.default_timezone = :local   # (opcional) o :utc según prefieras
+    
+    config.active_record.default_timezone = :utc
 
     # Configuration for the application, engines, and railties goes here.
     #

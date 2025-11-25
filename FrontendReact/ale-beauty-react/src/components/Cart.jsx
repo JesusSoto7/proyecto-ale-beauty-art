@@ -71,32 +71,40 @@ function Cart() {
     setLoading(true);
     setError(null);
 
+    let updatedCart = null;
+
     if (!token) {
       setMode("guest");
       const guest = getGuestCart();
-      setCart(mapGuestToCart(guest));
-      setLoading(false);
-      return;
+      updatedCart = mapGuestToCart(guest);
+    } else {
+      try {
+        const res = await fetch(`${API_BASE}/api/v1/cart`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        if (!res.ok) throw new Error("Failed to fetch cart");
+        const data = await res.json();
+        const serverCart = data?.cart || data;
+        updatedCart = serverCart;
+        setMode("auth");
+      } catch (err) {
+        // Fallback a modo invitado si falla
+        setMode("guest");
+        const guest = getGuestCart();
+        updatedCart = mapGuestToCart(guest);
+      }
     }
 
-    try {
-      const res = await fetch(`${API_BASE}/api/v1/cart`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      if (!res.ok) throw new Error("Failed to fetch cart");
-      const data = await res.json();
-      // data puede ser { cart: {...} } o directamente el carrito
-      const serverCart = data?.cart || data;
-      setCart(serverCart);
-      setMode("auth");
-    } catch (err) {
-      // Fallback a modo invitado si falla
-      setMode("guest");
-      const guest = getGuestCart();
-      setCart(mapGuestToCart(guest));
-    } finally {
-      setLoading(false);
+    // Ajustar cantidades según el stock disponible
+    if (updatedCart) {
+      updatedCart.products = updatedCart.products.map((product) => ({
+        ...product,
+        cantidad: Math.min(product.cantidad, product.stock),
+      }));
     }
+
+    setCart(updatedCart);
+    setLoading(false);
   }, [API_BASE, token]);
 
   useEffect(() => {
@@ -110,103 +118,53 @@ function Cart() {
     return () => window.removeEventListener("guestCartUpdated", onGuestUpdate);
   }, []);
 
-  const updateQuantity = async (productId, increment = true) => {
-    setUpdating(true);
-    setError(null);
+  async function updateQuantity(productId, increment = true) {
+    const product = cart.products.find((p) => p.product_id === productId);
 
-    if (mode === "guest") {
-      // Buscar cantidad actual
-      const current = cart?.products?.find((p) => p.product_id === productId);
-      const nextQty = Math.max(1, (current?.cantidad || 1) + (increment ? 1 : -1));
-      guestUpdateQty(productId, nextQty);
-      setCart(mapGuestToCart(getGuestCart()));
-      setUpdating(false);
+    if (!product) {
+      console.error(`Producto con ID ${productId} no encontrado en el carrito.`);
       return;
     }
 
-    // Modo autenticado (backend)
-    const url = increment
-      ? `${API_BASE}/api/v1/cart/add_product`
-      : `${API_BASE}/api/v1/cart/remove_product`;
+    const newQuantity = increment ? product.cantidad + 1 : product.cantidad - 1;
 
-    fetch(url, {
-      method: increment ? "POST" : "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({ product_id: productId }),
-    })
-      .then((res) => {
-        if (!res.ok) throw new Error("Update failed");
-        return res.json();
-      })
-      .then((data) => {
-        if (data?.cart) {
-          setCart(data.cart);
-          window.dispatchEvent(new CustomEvent("cartUpdatedCustom", { bubbles: false }));
-          // Evento GA solo si incrementa
-          if (increment && window.gtag) {
-            const product = data.cart.products.find((p) => p.product_id === productId);
-            if (product) {
-              window.gtag("event", "add_to_cart", {
-                currency: "COP",
-                value: product.precio_producto,
-                items: [
-                  {
-                    item_id: product.product_id,
-                    item_name: product.nombre_producto,
-                    price: product.precio_producto,
-                    quantity: product.cantidad,
-                  },
-                ],
-              });
-            }
-          }
-        }
-      })
-      .catch(() => setError(t("cart.updatingError")))
-      .finally(() => setUpdating(false));
-  };
-
-  const removeAllQuantity = async (productId) => {
-    setUpdating(true);
-    setError(null);
-
-    if (mode === "guest") {
-      guestRemoveItem(productId);
-      setCart(mapGuestToCart(getGuestCart()));
-      setUpdating(false);
+    // Limitar cantidad según stock disponible
+    if (newQuantity > product.stock) {
+      console.warn(`La cantidad excede el stock disponible para el producto ID ${productId}.`);
       return;
     }
 
-    // Auth: eliminar todas las unidades (múltiples DELETE como tenías)
+    if (newQuantity <= 0) {
+      await removeAllQuantity(productId);
+      return;
+    }
+
+    // Actualizar carrito en autenticación/servidor
     try {
-      const product = cart.products.find((p) => p.product_id === productId);
-      if (!product) throw new Error("Product not found in cart");
+      const url = increment
+        ? `${API_BASE}/api/v1/cart/add_product`
+        : `${API_BASE}/api/v1/cart/remove_product`;
 
-      const removalPromises = Array.from({ length: product.cantidad }, () =>
-        fetch(`${API_BASE}/api/v1/cart/remove_product`, {
-          method: "DELETE",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({ product_id: productId }),
-        }).then((res) => {
-          if (!res.ok) throw new Error("Remove failed");
-          return res.json();
-        })
-      );
+      const method = increment ? "POST" : "DELETE";
 
-      await Promise.all(removalPromises);
-      await loadCart();
-      window.dispatchEvent(new CustomEvent("cartUpdatedCustom", { bubbles: false }));
-    } catch {
-      setError(t("cart.updatingError"));
-      await loadCart();
-    } finally {
-      setUpdating(false);
+      const response = await fetch(url, {
+        method,
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ product_id: productId }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setCart(data.cart); // Actualizar el carrito global
+        window.dispatchEvent(new CustomEvent("cartUpdatedCustom", { bubbles: false })); // Reflejar cambios en el Header
+      } else {
+        console.warn("Error al actualizar producto", await response.json());
+      }
+    } catch (error) {
+      console.error("Error actualizando cantidad del producto:", error);
     }
   };
 
@@ -217,11 +175,12 @@ function Cart() {
     if (mode === "guest") {
       guestClearCart();
       setCart({ id: null, products: [] });
+      window.dispatchEvent(new CustomEvent("cartUpdatedCustom", { bubbles: false })); // Emitir el evento para reflejar el cambio
       setUpdating(false);
       return;
     }
 
-    // Auth: repetir remove sobre todos
+    // Modo autenticado
     try {
       const removalPromises = cart.products.flatMap((product) =>
         Array.from({ length: product.cantidad }, () =>
@@ -238,35 +197,33 @@ function Cart() {
           })
         )
       );
-
       await Promise.all(removalPromises);
-      await loadCart();
-      window.dispatchEvent(new CustomEvent("cartUpdatedCustom", { bubbles: false }));
+      setCart({ id: null, products: [] });
+      window.dispatchEvent(new CustomEvent("cartUpdatedCustom", { bubbles: false })); // Emitir el evento para reflejar el cambio
     } catch {
       setError(t("cart.updatingError"));
-      await loadCart();
     } finally {
       setUpdating(false);
     }
   };
 
-    const handleCheckout = () => {
-      if (mode === "guest") {
-        navigate(`/${lang}/guest-checkout`, {
-          state: {
-            mode: "guest",
-            guestCart: cart, // { id:null, products:[...] }
-          },
-        });
-        return;
+  const handleCheckout = () => {
+    if (mode === "guest") {
+      navigate(`/${lang}/guest-checkout`, {
+        state: {
+          mode: "guest",
+          guestCart: cart, // { id:null, products:[...] }
+        },
+      });
+      return;
+    }
+    fetch(`${API_BASE}/api/v1/orders`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
       }
-      fetch(`${API_BASE}/api/v1/orders`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        }
-      })
+    })
       .then((res) => {
         if (!res.ok) throw new Error("Checkout failed");
         return res.json();
@@ -284,10 +241,10 @@ function Cart() {
         }
       })
       .catch(() => setError(t("cart.orderError")));
-    };
+  };
 
-  const handleProductClick = (productId) => {
-    navigate(`/${lang}/producto/${productId}`);
+  const handleProductClick = (slug) => {
+    navigate(`/${lang}/producto/${slug}`);
   };
 
   // Loading
@@ -320,9 +277,9 @@ function Cart() {
   if (error) {
     return (
       <Box sx={{ p: 3, maxWidth: 1200, mx: "auto", textAlign: "center" }}>
-        <Alert 
-          color="danger" 
-          variant="soft" 
+        <Alert
+          color="danger"
+          variant="soft"
           startDecorator={<WarningIcon />}
           sx={{ mb: 3 }}
         >
@@ -338,23 +295,23 @@ function Cart() {
   // Vacío
   if (!cart || !cart.products || cart.products.length === 0) {
     return (
-      <Box sx={{ 
-        display: "flex", 
-        flexDirection: "column", 
-        alignItems: "center", 
-        justifyContent: "center", 
+      <Box sx={{
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
         py: 8,
         px: 2,
-        textAlign: "center" 
+        textAlign: "center"
       }}>
-        <img 
-          src={Not_found} 
-          alt={t("cart.empty")} 
-          style={{ 
-            marginBottom: "24px", 
+        <img
+          src={Not_found}
+          alt={t("cart.empty")}
+          style={{
+            marginBottom: "24px",
             maxWidth: "300px",
             width: "100%"
-          }} 
+          }}
         />
         <Typography level="h4" sx={{ mb: 2 }}>
           {t("cart.empty")}
@@ -372,9 +329,9 @@ function Cart() {
   const shippingCost = 10000;
 
   return (
-    <Box sx={{ 
-      p: { xs: 1, sm: 2, md: 3 }, 
-      maxWidth: 1200, 
+    <Box sx={{
+      p: { xs: 1, sm: 2, md: 3 },
+      maxWidth: 1200,
       mx: "auto",
       display: "flex",
       marginTop: "80px",
@@ -382,25 +339,25 @@ function Cart() {
       gap: 3
     }}>
       {/* Lista de productos */}
-      <Sheet variant="outlined" sx={{ 
-        flex: 1, 
-        borderRadius: "md", 
+      <Sheet variant="outlined" sx={{
+        flex: 1,
+        borderRadius: "md",
         p: { xs: 2, sm: 3 },
         mb: { xs: 2, lg: 0 },
         backgroundColor: 'background.surface'
       }}>
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-          <Typography level="h2" sx={{ 
+          <Typography level="h2" sx={{
             fontSize: { xs: '1.5rem', sm: '2rem' },
             fontWeight: 700,
             color: 'text.primary'
           }}>
             {t("cart.title")}
           </Typography>
-          <Chip 
-            variant="soft" 
-            sx={{ 
-              backgroundColor: 'rgba(255, 77, 148, 0.1)', 
+          <Chip
+            variant="soft"
+            sx={{
+              backgroundColor: 'rgba(255, 77, 148, 0.1)',
               color: '#ff4d94',
               fontSize: '1rem',
               fontWeight: 600
@@ -411,10 +368,10 @@ function Cart() {
             {cantidad} {t("cart.items")}
           </Chip>
         </Box>
-        
+
         <Stack spacing={2}>
           {cart.products.map((product) => (
-            <Card 
+            <Card
               key={product.product_id}
               variant="outlined"
               sx={{
@@ -423,149 +380,170 @@ function Cart() {
                 transition: 'all 0.2s ease-in-out',
                 '&:hover': {
                   boxShadow: 'md',
-                  borderColor: '#ff80b0',
-                  transform: 'translateY(-1px)'
+                  borderColor: product.stock > 0 ? '#ff80b0' : '#ccc',
+                  transform: product.stock > 0 ? 'translateY(-1px)' : 'none'
                 }
               }}
             >
-              <Box sx={{ 
-                display: "flex", 
-                gap: 2, 
+              <Box sx={{
+                display: "flex",
+                gap: 2,
                 alignItems: "center",
                 flexDirection: { xs: "column", sm: "row" }
               }}>
-                <Box 
-                  sx={{ 
+                <Box
+                  sx={{
                     cursor: 'pointer',
                     position: 'relative',
                     '&:hover': {
-                      opacity: 0.8,
-                      transform: 'scale(1.02)'
+                      opacity: product.stock > 0 ? 0.8 : 1,
+                      transform: product.stock > 0 ? 'scale(1.02)' : 'none'
                     },
                     transition: 'all 0.2s ease-in-out'
                   }}
-                  onClick={() => handleProductClick(product.product_id)}
+                  onClick={product.stock > 0 ? () => handleProductClick(product.slug) : undefined}
                 >
-                  <img 
-                    src={product.imagen_url || noImage} 
-                    alt={product.nombre_producto} 
-                    style={{ 
-                      width: 120, 
-                      height: 120, 
+                  <img
+                    src={product.imagen_url || noImage}
+                    alt={product.nombre_producto}
+                    style={{
+                      width: 120,
+                      height: 120,
                       objectFit: "cover",
                       borderRadius: 12,
-                      boxShadow: '0 4px 12px rgba(255, 77, 148, 0.2)'
-                    }} 
+                      boxShadow: product.stock > 0 ? '0 4px 12px rgba(255, 77, 148, 0.2)' : '0 2px 6px rgba(0,0,0,0.1)',
+                      filter: product.stock > 0 ? 'none' : 'grayscale(100%)'
+                    }}
                   />
+                  {product.stock === 0 && (
+                    <Chip
+                      size="sm"
+                      variant="soft"
+                      sx={{
+                        position: 'absolute',
+                        top: 8,
+                        left: 8,
+                        backgroundColor: 'background.surface',
+                        color: '#f44336',
+                        fontWeight: 600,
+                        textTransform: 'uppercase',
+                      }}
+                    >
+                      {t("cart.outOfStock")}
+                    </Chip>
+                  )}
                 </Box>
-                
-                <Box 
-                  sx={{ 
-                    flexGrow: 1, 
+
+                <Box
+                  sx={{
+                    flexGrow: 1,
                     minWidth: 0,
-                    cursor: 'pointer',
+                    cursor: product.stock > 0 ? 'pointer' : 'default',
                   }}
-                  onClick={() => handleProductClick(product.product_id)}
+                  onClick={product.stock > 0 ? () => handleProductClick(product.slug) : undefined}
                 >
-                  <Typography level="title-lg" sx={{ 
+                  <Typography level="title-lg" sx={{
                     mb: 1,
                     fontWeight: 600,
-                    lineHeight: 1.3
+                    lineHeight: 1.3,
+                    color: product.stock > 0 ? 'text.primary' : 'text.disabled'
                   }}>
                     {product.nombre_producto}
                   </Typography>
-                  
+
                   {product.precio_con_mejor_descuento && product.precio_con_mejor_descuento < product.precio_producto ? (
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap' }}>
-                      <Typography level="h4" fontWeight="bold" color="#ff4d94">
+                      <Typography level="h4" fontWeight="bold" color={product.stock > 0 ? "#ff4d94" : "text.disabled"}>
                         {formatCOP(product.precio_con_mejor_descuento)}
                       </Typography>
                       <Typography
                         level="body2"
-                        sx={{ 
-                          textDecoration: "line-through", 
-                          color: "text.secondary",
+                        sx={{
+                          textDecoration: "line-through",
+                          color: product.stock > 0 ? "text.secondary" : "text.disabled",
                           fontSize: '0.9rem'
                         }}
                       >
                         {formatCOP(product.precio_producto)}
                       </Typography>
-                      <Chip 
-                        variant="soft" 
-                        size="sm"
-                        sx={{ 
-                          backgroundColor: 'rgba(76, 175, 80, 0.1)', 
-                          color: '#4caf50',
-                          borderColor: '#4caf50'
-                        }}
-                      >
-                        {Math.round((1 - product.precio_con_mejor_descuento / product.precio_producto) * 100)}% OFF
-                      </Chip>
+                      {product.stock > 0 && (
+                        <Chip
+                          variant="soft"
+                          size="sm"
+                          sx={{
+                            backgroundColor: 'rgba(76, 175, 80, 0.1)',
+                            color: '#4caf50',
+                            borderColor: '#4caf50'
+                          }}
+                        >
+                          {Math.round((1 - product.precio_con_mejor_descuento / product.precio_producto) * 100)}% OFF
+                        </Chip>
+                      )}
                     </Box>
                   ) : (
-                    <Typography level="h4" fontWeight="bold" color="#ff4d94">
+                    <Typography level="h4" fontWeight="bold" color={product.stock > 0 ? "#ff4d94" : "text.disabled"}>
                       {formatCOP(product.precio_producto)}
                     </Typography>
                   )}
                 </Box>
-                
+
                 <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
-                  <IconButton 
-                    variant="outlined" 
+                  <IconButton
+                    variant="outlined"
                     size="sm"
-                    disabled={updating || product.cantidad <= 1}
+                    disabled={updating || product.cantidad <= 1 || product.stock === 0}
                     onClick={() => updateQuantity(product.product_id, false)}
                     sx={{
                       borderRadius: 'md',
-                      borderColor: '#ff80b0',
-                      color: '#ff4d94',
-                      '&:hover': {
+                      borderColor: product.stock > 0 ? '#ff80b0' : '#ccc',
+                      color: product.stock > 0 ? '#ff4d94' : 'text.disabled',
+                      '&:hover': product.stock > 0 ? {
                         backgroundColor: 'rgba(255, 77, 148, 0.1)',
                         borderColor: '#ff4d94'
-                      }
+                      } : undefined
                     }}
                   >
                     <RemoveIcon />
                   </IconButton>
-                  
-                  <Chip 
-                    variant="solid" 
+
+                  <Chip
+                    variant="solid"
                     size="lg"
-                    sx={{ 
-                      minWidth: 40,
-                      backgroundColor: '#ff4d94',
-                      color: 'white',
+                    sx={{
+                      minWidth: 32,
+                      backgroundColor: product.stock > 0 ? '#ff4d94' : '#ddd',
+                      color: product.stock > 0 ? 'white' : 'text.disabled',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center'
                     }}
                   >
-                    <Typography fontWeight="bold" fontSize="sm" sx={{ lineHeight: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', height: '100%' }}>
+                    <Typography fontWeight="bold" fontSize="sm" sx={{ lineHeight: 1, color: 'inherit' }}>
                       {product.cantidad}
                     </Typography>
                   </Chip>
-                  
-                  <IconButton 
-                    variant="outlined" 
+
+                  <IconButton
+                    variant="outlined"
                     size="sm"
-                    disabled={updating}
+                    disabled={updating || product.cantidad >= product.stock || product.stock === 0}
                     onClick={() => updateQuantity(product.product_id, true)}
                     sx={{
                       borderRadius: 'md',
-                      borderColor: '#ff80b0',
-                      color: '#ff4d94',
-                      '&:hover': {
+                      borderColor: product.stock > 0 ? '#ff80b0' : '#ccc',
+                      color: product.stock > 0 ? '#ff4d94' : 'text.disabled',
+                      '&:hover': product.stock > 0 ? {
                         backgroundColor: 'rgba(255, 77, 148, 0.1)',
-                        borderColor: '#ff4d94'
-                      }
+                        borderColor: '#ff4d94',
+                      } : undefined,
                     }}
                   >
                     <AddIcon />
                   </IconButton>
                 </Box>
-                
+
                 <Box sx={{ textAlign: 'center', minWidth: 100 }}>
-                  <Typography level="title-lg" fontWeight="bold" color="#ff4d94">
+                  <Typography level="title-lg" fontWeight="bold" color={product.stock > 0 ? "#ff4d94" : "text.disabled"}>
                     {formatCOP(
                       (product.precio_con_mejor_descuento && product.precio_con_mejor_descuento < product.precio_producto
                         ? product.precio_con_mejor_descuento
@@ -574,21 +552,21 @@ function Cart() {
                     )}
                   </Typography>
                 </Box>
-                
-                <IconButton 
-                  variant="soft" 
-                  sx={{ 
+
+                <IconButton
+                  variant="soft"
+                  sx={{
                     borderRadius: 'md',
-                    backgroundColor: 'rgba(244, 67, 54, 0.1)',
-                    color: '#f44336',
-                    '&:hover': {
+                    backgroundColor: product.stock > 0 ? 'rgba(244, 67, 54, 0.1)' : 'rgba(0,0,0,0.05)',
+                    color: product.stock > 0 ? '#f44336' : 'text.disabled',
+                    '&:hover': product.stock > 0 ? {
                       backgroundColor: 'rgba(244, 67, 54, 0.2)',
                       transform: 'scale(1.1)'
-                    },
+                    } : undefined,
                     transition: 'all 0.2s ease-in-out'
                   }}
-                  disabled={updating}
-                  onClick={() => removeAllQuantity(product.product_id)}
+                  disabled={updating || product.stock === 0}
+                  onClick={product.stock > 0 ? () => removeAllQuantity(product.product_id) : undefined}
                 >
                   <DeleteOutlineIcon />
                 </IconButton>
@@ -599,26 +577,26 @@ function Cart() {
       </Sheet>
 
       {/* Resumen del pedido */}
-      <Sheet variant="outlined" sx={{ 
-        width: { xs: "100%", lg: 400 }, 
-        borderRadius: "md", 
+      <Sheet variant="outlined" sx={{
+        width: { xs: "100%", lg: 400 },
+        borderRadius: "md",
         p: 3,
         alignSelf: "flex-start",
         backgroundColor: 'background.surface'
       }}>
-        <Typography level="h3" sx={{ 
-          mb: 3, 
+        <Typography level="h3" sx={{
+          mb: 3,
           textAlign: 'center',
           fontWeight: 700,
           color: 'text.primary'
         }}>
           {t("cart.summary")}
         </Typography>
-        
+
         <Stack spacing={2} sx={{ mb: 3 }}>
-          <Box sx={{ 
-            display: "flex", 
-            justifyContent: "space-between", 
+          <Box sx={{
+            display: "flex",
+            justifyContent: "space-between",
             alignItems: 'center',
             p: 1.5,
             borderRadius: 'md',
@@ -631,10 +609,10 @@ function Cart() {
               {formatCOP(total)}
             </Typography>
           </Box>
-          
-          <Box sx={{ 
-            display: "flex", 
-            justifyContent: "space-between", 
+
+          <Box sx={{
+            display: "flex",
+            justifyContent: "space-between",
             alignItems: 'center',
             p: 1.5,
             borderRadius: 'md',
@@ -650,12 +628,12 @@ function Cart() {
               {formatCOP(10000)}
             </Typography>
           </Box>
-          
+
           <Divider sx={{ my: 1 }} />
-          
-          <Box sx={{ 
-            display: "flex", 
-            justifyContent: "space-between", 
+
+          <Box sx={{
+            display: "flex",
+            justifyContent: "space-between",
             alignItems: 'center',
             p: 2,
             borderRadius: 'md',
@@ -671,29 +649,38 @@ function Cart() {
             </Typography>
           </Box>
         </Stack>
-        
+
         <Stack spacing={1.5}>
           <Button
             fullWidth
             size="lg"
             onClick={handleCheckout}
-            disabled={updating}
+            disabled={updating || !cart.products.some((p) => p.stock > 0) || cart.products.some((p) => p.cantidad > p.stock)} // Se inhabilita si hay productos con cantidades que superan el stock
             startDecorator={<ShoppingCartCheckoutIcon />}
-            sx={{ 
+            sx={{
               py: 1.5,
               fontSize: '1.1rem',
               fontWeight: 600,
-              background: 'linear-gradient(135deg, #ff4d94 0%, #ff6b9c 100%)',
-              boxShadow: '0 4px 16px rgba(255, 77, 148, 0.3)',
-              '&:hover': {
+              background: updating || !cart.products.some((p) => p.stock > 0) || cart.products.some((p) => p.cantidad > p.stock)
+                ? 'rgba(0,0,0,0.1)'
+                : 'linear-gradient(135deg, #ff4d94 0%, #ff6b9c 100%)',
+              boxShadow: updating || !cart.products.some((p) => p.stock > 0) || cart.products.some((p) => p.cantidad > p.stock)
+                ? 'none'
+                : '0 4px 16px rgba(255, 77, 148, 0.3)',
+              color: updating || !cart.products.some((p) => p.stock > 0) || cart.products.some((p) => p.cantidad > p.stock)
+                ? '#aaa'
+                : '#fff',
+              '&:hover': !updating &&
+                cart.products.some((p) => p.stock > 0) &&
+                !cart.products.some((p) => p.cantidad > p.stock) && {
                 background: 'linear-gradient(135deg, #ff6b9c 0%, #ff80b0 100%)',
                 boxShadow: '0 6px 20px rgba(255, 77, 148, 0.4)',
-                transform: 'translateY(-1px)'
+                transform: 'translateY(-1px)',
               },
               '&:active': {
-                transform: 'translateY(0)'
+                transform: 'translateY(0)',
               },
-              transition: 'all 0.2s ease-in-out'
+              transition: 'all 0.2s ease-in-out',
             }}
           >
             {t("cart.buy")}

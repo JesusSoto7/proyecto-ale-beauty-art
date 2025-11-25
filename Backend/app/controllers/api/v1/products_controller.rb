@@ -79,6 +79,25 @@ class Api::V1::ProductsController < Api::V1::BaseController
     end
   end
 
+  def reduce_stock
+    product = Product.find(params[:id])
+
+    cantidad = params[:cantidad].to_i
+    if cantidad <= 0
+      render json: { error: "La cantidad debe ser mayor a 0" }, status: :unprocessable_entity
+      return
+    end
+
+    if product.stock >= cantidad
+      product.update(stock: product.stock - cantidad)
+      render json: { message: "Stock actualizado correctamente", product: product }, status: :ok
+    else
+      render json: { error: "Stock insuficiente para el producto" }, status: :unprocessable_entity
+    end
+  rescue ActiveRecord::RecordNotFound
+    render json: { error: "Producto no encontrado" }, status: :not_found
+  end
+
   def can_review
     product = Product.find_by!(slug: params[:slug])
 

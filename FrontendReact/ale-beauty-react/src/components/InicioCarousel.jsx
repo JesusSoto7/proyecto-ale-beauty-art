@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Skeleton from '@mui/material/Skeleton';
 import Carousel from 'react-bootstrap/Carousel';
 
@@ -8,21 +8,40 @@ export default function InicioCarousel({
   carouselError,
   carouselItems,
   onRetry,
-  t
+  t,
 }) {
-  if (homeLoading) {
+  const [imagesLoadedCount, setImagesLoadedCount] = useState(0);
+
+  const totalImages = carouselItems?.length || 0;
+
+  useEffect(() => {
+    if (!carouselLoading && carouselItems?.length > 0) {
+      const imagePromises = carouselItems.map((item) => {
+        const img = new Image();
+        img.src = item.url; // Asegúrate de que 'url' sea la propiedad correcta para la fuente de la imagen.
+        return new Promise((resolve) => {
+          img.onload = () => {
+            setImagesLoadedCount((prev) => prev + 1); // Incrementa el contador de imágenes cargadas.
+            resolve(true);
+          };
+          img.onerror = () => resolve(false);
+        });
+      });
+
+      Promise.all(imagePromises).catch((error) => console.error(error));
+    }
+  }, [carouselLoading, carouselItems]);
+
+  if (homeLoading || carouselLoading || imagesLoadedCount < totalImages) {
     return (
       <Skeleton
         sx={{ bgcolor: 'grey.800' }}
         variant="rectangular"
         width="100%"
-        height={350}
+        height={450} // Ajustado al mismo tamaño que las imágenes del carrusel.
+        animation="wave"
       />
     );
-  }
-
-  if (carouselLoading) {
-    return <Skeleton variant="rectangular" width="100%" height={350} />;
   }
 
   if (carouselError) {
@@ -37,7 +56,7 @@ export default function InicioCarousel({
             border: 'none',
             padding: '6px 14px',
             borderRadius: 8,
-            cursor: 'pointer'
+            cursor: 'pointer',
           }}
           onClick={onRetry}
         >
@@ -57,14 +76,15 @@ export default function InicioCarousel({
 
   return (
     <Carousel interval={3000} className="main-carousel mb-0">
-      {carouselItems.map(item => (
+      {carouselItems.map((item) => (
         <Carousel.Item key={item.id}>
           <img
             className="d-block w-100"
             src={item.url}
             alt={`${t('home.slide')} ${item.id}`}
             style={{ height: '450px', objectFit: 'cover' }}
-            loading="lazy"
+            loading="lazy" // Carga diferida para mejorar la respuesta.
+            decoding="async" // Optimiza el tiempo de carga.
             onError={(e) => {
               e.currentTarget.src = 'https://placehold.co/1280x450?text=Imagen+no+disponible';
             }}

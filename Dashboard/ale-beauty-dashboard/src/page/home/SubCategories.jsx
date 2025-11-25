@@ -19,6 +19,7 @@ import {
   Alert,
   Snackbar,
   Tooltip,
+  CircularProgress,
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import EditIcon from "@mui/icons-material/Edit";
@@ -34,7 +35,7 @@ const SubCategorias = () => {
   const isDark = theme.palette.mode === "dark";
   const { slug } = useParams();
   const navigate = useNavigate();
-
+  const [submitLoading, setSubmitLoading] = useState(false);
   const [open, setOpen] = useState(false);
   const [subCategorias, setSubCategorias] = useState([]);
   const [nombre, setNombre] = useState("");
@@ -117,6 +118,9 @@ const SubCategorias = () => {
 
     if (!validateForm()) return;
 
+    // Activa el estado de carga
+    setSubmitLoading(true);
+
     const formData = new FormData();
     formData.append("sub_category[nombre]", nombre);
     if (imagen) formData.append("sub_category[imagen]", imagen);
@@ -141,22 +145,25 @@ const SubCategorias = () => {
       if (!res.ok) {
         const errorData = await res.json();
         showSnackbar(`Error: ${errorData.error || res.statusText}`, "error");
+        setSubmitLoading(false); // Desactiva el loader en caso de error
         return;
       }
 
-      const subCategoriaActualizada = await res.json();
-
-      if (subCategoriaEdit) {
-        setSubCategorias((prev) =>
-          prev.map((cat) =>
-            cat.id === subCategoriaActualizada.id ? subCategoriaActualizada : cat
-          )
-        );
-        showSnackbar("Subcategoría actualizada correctamente", "success");
-      } else {
-        setSubCategorias((prev) => [...prev, subCategoriaActualizada]);
-        showSnackbar("Subcategoría creada correctamente", "success");
-      }
+      // Una vez creada/actualizada, actualiza el estado con las subcategorías del servidor
+      showSnackbar("Actualizando subcategorías...", "success");
+      setTimeout(async () => {
+        try {
+          const subCategoriasRes = await fetch(`https://localhost:4000/api/v1/categories/${slug}/sub_categories`, {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+          const subCategoriasData = await subCategoriasRes.json();
+          setSubCategorias(Array.isArray(subCategoriasData) ? subCategoriasData : []);
+          showSnackbar(subCategoriaEdit ? "Subcategoría actualizada" : "Subcategoría creada", "success");
+        } catch (fetchError) {
+          console.error("Error obteniendo subcategorías tras actualizar:", fetchError);
+          showSnackbar("Error cargando subcategorías tras actualizar", "error");
+        }
+      }, 1200);
 
       setNombre("");
       setImagen(null);
@@ -166,6 +173,9 @@ const SubCategorias = () => {
     } catch (err) {
       console.error("Error:", err);
       showSnackbar("Ocurrió un error procesando la subcategoría", "error");
+    } finally {
+      // Desactiva la carga al final del proceso
+      setSubmitLoading(false);
     }
   };
 
@@ -717,6 +727,7 @@ const SubCategorias = () => {
             </Button>
             <Button
               onClick={handleSubmit}
+              disabled={submitLoading} // Desactiva el botón mientras se está cargando
               variant="contained"
               sx={{
                 borderRadius: "8px",
@@ -742,7 +753,14 @@ const SubCategorias = () => {
                 },
               }}
             >
-              {subCategoriaEdit ? "Actualizar" : "Crear"}
+              {submitLoading ? (
+                <Stack direction="row" alignItems="center" spacing={1}>
+                  <CircularProgress size={20} sx={{ color: "#fff" }} />
+                  <span>Cargando...</span>
+                </Stack>
+              ) : (
+                subCategoriaEdit ? "Actualizar" : "Crear"
+              )}
             </Button>
           </DialogActions>
         </Dialog>

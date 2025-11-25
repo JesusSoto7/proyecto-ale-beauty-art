@@ -37,7 +37,7 @@ export default function Header() {
       .then(data => setUser(data))
       .catch(err => console.error(err));
 
-      fetchPendingCount();
+    fetchPendingCount();
 
   }, []);
 
@@ -139,7 +139,7 @@ export default function Header() {
         <ColorModeIconDropdown />
 
         {/* Notificaciones */}
-        
+
         <IconButton
           aria-label="notifications"
           onClick={() => navigate(`/${lang}/home/support-messages`)}
@@ -224,7 +224,7 @@ export default function Header() {
           <MenuItem
             onClick={() => {
               handleMenuClose();
-              navigate(`/${currentLang}/home/user-profile`);
+              navigate(`/${currentLang}/home/perfil`);
             }}
           >
             Profile

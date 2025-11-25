@@ -22,9 +22,8 @@ export default function MainGrid() {
   const [orderCharData, setOrderCharData] = React.useState({ labels: [], values: [] });
   const [totalSales, setTotalSales] = React.useState(0);
   const [totalSalesCharData, setTotalSalesCharData] = React.useState({ labels: [], values: [] });
+  const [googlePageViewsData, setGooglePageViewsData] = React.useState({ labels: [], values: [] });
 
-  // estados nuevos para vistas
-  const [totalPageViews, setTotalPageViews] = React.useState(0);
   const [pageViewsCharData, setPageViewsCharData] = React.useState({ labels: [], values: [] });
 
   const { t } = useTranslation();
@@ -40,19 +39,43 @@ export default function MainGrid() {
     apiGet('/api/v1/total_sales', token)
       .then((data) => setTotalSales(formatCOP(data?.total_sales ?? 0)))
       .catch(console.error);
-
     apiGet('/api/v1/total_sales_per_day', token)
       .then((data) => {
-        const labels = Object.keys(data || {}).map(dateStr => {
-          const bogotaDate = new Date(
-            new Date(dateStr).toLocaleString("en-US", { timeZone: "America/Bogota" })
-          );
-          return bogotaDate.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+        if (!data || !Object.keys(data).length) {
+          console.warn("No hay datos de ventas por día disponibles.");
+          setTotalSalesCharData({ labels: ["Sin datos"], values: [0] }); // Mostrar valores predeterminados
+          return;
+        }
+
+        const processedData = Object.keys(data).map(dateStr => {
+          const isoDate = new Date(`${dateStr}T00:00:00`); // Asegura formato ISO
+          if (isNaN(isoDate)) {
+            console.error(`Fecha inválida recibida del backend: ${dateStr}`);
+            return { label: "Fecha inválida", value: 0 };
+          }
+          return {
+            label: isoDate.toLocaleDateString("es-CO", { // Formatear para UI
+              year: "numeric",
+              month: "short",
+              day: "numeric",
+            }),
+            value: Number(data[dateStr] || 0),
+          };
         });
-        const values = Object.values(data || {}).map((v) => Number(v) || 0);
-        setTotalSalesCharData({ labels, values });
+
+        const sortedData = processedData.sort(
+          (a, b) => new Date(a.label) - new Date(b.label)
+        );
+
+        setTotalSalesCharData({
+          labels: sortedData.map(item => item.label),
+          values: sortedData.map(item => item.value),
+        });
       })
-      .catch(console.error);
+      .catch((error) => {
+        console.error("Error obteniendo datos de ventas por día:", error);
+        setTotalSalesCharData({ labels: ["Error"], values: [0] }); // Manejar errores
+      });
   }, [token]);
 
   React.useEffect(() => {
@@ -64,16 +87,52 @@ export default function MainGrid() {
 
     apiGet('/api/v1/orders_completed_per_day', token)
       .then((data) => {
-        const labels = Object.keys(data || {}).map(dateStr => {
-          const bogotaDate = new Date(
-            new Date(dateStr).toLocaleString("en-US", { timeZone: "America/Bogota" })
-          );
-          return bogotaDate.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+        const adjustedLabels = Object.keys(data || {}).map(dateStr => {
+          const localDate = new Date(dateStr + "T00:00:00");
+          return localDate.toLocaleDateString("es-CO", {
+            timeZone: "America/Bogota",
+            year: "numeric",
+            month: "short",
+            day: "numeric"
+          });
         });
-        const values = Object.values(data || {}).map((v) => Number(v) || 0);
-        setOrderCharData({ labels, values });
+
+        const values = Object.values(data || {}).map(value => Number(value) || 0);
+        setOrderCharData({ labels: adjustedLabels, values });
+
       })
       .catch(console.error);
+  }, [token]);
+
+  React.useEffect(() => {
+    if (!token) return;
+
+    apiGet('/api/v1/analytics/google_page_views', token)
+      .then((data) => {
+        // Combina etiquetas y valores en pares
+        const combinedData = (data.labels || []).map((label, index) => ({
+          label,
+          value: data.values[index] || 0,
+        }));
+
+        // Ordena los pares basándose en las etiquetas (fechas)
+        const sortedData = combinedData.sort(
+          (a, b) => new Date(a.label) - new Date(b.label)
+        );
+
+        // Separa nuevamente las etiquetas y los valores ordenados
+        const sortedLabels = sortedData.map((item) => item.label);
+        const sortedValues = sortedData.map((item) => item.value);
+
+        // Actualiza el estado con datos ordenados
+        setGooglePageViewsData({
+          labels: sortedLabels,
+          values: sortedValues,
+        });
+      })
+      .catch((err) => {
+        console.error("google_page_views error:", err);
+      });
   }, [token]);
 
   React.useEffect(() => {
@@ -82,47 +141,42 @@ export default function MainGrid() {
     apiGet('/api/v1/count', token)
       .then((data) => setUserCount(Number(data?.count ?? 0)))
       .catch(console.error);
-
     apiGet('/api/v1/registrations_per_day', token)
       .then((data) => {
-        const labels = Object.keys(data || {}).map(dateStr => {
-          const bogotaDate = new Date(
-            new Date(dateStr).toLocaleString("en-US", { timeZone: "America/Bogota" })
-          );
-          return bogotaDate.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+        if (!data || !Object.keys(data).length || data.message) {
+          console.warn("No hay registros de usuarios.");
+          setUserChartData({ labels: ["Sin datos"], values: [0] });
+          return;
+        }
+
+        const processedData = Object.keys(data).map(dateStr => {
+          const isoDate = new Date(`${dateStr}T00:00:00`);
+          if (isNaN(isoDate)) {
+            console.error(`Fecha inválida recibida del backend: ${dateStr}`);
+            return { label: "Fecha inválida", value: 0 };
+          }
+          return {
+            label: isoDate.toLocaleDateString("es-CO", {
+              year: "numeric",
+              month: "short",
+              day: "numeric",
+            }),
+            value: Number(data[dateStr] || 0),
+          };
         });
-        const values = Object.values(data || {}).map((v) => Number(v) || 0);
-        setUserChartData({ labels, values });
-      })
-      .catch(console.error);
-  }, [token]);
 
-  // NUEVO: obtener datos de vistas desde backend (analytics controller)
-  React.useEffect(() => {
-    if (!token) return;
+        const sortedData = processedData.sort(
+          (a, b) => new Date(a.label) - new Date(b.label)
+        );
 
-    apiGet('/api/v1/analytics/total_page_views', token)
-      .then((data) => setTotalPageViews(data?.total_page_views ?? 0))
-      .catch((err) => {
-        console.error("total_page_views error:", err);
-        console.error("body:", err.body);
-      });
-
-
-    apiGet('/api/v1/analytics/page_views_per_day', token)
-      .then((data) => {
-        const labels = Object.keys(data || {}).map(dateStr => {
-          const bogotaDate = new Date(
-            new Date(dateStr).toLocaleString("en-US", { timeZone: "America/Bogota" })
-          );
-          return bogotaDate.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+        setUserChartData({
+          labels: sortedData.map(item => item.label),
+          values: sortedData.map(item => item.value),
         });
-        const values = Object.values(data || {}).map((v) => Number(v) || 0);
-        setPageViewsCharData({ labels, values });
       })
-      .catch((err) => {
-        console.error("page_views_per_day error:", err);
-        console.error("body:", err.body);
+      .catch((error) => {
+        console.error("Error obteniendo datos de usuarios registrados:", error);
+        setUserChartData({ labels: ["Error"], values: [0] });
       });
   }, [token]);
 
@@ -152,7 +206,7 @@ export default function MainGrid() {
 
   const cards = [
     {
-      title: 'Total vendido',
+      title: 'Ganancias Totales',
       value: totalSales,
       interval: 'Últimos 30 días',
       trend: totalSalesTrend.trend,
@@ -175,14 +229,14 @@ export default function MainGrid() {
     },
     {
       title: 'Visitas a la página',
-      value: totalPageViews,
+      value: googlePageViewsData.values.reduce((acc, curr) => acc + curr, 0),
       interval: 'Últimos 30 días',
-      trend: pageViewsTrend.trend,
-      percentText: pageViewsTrend.percentText,
-      deltaText: `${pageViewsTrend.deltaText} vs prev`,
+      trend: computeTrendInfo(googlePageViewsData.values).trend,
+      percentText: computeTrendInfo(googlePageViewsData.values).percentText,
+      deltaText: `${computeTrendInfo(googlePageViewsData.values).deltaText} vs prev`,
       subtitle: '',
-      data: pageViewsCharData.values || [],
-      labels: pageViewsCharData.labels || [],
+      data: googlePageViewsData.values,
+      labels: googlePageViewsData.labels,
       icon: VisibilityOutlinedIcon,
     },
   ];

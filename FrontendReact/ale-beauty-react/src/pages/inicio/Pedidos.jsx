@@ -100,7 +100,7 @@ function Pedidos() {
               </div>
 
               <button
-                onClick={() => navigate(`/${lang}/pedidos/${order.id}`)}
+                onClick={() => navigate(`/${lang}/pedidos/${order.numero_de_orden}`)}
                 className="pedido-btn"
                 onMouseEnter={(e) => {
                   const card = e.currentTarget.closest(".pedido-card");

@@ -21,6 +21,7 @@ import CircleNotificationsIcon from '@mui/icons-material/CircleNotifications';
 import { TbCategory2 } from "react-icons/tb";
 import { BiSolidDiscount } from "react-icons/bi";
 import { TfiReceipt } from "react-icons/tfi";
+import { BiSupport } from "react-icons/bi";
 
 
 export default function MenuContent() {
@@ -36,7 +37,7 @@ export default function MenuContent() {
     { text: 'Usuarios', icon: <PeopleRoundedIcon />, path: `/${lang}/home/usuarios` },
     { text: 'Ordenes', icon: <TfiReceipt />, path: `/${lang}/home/orders` },
     { text: 'Notificaciones', icon: <CircleNotificationsIcon />, path: `/${lang}/home/notificaciones` },
-    { text: 'Ver Mensajes', icon: <CircleNotificationsIcon />, path: `/${lang}/home/support-messages` },
+    { text: 'Ver Mensajes', icon: <BiSupport />, path: `/${lang}/home/support-messages` },
 
   ];
 

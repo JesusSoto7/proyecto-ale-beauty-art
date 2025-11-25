@@ -1,26 +1,31 @@
-
-
-
 @media (max-width: 760px) {
-    .product-container{
-        grid-template-columns: none !important;
-    }
-    .product-image {
-        /* width: 100% !important; */
-        max-width: none !important;
-    }
-    
-    .actions{
-        align-self: flex-start !important;
-    }
+  .product-container {
+    grid-template-columns: none !important;
+  }
+
+  .product-image {
+    /* width: 100% !important; */
+    max-width: none !important;
+  }
+
+  .actions {
+    align-self: flex-start !important;
+  }
+}
+
+button[disabled] {
+  cursor: not-allowed;
+  opacity: 0.7;
 }
 
 .related-products .carousel-items {
   display: flex;
-  flex-wrap: nowrap;      /* <- clave */
+  flex-wrap: nowrap;
+  /* <- clave */
 }
 
 /* Forzar que cada card ocupe un ancho fijo y no se encoja */
-.related-products .carousel-items > * {
-  flex: 0 0 250px;        /* ancho base igual al de las cards reales */
+.related-products .carousel-items>* {
+  flex: 0 0 250px;
+  /* ancho base igual al de las cards reales */
 }
