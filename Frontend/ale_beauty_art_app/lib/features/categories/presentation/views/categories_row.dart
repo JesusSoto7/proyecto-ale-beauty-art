@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:ale_beauty_art_app/core/utils/app_snack_bar.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 // Removed unused import for AppColors; use direct Colors where needed
 import '../bloc/categories_bloc.dart';
@@ -107,11 +108,7 @@ class _CategoriesRowViewState extends State<CategoriesRowView> {
                         ),
                       );
                     } else {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text('categories.products_not_available'.tr()),
-                        ),
-                      );
+                      showAppSnackBar(context, 'categories.products_not_available'.tr());
                     }
                   },
                   child: Container(

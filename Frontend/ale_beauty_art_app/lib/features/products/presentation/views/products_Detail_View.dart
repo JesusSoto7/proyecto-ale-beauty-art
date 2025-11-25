@@ -9,6 +9,8 @@ import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:ale_beauty_art_app/core/utils/app_snack_bar.dart';
+import 'package:ale_beauty_art_app/core/views/loading_view.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:ale_beauty_art_app/styles/colors.dart';
 import 'package:ale_beauty_art_app/core/utils/formatters.dart';
@@ -274,12 +276,12 @@ class _ProductDetailViewState extends State<ProductDetailView> {
 
     // Only allow review submission if we detected a purchase
     if (!_hasPurchased) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Debes comprar el producto para dejar una calificación')));
+      showAppSnackBar(context, 'product_detail.must_purchase_to_review'.tr());
       return;
     }
 
     if (_reviewController.text.trim().isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Por favor escribe un comentario')));
+      showAppSnackBar(context, 'product_detail.please_write_comment'.tr());
       return;
     }
 
@@ -302,14 +304,14 @@ class _ProductDetailViewState extends State<ProductDetailView> {
         // Refrescar reseñas
         _reviewController.clear();
         await _fetchReviews();
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Calificación enviada')));
+        showAppSnackBar(context, 'product_detail.rating_sent'.tr());
       } else if (resp.statusCode == 401) {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Debes iniciar sesión para dejar una calificación')));
+        showAppSnackBar(context, 'product_detail.login_required'.tr());
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error enviando calificación: ${resp.body}')));
+        showAppSnackBar(context, 'product_detail.error_sending_rating'.tr().replaceAll('{detail}', resp.body));
       }
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error de red: $e')));
+      showAppSnackBar(context, 'common.error'.tr() + ': $e');
     } finally {
       if (mounted) setState(() => _submittingReview = false);
     }
@@ -805,7 +807,7 @@ class _ProductDetailViewState extends State<ProductDetailView> {
 
                   // Calificar button + conditional form (only if user purchased)
                   if (_checkingPurchase)
-                    const Center(child: Padding(padding: EdgeInsets.symmetric(vertical: 8.0), child: SizedBox(width: 20, height: 20, child: CircularProgressIndicator())))
+                    const Center(child: Padding(padding: EdgeInsets.symmetric(vertical: 8.0), child: SizedBox(width: 20, height: 20, child: LoadingIndicator(size: 20))))
                   else ...[
                     Padding(
                       padding: const EdgeInsets.only(bottom: 12.0),
@@ -834,7 +836,7 @@ class _ProductDetailViewState extends State<ProductDetailView> {
                           }
 
                           if (!_hasPurchased) {
-                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('product_detail.must_purchase_to_review'.tr())));
+                            showAppSnackBar(context, 'product_detail.must_purchase_to_review'.tr());
                             return;
                           }
 
@@ -889,7 +891,7 @@ class _ProductDetailViewState extends State<ProductDetailView> {
                                     backgroundColor: AppColors.primaryPink,
                                   ),
                                   child: _submittingReview
-                                      ? const SizedBox(width: 18, height: 18, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))
+                                      ? const SizedBox(width: 18, height: 18, child: LoadingIndicator(size: 18, color: Colors.white))
                                       : Text('product_detail.send'.tr(), style: const TextStyle(color: Colors.white)),
                                 ),
                               ],
@@ -907,7 +909,7 @@ class _ProductDetailViewState extends State<ProductDetailView> {
                   if (_loadingReviews)
                     const Center(child: Padding(
                       padding: EdgeInsets.symmetric(vertical: 20),
-                      child: CircularProgressIndicator(),
+                      child: const LoadingIndicator(),
                     ))
                   else if (_reviews.isEmpty)
                     Padding(
@@ -954,7 +956,7 @@ class _ProductDetailViewState extends State<ProductDetailView> {
 
       // Botones
       bottomNavigationBar: SafeArea(
-        minimum: const EdgeInsets.symmetric(horizontal: 24, vertical: 22),
+        minimum: const EdgeInsets.symmetric(horizontal: 24, vertical: 10),
         child: LayoutBuilder(
           builder: (context, constraints) {
             // Siempre mostrar los dos botones lado a lado. Ajustar estilo si el ancho es reducido.
@@ -1126,7 +1128,7 @@ class _ProductDetailViewState extends State<ProductDetailView> {
             return Row(
               children: [
                 Expanded(child: addButton),
-                const SizedBox(width: 12),
+                const SizedBox(width: 22),
                 Expanded(child: buyButton),
               ],
             );
@@ -1146,7 +1148,7 @@ extension on _ProductDetailViewState {
     bool dense = false,
     String? tooltip,
   }) {
-    final double verticalPad = dense ? 10 : 14;
+    final double verticalPad = dense ? 8 : 12;
     final double horizontalPad = dense ? 14 : 20;
     final double fontSize = dense ? 14 : 15;
     final double iconSize = dense ? 20 : 22;
@@ -1268,7 +1270,7 @@ class _FavoriteButtonState extends State<_FavoriteButton> {
             ? const SizedBox(
                 width: 18,
                 height: 18,
-                child: CircularProgressIndicator(strokeWidth: 2),
+                child: const LoadingIndicator(size: 20),
               )
             : Icon(
                 isFav ? Icons.favorite : Icons.favorite_border,

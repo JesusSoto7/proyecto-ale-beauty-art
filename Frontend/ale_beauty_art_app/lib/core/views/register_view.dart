@@ -4,6 +4,8 @@ import 'package:ale_beauty_art_app/styles/text_styles.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:ale_beauty_art_app/core/utils/app_snack_bar.dart';
+import 'package:ale_beauty_art_app/core/views/loading_view.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -90,14 +92,12 @@ class _RegisterPageState extends State<RegisterPage> {
           );
             Navigator.pop(context);
           } else if (state is AuthFailure) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text(' ${state.message}')),
-            );
+            showAppSnackBar(context, state.message);
           }
         },
         builder: (context, state) {
           if (state is AuthInProgress) {
-            return const Center(child: CircularProgressIndicator());
+            return const Center(child: LoadingView());
           }
           return SingleChildScrollView(
             child: Padding(

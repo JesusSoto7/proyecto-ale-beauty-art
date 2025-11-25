@@ -6,6 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/services.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:ale_beauty_art_app/core/utils/app_snack_bar.dart';
+import 'package:ale_beauty_art_app/core/views/loading_view.dart';
 import 'package:ale_beauty_art_app/features/products/presentation/views/product_detail_loader.dart';
 
 class OrderDetailPageView extends StatefulWidget {
@@ -148,11 +150,7 @@ class _OrderDetailPageViewState extends State<OrderDetailPageView> {
       body: BlocBuilder<OrderDetailCubit, OrderDetailState>(
         builder: (context, state) {
           if (state is OrderDetailLoading) {
-            return const Center(
-              child: CircularProgressIndicator(
-                color: Color(0xFFD95D85),
-              ),
-            );
+            return const Center(child: LoadingIndicator(size: 28));
           }
 
           if (state is OrderDetailError) {
@@ -579,12 +577,7 @@ class _ProductsCard extends StatelessWidget {
                 borderRadius: BorderRadius.circular(12),
                 onTap: () {
                   if (productId <= 0) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text('orders.detail.product_detail_missing'.tr()),
-                        backgroundColor: const Color(0xFFD95D85),
-                      ),
-                    );
+                    showAppSnackBar(context, 'orders.detail.product_detail_missing'.tr());
                     return;
                   }
                   final rawProd = mp['product'];

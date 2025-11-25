@@ -7,6 +7,8 @@ import 'package:ale_beauty_art_app/features/shipping_address/presentation/bloc/s
 import 'package:ale_beauty_art_app/features/shipping_address/presentation/bloc/shipping_address_state.dart';
 import 'package:ale_beauty_art_app/features/shipping_address/presentation/views/shipping_address_add.dart';
 import 'package:ale_beauty_art_app/styles/text_styles.dart';
+import 'package:ale_beauty_art_app/core/utils/app_snack_bar.dart';
+import 'package:ale_beauty_art_app/core/views/loading_view.dart';
 import 'package:ale_beauty_art_app/models/ShippingAddress.dart';
 
 class SelectAddressPage extends StatefulWidget {
@@ -88,7 +90,7 @@ class _SelectAddressPageState extends State<SelectAddressPage> {
       body: BlocBuilder<ShippingAddressBloc, ShippingAddressState>(
         builder: (context, state) {
           if (state is ShippingAddressLoading || isUpdatingDefault) {
-            return const Center(child: CircularProgressIndicator());
+            return const Center(child: LoadingIndicator());
           } else if (state is ShippingAddressError) {
             return Center(
               child: Text(state.message, style: AppTextStyles.error),
@@ -277,10 +279,7 @@ class _SelectAddressPageState extends State<SelectAddressPage> {
                       if (selectedAddress != null) {
                         Navigator.pop(context, selectedAddress!.id);
                       } else {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                              content: Text('addresses.select_required'.tr())),
-                        );
+                        showAppSnackBar(context, 'addresses.select_required'.tr());
                       }
                     },
                     child: Container(

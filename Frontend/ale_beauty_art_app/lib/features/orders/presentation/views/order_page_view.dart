@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/services.dart';
+import 'package:ale_beauty_art_app/core/views/loading_view.dart';
 import 'package:ale_beauty_art_app/features/orders/presentation/bloc/order_bloc.dart';
 
 class OrderPageView extends StatefulWidget {
@@ -156,9 +157,7 @@ class _OrderPageViewState extends State<OrderPageView> {
         builder: (context, state) {
           if (state is OrderLoading) {
             return const Center(
-              child: CircularProgressIndicator(
-                color: Color(0xFFD95D85),
-              ),
+              child: LoadingView(),
             );
           }
 

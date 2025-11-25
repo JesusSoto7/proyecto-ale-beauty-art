@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:ale_beauty_art_app/core/views/loading_view.dart';
 
 import '../bloc/product_bloc.dart';
 import '../../../../models/product.dart';
@@ -18,7 +19,7 @@ class ProductDetailLoader extends StatelessWidget {
         builder: (context, state) {
           if (state is ProductLoadInProgress || state is ProductInitial) {
             return const Scaffold(
-              body: Center(child: CircularProgressIndicator()),
+              body: Center(child: LoadingIndicator(size: 28)),
             );
           }
           if (state is ProductLoadFailure) {

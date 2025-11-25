@@ -9,6 +9,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:ale_beauty_art_app/features/favorites/presentation/bloc/favorite_bloc.dart';
 import 'package:ale_beauty_art_app/features/auth/bloc/auth_bloc.dart';
+import 'package:ale_beauty_art_app/core/utils/app_snack_bar.dart';
 
 class FavoritePage extends StatelessWidget {
   const FavoritePage({super.key});
@@ -188,14 +189,8 @@ class FavoritePage extends StatelessWidget {
                                 icon: Icons.add_shopping_cart_rounded,
                                 color: const Color.fromARGB(255, 182, 92, 142),
                                 onTap: () {
-                                  context
-                                      .read<CartBloc>()
-                                      .add(AddProductToCart(productId: fav.id));
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                        content: Text(
-                                            "Producto añadido al carrito")),
-                                  );
+                                  context.read<CartBloc>().add(AddProductToCart(productId: fav.id));
+                                  showAppSnackBar(context, 'product_detail.added_snackbar'.tr());
                                 },
                               ),
                             ],
@@ -228,8 +223,7 @@ class FavoritePage extends StatelessWidget {
                     ],
                     onTap: () {
                       context.read<FavoriteBloc>().add(ClearFavorites());
-                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                          content: Text("Todos los favoritos eliminados")));
+                      showAppSnackBar(context, 'All favorites removed');
                     },
                   ),
                   _gradientButton(
@@ -241,9 +235,7 @@ class FavoritePage extends StatelessWidget {
                     ],
                     onTap: () {
                       context.read<FavoriteBloc>().add(AddAllFavoritesToCart());
-                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                          content:
-                              Text("Todos los favoritos añadidos al carrito")));
+                      showAppSnackBar(context, 'All favorites added to cart');
                     },
                   ),
                 ],
