@@ -799,7 +799,7 @@ class _PaymentPageState extends State<PaymentPage> {
                       ],
                     ),
 
-                    const SizedBox(height: 20),
+                    const SizedBox(height: 44),
                   ],
                 ),
               ),

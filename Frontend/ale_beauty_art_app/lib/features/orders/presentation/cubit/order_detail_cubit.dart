@@ -12,7 +12,7 @@ class OrderDetailCubit extends Cubit<OrderDetailState> {
 
   String get _api => '${dotenv.env['API_BASE_URL']}/api/v1';
 
-  Future<void> fetch(int id) async {
+  Future<void> fetch(String id) async {
     emit(const OrderDetailLoading());
     try {
       if (token.isEmpty) {
