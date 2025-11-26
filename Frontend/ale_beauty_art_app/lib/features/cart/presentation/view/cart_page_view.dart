@@ -131,6 +131,9 @@ class _CartPageViewState extends State<CartPageView> {
           const double shippingCost = 10000;
           final total = subtotalConDescuento + shippingCost;
           final token = state.token ?? '';
+          // Añadir espacio inferior seguro para que el botón no quede pegado
+          // a la barra de navegación del sistema.
+          final bottomInset = MediaQuery.of(context).padding.bottom;
 
           return Column(
             children: [
@@ -434,8 +437,8 @@ class _CartPageViewState extends State<CartPageView> {
 
               // 💳 Resumen de compra
               Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+                padding: EdgeInsets.fromLTRB(
+                    24, 0, 24, 0 + bottomInset + 12),
                 decoration: BoxDecoration(
                   color: Colors.white,
                   boxShadow: [
