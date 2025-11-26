@@ -2,18 +2,42 @@ import 'package:ale_beauty_art_app/styles/colors.dart'; // Importa los colores d
 import 'package:flutter/material.dart';
 
 class LoadingView extends StatelessWidget {
-  const LoadingView({super.key});
+  final bool modal;
+
+  const LoadingView({super.key, this.modal = false});
 
   @override
   Widget build(BuildContext context) {
+    if (modal) {
+      // Small white card centered so it doesn't change the whole app look
+      return Center(
+        child: Material(
+          color: Colors.white,
+          elevation: 8,
+          borderRadius: BorderRadius.circular(12),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 18.0),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: const [
+                LoadingIndicator(size: 28),
+                SizedBox(height: 12),
+              ],
+            ),
+          ),
+        ),
+      );
+    }
+
+    // Full screen loading view (keeps white background to match app)
     return Scaffold(
-      backgroundColor: const Color(0xFFF8F8F8),
+      backgroundColor: Colors.white,
       body: Center(
         child: Column(
-          mainAxisSize: MainAxisSize.min, // Para que no ocupe toda la pantalla
-          children: [
-            const LoadingIndicator(),
-            const SizedBox(height: 16), // Espacio vertical entre el indicador y el texto
+          mainAxisSize: MainAxisSize.min,
+          children: const [
+            LoadingIndicator(),
+            SizedBox(height: 16),
           ],
         ),
       ),
