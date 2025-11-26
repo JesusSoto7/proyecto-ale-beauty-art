@@ -263,7 +263,7 @@ class _SelectAddressPageState extends State<SelectAddressPage> {
                 ),
                 Container(
                   padding:
-                      const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+                      const EdgeInsets.symmetric(horizontal: 24, vertical: 6),
                   decoration: BoxDecoration(
                     color: Colors.white,
                     boxShadow: [

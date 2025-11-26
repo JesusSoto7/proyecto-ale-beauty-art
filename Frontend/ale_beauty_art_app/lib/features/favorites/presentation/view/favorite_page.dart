@@ -3,6 +3,8 @@ import 'package:ale_beauty_art_app/features/cart/presentation/bloc/cart_bloc.dar
 import 'package:ale_beauty_art_app/features/cart/presentation/bloc/cart_event.dart';
 import 'package:ale_beauty_art_app/features/products/presentation/views/products_Detail_View.dart';
 import 'package:ale_beauty_art_app/models/product.dart';
+import 'package:ale_beauty_art_app/core/http/custom_http_client.dart';
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -105,25 +107,71 @@ class FavoritePage extends StatelessWidget {
                   ),
                   child: InkWell(
                     borderRadius: BorderRadius.circular(16),
-                    onTap: () {
-                      // Mapear FavoriteProduct -> Product mínimamente para navegar sin tocar ProductBloc
-                      final product = Product(
-                        id: fav.id,
-                        nombreProducto: fav.nombreProducto,
-                        precioProducto: fav.precioProducto.round(),
-                        descripcion: '',
-                        subCategoryId: 0,
-                        stock: fav.stock,
-                        nombreSubCategoria: '',
-                        categoryId: 0,
-                        nombreCategoria: fav.categoria ?? '',
-                        imagenUrl: fav.imagenUrl,
+                    onTap: () async {
+                      // Mostrar LoadingView modal mientras se obtiene el producto
+                      showDialog(
+                        context: context,
+                        barrierDismissible: false,
+                        builder: (_) => const Center(child: LoadingIndicator(size: 28)),
                       );
+
+                      Product prodToOpen;
+                      try {
+                        final res = await CustomHttpClient.getRequest('/api/v1/products/${fav.id}', headers: {'Content-Type': 'application/json'});
+                        if (res.statusCode == 200) {
+                          final body = jsonDecode(res.body);
+                          if (body is Map<String, dynamic>) {
+                            prodToOpen = Product.fromJson(body);
+                          } else {
+                            prodToOpen = Product(
+                              id: fav.id,
+                              nombreProducto: fav.nombreProducto,
+                              precioProducto: fav.precioProducto.round(),
+                              descripcion: '',
+                              subCategoryId: 0,
+                              stock: fav.stock,
+                              nombreSubCategoria: '',
+                              categoryId: 0,
+                              nombreCategoria: fav.categoria ?? '',
+                              imagenUrl: fav.imagenUrl,
+                            );
+                          }
+                        } else {
+                          prodToOpen = Product(
+                            id: fav.id,
+                            nombreProducto: fav.nombreProducto,
+                            precioProducto: fav.precioProducto.round(),
+                            descripcion: '',
+                            subCategoryId: 0,
+                            stock: fav.stock,
+                            nombreSubCategoria: '',
+                            categoryId: 0,
+                            nombreCategoria: fav.categoria ?? '',
+                            imagenUrl: fav.imagenUrl,
+                          );
+                        }
+                      } catch (e) {
+                        prodToOpen = Product(
+                          id: fav.id,
+                          nombreProducto: fav.nombreProducto,
+                          precioProducto: fav.precioProducto.round(),
+                          descripcion: '',
+                          subCategoryId: 0,
+                          stock: fav.stock,
+                          nombreSubCategoria: '',
+                          categoryId: 0,
+                          nombreCategoria: fav.categoria ?? '',
+                          imagenUrl: fav.imagenUrl,
+                        );
+                      } finally {
+                        // Cerrar el modal de loading (usar rootNavigator para estar seguro)
+                        Navigator.of(context, rootNavigator: true).pop();
+                      }
 
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (_) => ProductDetailView(product: product),
+                          builder: (_) => ProductDetailView(product: prodToOpen),
                         ),
                       );
                     },

@@ -335,7 +335,7 @@ class _ShippingAddressFormPageState extends State<ShippingAddressAdd> {
                     decoration: _inputDecoration('addresses.additional_instructions'.tr()),
                     maxLines: 3,
                   ),
-                  const SizedBox(height: 28),
+                  const SizedBox(height: 6),
 
                   // --- Botón con gradiente ---
                   Container(

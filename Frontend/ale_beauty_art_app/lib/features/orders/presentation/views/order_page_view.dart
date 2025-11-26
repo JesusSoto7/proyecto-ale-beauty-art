@@ -283,7 +283,11 @@ class _OrderPageViewState extends State<OrderPageView> {
                     fechaPago: fechaPago,
                     total: total,
                     onTap: () async {
-                      if (orderId <= 0) return;
+                      // Prefer navigation by order number (string). If missing, fallback to numeric id.
+                      final identifier = (numeroOrden != null && numeroOrden.toString().isNotEmpty)
+                          ? numeroOrden.toString()
+                          : (orderId > 0 ? orderId.toString() : '');
+                      if (identifier.isEmpty) return;
 
                       // Verifica sesión
                       final authState = context.read<AuthBloc>().state;
@@ -302,9 +306,8 @@ class _OrderPageViewState extends State<OrderPageView> {
                         context,
                         MaterialPageRoute(
                           builder: (_) => BlocProvider(
-                            create: (_) =>
-                                OrderDetailCubit(auth.token)..fetch(orderId),
-                            child: OrderDetailPageView(orderId: orderId),
+                            create: (_) => OrderDetailCubit(auth.token)..fetch(identifier),
+                            child: OrderDetailPageView(orderId: identifier),
                           ),
                         ),
                       );

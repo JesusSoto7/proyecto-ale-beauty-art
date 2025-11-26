@@ -4,6 +4,9 @@ import 'package:flutter/services.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ale_beauty_art_app/features/chat_ia/bloc/chat_ia_bloc.dart';
+import 'package:ale_beauty_art_app/features/auth/bloc/auth_bloc.dart';
+import 'package:ale_beauty_art_app/core/views/login_view.dart';
+import 'package:ale_beauty_art_app/core/views/loading_view.dart';
 import 'package:easy_localization/easy_localization.dart';
 
 class ChatIAWidget extends StatefulWidget {
@@ -44,6 +47,20 @@ class _ChatIAWidgetState extends State<ChatIAWidget>
     final pregunta = _controller.text.trim();
     if (pregunta.isEmpty) return;
 
+    // Require login: if not logged, navigate to login immediately
+    final authState = context.read<AuthBloc>().state;
+    if (authState is! AuthSuccess) {
+      final result = await Navigator.push(
+        context,
+        MaterialPageRoute(builder: (_) => const LoginPage()),
+      );
+      if (result != true) return; // user cancelled login
+    }
+
+    // Obtain token from AuthBloc if available
+    final currentAuth = context.read<AuthBloc>().state;
+    final String? token = currentAuth is AuthSuccess ? currentAuth.token : null;
+
     setState(() => loading = true);
     context.read<ChatIaBloc>().add(AddUserMessage(pregunta));
     _controller.clear();
@@ -60,7 +77,7 @@ class _ChatIAWidgetState extends State<ChatIAWidget>
     });
 
     try {
-      final aiResp = await getAIResponse(pregunta);
+      final aiResp = await getAIResponse(pregunta, authToken: token);
       if (mounted) {
         context.read<ChatIaBloc>().add(AddAIMessage(aiResp));
         setState(() => loading = false);
@@ -76,9 +93,7 @@ class _ChatIAWidgetState extends State<ChatIAWidget>
       }
     } catch (e) {
       if (mounted) {
-    context
-      .read<ChatIaBloc>()
-      .add(AddAIMessage('${'chat.error_prefix'.tr()}: $e'));
+        context.read<ChatIaBloc>().add(AddAIMessage('${'chat.error_prefix'.tr()}: $e'));
         setState(() => loading = false);
       }
     }
@@ -347,10 +362,7 @@ class _ChatIAWidgetState extends State<ChatIAWidget>
                                 ? const SizedBox(
                                     width: 20,
                                     height: 20,
-                                    child: CircularProgressIndicator(
-                                      strokeWidth: 2,
-                                      color: Colors.white,
-                                    ),
+                                    child: LoadingIndicator(size: 20, color: Colors.white),
                                   )
                                 : const Icon(
                                     Icons.send_rounded,

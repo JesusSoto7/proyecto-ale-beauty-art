@@ -11,7 +11,7 @@ import 'package:ale_beauty_art_app/core/views/loading_view.dart';
 import 'package:ale_beauty_art_app/features/products/presentation/views/product_detail_loader.dart';
 
 class OrderDetailPageView extends StatefulWidget {
-  final int orderId;
+  final String orderId;
   const OrderDetailPageView({super.key, required this.orderId});
 
   @override

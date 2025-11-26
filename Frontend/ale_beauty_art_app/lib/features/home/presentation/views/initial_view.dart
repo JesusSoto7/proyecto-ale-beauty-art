@@ -55,6 +55,7 @@ class InitialView extends StatelessWidget {
       child: Stack(
         children: [
           Scaffold(
+            resizeToAvoidBottomInset: false,
             extendBody: true, // Mantener el body extendido para que el bottom nav quede encima
             backgroundColor: const Color.fromRGBO(209, 112, 143, 1),
             body: SafeArea(

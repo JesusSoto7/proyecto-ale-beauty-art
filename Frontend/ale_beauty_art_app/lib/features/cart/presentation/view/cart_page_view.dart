@@ -10,6 +10,10 @@ import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:ale_beauty_art_app/features/products/presentation/views/products_Detail_View.dart';
+import 'package:ale_beauty_art_app/models/product.dart';
+import 'package:ale_beauty_art_app/core/http/custom_http_client.dart';
+import 'dart:convert';
 
 class CartPageView extends StatefulWidget {
   const CartPageView({super.key});
@@ -95,24 +99,6 @@ class _CartPageViewState extends State<CartPageView> {
             );
           }
 
-          if (state.error != null && state.products.isEmpty) {
-            return Center(
-              child: Text(
-                'cart.empty'.tr(),
-                style: const TextStyle(fontSize: 16, color: Colors.black54),
-              ),
-            );
-          }
-
-          if (state.products.isEmpty) {
-            return Center(
-              child: Text(
-                'cart.empty'.tr(),
-                style: const TextStyle(fontSize: 16, color: Colors.black54),
-              ),
-            );
-          }
-
           // 💰 Cálculo de precios con descuentos
           double subtotal = 0;
           double totalDescuentos = 0;
@@ -131,6 +117,9 @@ class _CartPageViewState extends State<CartPageView> {
           const double shippingCost = 10000;
           final total = subtotalConDescuento + shippingCost;
           final token = state.token ?? '';
+          // Añadir espacio inferior seguro para que el botón no quede pegado
+          // a la barra de navegación del sistema.
+          final bottomInset = MediaQuery.of(context).padding.bottom;
 
           return Column(
             children: [
@@ -189,31 +178,117 @@ class _CartPageViewState extends State<CartPageView> {
                                 children: [
                                   ClipRRect(
                                     borderRadius: BorderRadius.circular(12),
-                                    child: imageUrl.isNotEmpty
-                                        ? Image.network(
-                                            imageUrl,
-                                            width: 80,
-                                            height: 80,
-                                            fit: BoxFit.cover,
-                                            errorBuilder:
-                                                (context, error, stackTrace) =>
-                                                    Container(
+                                    child: GestureDetector(
+                                      onTap: () async {
+                                        // Mostrar LoadingView modal mientras se obtiene el producto
+                                        showDialog(
+                                          context: context,
+                                          barrierDismissible: false,
+                                          builder: (_) => const Center(child: LoadingIndicator(size: 28)),
+                                        );
+
+                                        // Intent: obtener la versión completa del producto
+                                        final prodIdDyn = product['product_id'] ?? product['id'];
+                                        final prodIdStr = prodIdDyn is int ? prodIdDyn.toString() : prodIdDyn?.toString() ?? '';
+                                        Product prodToOpen;
+                                        try {
+                                          final res = await CustomHttpClient.getRequest('/api/v1/products/$prodIdStr', headers: {'Content-Type': 'application/json'});
+                                          if (res.statusCode == 200) {
+                                            final body = jsonDecode(res.body);
+                                            if (body is Map<String, dynamic>) {
+                                              prodToOpen = Product.fromJson(body);
+                                            } else {
+                                              // fallback minimal
+                                              prodToOpen = Product(
+                                                id: int.tryParse(prodIdStr) ?? 0,
+                                                nombreProducto: product['nombre_producto']?.toString() ?? nombre,
+                                                precioProducto: _parsePrice(product['precio_producto']).toInt(),
+                                                descripcion: product['descripcion']?.toString() ?? '',
+                                                subCategoryId: product['sub_category_id'] is int
+                                                    ? product['sub_category_id']
+                                                    : int.tryParse(product['sub_category_id']?.toString() ?? '0') ?? 0,
+                                                stock: product['stock'] is int
+                                                    ? product['stock']
+                                                    : int.tryParse(product['stock']?.toString() ?? '0') ?? 0,
+                                                nombreSubCategoria: product['nombre_sub_categoria']?.toString() ?? '',
+                                                categoryId: product['category_id'] is int
+                                                    ? product['category_id']
+                                                    : int.tryParse(product['category_id']?.toString() ?? '0') ?? 0,
+                                                nombreCategoria: product['nombre_categoria']?.toString() ?? '',
+                                                imagenUrl: imageUrl?.toString() ?? '',
+                                              );
+                                            }
+                                          } else {
+                                            prodToOpen = Product(
+                                              id: int.tryParse(prodIdStr) ?? 0,
+                                              nombreProducto: product['nombre_producto']?.toString() ?? nombre,
+                                              precioProducto: _parsePrice(product['precio_producto']).toInt(),
+                                              descripcion: product['descripcion']?.toString() ?? '',
+                                              subCategoryId: product['sub_category_id'] is int
+                                                  ? product['sub_category_id']
+                                                  : int.tryParse(product['sub_category_id']?.toString() ?? '0') ?? 0,
+                                              stock: product['stock'] is int
+                                                  ? product['stock']
+                                                  : int.tryParse(product['stock']?.toString() ?? '0') ?? 0,
+                                              nombreSubCategoria: product['nombre_sub_categoria']?.toString() ?? '',
+                                              categoryId: product['category_id'] is int
+                                                  ? product['category_id']
+                                                  : int.tryParse(product['category_id']?.toString() ?? '0') ?? 0,
+                                              nombreCategoria: product['nombre_categoria']?.toString() ?? '',
+                                              imagenUrl: imageUrl?.toString() ?? '',
+                                            );
+                                          }
+                                        } catch (e) {
+                                          prodToOpen = Product(
+                                            id: int.tryParse(prodIdStr) ?? 0,
+                                            nombreProducto: product['nombre_producto']?.toString() ?? nombre,
+                                            precioProducto: _parsePrice(product['precio_producto']).toInt(),
+                                            descripcion: product['descripcion']?.toString() ?? '',
+                                            subCategoryId: product['sub_category_id'] is int
+                                                ? product['sub_category_id']
+                                                : int.tryParse(product['sub_category_id']?.toString() ?? '0') ?? 0,
+                                            stock: product['stock'] is int
+                                                ? product['stock']
+                                                : int.tryParse(product['stock']?.toString() ?? '0') ?? 0,
+                                            nombreSubCategoria: product['nombre_sub_categoria']?.toString() ?? '',
+                                            categoryId: product['category_id'] is int
+                                                ? product['category_id']
+                                                : int.tryParse(product['category_id']?.toString() ?? '0') ?? 0,
+                                            nombreCategoria: product['nombre_categoria']?.toString() ?? '',
+                                            imagenUrl: imageUrl?.toString() ?? '',
+                                          );
+                                        } finally {
+                                          // Cerrar modal de loading
+                                          Navigator.of(context, rootNavigator: true).pop();
+                                        }
+
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (_) => ProductDetailView(product: prodToOpen),
+                                          ),
+                                        );
+                                      },
+                                      child: imageUrl.isNotEmpty
+                                          ? Image.network(
+                                              imageUrl,
+                                              width: 80,
+                                              height: 80,
+                                              fit: BoxFit.cover,
+                                              errorBuilder: (context, error, stackTrace) => Container(
+                                                width: 80,
+                                                height: 80,
+                                                color: Colors.grey.shade200,
+                                                child: const Icon(Icons.broken_image, color: Colors.grey),
+                                              ),
+                                            )
+                                          : Container(
                                               width: 80,
                                               height: 80,
                                               color: Colors.grey.shade200,
-                                              child: const Icon(
-                                                  Icons.broken_image,
-                                                  color: Colors.grey),
+                                              child: const Icon(Icons.image_outlined, color: Colors.grey),
                                             ),
-                                          )
-                                        : Container(
-                                            width: 80,
-                                            height: 80,
-                                            color: Colors.grey.shade200,
-                                            child: const Icon(
-                                                Icons.image_outlined,
-                                                color: Colors.grey),
-                                          ),
+                                    ),
                                   ),
                                   // 🏷️ Badge de descuento en la imagen
                                   if (tieneDescuento && porcentajeDescuento > 0)
@@ -434,8 +509,8 @@ class _CartPageViewState extends State<CartPageView> {
 
               // 💳 Resumen de compra
               Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+                padding: EdgeInsets.fromLTRB(
+                    24, 0, 24, 0 + bottomInset + 12),
                 decoration: BoxDecoration(
                   color: Colors.white,
                   boxShadow: [
