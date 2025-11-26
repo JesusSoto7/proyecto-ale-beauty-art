@@ -176,8 +176,6 @@ class _ShippingAddressFormPageState extends State<ShippingAddressAdd> {
 
   @override
   Widget build(BuildContext context) {
-    final bottomInset = MediaQuery.of(context).padding.bottom;
-
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: PreferredSize(
@@ -223,165 +221,158 @@ class _ShippingAddressFormPageState extends State<ShippingAddressAdd> {
       body: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 22),
         child: Center(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                constraints: const BoxConstraints(maxWidth: 600),
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 25),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(18),
-                  boxShadow: [
-                    BoxShadow(
-                      color: const Color.fromARGB(255, 121, 51, 74).withOpacity(0.25),
-                      blurRadius: 15,
-                      offset: const Offset(0, 4),
-                    ),
-                  ],
+          child: Container(
+            constraints: const BoxConstraints(maxWidth: 600),
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 25),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(18),
+              boxShadow: [
+                BoxShadow(
+                  color:
+                      const Color.fromARGB(255, 121, 51, 74).withOpacity(0.25),
+                  blurRadius: 15,
+                  offset: const Offset(0, 4),
                 ),
-                child: Form(
-                  key: _formKey,
-                  child: Column(
-                    children: [
-                      Text(
-                        'addresses.form_intro'.tr(),
-                        style: const TextStyle(
-                          color: Colors.black87,
-                          fontSize: 15,
-                          fontWeight: FontWeight.w500,
+              ],
+            ),
+            child: Form(
+              key: _formKey,
+              child: Column(
+                children: [
+                  Text(
+                    'addresses.form_intro'.tr(),
+                    style: const TextStyle(
+                      color: Colors.black87,
+                      fontSize: 15,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+
+                  // --- Campos del formulario ---
+          TextFormField(
+                      controller: nombreController,
+            decoration: _inputDecoration('addresses.name'.tr()),
+            validator: (v) => v!.isEmpty ? 'addresses.required'.tr() : null),
+                  const SizedBox(height: 14),
+          TextFormField(
+                      controller: apellidoController,
+            decoration: _inputDecoration('addresses.surname'.tr()),
+            validator: (v) => v!.isEmpty ? 'addresses.required'.tr() : null),
+                  const SizedBox(height: 14),
+          TextFormField(
+                      controller: telefonoController,
+            decoration: _inputDecoration('addresses.phone'.tr()),
+            validator: (v) => v!.isEmpty ? 'addresses.required'.tr() : null),
+                  const SizedBox(height: 14),
+          TextFormField(
+                      controller: direccionController,
+            decoration: _inputDecoration('addresses.address'.tr()),
+            validator: (v) => v!.isEmpty ? 'addresses.required'.tr() : null),
+                  const SizedBox(height: 14),
+                  TextFormField(
+                    controller: codigoPostalController,
+          decoration: _inputDecoration('addresses.postal_code'.tr()),
+                  ),
+                  const SizedBox(height: 14),
+                  DropdownButtonFormField<String>(
+                    value: departmentId,
+          decoration: _inputDecoration('addresses.department'.tr()),
+                    items: departments
+                        .map((d) => DropdownMenuItem(
+                            value: d['id'].toString(),
+                            child: Text(d['nombre'])))
+                        .toList(),
+                    onChanged: (val) {
+                      setState(() {
+                        departmentId = val;
+                        municipalities = [];
+                        municipalityId = null;
+                        neighborhoods = [];
+                        neighborhoodId = null;
+                      });
+                      if (val != null) _fetchMunicipalities(val);
+                    },
+          validator: (v) =>
+            v == null ? 'addresses.select_department'.tr() : null,
+                  ),
+                  const SizedBox(height: 14),
+                  DropdownButtonFormField<String>(
+                    value: municipalityId,
+          decoration: _inputDecoration('addresses.municipality'.tr()),
+                    items: municipalities
+                        .map((m) => DropdownMenuItem(
+                            value: m['id'].toString(),
+                            child: Text(m['nombre'])))
+                        .toList(),
+                    onChanged: (val) {
+                      setState(() {
+                        municipalityId = val;
+                        neighborhoods = [];
+                        neighborhoodId = null;
+                      });
+                      if (val != null) _fetchNeighborhoods(val);
+                    },
+                    validator: (v) =>
+                        v == null ? 'addresses.select_municipality'.tr() : null,
+                  ),
+                  const SizedBox(height: 14),
+                  DropdownButtonFormField<String>(
+                    value: neighborhoodId,
+                    decoration: _inputDecoration('addresses.neighborhood_field'.tr()),
+                    items: neighborhoods
+                        .map((n) => DropdownMenuItem(
+                            value: n['id'].toString(),
+                            child: Text(n['nombre'])))
+                        .toList(),
+                    onChanged: (val) => setState(() => neighborhoodId = val),
+                    validator: (v) => v == null ? 'addresses.select_neighborhood'.tr() : null,
+                  ),
+                  const SizedBox(height: 14),
+                  TextFormField(
+                    controller: indicacionesController,
+                    decoration: _inputDecoration('addresses.additional_instructions'.tr()),
+                    maxLines: 3,
+                  ),
+                  const SizedBox(height: 6),
+
+                  // --- Botón con gradiente ---
+                  Container(
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      gradient: const LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        colors: [Color(0xFFD95D85), Color(0xFFE58BB1)],
+                      ),
+                      borderRadius: BorderRadius.circular(14),
+                    ),
+                    child: ElevatedButton(
+                      onPressed: _submit,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.transparent,
+                        shadowColor: Colors.transparent,
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(14),
                         ),
                       ),
-                      const SizedBox(height: 20),
-
-                      // --- Campos del formulario ---
-                      TextFormField(
-                        controller: nombreController,
-                        decoration: _inputDecoration('addresses.name'.tr()),
-                        validator: (v) => v!.isEmpty ? 'addresses.required'.tr() : null,
+                      child: Text(
+                        isEditing
+                            ? 'addresses.update'.tr()
+                            : 'addresses.save'.tr(),
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
-                      const SizedBox(height: 14),
-                      TextFormField(
-                        controller: apellidoController,
-                        decoration: _inputDecoration('addresses.surname'.tr()),
-                        validator: (v) => v!.isEmpty ? 'addresses.required'.tr() : null,
-                      ),
-                      const SizedBox(height: 14),
-                      TextFormField(
-                        controller: telefonoController,
-                        decoration: _inputDecoration('addresses.phone'.tr()),
-                        validator: (v) => v!.isEmpty ? 'addresses.required'.tr() : null,
-                      ),
-                      const SizedBox(height: 14),
-                      TextFormField(
-                        controller: direccionController,
-                        decoration: _inputDecoration('addresses.address'.tr()),
-                        validator: (v) => v!.isEmpty ? 'addresses.required'.tr() : null,
-                      ),
-                      const SizedBox(height: 14),
-                      TextFormField(
-                        controller: codigoPostalController,
-                        decoration: _inputDecoration('addresses.postal_code'.tr()),
-                      ),
-                      const SizedBox(height: 14),
-                      DropdownButtonFormField<String>(
-                        value: departmentId,
-                        decoration: _inputDecoration('addresses.department'.tr()),
-                        items: departments
-                            .map((d) => DropdownMenuItem(
-                                value: d['id'].toString(), child: Text(d['nombre'])))
-                            .toList(),
-                        onChanged: (val) {
-                          setState(() {
-                            departmentId = val;
-                            municipalities = [];
-                            municipalityId = null;
-                            neighborhoods = [];
-                            neighborhoodId = null;
-                          });
-                          if (val != null) _fetchMunicipalities(val);
-                        },
-                        validator: (v) => v == null ? 'addresses.select_department'.tr() : null,
-                      ),
-                      const SizedBox(height: 14),
-                      DropdownButtonFormField<String>(
-                        value: municipalityId,
-                        decoration: _inputDecoration('addresses.municipality'.tr()),
-                        items: municipalities
-                            .map((m) => DropdownMenuItem(
-                                value: m['id'].toString(), child: Text(m['nombre'])))
-                            .toList(),
-                        onChanged: (val) {
-                          setState(() {
-                            municipalityId = val;
-                            neighborhoods = [];
-                            neighborhoodId = null;
-                          });
-                          if (val != null) _fetchNeighborhoods(val);
-                        },
-                        validator: (v) => v == null ? 'addresses.select_municipality'.tr() : null,
-                      ),
-                      const SizedBox(height: 14),
-                      DropdownButtonFormField<String>(
-                        value: neighborhoodId,
-                        decoration: _inputDecoration('addresses.neighborhood_field'.tr()),
-                        items: neighborhoods
-                            .map((n) => DropdownMenuItem(
-                                value: n['id'].toString(), child: Text(n['nombre'])))
-                            .toList(),
-                        onChanged: (val) => setState(() => neighborhoodId = val),
-                        validator: (v) => v == null ? 'addresses.select_neighborhood'.tr() : null,
-                      ),
-                      const SizedBox(height: 14),
-                      TextFormField(
-                        controller: indicacionesController,
-                        decoration: _inputDecoration('addresses.additional_instructions'.tr()),
-                        maxLines: 3,
-                      ),
-                      const SizedBox(height: 6),
-                    ],
+                    ),
                   ),
-                ),
+                ],
               ),
-
-              // --- Botón con gradiente fuera del contenedor blanco ---
-              const SizedBox(height:16),
-              Container(
-                constraints: const BoxConstraints(maxWidth: 600),
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: Container(
-                  width: double.infinity,
-                  margin: EdgeInsets.only(bottom: bottomInset + 2),
-                  decoration: BoxDecoration(
-                    gradient: const LinearGradient(
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                      colors: [Color(0xFFD95D85), Color(0xFFE58BB1)],
-                    ),
-                    borderRadius: BorderRadius.circular(14),
-                  ),
-                  child: ElevatedButton(
-                    onPressed: _submit,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.transparent,
-                      shadowColor: Colors.transparent,
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(14),
-                      ),
-                    ),
-                    child: Text(
-                      isEditing ? 'addresses.update'.tr() : 'addresses.save'.tr(),
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ],
+            ),
           ),
         ),
       ),

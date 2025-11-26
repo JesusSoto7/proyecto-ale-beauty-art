@@ -113,8 +113,6 @@ class _SelectAddressPageState extends State<SelectAddressPage> {
               orElse: () => addresses[0],
             );
 
-            final bottomInset = MediaQuery.of(context).padding.bottom;
-
             return Column(
               children: [
                 Expanded(
@@ -264,7 +262,8 @@ class _SelectAddressPageState extends State<SelectAddressPage> {
                   ),
                 ),
                 Container(
-                  padding: EdgeInsets.fromLTRB(24, 10, 24, bottomInset + 6),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 24, vertical: 6),
                   decoration: BoxDecoration(
                     color: Colors.white,
                     boxShadow: [
