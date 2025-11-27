@@ -195,9 +195,9 @@ class InfoProduct extends StatelessWidget {
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              // Precio original tachado
+                              // Precio original tachado (mostrar con IVA incluido)
                               Text(
-                                formatPriceCOP(product.precioProducto),
+                                formatPriceCOP((product.precioProducto * 1.19).round()),
                                 style: TextStyle(
                                   color: Colors.grey[500],
                                   fontSize: 12,
@@ -208,12 +208,11 @@ class InfoProduct extends StatelessWidget {
                                 ),
                               ),
                               const SizedBox(height: 4),
-                              // Precio con descuento destacado
+                              // Precio con descuento destacado (IVA incluido)
                               Row(
                                 children: [
                                   Text(
-                                    formatPriceCOP(
-                                        product.precioConMejorDescuento!),
+                                    formatPriceCOP((product.precioConMejorDescuento! * 1.19).round()),
                                     style: const TextStyle(
                                       color: Color(0xFFD95D85),
                                       fontWeight: FontWeight.bold,
@@ -227,7 +226,8 @@ class InfoProduct extends StatelessWidget {
                           )
                         else
                           Text(
-                            formatPriceCOP(product.precioProducto),
+                            // Precio en producto sin descuento (IVA incluido)
+                            formatPriceCOP((product.precioProducto * 1.19).round()),
                             style: const TextStyle(
                               color: Color(0xFFD95D85),
                               fontWeight: FontWeight.bold,

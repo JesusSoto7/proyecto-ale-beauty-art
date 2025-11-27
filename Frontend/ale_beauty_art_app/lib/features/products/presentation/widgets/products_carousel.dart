@@ -299,8 +299,8 @@ class _ProductsCarouselState extends State<ProductsCarousel> {
                                           children: [
                                             // Precio original tachado
                                             Text(
-                                              formatPriceCOP(
-                                                  product.precioProducto),
+                                              // Mostrar precio con IVA incluido (19%)
+                                              formatPriceCOP((product.precioProducto * 1.19).round()),
                                               style: TextStyle(
                                                 color: Colors.grey[500],
                                                 fontSize: 11,
@@ -313,10 +313,9 @@ class _ProductsCarouselState extends State<ProductsCarousel> {
                                               ),
                                             ),
                                             const SizedBox(height: 2),
-                                            // Precio con descuento
+                                            // Precio con descuento (IVA incluido)
                                             Text(
-                                              formatPriceCOP(product
-                                                  .precioConMejorDescuento!),
+                                              formatPriceCOP((product.precioConMejorDescuento! * 1.19).round()),
                                               style: const TextStyle(
                                                 color: Color(0xFFD95D85),
                                                 fontWeight: FontWeight.bold,
@@ -330,8 +329,8 @@ class _ProductsCarouselState extends State<ProductsCarousel> {
                                         )
                                       else
                                         Text(
-                                          formatPriceCOP(
-                                              product.precioProducto),
+                                          // Precio sin descuento ya con IVA incluido
+                                          formatPriceCOP((product.precioProducto * 1.19).round()),
                                           style: const TextStyle(
                                             color: Color(0xFFD95D85),
                                             fontWeight: FontWeight.bold,
