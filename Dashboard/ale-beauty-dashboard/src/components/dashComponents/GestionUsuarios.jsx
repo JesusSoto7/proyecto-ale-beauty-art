@@ -13,7 +13,7 @@ import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogActions from '@mui/material/DialogActions';
-import { useParams } from 'react-router-dom';
+// useParams no es necesario para esta vista ahora que no usamos prefijo de idioma
 import FormControl from '@mui/material/FormControl';
 import InputLabel from '@mui/material/InputLabel';
 import Select from '@mui/material/Select';
@@ -219,7 +219,6 @@ export default function GestionUsuarios() {
   const [selectedRowForDelete, setSelectedRowForDelete] = React.useState(null);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
-  const { lang } = useParams();
 
 
   const handleRefresh = () => {
@@ -232,8 +231,8 @@ export default function GestionUsuarios() {
   const handleViewClick = (id) => () => {
       const selectedUser = rows.find((row) => row.id === id);
       if (selectedUser) {
-          // Usa la ruta completa, empezando desde la raíz /:lang/home/
-          navigate(`/${lang}/home/user-full-perfil/${selectedUser.id}`, { state: { user: selectedUser } });
+              // Navega al perfil del usuario sin prefijo de idioma
+              navigate(`/home/user-full-perfil/${selectedUser.id}`, { state: { user: selectedUser } });
       }
   };
 

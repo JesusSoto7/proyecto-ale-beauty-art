@@ -57,7 +57,7 @@ export default function SideMenu() {
       console.warn('Error cerrando sesión:', err);
     }
     localStorage.removeItem('token');
-    window.location.href = `/${lang || 'es'}/login`; // ✅ Redirección con idioma por defecto
+    window.location.href = `/login`; // Redirige al login sin prefijo de idioma
   }
 
   if (!user) return null;

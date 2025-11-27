@@ -1,11 +1,10 @@
 import React from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { Box, Typography, Button, Container } from '@mui/material';
 import { Block, Home } from '@mui/icons-material';
 import { useTranslation } from "react-i18next";
 
 export default function Forbidden403() {
-    const { lang } = useParams();
     const { t } = useTranslation();
     
     return (
@@ -38,7 +37,7 @@ export default function Forbidden403() {
                 
                 <Button
                     component={Link}
-                    to={`/${lang}/login`}
+                    to={`/login`}
                     variant="contained"
                     startIcon={<Home />}
                     size="large"

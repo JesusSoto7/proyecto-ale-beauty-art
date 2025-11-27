@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import {
   List,
   ListItem,
@@ -25,19 +25,18 @@ import { BiSupport } from "react-icons/bi";
 
 
 export default function MenuContent() {
-  const { lang } = useParams();
   const navigate = useNavigate();
 
   const mainListItems = [
-    { text: 'Home', icon: <HomeRoundedIcon />, path: `/${lang}/home` },
-    { text: 'Productos', icon: <AnalyticsRoundedIcon />, path: `/${lang}/home/products` },
-    { text: 'Ventas', icon: <AnalyticsRoundedIcon />, path: `/${lang}/home/ventas` },
-    { text: 'Categorias', icon: <TbCategory2 />, path: `/${lang}/home/categories` },
-    { text: 'Carousel', icon: <AssignmentRoundedIcon />, path: `/${lang}/home/carousel` },
-    { text: 'Usuarios', icon: <PeopleRoundedIcon />, path: `/${lang}/home/usuarios` },
-    { text: 'Ordenes', icon: <TfiReceipt />, path: `/${lang}/home/orders` },
-    { text: 'Notificaciones', icon: <CircleNotificationsIcon />, path: `/${lang}/home/notificaciones` },
-    { text: 'Ver Mensajes', icon: <BiSupport />, path: `/${lang}/home/support-messages` },
+    { text: 'Home', icon: <HomeRoundedIcon />, path: `/home` },
+    { text: 'Productos', icon: <AnalyticsRoundedIcon />, path: `/home/products` },
+    { text: 'Ventas', icon: <AnalyticsRoundedIcon />, path: `/home/ventas` },
+    { text: 'Categorias', icon: <TbCategory2 />, path: `/home/categories` },
+    { text: 'Carousel', icon: <AssignmentRoundedIcon />, path: `/home/carousel` },
+    { text: 'Usuarios', icon: <PeopleRoundedIcon />, path: `/home/usuarios` },
+    { text: 'Ordenes', icon: <TfiReceipt />, path: `/home/orders` },
+    { text: 'Notificaciones', icon: <CircleNotificationsIcon />, path: `/home/notificaciones` },
+    { text: 'Ver Mensajes', icon: <BiSupport />, path: `/home/support-messages` },
 
   ];
 
@@ -98,7 +97,7 @@ export default function MenuContent() {
             <List disablePadding dense>
               <ListItemButton
                 sx={{ pl: 6, py: 0.3 }}
-                onClick={() => navigate(`/${lang}/home/crear_descuento`)}
+                onClick={() => navigate(`/home/crear_descuento`)}
               >
                 <ListItemText primary="Crear Descuento" primaryTypographyProps={{ fontSize: 13 }} />
               </ListItemButton>
