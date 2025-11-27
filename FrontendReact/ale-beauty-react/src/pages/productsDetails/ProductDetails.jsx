@@ -675,10 +675,7 @@ function ProductDetails() {
                     )}
                   </p>
 
-                  <div style={{ fontSize: '16px', color: '#666' }}>
-                    <div>IVA (19%): <strong>{formatCOP(ivaPerUnit)}</strong></div>
-                    <div>Precio base (sin IVA): <strong>{formatCOP(base)}</strong></div>
-                  </div>
+                  {/* Mostrar sólo el precio con IVA en la vista de producto (el cliente no necesita ver desglose aquí) */}
                 </>
               );
             })()}
