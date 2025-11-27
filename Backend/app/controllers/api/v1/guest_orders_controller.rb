@@ -17,15 +17,13 @@ module Api
         )
 
         total_productos = 0
-        iva_total = 0
         items.each do |it|
           product = Product.find(it[:product_id])
           qty     = (it[:quantity] || 1).to_i
-          # Usa solo los métodos de Product
+          # Mantén el mismo cálculo que usas en OrdersController
           price   = product.precio_con_mejor_descuento
 
           total_productos += price * qty
-          iva_total += product.iva_amount(price) * qty
           order.order_details.build(
             product: product,
             cantidad: qty,
@@ -33,19 +31,10 @@ module Api
           )
         end
 
-        envio = order.costo_de_envio || 0
-        total_con_iva = total_productos + iva_total + envio
+        order.pago_total = total_productos + (order.costo_de_envio || 0)
 
         if order.save
-          render json: {
-            order: {
-              id: order.id,
-              subtotal_sin_iva: total_productos,
-              iva_total: iva_total,
-              envio: envio,
-              total: total_con_iva
-            }
-          }, status: :ok
+          render json: { order: { id: order.id, total: order.pago_total } }, status: :ok
         else
           render json: { errors: order.errors.full_messages }, status: :unprocessable_entity
         end

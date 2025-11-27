@@ -53,50 +53,31 @@ module Api
       private
 
       def cart_json(cart)
-        products = cart.cart_products.includes(product: [:discount]).map do |cp|
-          product = cp.product
-          mejor_descuento = product.mejor_descuento_para_precio(product.precio_producto)
-          precio_con_descuento = product.precio_con_mejor_descuento(product.precio_producto)
-          cantidad = cp.cantidad.to_i
-
-          subtotal_line = precio_con_descuento.to_f * cantidad
-          iva_line = product.iva_amount(precio_con_descuento).to_f * cantidad
-
-          {
-            product_id: product.id,
-            nombre_producto: product.nombre_producto,
-            cantidad: cantidad,
-            precio_producto: product.precio_producto,
-            stock: product.stock,
-            slug: product.slug,
-            imagen_url: product.imagen.attached? ? url_for(product.imagen) : nil,
-            precio_con_mejor_descuento: precio_con_descuento,
-            mejor_descuento_para_precio: mejor_descuento,
-            precio_con_descuento: precio_con_descuento,
-            precio_con_iva: product.precio_con_iva(precio_con_descuento).to_f,
-            tiene_descuento: mejor_descuento.present? && precio_con_descuento < product.precio_producto,
-            porcentaje_descuento: if mejor_descuento.present?
-              ((product.precio_producto - precio_con_descuento) / product.precio_producto * 100).round
-            else
-              0
-            end,
-            subtotal_line: subtotal_line,
-            iva_line: iva_line
-          }
-        end
-
-        subtotal_sin_iva = products.sum { |p| p[:subtotal_line].to_f }
-        iva_total = products.sum { |p| p[:iva_line].to_f }
-        envio = 10_000
-        total = subtotal_sin_iva + iva_total + envio
-
         {
           id: cart.id,
-          products: products,
-          subtotal_sin_iva: subtotal_sin_iva,
-          iva_total: iva_total,
-          envio: envio,
-          total: total
+          products: cart.cart_products.includes(product: [:discount]).map do |cp|
+            product = cp.product
+            mejor_descuento = product.mejor_descuento_para_precio(product.precio_producto)
+            precio_con_descuento = product.precio_con_mejor_descuento(product.precio_producto)
+            {
+              product_id: product.id,
+              nombre_producto: product.nombre_producto,
+              cantidad: cp.cantidad,
+              precio_producto: product.precio_producto,
+              stock: product.stock,
+              slug: product.slug,
+              imagen_url: product.imagen.attached? ? url_for(product.imagen) : nil,
+              precio_con_mejor_descuento: precio_con_descuento,
+              mejor_descuento_para_precio: mejor_descuento,
+              precio_con_descuento: precio_con_descuento,
+              tiene_descuento: mejor_descuento.present? && precio_con_descuento < product.precio_producto,
+              porcentaje_descuento: if mejor_descuento.present?
+                ((product.precio_producto - precio_con_descuento) / product.precio_producto * 100).round
+              else
+                0
+              end
+            }
+          end
         }
       end
     end

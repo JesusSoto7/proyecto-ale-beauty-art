@@ -65,27 +65,15 @@
   <tr style="background-color:#202020; color:#fff;">
     <th align="left" style="padding:8px;">Producto</th>
     <th align="center" style="padding:8px;">Cantidad</th>
-    <th align="right" style="padding:8px;">Valor unitario (sin IVA)</th>
-    <th align="right" style="padding:8px;">IVA por unidad</th>
-    <th align="right" style="padding:8px;">Total línea (con IVA)</th>
+    <th align="right" style="padding:8px;">Valor unitario</th>
   </tr>
   <% @order.order_details.each do |item| %>
     <% product_name = item.product&.nombre_producto || "Producto" %>
     <% unit_price   = item.precio_unitario.to_f %>
-    <% qty = item.cantidad.to_i %>
-    <% iva_per_unit = if item.product && item.product.respond_to?(:iva_amount)
-                        item.product.iva_amount(unit_price).to_f
-                      else
-                        (unit_price * 0.19)
-                      end %>
-    <% line_iva = iva_per_unit * qty %>
-    <% line_total = (unit_price + iva_per_unit) * qty %>
     <tr style="background-color:#fff;">
       <td style="padding:8px; border-top:1px solid #eee;"><%= product_name %></td>
-      <td align="center" style="padding:8px; border-top:1px solid #eee;">x<%= qty %></td>
+      <td align="center" style="padding:8px; border-top:1px solid #eee;">x<%= item.cantidad %></td>
       <td align="right" style="padding:8px; border-top:1px solid #eee;">$ <%= number_with_precision(unit_price, precision: 0, delimiter: ".") %></td>
-      <td align="right" style="padding:8px; border-top:1px solid #eee;">$ <%= number_with_precision(iva_per_unit, precision: 0, delimiter: ".") %></td>
-      <td align="right" style="padding:8px; border-top:1px solid #eee;">$ <%= number_with_precision(line_total, precision: 0, delimiter: ".") %></td>
     </tr>
   <% end %>
 </table>
@@ -94,13 +82,7 @@
 <table role="presentation" width="100%" cellspacing="0" cellpadding="10" border="0" style="max-width:650px; margin:0 auto;">
   <tr>
     <td align="right" style="font-size:16px; font-weight:bold;">
-      <div style="text-align:right;">
-        <div style="font-weight:600;">Subtotal (sin IVA): $ <%= number_with_precision(@subtotal_sin_iva, precision: 0, delimiter: ".") %></div>
-        <div style="font-weight:600;">IVA: $ <%= number_with_precision(@iva_total, precision: 0, delimiter: ".") %></div>
-        <div style="font-weight:600;">Envío: $ <%= number_with_precision(@envio, precision: 0, delimiter: ".") %></div>
-        <hr style="border:none; border-top:1px solid #ccc; margin:8px 0;">
-        <div style="font-size:18px; font-weight:bold;">Total a pagar: $ <%= number_with_precision(@total, precision: 0, delimiter: ".") %></div>
-      </div>
+      Total: $ <%= number_with_precision(@total, precision: 0, delimiter: ".") %>
     </td>
   </tr>
 </table>

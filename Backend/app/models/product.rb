@@ -70,34 +70,4 @@ class Product < ApplicationRecord
     monto = mejor.monto_descuento_en(precio_base)
     [precio_base.to_d - monto, 0.to_d].max.round(2)
   end
-
-  # --- IVA (impuesto) helpers ---
-  # Tasa de IVA por defecto (19%). Usamos BigDecimal para precisión.
-  IVA_RATE = BigDecimal('0.19')
-
-  # Devuelve el monto de IVA para una base dada. Por defecto: precio final
-  # después de aplicar el mejor descuento.
-  def iva_amount(precio_base = nil)
-    base = (precio_base || precio_con_mejor_descuento).to_d
-    (base * IVA_RATE).round(2)
-  end
-
-  # Devuelve el precio total (base + IVA) para una base dada.
-  def precio_con_iva(precio_base = nil)
-    base = (precio_base || precio_con_mejor_descuento).to_d
-    (base + iva_amount(base)).round(2)
-  end
-
-  # Exponer valores útiles en el JSON por defecto para consumo del frontend
-  # sin cambiar serializadores existentes.
-  def as_json(options = {})
-    super(options).merge(
-      {
-        precio_sin_iva: precio_con_mejor_descuento,
-        iva_amount: iva_amount,
-        precio_con_iva: precio_con_iva,
-        precio_producto_con_iva: precio_con_iva(precio_producto)
-      }
-    )
-  end
 end

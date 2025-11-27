@@ -23,32 +23,20 @@ class FacturaPdf
       pdf.stroke_horizontal_rule
       pdf.move_down 20
 
-      subtotal_sin_iva = 0.0
-      iva_total = 0.0
+      subtotal = 0
 
       if @order.order_details.any?
-        data = [["Producto", "Cantidad", "Precio unitario (sin IVA)", "IVA por unidad", "Total línea (con IVA)"]]
+        data = [["Producto", "Cantidad", "Precio unitario", "Subtotal"]]
         @order.order_details.each do |item|
-          unit_price = item.precio_unitario.to_f
-          quantity   = item.cantidad.to_i
-
-          iva_per_unit = if item.product && item.product.respond_to?(:iva_amount)
-                           item.product.iva_amount(unit_price).to_f
-                         else
-                           (unit_price * 0.19)
-                         end
-
-          line_iva = iva_per_unit * quantity
-          line_total = (unit_price + iva_per_unit) * quantity
-
-          subtotal_sin_iva += unit_price * quantity
-          iva_total += line_iva
+          unit_price = item.precio_unitario || 0
+          quantity   = item.cantidad || 0
+          line_total = unit_price * quantity
+          subtotal  += line_total
 
           data << [
             item.product&.nombre_producto || "Producto desconocido",
             quantity,
             number_to_currency(unit_price, unit: '$', delimiter: '.', separator: ','),
-            number_to_currency(iva_per_unit, unit: '$', delimiter: '.', separator: ','),
             number_to_currency(line_total, unit: '$', delimiter: '.', separator: ',')
           ]
         end
@@ -63,15 +51,13 @@ class FacturaPdf
         pdf.move_down 20
       end
 
-      envio = (@order.costo_de_envio.to_f > 0) ? @order.costo_de_envio.to_f : SHIPPING_COST
-      total = (subtotal_sin_iva + iva_total + envio)
+      total_con_envio = subtotal + SHIPPING_COST
 
-      pdf.text "Subtotal (sin IVA): #{number_to_currency(subtotal_sin_iva, unit: '$', separator: ',', delimiter: '.')}", size: 12, align: :right
-      pdf.text "IVA: #{number_to_currency(iva_total, unit: '$', separator: ',', delimiter: '.')}", size: 12, align: :right
-      pdf.text "Envío: #{number_to_currency(envio, unit: '$', separator: ',', delimiter: '.')}", size: 12, align: :right
+      pdf.text "Subtotal: #{number_to_currency(subtotal, unit: '$', separator: ',', delimiter: '.')}", size: 12, align: :right
+      pdf.text "Envío: #{number_to_currency(SHIPPING_COST, unit: '$', separator: ',', delimiter: '.')}", size: 12, align: :right
       pdf.stroke_horizontal_rule
       pdf.move_down 5
-      pdf.text "Total: #{number_to_currency(total, unit: '$', separator: ',', delimiter: '.')}", size: 16, style: :bold, align: :right
+      pdf.text "Total: #{number_to_currency(total_con_envio, unit: '$', separator: ',', delimiter: '.')}", size: 16, style: :bold, align: :right
     end.render
   end
 end
