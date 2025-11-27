@@ -96,14 +96,23 @@ const ProductCard = memo(({
 
           {/* Precios */}
           <div className="price-container-v3">
-            {product.precio_con_mejor_descuento && product.precio_con_mejor_descuento < product.precio_producto ? (
-              <>
-                <span className="price-current-v3">{formatCOP(product.precio_con_mejor_descuento)}</span>
-                <span className="price-original-v3">{formatCOP(product.precio_producto)}</span>
-              </>
-            ) : (
-              <span className="price-current-v3">{formatCOP(product.precio_producto)}</span>
-            )}
+            {(() => {
+              const base = product.precio_con_mejor_descuento && product.precio_con_mejor_descuento < product.precio_producto
+                ? product.precio_con_mejor_descuento
+                : product.precio_producto;
+              // Use server-provided IVA/price-with-IVA when present, otherwise fallback to local calc
+              const ivaPerUnit = (product.iva_amount !== undefined && product.iva_amount !== null) ? product.iva_amount : Math.round(base * 0.19 * 100) / 100;
+              const precioConIva = (product.precio_con_iva !== undefined && product.precio_con_iva !== null) ? product.precio_con_iva : (base + ivaPerUnit);
+
+              return (
+                <>
+                  <span className="price-current-v3">{formatCOP(precioConIva)}</span>
+                  {product.precio_con_mejor_descuento && product.precio_con_mejor_descuento < product.precio_producto ? (
+                      <span className="price-original-v3">{formatCOP(product.precio_producto_con_iva ?? Math.round(product.precio_producto * 1.19))}</span>
+                  ) : null}
+                </>
+              );
+            })()}
           </div>
 
           {/* Nombre del descuento */}
@@ -125,7 +134,7 @@ const ProductCard = memo(({
             onClick={(e) => {
               e.preventDefault();
               e.stopPropagation();
-              onAddToCart(product.id);
+              onAddToCart(product);
             }}
             className="add-to-cart-btn-v3"
           >

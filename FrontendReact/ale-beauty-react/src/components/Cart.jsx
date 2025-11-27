@@ -320,10 +320,23 @@ function Cart() {
     );
   }
 
-  const total = cart.products.reduce(
+  // Prefer server-provided totals (subtotal_sin_iva, iva_total, envio, total). Fallback to local calculation.
+  const serverSubtotal = cart.subtotal_sin_iva ?? null;
+  const serverIva = cart.iva_total ?? null;
+  const serverEnvio = cart.envio ?? null;
+  const serverTotal = cart.total ?? null;
+
+  const localSubtotal = cart.products.reduce(
     (sum, p) => sum + (p.precio_con_mejor_descuento && p.precio_con_mejor_descuento < p.precio_producto ? p.precio_con_mejor_descuento : p.precio_producto) * p.cantidad,
     0
   );
+
+  const localIva = cart.products.reduce((sum, p) => {
+    const base = (p.precio_con_mejor_descuento && p.precio_con_mejor_descuento < p.precio_producto) ? p.precio_con_mejor_descuento : p.precio_producto;
+    return sum + (p.iva_line ?? (base * 0.19) ) * p.cantidad;
+  }, 0);
+
+  const total = serverTotal ?? ((serverSubtotal ?? localSubtotal) + (serverIva ?? localIva) + (serverEnvio ?? shippingCost));
 
   const cantidad = cart.products.reduce((acc, p) => acc + p.cantidad, 0);
   const shippingCost = 10000;
@@ -543,14 +556,28 @@ function Cart() {
                 </Box>
 
                 <Box sx={{ textAlign: 'center', minWidth: 100 }}>
-                  <Typography level="title-lg" fontWeight="bold" color={product.stock > 0 ? "#ff4d94" : "text.disabled"}>
-                    {formatCOP(
-                      (product.precio_con_mejor_descuento && product.precio_con_mejor_descuento < product.precio_producto
-                        ? product.precio_con_mejor_descuento
-                        : product.precio_producto
-                      ) * product.cantidad
-                    )}
-                  </Typography>
+                  {(() => {
+                    const base = product.precio_con_mejor_descuento && product.precio_con_mejor_descuento < product.precio_producto
+                      ? product.precio_con_mejor_descuento
+                      : product.precio_producto;
+                    // Prefer server-provided iva_line (total IVA for the line) to compute per-unit IVA
+                    const ivaPerUnit = product.iva_line ? (product.iva_line / Math.max(1, product.cantidad)) : (product.iva_amount ?? Math.round(base * 0.19 * 100) / 100);
+                    const precioConIvaUnit = (product.precio_con_iva !== undefined && product.precio_con_iva !== null) ? product.precio_con_iva : (base + ivaPerUnit);
+                    const totalConIva = precioConIvaUnit * product.cantidad;
+
+                    return (
+                      <div>
+                        <Typography level="title-lg" fontWeight="bold" color={product.stock > 0 ? "#ff4d94" : "text.disabled"}>
+                          {formatCOP(totalConIva)}
+                        </Typography>
+                        {product.precio_con_mejor_descuento && product.precio_con_mejor_descuento < product.precio_producto ? (
+                          <Typography level="body2" sx={{ textDecoration: 'line-through', color: product.stock > 0 ? 'text.secondary' : 'text.disabled', fontSize: '0.85rem' }}>
+                            {formatCOP((product.precio_producto_con_iva ?? (product.precio_producto * 1.19)) * product.cantidad)}
+                          </Typography>
+                        ) : null}
+                      </div>
+                    );
+                  })()}
                 </Box>
 
                 <IconButton
@@ -594,6 +621,7 @@ function Cart() {
         </Typography>
 
         <Stack spacing={2} sx={{ mb: 3 }}>
+          {/* Subtotal (sin IVA) */}
           <Box sx={{
             display: "flex",
             justifyContent: "space-between",
@@ -606,10 +634,28 @@ function Cart() {
               {t("cart.products")} ({cantidad})
             </Typography>
             <Typography level="body1" fontWeight="bold" color="#ff4d94">
-              {formatCOP(total)}
+              {formatCOP(serverSubtotal ?? localSubtotal)}
             </Typography>
           </Box>
 
+          {/* IVA */}
+          <Box sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: 'center',
+            p: 1.5,
+            borderRadius: 'md',
+            backgroundColor: 'transparent'
+          }}>
+            <Typography level="body1" fontWeight="medium">
+              IVA (19%)
+            </Typography>
+            <Typography level="body1" fontWeight="bold" color="#ff4d94">
+              {formatCOP(serverIva ?? localIva)}
+            </Typography>
+          </Box>
+
+          {/* Shipping */}
           <Box sx={{
             display: "flex",
             justifyContent: "space-between",
@@ -625,7 +671,7 @@ function Cart() {
               </Typography>
             </Box>
             <Typography level="body1" fontWeight="bold" color="#ff4d94">
-              {formatCOP(10000)}
+              {formatCOP(serverEnvio ?? shippingCost)}
             </Typography>
           </Box>
 
@@ -645,7 +691,7 @@ function Cart() {
               {t("cart.total")}
             </Typography>
             <Typography level="h4" fontWeight="bold" color="#ff4d94">
-              {formatCOP(total + 10000)}
+              {formatCOP(serverTotal ?? ((serverSubtotal ?? localSubtotal) + (serverIva ?? localIva) + (serverEnvio ?? shippingCost)))}
             </Typography>
           </Box>
         </Stack>

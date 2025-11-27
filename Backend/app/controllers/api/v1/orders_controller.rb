@@ -8,6 +8,44 @@ class Api::V1::OrdersController < Api::V1::BaseController
       return render json: { error: "Orden no encontrada" }, status: :not_found
     end
 
+    productos = order.order_details.map do |od|
+      product = od.product
+      precio_original = product.precio_producto
+      precio_con_descuento = od.precio_unitario
+      cantidad = od.cantidad.to_i
+
+      subtotal_line = (precio_con_descuento.to_f * cantidad)
+      iva_line = (product.iva_amount(precio_con_descuento).to_f * cantidad)
+      total_line = subtotal_line + iva_line
+
+      {
+        id: od.id,
+        product_id: product.id,
+        nombre_producto: product.nombre_producto,
+        slug: product.slug,
+        cantidad: cantidad,
+        precio_producto: precio_original.to_f,
+        precio_descuento: precio_con_descuento.to_f,
+        precio_unitario: precio_con_descuento.to_f,
+        precio_con_iva: product.precio_con_iva(precio_con_descuento).to_f,
+        imagen_url: product.imagen.attached? ? url_for(product.imagen) : nil,
+        tiene_descuento: precio_con_descuento < precio_original,
+        porcentaje_descuento: precio_con_descuento < precio_original ?
+          (((precio_original - precio_con_descuento) / precio_original) * 100).round : 0,
+        descuento: product.mejor_descuento_para_precio(precio_original)&.as_json(
+          only: [:id, :nombre, :tipo, :valor, :fecha_inicio, :fecha_fin]
+        ),
+        subtotal_line: subtotal_line,
+        iva_line: iva_line,
+        total_line: total_line
+      }
+    end
+
+    subtotal_sin_iva = productos.sum { |p| p[:subtotal_line].to_f }
+    iva_total = productos.sum { |p| p[:iva_line].to_f }
+    envio = order.costo_de_envio.to_f
+    total = subtotal_sin_iva + iva_total + envio
+
     render json: {
       id: order.id,
       numero_de_orden: order.numero_de_orden,
@@ -18,30 +56,11 @@ class Api::V1::OrdersController < Api::V1::BaseController
       tarjeta_tipo: order.tarjeta_tipo,
       tarjeta_ultimos4: order.tarjeta_ultimos4,
       payment_method: order.payment_method&.as_json(only: [:id, :nombre_metodo, :codigo]),
-      envio: order.costo_de_envio.to_f,
-      productos: order.order_details.map do |od|
-        product = od.product
-        precio_original = product.precio_producto
-        precio_con_descuento = od.precio_unitario
-
-        {
-          id: od.id,
-          product_id: product.id,
-          nombre_producto: product.nombre_producto,
-          slug: product.slug,
-          cantidad: od.cantidad,
-          precio_producto: precio_original.to_f,
-          precio_descuento: precio_con_descuento.to_f,
-          precio_unitario: precio_con_descuento.to_f,
-          imagen_url: product.imagen.attached? ? url_for(product.imagen) : nil,
-          tiene_descuento: precio_con_descuento < precio_original,
-          porcentaje_descuento: precio_con_descuento < precio_original ?
-            (((precio_original - precio_con_descuento) / precio_original) * 100).round : 0,
-          descuento: product.mejor_descuento_para_precio(precio_original)&.as_json(
-            only: [:id, :nombre, :tipo, :valor, :fecha_inicio, :fecha_fin]
-          )
-        }
-      end
+      envio: envio,
+      subtotal_sin_iva: subtotal_sin_iva,
+      iva_total: iva_total,
+      total: total,
+      productos: productos
     }
   end
 

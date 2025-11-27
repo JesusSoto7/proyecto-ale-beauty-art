@@ -176,14 +176,23 @@ export default function DetallePedido() {
   if (error) return <p className="text-red-500">{error}</p>;
   if (!pedido) return <p className="text-red-500">{t("orderDetail.notFound")}</p>;
 
-  const subTotal = (pedido.productos || []).reduce((acc, p) => {
+  // Prefer server-provided breakdowns if available
+  const subTotal = Number(pedido.subtotal_sin_iva ?? (pedido.productos || []).reduce((acc, p) => {
     const cantidad = Number(p.cantidad || 0);
     const precio = Number(p.precio_descuento || p.precio_unitario || p.precio_producto || 0);
     return acc + cantidad * precio;
-  }, 0);
+  }, 0));
 
-  const envio = Number(pedido.envio || 10000);
-  const total = subTotal + envio;
+  const ivaTotal = Number(pedido.iva_total ?? (pedido.productos || []).reduce((acc, p) => {
+    const cantidad = Number(p.cantidad || 0);
+    const ivaLine = Number(p.iva_line ?? 0);
+    if (ivaLine > 0) return acc + ivaLine;
+    const precio = Number(p.precio_descuento || p.precio_unitario || p.precio_producto || 0);
+    return acc + precio * 0.19 * cantidad;
+  }, 0));
+
+  const envio = Number(pedido.envio ?? pedido.costo_de_envio ?? 10000);
+  const total = Number(pedido.total ?? pedido.pago_total ?? (subTotal + ivaTotal + envio));
 
   const status = (pedido.status || "").toLowerCase();
   const isCancelled = status === "cancelada";
@@ -315,54 +324,48 @@ export default function DetallePedido() {
       <div className="pedido-products">
         <h3>{t("Productos adquiridos")}</h3>
         {(pedido.productos || []).map((p) => {
-          const cantidad = p.cantidad;
-          const precioOriginal = p.precio_producto;
-          const precioDescuento = p.precio_descuento || p.precio_unitario;
+          const cantidad = Number(p.cantidad || 0);
+          const precioOriginal = Number(p.precio_producto || 0);
+          const precioDescuento = Number(p.precio_descuento || p.precio_unitario || 0);
           const tieneDescuento = p.tiene_descuento || (precioDescuento < precioOriginal);
           const porcentajeDescuento = p.porcentaje_descuento;
 
-          const nombre =
-            p.nombre_producto ||
-            p.product?.nombre_producto ||
-            t("orderDetail.product");
+          const nombre = p.nombre_producto || p.product?.nombre_producto || t("orderDetail.product");
           const imagen = p.imagen_url || p.product?.imagen_url || noImage;
           const slug = p.slug || p.product?.slug;
 
+          // Prefer server-provided line totals (subtotal/iva/total), otherwise compute locally
+          const subtotalLine = Number(p.subtotal_line ?? (precioDescuento * cantidad));
+          const ivaLine = Number(p.iva_line ?? (precioDescuento * 0.19 * cantidad));
+          const totalLine = Number(p.total_line ?? (subtotalLine + ivaLine));
+
+          // Per-unit price with IVA
+          const precioConIvaUnit = p.precio_con_iva ?? (subtotalLine / Math.max(1, cantidad) + (ivaLine / Math.max(1, cantidad)));
+
           return (
-            <Link
-              key={p.id}
-              to={`/${lang || "es"}/producto/${slug}`}
-              className="pedido-item"
-            >
-              <img
-                src={imagen}
-                alt={nombre}
-                onError={(e) => (e.currentTarget.src = noImage)}
-              />
+            <Link key={p.id} to={`/${lang || "es"}/producto/${slug}`} className="pedido-item">
+              <img src={imagen} alt={nombre} onError={(e) => (e.currentTarget.src = noImage)} />
               <div className="pedido-item-info">
                 <span className="pedido-item-name">{nombre}</span>
-                <span>
-                  {t("orderDetail.quantity")}: {cantidad}
-                </span>
+                <span>{t("orderDetail.quantity")}: {cantidad}</span>
                 {tieneDescuento && porcentajeDescuento > 0 && (
-                  <span style={{ color: "#2563eb", fontWeight: 600, fontSize: "0.9em" }}>
-                    {porcentajeDescuento}% OFF
-                  </span>
+                  <span style={{ color: "#2563eb", fontWeight: 600, fontSize: "0.9em" }}>{porcentajeDescuento}% OFF</span>
                 )}
               </div>
               <div className="pedido-item-price">
-                {tieneDescuento ? (
-                  <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end" }}>
-                    <span style={{ color: "#dc2626", fontWeight: 700 }}>
-                      {formatCOP(precioDescuento * cantidad)}
-                    </span>
+                <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end" }}>
+                  <span style={{ color: "#dc2626", fontWeight: 700 }}>
+                    {formatCOP(totalLine)}
+                  </span>
+                  <span style={{ fontSize: '0.85em', color: '#666' }}>
+                    {formatCOP(precioConIvaUnit)} / unidad (incl. IVA)
+                  </span>
+                  {tieneDescuento && (
                     <span style={{ textDecoration: "line-through", color: "#64748b", fontSize: "0.85em" }}>
-                      {formatCOP(precioOriginal * cantidad)}
+                      {formatCOP((p.precio_producto_con_iva ?? (precioOriginal * 1.19)) * cantidad)}
                     </span>
-                  </div>
-                ) : (
-                  <span>{formatCOP(precioDescuento * cantidad)}</span>
-                )}
+                  )}
+                </div>
               </div>
             </Link>
           );
@@ -373,6 +376,10 @@ export default function DetallePedido() {
         <div className="pedido-summary-row">
           <span>{t("orderDetail.subtotal")}:</span>
           <strong>{formatCOP(subTotal)}</strong>
+        </div>
+        <div className="pedido-summary-row">
+          <span>IVA (19%):</span>
+          <strong>{formatCOP(ivaTotal)}</strong>
         </div>
         <div className="pedido-summary-row">
           <span>{t("orderDetail.shipping")}:</span>

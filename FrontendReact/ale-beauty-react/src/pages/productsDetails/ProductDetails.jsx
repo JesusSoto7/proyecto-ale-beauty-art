@@ -651,48 +651,37 @@ function ProductDetails() {
 
           <br></br>
 
-          {/* Precio con descuento */}
+          {/* Precio (mostrar precio con IVA como principal) */}
           <div style={{ marginBottom: "30px", textAlign: "left" }}>
-            {priceDiscount && priceDiscount < priceOriginal ? (
-              <>
-                <span style={{
-                  textDecoration: "line-through",
-                  color: "#999",
-                  marginLeft: "4px",
-                  fontSize: "18px",
-                  fontWeight: "400"
-                }}>
-                  {formatCOP(priceOriginal)}
-                </span>
-                <p className="price" style={{
-                  color: "#e91e63",
-                  fontWeight: "700",
-                  marginBottom: "4px",
-                  fontSize: "28px"
-                }}>
-                  {formatCOP(priceDiscount)}
+            {(() => {
+              const base = priceDiscount && priceDiscount < priceOriginal ? priceDiscount : priceOriginal;
+              const ivaPerUnit = (product.iva_amount !== undefined && product.iva_amount !== null) ? product.iva_amount : Math.round(base * 0.19 * 100) / 100;
+              const precioConIva = (product.precio_con_iva !== undefined && product.precio_con_iva !== null) ? product.precio_con_iva : (base + ivaPerUnit);
 
-                  {discount && discount.tipo === "porcentaje" && (
-                    <span style={{
-                      color: "#4caf50",
-                      fontWeight: 600,
-                      fontSize: "20px",
-                      marginTop: "0",
-                      padding: "4px 12px",
-                      display: "inline-block"
-                    }}>
-                      {discount.valor}%
+              return (
+                <>
+                  {priceDiscount && priceDiscount < priceOriginal ? (
+                    <span style={{ textDecoration: "line-through", color: "#999", marginLeft: "4px", fontSize: "18px", fontWeight: "400" }}>
+                      {formatCOP(product.precio_producto_con_iva ?? Math.round(priceOriginal * 1.19 * 100) / 100)}
                     </span>
-                  )}
-                </p>
-              </>
-            ) : (
-              <p className="price" style={{
-                fontSize: "28px",
-                fontWeight: "700",
-                color: "#333"
-              }}>{formatCOP(priceOriginal)}</p>
-            )}
+                  ) : null}
+
+                  <p className="price" style={{ color: "#e91e63", fontWeight: "700", marginBottom: "4px", fontSize: "28px" }}>
+                    {formatCOP(precioConIva)}
+                    {discount && discount.tipo === "porcentaje" && (
+                      <span style={{ color: "#4caf50", fontWeight: 600, fontSize: "20px", marginTop: "0", padding: "4px 12px", display: "inline-block" }}>
+                        {discount.valor}%
+                      </span>
+                    )}
+                  </p>
+
+                  <div style={{ fontSize: '16px', color: '#666' }}>
+                    <div>IVA (19%): <strong>{formatCOP(ivaPerUnit)}</strong></div>
+                    <div>Precio base (sin IVA): <strong>{formatCOP(base)}</strong></div>
+                  </div>
+                </>
+              );
+            })()}
           </div>
           <div className="actions" style={{
             display: "flex",
