@@ -48,45 +48,8 @@ class CartBloc extends Bloc<CartEvent, CartState> {
         final List<Map<String, dynamic>> products = (json['products'] as List)
             .map((item) => item as Map<String, dynamic>)
             .toList();
-        // Parse optional server-provided totals (nombres: subtotal_sin_iva, iva_total, envio, total_con_iva)
-        double? subtotalSinIva;
-        double? ivaTotal;
-        double? envio;
-        double? totalConIva;
-
-        try {
-          if (json.containsKey('subtotal_sin_iva')) {
-            subtotalSinIva = (json['subtotal_sin_iva'] is num)
-                ? (json['subtotal_sin_iva'] as num).toDouble()
-                : double.tryParse(json['subtotal_sin_iva'].toString());
-          }
-          if (json.containsKey('iva_total')) {
-            ivaTotal = (json['iva_total'] is num)
-                ? (json['iva_total'] as num).toDouble()
-                : double.tryParse(json['iva_total'].toString());
-          }
-          if (json.containsKey('envio')) {
-            envio = (json['envio'] is num)
-                ? (json['envio'] as num).toDouble()
-                : double.tryParse(json['envio'].toString());
-          }
-          if (json.containsKey('total_con_iva')) {
-            totalConIva = (json['total_con_iva'] is num)
-                ? (json['total_con_iva'] as num).toDouble()
-                : double.tryParse(json['total_con_iva'].toString());
-          }
-        } catch (_) {
-          // ignore parse errors and leave nulls
-        }
-
         emit(state.copyWith(
-            products: products,
-            isLoading: false,
-            cartId: cartId,
-            subtotalSinIva: subtotalSinIva,
-            ivaTotal: ivaTotal,
-            envio: envio,
-            totalConIva: totalConIva));
+            products: products, isLoading: false, cartId: cartId));
       } else {
         emit(
             state.copyWith(error: 'Error al cargar carrito', isLoading: false));

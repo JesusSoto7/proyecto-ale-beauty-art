@@ -194,18 +194,12 @@ class _OrderDetailPageViewState extends State<OrderDetailPageView> {
             final o = state.order;
             final numero = _text(o['numero_de_orden'] ?? o['id']);
             final status = _text(o['status']);
-            // Preferir los valores persistidos por el backend (autoridad legal)
-            final subtotalSinIvaServer = _parsePrice(o['subtotal_sin_iva']);
-            final ivaTotalServer = _parsePrice(o['iva_total']);
-            final envioRaw = o['envio'] ?? o['costo_de_envio'] ?? o['shipping_cost'];
-            final envio = _parsePrice(envioRaw);
-            // total_con_iva es la suma final que debe incluir IVA
-            final totalServer = _parsePrice(o['total'] ?? o['total_con_iva'] ?? o['total'] );
-
+            final totalRaw = o['pago_total'] ?? o['total'];
+            final total = _parsePrice(totalRaw);
             final fechaRaw = o['fecha_pago'] ??
-              o['paid_at'] ??
-              o['created_at'] ??
-              o['updated_at'];
+                o['paid_at'] ??
+                o['created_at'] ??
+                o['updated_at'];
             final fecha = _date(fechaRaw);
       final direccion = _text(
         o['direccion_envio'] ?? o['shipping_address'],
@@ -217,7 +211,7 @@ class _OrderDetailPageViewState extends State<OrderDetailPageView> {
             final productos = (o['productos'] as List?) ?? [];
 
             // 💰 Cálculo de precios con descuentos
-            double subtotalCalcSinIva = 0;
+            double subtotal = 0;
             double totalDescuentos = 0;
 
             for (final p in productos) {
@@ -225,34 +219,34 @@ class _OrderDetailPageViewState extends State<OrderDetailPageView> {
               final cantidad =
                   int.tryParse(mp['cantidad']?.toString() ?? '1') ?? 1;
 
-              // Precio unitario SIN IVA proporcionado por backend (fallback a precio_descuento)
-              final precioUnitarioSinIva = _parsePrice(
-                mp['precio_unitario'] ?? mp['precio_descuento'] ?? mp['precio_unitario_sin_iva'] ?? 0,
-              );
+              // 🔥 USAR LOS CAMPOS CORRECTOS DEL BACKEND
+              final precioOriginal =
+                  _parsePrice(mp['precio_producto']); // Precio original
+              final precioConDescuento =
+                  _parsePrice(mp['precio_descuento']); // Precio con descuento
 
-              // Precio unitario CON IVA: preferir campo persistido, sino calcular *1.19 (no lo necesitamos aquí)
-              // Precio original del producto (sin IVA)
-              final precioOriginalSinIva = _parsePrice(mp['precio_producto']);
+              subtotal += precioOriginal * cantidad;
 
-              subtotalCalcSinIva += precioUnitarioSinIva * cantidad;
-
-              // Calcular descuento si existe (comparando sin IVA)
-              if (precioUnitarioSinIva > 0 && precioOriginalSinIva > precioUnitarioSinIva) {
-                totalDescuentos += (precioOriginalSinIva - precioUnitarioSinIva) * cantidad;
+              // Calcular descuento si existe
+              if (precioConDescuento > 0 &&
+                  precioConDescuento < precioOriginal) {
+                totalDescuentos +=
+                    (precioOriginal - precioConDescuento) * cantidad;
               }
             }
 
-            final subtotalSinIva = subtotalSinIvaServer > 0 ? subtotalSinIvaServer : subtotalCalcSinIva;
-            final ivaTotal = ivaTotalServer > 0 ? ivaTotalServer : (subtotalSinIva * 0.19);
-            final totalCalculado = totalServer > 0 ? totalServer : (subtotalSinIva + ivaTotal + envio);
-            // Espacio inferior seguro para que el contenido no quede pegado a la barra de navegación
-            final bottomInset = MediaQuery.of(context).padding.bottom;
+            final envioRaw = o['envio'] ?? 10000;
+            final envio = _parsePrice(envioRaw);
+
+            final subtotalConDescuento = subtotal - totalDescuentos;
+            final totalCalculado =
+                (total > 0) ? total : (subtotalConDescuento + envio);
 
             return RefreshIndicator(
               color: const Color(0xFFD95D85),
               onRefresh: _refresh,
               child: ListView(
-                padding: EdgeInsets.fromLTRB(16, 16, 16, bottomInset + 20),
+                padding: const EdgeInsets.all(16),
                 children: [
                   // 🎯 Header con número de orden y estado
                   _StatusCard(
@@ -302,12 +296,8 @@ class _OrderDetailPageViewState extends State<OrderDetailPageView> {
                   const SizedBox(height: 16),
 
                   // 💰 Totales
-                  // Mostrar totales en el mismo orden que la vista de carrito:
-                  // Subtotal (original) -> Discounts -> Subtotal (without VAT) -> VAT -> Shipping -> Total
                   _TotalsCard(
-                    subtotalOriginal: subtotalSinIva + totalDescuentos,
-                    subtotalWithoutVat: subtotalSinIva,
-                    iva: ivaTotal,
+                    subtotal: subtotal,
                     descuentos: totalDescuentos,
                     envio: envio,
                     total: totalCalculado,
@@ -555,26 +545,20 @@ class _ProductsCard extends StatelessWidget {
           final descripcion = (mp['descripcion'] ?? mp['description'] ?? mp['product']?['descripcion'] ?? mp['product']?['description'])?.toString() ?? '';
           final cantidad = int.tryParse(mp['cantidad']?.toString() ?? '1') ?? 1;
 
-            // 💰 USAR LOS CAMPOS CORRECTOS
-            final precioOriginalSinIva = parsePrice(mp['precio_producto']); // Precio original sin IVA
-            final precioConDescuentoSinIva = parsePrice(mp['precio_descuento']); // Precio con descuento sin IVA
+          // 💰 USAR LOS CAMPOS CORRECTOS
+          final precioOriginal =
+              parsePrice(mp['precio_producto']); // Precio original
+          final precioConDescuento =
+              parsePrice(mp['precio_descuento']); // Precio con descuento
 
-            // Precio unitario sin IVA que backend entregó (fallback a precio_descuento)
-            final precioUnitarioSinIva = parsePrice(
-              mp['precio_unitario'] ?? mp['precio_descuento'] ?? mp['precio_unitario_sin_iva'] ?? precioConDescuentoSinIva);
-
-            // Precio unitario con IVA preferido (campo persistido), sino calculamos
-            final precioUnitarioConIva = parsePrice(
-              mp['precio_con_iva'] ?? mp['precio_unitario_con_iva'] ?? (precioUnitarioSinIva * 1.19));
-
-            final tieneDescuento =
-              precioUnitarioSinIva > 0 && precioConDescuentoSinIva > 0 && precioUnitarioSinIva < precioOriginalSinIva;
+          final tieneDescuento =
+              precioConDescuento > 0 && precioConDescuento < precioOriginal;
 
           // Calcular porcentaje de descuento
           int porcentajeDescuento = 0;
-          if (tieneDescuento && precioOriginalSinIva > 0) {
+          if (tieneDescuento && precioOriginal > 0) {
             porcentajeDescuento =
-                (((precioOriginalSinIva - precioConDescuentoSinIva) / precioOriginalSinIva) * 100)
+                (((precioOriginal - precioConDescuento) / precioOriginal) * 100)
                     .round();
           }
 
@@ -606,9 +590,9 @@ class _ProductsCard extends StatelessWidget {
                       product = Product(
                         id: productId,
                         nombreProducto: rawProd['nombre_producto'] ?? nombre,
-                          precioProducto:
-                (rawProd['precio_producto'] ?? precioOriginalSinIva)
-                  .round(),
+                        precioProducto:
+                            (rawProd['precio_producto'] ?? precioOriginal)
+                                .round(),
                         descripcion: rawProd['descripcion']?.toString() ?? '',
                         subCategoryId:
                             (rawProd['sub_category']?['id'] ?? 0) as int,
@@ -772,9 +756,9 @@ class _ProductsCard extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
                         if (tieneDescuento) ...[
-                          // Precio original tachado (mostrar con IVA incluido)
+                          // Precio original tachado
                           Text(
-                            formatPriceCOP((precioOriginalSinIva * 1.19).toInt()),
+                            formatPriceCOP(precioOriginal.toInt()),
                             style: TextStyle(
                               fontSize: 11,
                               color: Colors.grey[500],
@@ -785,9 +769,9 @@ class _ProductsCard extends StatelessWidget {
                           ),
                           const SizedBox(height: 2),
                         ],
-                        // Precio final pagado (mostrar con IVA incluido)
+                        // Precio final pagado
                         Text(
-                          formatPriceCOP(precioUnitarioConIva.toInt()),
+                          formatPriceCOP(precioConDescuento.toInt()),
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
@@ -819,19 +803,13 @@ class _ProductsCard extends StatelessWidget {
 
 /// 💰 Card de totales
 class _TotalsCard extends StatelessWidget {
-  // Subtotal original (before discounts), expressed without VAT
-  final double subtotalOriginal;
-  // Subtotal after discounts, without VAT
-  final double subtotalWithoutVat;
-  final double iva;
+  final double subtotal;
   final double descuentos;
   final double envio;
   final double total;
 
   const _TotalsCard({
-    required this.subtotalOriginal,
-    required this.subtotalWithoutVat,
-    required this.iva,
+    required this.subtotal,
     required this.descuentos,
     required this.envio,
     required this.total,
@@ -843,47 +821,24 @@ class _TotalsCard extends StatelessWidget {
       title: 'orders.detail.summary_title'.tr(),
       child: Column(
         children: [
-          // 1) Subtotal original (before discounts)
           _TotalRow(
             label: 'orders.detail.subtotal'.tr(),
-            value: formatPriceCOP(subtotalOriginal.toInt()),
+            value: formatPriceCOP(subtotal.toInt()),
           ),
-          const SizedBox(height: 12),
-
-          // 2) Discounts (if any)
           if (descuentos > 0) ...[
+            const SizedBox(height: 12),
             _TotalRow(
               label: 'orders.detail.discounts'.tr(),
               value: '-${formatPriceCOP(descuentos.toInt())}',
               isDiscount: true,
             ),
-            const SizedBox(height: 12),
           ],
-
-          // 3) Subtotal without VAT (after discounts)
-          _TotalRow(
-            label: 'cart.subtotal_without_vat'.tr(),
-            value: formatPriceCOP(subtotalWithoutVat.toInt()),
-          ),
           const SizedBox(height: 12),
-
-          // 4) IVA (usar mismo título y color que en el carrito)
-          _TotalRow(
-            label: 'cart.vat'.tr(),
-            value: formatPriceCOP(iva.toInt()),
-            isDiscount: true,
-          ),
-          const SizedBox(height: 12),
-
-          // 5) Shipping (usar color rosado igual que descuentos)
           _TotalRow(
             label: 'orders.detail.shipping'.tr(),
             value: formatPriceCOP(envio.toInt()),
-            isDiscount: true,
           ),
           const SizedBox(height: 16),
-
-          // 6) Total paid
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(

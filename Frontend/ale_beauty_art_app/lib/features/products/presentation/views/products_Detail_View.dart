@@ -517,8 +517,7 @@ class _ProductDetailViewState extends State<ProductDetailView> {
                               mainAxisSize: MainAxisSize.min,
                               children: [
                                 Text(
-                                  // Precio original con IVA incluido
-                                  formatPriceCOP((product.precioProducto * 1.19).round()),
+                                  formatPriceCOP(product.precioProducto),
                                   style: TextStyle(
                                     color: Colors.grey[500],
                                     fontSize: 13,
@@ -540,8 +539,7 @@ class _ProductDetailViewState extends State<ProductDetailView> {
                           const SizedBox(height: 4),
 
                           Text(
-                            // Mostrar precio con IVA incluido (aplica descuento si existe)
-                            formatPriceCOP(((product.precioConMejorDescuento ?? product.precioProducto) * 1.19).round()),
+                            formatPriceCOP(product.precioConMejorDescuento ?? product.precioProducto),
                             style: const TextStyle(
                               fontSize: 20,
                               fontWeight: FontWeight.w800,
@@ -1080,16 +1078,12 @@ class _ProductDetailViewState extends State<ProductDetailView> {
 
                   if (selectedAddressId == null) return; // cancelado
 
-                    // 2) Calcular total SOLO para este producto (con descuento si aplica) + envío
-                    final double unitPriceSinIva =
+                  // 2) Calcular total SOLO para este producto (con descuento si aplica) + envío
+                  final double unitPrice =
                       (product.precioConMejorDescuento ?? product.precioProducto)
-                        .toDouble();
-                    // Preferir campo provisto por el backend (precio_unitario_con_iva) si existe
-                    final double unitPriceConIva = product.precioUnitarioConIva != null
-                      ? product.precioUnitarioConIva!.toDouble()
-                      : (unitPriceSinIva * 1.19);
-                    const double shippingCost = 10000;
-                    final double total = unitPriceConIva + shippingCost;
+                          .toDouble();
+                  const double shippingCost = 10000;
+                  final double total = unitPrice + shippingCost;
 
                   // 3) Ir a CheckoutPage pasando una lista con un solo producto
                   final oneItemProducts = [

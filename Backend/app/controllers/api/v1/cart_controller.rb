@@ -73,10 +73,6 @@ module Api
             precio_con_mejor_descuento: precio_con_descuento,
             mejor_descuento_para_precio: mejor_descuento,
             precio_con_descuento: precio_con_descuento,
-            # precio_con_descuento is the unit price WITHOUT IVA
-            precio_unitario_sin_iva: precio_con_descuento.to_f,
-            iva_por_unidad: product.iva_amount(precio_con_descuento).to_f,
-            precio_unitario_con_iva: product.precio_con_iva(precio_con_descuento).to_f,
             precio_con_iva: product.precio_con_iva(precio_con_descuento).to_f,
             tiene_descuento: mejor_descuento.present? && precio_con_descuento < product.precio_producto,
             porcentaje_descuento: if mejor_descuento.present?
@@ -85,8 +81,7 @@ module Api
               0
             end,
             subtotal_line: subtotal_line,
-            iva_line: iva_line,
-            total_line_con_iva: (subtotal_line + iva_line).to_f
+            iva_line: iva_line
           }
         end
 
@@ -101,8 +96,7 @@ module Api
           subtotal_sin_iva: subtotal_sin_iva,
           iva_total: iva_total,
           envio: envio,
-          total: total,
-          total_con_iva: total
+          total: total
         }
       end
     end

@@ -89,31 +89,12 @@ class _CartPageViewState extends State<CartPageView> {
             return const LoadingView();
           }
 
-          // Si no hay productos en el carrito mostramos la vista vacía
-          if (state.products.isEmpty) {
+          if ((state.token == null || state.token!.isEmpty) &&
+              state.products.isEmpty) {
             return Center(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 24),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(Icons.shopping_bag_outlined,
-                        size: 64, color: Colors.grey.shade400),
-                    const SizedBox(height: 12),
-                    Text(
-                      'cart.empty'.tr(),
-                      textAlign: TextAlign.center,
-                      style: const TextStyle(
-                          fontSize: 16, color: Colors.black54),
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      'cart.add_first_product'.tr(),
-                      textAlign: TextAlign.center,
-                      style: TextStyle(fontSize: 14, color: Colors.black45),
-                    ),
-                  ],
-                ),
+              child: Text(
+                'cart.empty'.tr(),
+                style: const TextStyle(fontSize: 16, color: Colors.black54),
               ),
             );
           }
@@ -133,13 +114,8 @@ class _CartPageViewState extends State<CartPageView> {
           }
 
           final subtotalConDescuento = subtotal - totalDescuentos;
-          const double fallbackShippingCost = 10000;
-
-          // Prefer server-provided totals when available (authoritative)
-          final double displaySubtotalSinIva = state.subtotalSinIva ?? subtotalConDescuento;
-          final double displayIva = state.ivaTotal ?? (displaySubtotalSinIva * 0.19);
-          final double displayEnvio = state.envio ?? fallbackShippingCost;
-          final double displayTotal = state.totalConIva ?? (displaySubtotalSinIva + displayIva + displayEnvio);
+          const double shippingCost = 10000;
+          final total = subtotalConDescuento + shippingCost;
           final token = state.token ?? '';
           // Añadir espacio inferior seguro para que el botón no quede pegado
           // a la barra de navegación del sistema.
@@ -161,16 +137,9 @@ class _CartPageViewState extends State<CartPageView> {
 
                     // 🔥 CORREGIDO: Usar _parsePrice en lugar de .toDouble()
                     final precioOriginal =
-                      _parsePrice(product['precio_producto']);
+                        _parsePrice(product['precio_producto']);
                     final precioConDescuento =
-                      _parsePrice(product['precio_con_descuento']);
-                    // Mostrar precios con IVA incluido (preferir campos provistos por el backend)
-                    final displayPrecioOriginalConIva = product.containsKey('precio_unitario_con_iva')
-                      ? _parsePrice(product['precio_unitario_con_iva'])
-                      : (precioOriginal * 1.19);
-                    final displayPrecioConDescuentoConIva = product.containsKey('precio_unitario_con_iva')
-                      ? _parsePrice(product['precio_unitario_con_iva'])
-                      : (precioConDescuento * 1.19);
+                        _parsePrice(product['precio_con_descuento']);
                     final tieneDescuento = product['tiene_descuento'] == true ||
                         precioConDescuento < precioOriginal;
 
@@ -387,8 +356,8 @@ class _CartPageViewState extends State<CartPageView> {
                                         children: [
                                           // Precio original tachado
                                           Text(
-                                            // Precio original con IVA
-                                            formatPriceCOP(displayPrecioOriginalConIva.toInt()),
+                                            formatPriceCOP(
+                                                precioOriginal.toInt()),
                                             style: TextStyle(
                                               fontSize: 12,
                                               color: Colors.grey[500],
@@ -401,8 +370,8 @@ class _CartPageViewState extends State<CartPageView> {
                                           const SizedBox(height: 2),
                                           // Precio con descuento
                                           Text(
-                                            // Precio con descuento (IVA incluido)
-                                            formatPriceCOP(displayPrecioConDescuentoConIva.toInt()),
+                                            formatPriceCOP(
+                                                precioConDescuento.toInt()),
                                             style: const TextStyle(
                                               fontSize: 16,
                                               fontWeight: FontWeight.bold,
@@ -413,8 +382,7 @@ class _CartPageViewState extends State<CartPageView> {
                                       )
                                     else
                                       Text(
-                                        // Precio sin descuento (IVA incluido)
-                                        formatPriceCOP(displayPrecioOriginalConIva.toInt()),
+                                        formatPriceCOP(precioOriginal.toInt()),
                                         style: const TextStyle(
                                           fontSize: 16,
                                           fontWeight: FontWeight.bold,
@@ -558,15 +526,11 @@ class _CartPageViewState extends State<CartPageView> {
                   children: [
                     _priceRow('cart.subtotal'.tr(), subtotal),
                     if (totalDescuentos > 0)
-                    _priceRow('cart.discounts'.tr(), -totalDescuentos,
-                        isDiscount: true),
-                    // Mostrar desglose preferentemente con valores del servidor
-                    _priceRow('cart.subtotal_without_vat'.tr(), displaySubtotalSinIva),
-                    _priceRow('cart.vat'.tr(), displayIva, isDiscount: true),
-
-                    _priceRow('cart.shipping_cost'.tr(), displayEnvio, isDiscount: true),
+                      _priceRow('cart.discounts'.tr(), -totalDescuentos,
+                          isDiscount: true),
+                    _priceRow('cart.shipping_cost'.tr(), shippingCost),
                     const Divider(height: 20),
-                    _priceRow('cart.total'.tr(), displayTotal, isBold: true),
+                    _priceRow('cart.total'.tr(), total, isBold: true),
                     const SizedBox(height: 18),
 
                     // 🛒 Botón de compra
@@ -600,7 +564,7 @@ class _CartPageViewState extends State<CartPageView> {
                               MaterialPageRoute(
                                 builder: (_) => CheckoutPage(
                                   cartProducts: state.products,
-                                  cartTotal: displayTotal,
+                                  cartTotal: total,
                                   token: token,
                                   selectedAddressId: selectedAddressId,
                                   restoreCartAfterPayment: false,

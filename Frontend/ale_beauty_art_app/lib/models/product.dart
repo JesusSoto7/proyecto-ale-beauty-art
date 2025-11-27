@@ -21,11 +21,6 @@ class Product extends Equatable {
   final Discount? discount;
   final Discount? mejorDescuentoParaPrecio;
   final double? precioConMejorDescuento;
-  // IVA related fields (optional, supplied by cart endpoints)
-  final double? precioUnitarioSinIva;
-  final double? ivaPorUnidad;
-  final double? precioUnitarioConIva;
-  final double? totalLineConIva;
 
   const Product({
     required this.id,
@@ -45,10 +40,6 @@ class Product extends Equatable {
     this.discount,
     this.mejorDescuentoParaPrecio,
     this.precioConMejorDescuento,
-    this.precioUnitarioSinIva,
-    this.ivaPorUnidad,
-    this.precioUnitarioConIva,
-    this.totalLineConIva,
   });
 
   factory Product.fromJson(Map<String, dynamic> json) {
@@ -95,27 +86,6 @@ class Product extends Equatable {
             ? int.tryParse(json['reviews_count'])
             : (json['reviews_count'] as num?)?.toInt())
           : null,
-          // IVA fields (opcionales)
-          precioUnitarioSinIva: json['precio_unitario_sin_iva'] != null
-            ? (json['precio_unitario_sin_iva'] is String
-              ? double.tryParse(json['precio_unitario_sin_iva'])
-              : (json['precio_unitario_sin_iva'] as num?)?.toDouble())
-            : null,
-          ivaPorUnidad: json['iva_por_unidad'] != null
-            ? (json['iva_por_unidad'] is String
-              ? double.tryParse(json['iva_por_unidad'])
-              : (json['iva_por_unidad'] as num?)?.toDouble())
-            : null,
-          precioUnitarioConIva: json['precio_unitario_con_iva'] != null
-            ? (json['precio_unitario_con_iva'] is String
-              ? double.tryParse(json['precio_unitario_con_iva'])
-              : (json['precio_unitario_con_iva'] as num?)?.toDouble())
-            : null,
-          totalLineConIva: json['total_line_con_iva'] != null
-            ? (json['total_line_con_iva'] is String
-              ? double.tryParse(json['total_line_con_iva'])
-              : (json['total_line_con_iva'] as num?)?.toDouble())
-            : null,
     );
   }
 
@@ -138,12 +108,6 @@ class Product extends Equatable {
           'mejor_descuento_para_precio': mejorDescuentoParaPrecio!.toJson(),
         if (precioConMejorDescuento != null)
           'precio_con_mejor_descuento': precioConMejorDescuento,
-        if (precioUnitarioSinIva != null)
-          'precio_unitario_sin_iva': precioUnitarioSinIva,
-        if (ivaPorUnidad != null) 'iva_por_unidad': ivaPorUnidad,
-        if (precioUnitarioConIva != null)
-          'precio_unitario_con_iva': precioUnitarioConIva,
-        if (totalLineConIva != null) 'total_line_con_iva': totalLineConIva,
         if (averageRating != null) 'average_rating': averageRating,
         if (reviewsCount != null) 'reviews_count': reviewsCount,
       };
@@ -180,9 +144,5 @@ class Product extends Equatable {
         discount,
         mejorDescuentoParaPrecio,
         precioConMejorDescuento,
-        precioUnitarioSinIva,
-        ivaPorUnidad,
-        precioUnitarioConIva,
-        totalLineConIva,
       ];
 }

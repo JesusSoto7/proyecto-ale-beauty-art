@@ -194,28 +194,11 @@ class _PaymentPageState extends State<PaymentPage> {
       }
 
       if (!mounted) return;
-      // Prefer the processor/backend confirmed transaction amount when available
-      double resolvedPaidAmount = widget.amount;
-      try {
-        if (payment is Map<String, dynamic>) {
-          // MercadoPago usually returns 'transaction_amount'
-          final ta = payment['transaction_amount'] ?? payment['transaction_amount_settled'] ?? payment['amount'];
-          if (ta != null) {
-            resolvedPaidAmount = (ta is num) ? ta.toDouble() : double.tryParse(ta.toString()) ?? resolvedPaidAmount;
-          } else if (response['transaction_amount'] != null) {
-            final ra = response['transaction_amount'];
-            resolvedPaidAmount = (ra is num) ? ra.toDouble() : double.tryParse(ra.toString()) ?? resolvedPaidAmount;
-          }
-        }
-      } catch (_) {
-        // ignore and fallback to widget.amount
-      }
-
       await Navigator.push(
         context,
         MaterialPageRoute(
           builder: (_) => PaymentSuccessPage(
-            amount: resolvedPaidAmount,
+            amount: widget.amount,
             paymentId: paymentId,
             status: status,
             paymentMethodId: resolvedPaymentMethodId,
