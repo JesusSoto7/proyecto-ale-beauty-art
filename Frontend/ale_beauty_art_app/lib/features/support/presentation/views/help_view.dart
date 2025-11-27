@@ -30,6 +30,10 @@ class _HelpViewState extends State<HelpView> {
   List<Map<String, dynamic>> _orders = [];
   int? _selectedOrderId;
   bool _submitting = false;
+  // Scroll and focus helpers for automatic scrolling when keyboard opens
+  final ScrollController _scrollController = ScrollController();
+  final FocusNode _messageFocus = FocusNode();
+  final GlobalKey _messageFieldKey = GlobalKey();
 
   @override
   void initState() {
@@ -49,6 +53,12 @@ class _HelpViewState extends State<HelpView> {
     _messageCtrl.addListener(() {
       if (mounted) setState(() {});
     });
+    // When message field gets focus, ensure it's visible inside the scroll view
+    _messageFocus.addListener(() {
+      if (_messageFocus.hasFocus) {
+        WidgetsBinding.instance.addPostFrameCallback((_) => _ensureMessageVisible());
+      }
+    });
   }
 
   @override
@@ -58,7 +68,21 @@ class _HelpViewState extends State<HelpView> {
     _emailCtrl.dispose();
     _subjectCtrl.dispose();
     _messageCtrl.dispose();
+    _messageFocus.dispose();
+    _scrollController.dispose();
     super.dispose();
+  }
+
+  void _ensureMessageVisible() {
+    if (!mounted) return;
+    final ctx = _messageFieldKey.currentContext;
+    if (ctx != null) {
+      Scrollable.ensureVisible(ctx, duration: const Duration(milliseconds: 280), curve: Curves.easeInOut, alignment: 0.1);
+    } else {
+      try {
+        _scrollController.animateTo(_scrollController.position.maxScrollExtent, duration: const Duration(milliseconds: 280), curve: Curves.easeInOut);
+      } catch (_) {}
+    }
   }
 
   Future<void> _fetchOrders() async {
@@ -174,140 +198,153 @@ class _HelpViewState extends State<HelpView> {
             ),
             child: Padding(
               padding: const EdgeInsets.fromLTRB(20, 24, 20, 20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('support.need_help'.tr(), style: AppTextStyles.title.copyWith(fontSize: 20)),
-                  const SizedBox(height: 12),
-                  Text('support.help_description'.tr(), style: const TextStyle(fontSize: 14, color: Colors.black87)),
-                  const SizedBox(height: 12),
+              child: SingleChildScrollView(
+                controller: _scrollController,
+                physics: const AlwaysScrollableScrollPhysics(),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('support.need_help'.tr(), style: AppTextStyles.title.copyWith(fontSize: 20)),
+                    const SizedBox(height: 12),
+                    Text('support.help_description'.tr(), style: const TextStyle(fontSize: 14, color: Colors.black87)),
+                    const SizedBox(height: 12),
 
-                  // Contact details block
-                  Card(
-                    elevation: 0,
-                    color: const Color(0xFFF7F7F7),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 14),
+                    // Contact details block
+                    Card(
+                      elevation: 0,
+                      color: const Color(0xFFF7F7F7),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 14),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                Icon(Icons.email_outlined, size: 18, color: Colors.black54),
+                                const SizedBox(width: 8),
+                                Text('support.contact_email'.tr(), style: const TextStyle(fontWeight: FontWeight.w600)),
+                              ],
+                            ),
+                            const SizedBox(height: 4),
+                            Text('support.contact_email_desc'.tr(), style: const TextStyle(color: Colors.black87)),
+                            const SizedBox(height: 12),
+                            Row(
+                              children: [
+                                Icon(Icons.phone_outlined, size: 18, color: Colors.black54),
+                                const SizedBox(width: 8),
+                                Text('support.contact_phone'.tr(), style: const TextStyle(fontWeight: FontWeight.w600)),
+                              ],
+                            ),
+                            const SizedBox(height: 4),
+                            Text('support.contact_phone_desc'.tr(), style: const TextStyle(color: Colors.black87)),
+                            const SizedBox(height: 12),
+                            Row(
+                              children: [
+                                Icon(Icons.location_on_outlined, size: 18, color: Colors.black54),
+                                const SizedBox(width: 8),
+                                Text('support.address'.tr(), style: const TextStyle(fontWeight: FontWeight.w600)),
+                              ],
+                            ),
+                            const SizedBox(height: 4),
+                            Text('support.address_desc'.tr(), style: const TextStyle(color: Colors.black87)),
+                          ],
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+
+                    Form(
+                      key: _formKey,
                       child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Row(
-                            children: [
-                              Icon(Icons.email_outlined, size: 18, color: Colors.black54),
-                              const SizedBox(width: 8),
-                              Text('support.contact_email'.tr(), style: const TextStyle(fontWeight: FontWeight.w600)),
-                            ],
-                          ),
-                          const SizedBox(height: 4),
-                          Text('support.contact_email_desc'.tr(), style: const TextStyle(color: Colors.black87)),
-                          const SizedBox(height: 12),
-                          Row(
-                            children: [
-                              Icon(Icons.phone_outlined, size: 18, color: Colors.black54),
-                              const SizedBox(width: 8),
-                              Text('support.contact_phone'.tr(), style: const TextStyle(fontWeight: FontWeight.w600)),
-                            ],
-                          ),
-                          const SizedBox(height: 4),
-                          Text('support.contact_phone_desc'.tr(), style: const TextStyle(color: Colors.black87)),
-                          const SizedBox(height: 12),
-                          Row(
-                            children: [
-                              Icon(Icons.location_on_outlined, size: 18, color: Colors.black54),
-                              const SizedBox(width: 8),
-                              Text('support.address'.tr(), style: const TextStyle(fontWeight: FontWeight.w600)),
-                            ],
-                          ),
-                          const SizedBox(height: 4),
-                          Text('support.address_desc'.tr(), style: const TextStyle(color: Colors.black87)),
+                          // Selector de orden (si existe)
+                          if (_loadingOrders)
+                            const Center(child: Padding(padding: EdgeInsets.symmetric(vertical: 8), child: LoadingIndicator()))
+                          else if (_orders.isNotEmpty) ...[
+                            Container(
+                              decoration: BoxDecoration(
+                                color: const Color(0xFFF9F7FA),
+                                borderRadius: BorderRadius.circular(12),
+                                border: Border.all(color: const Color(0xFFEDE7F0)),
+                              ),
+                              padding: const EdgeInsets.symmetric(horizontal: 12),
+                              child: DropdownButtonFormField<int>(
+                                value: _selectedOrderId,
+                                items: _orders.map((o) => DropdownMenuItem<int>(value: o['id'] as int, child: Text(o['numero_de_orden'].toString()))).toList(),
+                                onChanged: (v) {
+                                  setState(() => _selectedOrderId = v);
+                                  if (v != null) {
+                                    // After selecting an order, focus the message field so keyboard opens and we auto-scroll
+                                    Future.delayed(const Duration(milliseconds: 240), () {
+                                      if (mounted) _messageFocus.requestFocus();
+                                    });
+                                  }
+                                },
+                                decoration: InputDecoration(
+                                  labelText: 'support.select_order'.tr(),
+                                  border: InputBorder.none,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: 10),
+                          ] else ...[
+                            Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 8.0),
+                              child: Text('support.select_order_required'.tr(), style: const TextStyle(color: Colors.black54)),
+                            ),
+                          ],
+
+                          // Mostrar campo de mensaje y botón SOLO cuando se haya seleccionado una orden
+                          if (_selectedOrderId != null) ...[
+                            TextFormField(
+                              key: _messageFieldKey,
+                              focusNode: _messageFocus,
+                              controller: _messageCtrl,
+                              decoration: InputDecoration(
+                                labelText: 'support.help'.tr(),
+                                hintText: 'support.message_required'.tr(),
+                                filled: true,
+                                fillColor: const Color(0xFFF9F9FB),
+                                enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: Colors.transparent)),
+                                focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: AppColors.primaryPink)),
+                                contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+                              ),
+                              maxLines: 6,
+                              validator: (v) => (v == null || v.trim().isEmpty) ? 'support.message_required'.tr() : null,
+                            ),
+                            const SizedBox(height: 12),
+                            SizedBox(
+                              width: double.infinity,
+                              child: ElevatedButton(
+                                onPressed: (_submitting || _messageCtrl.text.trim().isEmpty) ? null : _sendMessage,
+                                child: _submitting ? const LoadingIndicator(size: 18, color: Colors.white) : Text('support.send'.tr(), style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: AppColors.primaryPink,
+                                  padding: const EdgeInsets.symmetric(vertical: 14),
+                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                                ),
+                              ),
+                            ),
+                          ],
                         ],
                       ),
                     ),
-                  ),
-                  const SizedBox(height: 16),
 
-                  Form(
-                    key: _formKey,
-                    child: Column(
-                      children: [
-                        // Selector de orden (si existe)
-                        if (_loadingOrders)
-                          const Center(child: Padding(padding: EdgeInsets.symmetric(vertical: 8), child: LoadingIndicator()))
-                        else if (_orders.isNotEmpty) ...[
-                          Container(
-                            decoration: BoxDecoration(
-                              color: const Color(0xFFF9F7FA),
-                              borderRadius: BorderRadius.circular(12),
-                              border: Border.all(color: const Color(0xFFEDE7F0)),
-                            ),
-                            padding: const EdgeInsets.symmetric(horizontal: 12),
-                            child: DropdownButtonFormField<int>(
-                              value: _selectedOrderId,
-                              items: _orders.map((o) => DropdownMenuItem<int>(value: o['id'] as int, child: Text(o['numero_de_orden'].toString()))).toList(),
-                              onChanged: (v) => setState(() => _selectedOrderId = v),
-                              decoration: InputDecoration(
-                                labelText: 'support.select_order'.tr(),
-                                border: InputBorder.none,
-                              ),
-                            ),
-                          ),
-                          const SizedBox(height: 10),
-                        ] else ...[
-                          Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 8.0),
-                            child: Text('support.select_order_required'.tr(), style: const TextStyle(color: Colors.black54)),
-                          ),
-                        ],
-
-                        // Mostrar campo de mensaje y botón SOLO cuando se haya seleccionado una orden
-                        if (_selectedOrderId != null) ...[
-                          TextFormField(
-                            controller: _messageCtrl,
-                            decoration: InputDecoration(
-                              labelText: 'support.help'.tr(),
-                              hintText: 'support.message_required'.tr(),
-                              filled: true,
-                              fillColor: const Color(0xFFF9F9FB),
-                              enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: Colors.transparent)),
-                              focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: AppColors.primaryPink)),
-                              contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-                            ),
-                            maxLines: 6,
-                            validator: (v) => (v == null || v.trim().isEmpty) ? 'support.message_required'.tr() : null,
-                          ),
-                          const SizedBox(height: 12),
-                          SizedBox(
-                            width: double.infinity,
-                            child: ElevatedButton(
-                              onPressed: (_submitting || _messageCtrl.text.trim().isEmpty) ? null : _sendMessage,
-                              child: _submitting ? const LoadingIndicator(size: 18, color: Colors.white) : Text('support.send'.tr(), style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: AppColors.primaryPink,
-                                padding: const EdgeInsets.symmetric(vertical: 14),
-                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ],
-                    ),
-                  ),
-
-                  const SizedBox(height: 12),
-                  Text('support.faq'.tr(), style: AppTextStyles.title.copyWith(fontSize: 16)),
-                  const SizedBox(height: 8),
-                  Expanded(
-                    child: ListView(
-                      padding: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom + 4),
+                    const SizedBox(height: 12),
+                    Text('support.faq'.tr(), style: AppTextStyles.title.copyWith(fontSize: 16)),
+                    const SizedBox(height: 8),
+                      ListView(
+                        padding: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom + 58),
+                        shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
                       children: [
                         ListTile(title: Text('support.faq_q1'.tr()), subtitle: Text('support.faq_a1'.tr())),
                         ListTile(title: Text('support.faq_q2'.tr()), subtitle: Text('support.faq_a2'.tr())),
                       ],
                     ),
-                  ),
-                  const SizedBox(height: 24),
-                ],
+                  ],
+                ),
               ),
             ),
           ),
