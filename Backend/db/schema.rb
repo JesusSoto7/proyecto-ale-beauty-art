@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_11_22_230516) do
+ActiveRecord::Schema[8.0].define(version: 2025_11_27_123000) do
   create_table "active_storage_attachments", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
@@ -126,6 +126,10 @@ ActiveRecord::Schema[8.0].define(version: 2025_11_22_230516) do
     t.decimal "subtotal", precision: 10, scale: 2, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.decimal "precio_unitario_sin_iva", precision: 12, scale: 2, default: "0.0", null: false
+    t.decimal "iva_por_unidad", precision: 12, scale: 2, default: "0.0", null: false
+    t.decimal "precio_unitario_con_iva", precision: 12, scale: 2, default: "0.0", null: false
+    t.decimal "total_line_con_iva", precision: 12, scale: 2, default: "0.0", null: false
     t.index ["order_id"], name: "index_order_details_on_order_id"
     t.index ["product_id"], name: "index_order_details_on_product_id"
   end
@@ -145,6 +149,9 @@ ActiveRecord::Schema[8.0].define(version: 2025_11_22_230516) do
     t.string "card_type"
     t.string "card_last4"
     t.string "payment_id"
+    t.decimal "subtotal_sin_iva", precision: 12, scale: 2, default: "0.0", null: false
+    t.decimal "iva_total", precision: 12, scale: 2, default: "0.0", null: false
+    t.decimal "total_con_iva", precision: 12, scale: 2, default: "0.0", null: false
     t.index ["numero_de_orden"], name: "index_orders_on_numero_de_orden", unique: true
     t.index ["payment_id"], name: "index_orders_on_payment_id", unique: true
     t.index ["payment_method_id"], name: "index_orders_on_payment_method_id"

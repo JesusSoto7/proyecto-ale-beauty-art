@@ -1,5 +1,6 @@
 class Order < ApplicationRecord
   after_update :reducir_stock_si_pagada
+  before_save :calcular_totales
   
   enum :status, {
     pendiente: 0,
@@ -71,5 +72,16 @@ class Order < ApplicationRecord
         Rails.logger.warn "Stock insuficiente para producto: #{product.nombre_producto} (ID: #{product.id})"
       end
     end
+  end
+
+  def calcular_totales
+    # Recalcula subtotal_sin_iva, iva_total y total_con_iva a partir de order_details
+    subtotal = order_details.to_a.sum { |d| d.subtotal.to_f }
+    iva = order_details.to_a.sum { |d| (d.iva_por_unidad || d.precio_unitario.to_f * 0.19).to_f * d.cantidad.to_i }
+    envio = costo_de_envio.to_f
+    self.subtotal_sin_iva = subtotal
+    self.iva_total = iva
+    self.total_con_iva = (subtotal + iva + envio).to_f
+    # Mantener pago_total compatible: si no hay pago_total, no lo tocamos; al confirmar pago el controller actualizará pago_total
   end
 end

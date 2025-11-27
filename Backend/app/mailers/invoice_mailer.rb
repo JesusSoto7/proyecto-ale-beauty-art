@@ -22,22 +22,24 @@ class InvoiceMailer < ApplicationMailer
       safe_attr(@order&.shipping_address, :direccion) ||
       safe_attr(@order.user, :address, :direccion)
 
-    # Total con fallback
-    # Calcula subtotal sin IVA y total de IVA por línea usando Product#iva_amount
-    subtotal_sin_iva = @order.order_details.to_a.sum { |od| od.cantidad.to_i * od.precio_unitario.to_f }
-    iva_total = @order.order_details.to_a.sum do |od|
-      unit_price = od.precio_unitario.to_f
-      qty = od.cantidad.to_i
-      iva_per_unit = od.product.respond_to?(:iva_amount) ? od.product.iva_amount(unit_price).to_f : (unit_price * 0.19)
-      (iva_per_unit * qty)
+    # Preferir campos persistidos en la orden; si faltan, calcular como fallback.
+    if @order.subtotal_sin_iva.present? && @order.iva_total.present?
+      @subtotal_sin_iva = @order.subtotal_sin_iva.to_f
+      @iva_total = @order.iva_total.to_f
+    else
+      # Fallback: calcular desde detalles
+      @subtotal_sin_iva = @order.order_details.to_a.sum { |od| od.cantidad.to_i * od.precio_unitario.to_f }
+      @iva_total = @order.order_details.to_a.sum do |od|
+        unit_price = (od.precio_unitario_sin_iva.present? ? od.precio_unitario_sin_iva.to_f : od.precio_unitario.to_f)
+        qty = od.cantidad.to_i
+        iva_per_unit = od.iva_por_unidad.present? ? od.iva_por_unidad.to_f : (od.product.respond_to?(:iva_amount) ? od.product.iva_amount(unit_price).to_f : (unit_price * 0.19))
+        (iva_per_unit * qty)
+      end
     end
 
-    envio = @order.costo_de_envio.to_f
-    @subtotal_sin_iva = subtotal_sin_iva
-    @iva_total = iva_total
-    @envio = envio
-    # Forzar total como suma de subtotal (sin IVA) + IVA + envío
-    @total   = (subtotal_sin_iva + iva_total + envio)
+    @envio = @order.costo_de_envio.to_f
+    # Preferir total persistido en la orden, si existe
+    @total = (@order.total_con_iva.present? && @order.total_con_iva.to_f > 0) ? @order.total_con_iva.to_f : (@subtotal_sin_iva + @iva_total + @envio)
 
     # Generar PDF (si falla, enviamos sin adjunto)
     pdf_data = nil
