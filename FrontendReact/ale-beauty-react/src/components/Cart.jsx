@@ -466,9 +466,8 @@ function Cart() {
 
                   {product.precio_con_mejor_descuento && product.precio_con_mejor_descuento < product.precio_producto ? (
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap' }}>
-                      {/* Mostrar precio con IVA (preferir campo con IVA si existe) */}
                       <Typography level="h4" fontWeight="bold" color={product.stock > 0 ? "#ff4d94" : "text.disabled"}>
-                        {formatCOP(product.precio_con_mejor_descuento_con_iva ?? Math.round((product.precio_con_mejor_descuento * 1.19) * 100) / 100)}
+                        {formatCOP(product.precio_con_mejor_descuento)}
                       </Typography>
                       <Typography
                         level="body2"
@@ -478,7 +477,7 @@ function Cart() {
                           fontSize: '0.9rem'
                         }}
                       >
-                        {formatCOP(product.precio_producto_con_iva ?? Math.round((product.precio_producto * 1.19) * 100) / 100)}
+                        {formatCOP(product.precio_producto)}
                       </Typography>
                       {product.stock > 0 && (
                         <Chip
@@ -496,7 +495,7 @@ function Cart() {
                     </Box>
                   ) : (
                     <Typography level="h4" fontWeight="bold" color={product.stock > 0 ? "#ff4d94" : "text.disabled"}>
-                      {formatCOP(product.precio_producto_con_iva ?? Math.round((product.precio_producto * 1.19) * 100) / 100)}
+                      {formatCOP(product.precio_producto)}
                     </Typography>
                   )}
                 </Box>
@@ -646,7 +645,7 @@ function Cart() {
             alignItems: 'center',
             p: 1.5,
             borderRadius: 'md',
-            backgroundColor: 'rgba(255, 77, 148, 0.05)'
+            backgroundColor: 'transparent'
           }}>
             <Typography level="body1" fontWeight="medium">
               IVA (19%)
