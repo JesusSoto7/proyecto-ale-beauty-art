@@ -5,31 +5,9 @@ class Api::V1::PaymentsController < Api::V1::BaseController
     require 'mercadopago'
     sdk = Mercadopago::SDK.new(ENV['MERCADOPAGO_ACCESS_TOKEN'])
     frontend_url = ENV['FRONTEND_URL'].presence || "https://localhost:3000"
-    # Si viene order_id, calcular server-side el monto total (subtotal sin IVA + IVA + envío)
-    order = nil
-    if params[:order_id].present?
-      begin
-        order = Order.find(params[:order_id])
-      rescue ActiveRecord::RecordNotFound
-        order = nil
-      end
-    end
-
-    computed_transaction_amount = nil
-    if order
-      subtotal_sin_iva = order.order_details.to_a.sum { |od| od.cantidad.to_i * od.precio_unitario.to_f }
-      iva_total = order.order_details.to_a.sum do |od|
-        unit_price = od.precio_unitario.to_f
-        qty = od.cantidad.to_i
-        iva_per_unit = od.product.respond_to?(:iva_amount) ? od.product.iva_amount(unit_price).to_f : (unit_price * 0.19)
-        (iva_per_unit * qty)
-      end
-      envio = order.costo_de_envio.to_f
-      computed_transaction_amount = (subtotal_sin_iva + iva_total + envio).to_f
-    end
 
     payment_data = {
-      transaction_amount: (computed_transaction_amount || params[:transaction_amount].to_f),
+      transaction_amount: params[:transaction_amount].to_f,
       token: params[:token],
       description: params[:description] || "Pago",
       installments: params[:installments].to_i,
@@ -56,8 +34,7 @@ class Api::V1::PaymentsController < Api::V1::BaseController
     payment = payment_response[:response]
     Rails.logger.info "🔹 Respuesta de MercadoPago: #{payment_response.inspect}"
 
-    # ensure order is loaded (may have been loaded above)
-    order ||= (params[:order_id].present? ? Order.find_by(id: params[:order_id]) : nil)
+    order = Order.find(params[:order_id])
 
     if order.payment_method.blank?
       if (pm = find_pm_from_params || PaymentMethod.find_by(codigo: 'mercadopago', activo: true))
@@ -66,14 +43,12 @@ class Api::V1::PaymentsController < Api::V1::BaseController
     end
 
     if payment["status"] == "approved"
-      # Guardar estado y datos del pago. Además persistir el pago_total calculado (server-side)
       order.update(
         status: :pagada,
         fecha_pago: Time.current,
         payment_id: payment["id"],
         card_type: payment.dig("payment_method_id"),
-        card_last4: payment.dig("card", "last_four_digits"),
-        pago_total: (computed_transaction_amount || order.total_con_iva || order.pago_total)
+        card_last4: payment.dig("card", "last_four_digits")
       )
 
       if order.correo_cliente.blank?
@@ -168,12 +143,6 @@ class Api::V1::PaymentsController < Api::V1::BaseController
         card_type: payment.dig("payment_method_id"),
         card_last4: payment.dig("card", "last_four_digits")
       )
-      # Persistir pago_total basado en totales de la orden (si no se proporcionó explicitamente)
-      begin
-        order.update(pago_total: order.total_con_iva) if order.total_con_iva.present? && order.pago_total.to_f == 0.0
-      rescue => e
-        Rails.logger.warn "No se pudo actualizar pago_total para la orden #{order.id}: #{e.message}"
-      end
       order.user.cart.cart_products.destroy_all if order.user&.cart
       begin
         InvoiceMailer.enviar_factura(order).deliver_later

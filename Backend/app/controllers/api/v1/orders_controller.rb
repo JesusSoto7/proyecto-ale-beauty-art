@@ -10,11 +10,13 @@ class Api::V1::OrdersController < Api::V1::BaseController
 
     productos = order.order_details.map do |od|
       product = od.product
+      precio_original = product.precio_producto
+      precio_con_descuento = od.precio_unitario
       cantidad = od.cantidad.to_i
 
-      subtotal_line = od.subtotal.to_f
-      iva_line = (od.iva_por_unidad.to_f * cantidad)
-      total_line = od.total_line_con_iva.to_f
+      subtotal_line = (precio_con_descuento.to_f * cantidad)
+      iva_line = (product.iva_amount(precio_con_descuento).to_f * cantidad)
+      total_line = subtotal_line + iva_line
 
       {
         id: od.id,
@@ -22,14 +24,15 @@ class Api::V1::OrdersController < Api::V1::BaseController
         nombre_producto: product.nombre_producto,
         slug: product.slug,
         cantidad: cantidad,
-        precio_producto: product.precio_producto.to_f,
-        precio_descuento: od.precio_unitario.to_f,
-        precio_unitario: od.precio_unitario_sin_iva.to_f,
-        precio_con_iva: od.precio_unitario_con_iva.to_f,
+        precio_producto: precio_original.to_f,
+        precio_descuento: precio_con_descuento.to_f,
+        precio_unitario: precio_con_descuento.to_f,
+        precio_con_iva: product.precio_con_iva(precio_con_descuento).to_f,
         imagen_url: product.imagen.attached? ? url_for(product.imagen) : nil,
-        tiene_descuento: od.precio_unitario.to_f < product.precio_producto.to_f,
-        porcentaje_descuento: (product.precio_producto.to_f > 0) ? (((product.precio_producto.to_f - od.precio_unitario.to_f) / product.precio_producto.to_f) * 100).round : 0,
-        descuento: product.mejor_descuento_para_precio(product.precio_producto)&.as_json(
+        tiene_descuento: precio_con_descuento < precio_original,
+        porcentaje_descuento: precio_con_descuento < precio_original ?
+          (((precio_original - precio_con_descuento) / precio_original) * 100).round : 0,
+        descuento: product.mejor_descuento_para_precio(precio_original)&.as_json(
           only: [:id, :nombre, :tipo, :valor, :fecha_inicio, :fecha_fin]
         ),
         subtotal_line: subtotal_line,
@@ -38,11 +41,10 @@ class Api::V1::OrdersController < Api::V1::BaseController
       }
     end
 
-    # Preferir campos persistidos en la orden
-    subtotal_sin_iva = order.subtotal_sin_iva.to_f
-    iva_total = order.iva_total.to_f
+    subtotal_sin_iva = productos.sum { |p| p[:subtotal_line].to_f }
+    iva_total = productos.sum { |p| p[:iva_line].to_f }
     envio = order.costo_de_envio.to_f
-    total = order.total_con_iva.to_f
+    total = subtotal_sin_iva + iva_total + envio
 
     render json: {
       id: order.id,
@@ -70,9 +72,6 @@ class Api::V1::OrdersController < Api::V1::BaseController
         numero_de_orden: o.numero_de_orden,
         status: o.status,
         pago_total: o.pago_total,
-        subtotal_sin_iva: o.subtotal_sin_iva.to_f,
-        iva_total: o.iva_total.to_f,
-        total: o.total_con_iva.to_f,
         fecha_pago: o.fecha_pago,
         clientes: o.user ? "#{o.user.nombre} #{o.user.apellido}" : "N/A",
         email: o.user&.email || "N/A",
@@ -104,9 +103,6 @@ class Api::V1::OrdersController < Api::V1::BaseController
         numero_de_orden: o.numero_de_orden,
         status: o.status,
         pago_total: o.pago_total,
-        subtotal_sin_iva: o.subtotal_sin_iva.to_f,
-        iva_total: o.iva_total.to_f,
-        total: o.total_con_iva.to_f,
         # fecha_pago puede ser nil si se creó mal; usa created_at como respaldo en el front
         fecha_pago: o.fecha_pago,
         clientes: o.user ? "#{o.user.nombre} #{o.user.apellido}" : "N/A",
@@ -237,19 +233,17 @@ class Api::V1::OrdersController < Api::V1::BaseController
   end
 
   def total_sales
-    # Ventas netas: sumar subtotal (sin IVA) + costo de envío para órdenes pagadas.
-    total = Order.where(status: :pagada).sum(Arel.sql("COALESCE(subtotal_sin_iva,0) + COALESCE(costo_de_envio,0)"))
-    render json: { total_sales: total }
+    total = Order.where(status: :pagada).sum(:pago_total)
+    render json: { total_sales: total}
   end
 
   def total_sales_per_day
     begin
       # Filtra órdenes pagadas y asegura que tengan fecha_pago válida
-      # Agrupar por fecha de pago y sumar subtotal (sin IVA) + costo de envío por día
       data = Order.where(status: :pagada)
-          .where.not(fecha_pago: nil)
-          .group_by_day(:fecha_pago, time_zone: "America/Bogota")
-          .sum(Arel.sql("COALESCE(subtotal_sin_iva,0) + COALESCE(costo_de_envio,0)"))
+                  .where.not(fecha_pago: nil)
+                  .group_by_day(:fecha_pago, time_zone: "America/Bogota")
+                  .sum(:pago_total)
                   
       # Si no se encuentran datos, retorna {} en lugar de un error
       if data.empty?

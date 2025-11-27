@@ -186,55 +186,48 @@ export default function Orders() {
             </tr>
           </thead>
           <tbody>
-            {orders.map((o) => {
-              const subtotal = Number(o.subtotal_sin_iva ?? 0);
-              const iva = Number(o.iva_total ?? 0);
-              const envioV = Number(o.envio ?? o.costo_de_envio ?? 0);
-              const displayedTotal = o.total != null ? Number(o.total) : (subtotal || iva) ? subtotal + iva + envioV : Number(o.pago_total || 0);
-
-              return (
-                <tr key={o.id} style={{ borderBottom: "1px solid #f0f0f0" }}>
-                  <td style={{ padding: 8 }}>{o.created_at ? new Date(o.created_at).toLocaleString() : "-"}</td>
-                  <td style={{ padding: 8 }}>{o.numero_de_orden}</td>
-                  <td style={{ padding: 8 }}>{o.clientes || "-"}</td>
-                  <td style={{ padding: 8 }}>{o.correo_cliente || o.email || "-"}</td>
-                  <td style={{ padding: 8 }}>${displayedTotal.toLocaleString()}</td>
-                  <td style={{ padding: 8 }}>
-                    <span style={badgeStyle(o.status)}>{o.status}</span>
-                  </td>
-                  <td style={{ padding: 8 }}>
-                    {o.pdf_url ? (
-                      <a
-                        href={o.pdf_url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        title="Ver factura"
-                        style={{ color: "red", display: "inline-flex", alignItems: "center" }}
-                      >
-                        <DescriptionIcon fontSize="small" />
-                      </a>
-                    ) : (
-                      <InsertDriveFileIcon fontSize="small" style={{ color: "grey" }} titleAccess="Sin factura" />
-                    )}
-                  </td>
-                  <td style={{ padding: 8 }}>
-                    <select
-                      value={o.status}
-                      onChange={(e) => onChangeStatus(o.id, e.target.value)}
-                      disabled={savingId === o.id}
-                      style={{ padding: 6, border: "1px solid #e5e7eb", borderRadius: 6 }}
+            {orders.map((o) => (
+              <tr key={o.id} style={{ borderBottom: "1px solid #f0f0f0" }}>
+                <td style={{ padding: 8 }}>{o.created_at ? new Date(o.created_at).toLocaleString() : "-"}</td>
+                <td style={{ padding: 8 }}>{o.numero_de_orden}</td>
+                <td style={{ padding: 8 }}>{o.clientes || "-"}</td>
+                <td style={{ padding: 8 }}>{o.correo_cliente || o.email || "-"}</td>
+                <td style={{ padding: 8 }}>${Number(o.pago_total || 0).toLocaleString()}</td>
+                <td style={{ padding: 8 }}>
+                  <span style={badgeStyle(o.status)}>{o.status}</span>
+                </td>
+                <td style={{ padding: 8 }}>
+                  {o.pdf_url ? (
+                    <a
+                      href={o.pdf_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      title="Ver factura"
+                      style={{ color: "red", display: "inline-flex", alignItems: "center" }}
                     >
-                      {STATUS.map((s) => (
-                        <option key={s} value={s}>{s}</option>
-                      ))}
-                    </select>
-                    {savingId === o.id && (
-                      <span style={{ marginLeft: 8, fontSize: 12, color: "#6b7280" }}>Guardando…</span>
-                    )}
-                  </td>
-                </tr>
-              );
-            })}
+                      <DescriptionIcon fontSize="small" />
+                    </a>
+                  ) : (
+                    <InsertDriveFileIcon fontSize="small" style={{ color: "grey" }} titleAccess="Sin factura" />
+                  )}
+                </td>
+                <td style={{ padding: 8 }}>
+                  <select
+                    value={o.status}
+                    onChange={(e) => onChangeStatus(o.id, e.target.value)}
+                    disabled={savingId === o.id}
+                    style={{ padding: 6, border: "1px solid #e5e7eb", borderRadius: 6 }}
+                  >
+                    {STATUS.map((s) => (
+                      <option key={s} value={s}>{s}</option>
+                    ))}
+                  </select>
+                  {savingId === o.id && (
+                    <span style={{ marginLeft: 8, fontSize: 12, color: "#6b7280" }}>Guardando…</span>
+                  )}
+                </td>
+              </tr>
+            ))}
           </tbody>
         </table>
       </div>
