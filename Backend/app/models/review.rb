@@ -14,6 +14,10 @@ class Review < ApplicationRecord
     "mamón", "gilipollas", "cretino", "tarado", "subnormal", "mongol",
     "ignorante", "inutil", "payaso", "majadero", "cabeza de chorlito",
 
+
+    # jerga colonial
+"jopo", "monda", "añañin", "chingar", "chucha", "culote", "imbéciles", "imbécil",
+
     # Muy ofensivas / sexuales
     "mierda", "puta", "perra", "cabron", "malparido", "chingada", "coño",
     "verga", "pito", "culo", "joder", "polla", "zorra", "guarra",

@@ -17,39 +17,45 @@ function RankingPro({ products, productRatings, loading }) {
               <Skeleton
                 variant="rectangular"
                 width="100%"
-                height={140}
+                height="100%"
                 animation="wave"
                 sx={{ bgcolor: "#e0e0e0" }}
               />
             </div>
 
             <div className="ranking-info">
+              {/* Título */}
               <Skeleton
                 variant="text"
-                width="80%"
-                height={24}
-                sx={{ margin: "0.5rem auto" }}
+                width="100%"
+                height={30}
+                sx={{ marginBottom: "0.5rem" }}
               />
-              <div className="ranking-labels">
+              {/* Subtítulo */}
+              <Skeleton
+                variant="text"
+                width="40%"
+                height={20}
+                sx={{ marginBottom: "1.5rem" }}
+              />
+
+              {/* Fila inferior: Botón y Círculo */}
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  marginTop: "auto",
+                }}
+              >
                 <Skeleton
-                  variant="rounded"
-                  width={70}
-                  height={20}
-                  sx={{ borderRadius: "12px" }}
+                  variant="rectangular"
+                  width={120}
+                  height={36}
+                  sx={{ borderRadius: "4px" }}
                 />
-                <Skeleton
-                  variant="rounded"
-                  width={50}
-                  height={20}
-                  sx={{ borderRadius: "12px" }}
-                />
+                <Skeleton variant="circular" width={36} height={36} />
               </div>
-              <Skeleton
-                variant="text"
-                width="60%"
-                height={18}
-                sx={{ marginTop: "0.3rem" }}
-              />
             </div>
           </div>
         ))}
@@ -89,9 +95,8 @@ function RankingPro({ products, productRatings, loading }) {
 
               <div className="ranking-labels">
                 <span
-                  className={`label ${
-                    product.stock > 1 ? "in-stock" : "out-stock"
-                  }`}
+                  className={`label ${product.stock > 1 ? "in-stock" : "out-stock"
+                    }`}
                 >
                   {product.stock > 1 ? "En stock" : "Agotado"}
                 </span>

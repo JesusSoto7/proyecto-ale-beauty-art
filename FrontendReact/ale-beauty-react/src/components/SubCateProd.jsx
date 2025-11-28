@@ -14,6 +14,8 @@ import { useAlert } from "../components/AlertProvider.jsx";
 import ProductCard from "../components/ProductCard";
 import { addItem as addGuestItem } from "../utils/guestCart.js";
 
+const normalizeToken = (raw) => (raw && raw !== "null" && raw !== "undefined" ? raw : null);
+
 export default function ProductsPageSubCategory() {
   const { categorySlug, subCategorySlug, lang } = useParams();
   const { t } = useTranslation();
@@ -21,6 +23,7 @@ export default function ProductsPageSubCategory() {
   const API_BASE = import.meta.env.VITE_API_BASE_URL || "https://localhost:4000";
   const [token, setToken] = useState(() => localStorage.getItem("token"));
 
+  const [categories, setCategories] = useState([]);
   const [products, setProducts] = useState([]);
   const [cart, setCart] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -209,41 +212,67 @@ export default function ProductsPageSubCategory() {
   };
 
   const addToCart = (item) => {
-    const product = products.find((p) => p.id === item.id);
+    const product = typeof item === "object" ? item : products.find((p) => String(p.id) === String(item));
+    const productId = product?.id ?? item;
 
-    // Evento Analytics
+    // Reportar `add_to_cart` a Google Analytics
     if (product) {
       window.gtag && window.gtag('event', 'add_to_cart', {
-        currency: 'COP',
+        currency: 'COP', // Cambia a la moneda que estés usando
         items: [{
           item_id: product.id,
           item_name: product.nombre_producto,
           price: product.precio_producto,
-          item_category: subCategory?.nombre || '',
+          item_category: categories.find((cat) => String(cat.id_categoria || cat.id) === String(product.category_id))?.nombre_categoria || '',
           item_variant: product.sku || '',
-          quantity: 1,
+          quantity: 1, // Ajusta cantidad según lógica del carrito
         }]
       });
     }
 
-    // Backend lógica existente
+    // Actualizar carrito (Invitado o Autenticado)
+    const tok = normalizeToken(localStorage.getItem("token") || token);
+
+    if (!tok) {
+      // Lógica para usuario invitado
+      window.dispatchEvent(new CustomEvent("cartUpdatedOptimistic", { bubbles: false }));
+      if (product) addGuestItem(product, 1); // emite `guestCartUpdated`
+      window.dispatchEvent(new CustomEvent("cartUpdatedCustom", { bubbles: false }));
+      addAlert(t("productDetails.addedToCart") || "Se agregó al carrito", "success", 3500);
+      return;
+    }
+
+    // Lógica para usuario autenticado
+    window.dispatchEvent(new CustomEvent("cartUpdatedOptimistic", {
+      bubbles: false,
+      detail: { productId, action: 'add' },
+    }));
+
     fetch(`${API_BASE}/api/v1/cart/add_product`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${tok}`,
       },
-      body: JSON.stringify({ product_id: item.id }),
+      body: JSON.stringify({ product_id: productId }),
     })
       .then(res => res.json())
-      .then(data => {
-        if (data.cart) {
-          setCart(data.cart);
-          addAlert("Producto añadido al carrito.", "success", 3500);
+      .then((data) => {
+        const serverCart = data?.cart || data;
+        if (serverCart?.products) {
+          setCart(serverCart);
+          window.dispatchEvent(new CustomEvent("cartUpdatedCustom", { bubbles: false }));
+          addAlert(t("productDetails.addedToCart") || "Se agregó al carrito", "success", 3500);
+        } else {
+          window.dispatchEvent(new CustomEvent("cartUpdatedCustom", { bubbles: false }));
         }
       })
       .catch(() => {
-        addAlert(t("productDetails.cartAddError") || "No se pudo agregar al carrito", "error", 3500);
+        addAlert(t('productDetails.cartAddError') || "No se pudo agregar al carrito", "error", 3500);
+        window.dispatchEvent(new CustomEvent("cartUpdateFailed", {
+          bubbles: false,
+          detail: { productId, action: 'add' },
+        }));
       });
   };
 
