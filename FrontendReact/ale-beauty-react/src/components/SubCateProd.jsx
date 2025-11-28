@@ -150,7 +150,9 @@ export default function ProductsPageSubCategory() {
 
   if (selectedRatings.length > 0) {
     filteredProducts = filteredProducts.filter((p) => {
-      const productRating = Math.floor(productRatings[p.id]?.avg || 0);
+      const avg = productRatings[p.id]?.avg || 0;
+      // 5 estrellas si el promedio es 4.75 o más, si no, redondear hacia abajo
+      const productRating = avg >= 4.75 ? 5 : Math.floor(avg);
       return selectedRatings.includes(productRating);
     });
   }
@@ -373,7 +375,7 @@ export default function ProductsPageSubCategory() {
 
       <div className="filter-group">
         <h4>Valoración</h4>
-        {[4, 3, 2, 1].map((rating) => (
+        {[5, 4, 3, 2, 1].map((rating) => (
           <label key={rating}>
             <input
               type="checkbox"
