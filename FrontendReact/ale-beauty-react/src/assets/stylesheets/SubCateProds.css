@@ -123,6 +123,7 @@
   gap: 8px;
 }
 
+/* ✅ CAMBIO CRÍTICO: Usar type="text" en lugar de type="number" */
 .price-range input {
   width: 90px;
   padding: 8px;
@@ -130,6 +131,16 @@
   border-radius: 6px;
   font-size: 13px;
   transition: border-color 0.2s;
+  /* Asegurar que sea tipo texto para evitar comportamiento del navegador */
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
+/* Quitar flechas en navegadores Webkit */
+.price-range input::-webkit-outer-spin-button,
+.price-range input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
 }
 
 .price-range input:focus {
@@ -306,6 +317,7 @@
     padding: 20px 16px;
   }
 }
+
 /* ✅ ESTILOS PARA PAGINACIÓN */
 .products-main {
   flex: 1;
@@ -532,16 +544,27 @@
   gap: 8px;
 }
 
-.price-range input[type=number] {
+/* ✅ CAMBIO CRÍTICO: Usar type="text" en lugar de type="number" */
+.price-range input[type="text"] {
   width: 90px;
   padding: 8px;
   border: 1px solid #ddd;
   border-radius: 6px;
   font-size: 13px;
   transition: border-color 0.2s;
+  /* Asegurar que sea tipo texto */
+  -moz-appearance: textfield;
+  appearance: textfield;
 }
 
-.price-range input[type=number]:focus {
+/* Quitar flechas en navegadores Webkit */
+.price-range input[type="text"]::-webkit-outer-spin-button,
+.price-range input[type="text"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.price-range input[type="text"]:focus {
   outline: none;
   border-color: #ff4d94;
 }

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useParams, useOutletContext } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import CircularProgress from "@mui/material/CircularProgress";
@@ -26,7 +26,13 @@ export default function ProductsPageSubCategory() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [sortOrder, setSortOrder] = useState(null);
-  const [priceRange, setPriceRange] = useState({ min: "", max: "" });
+  
+  // ✅ SOLO UN ESTADO para precios aplicados
+  const [appliedPriceRange, setAppliedPriceRange] = useState({ min: "", max: "" });
+  
+  // ✅ useRef para almacenar los valores de input SIN causar re-renders
+  const priceInputsRef = useRef({ min: "", max: "" });
+  
   const [selectedRatings, setSelectedRatings] = useState([]);
   const [productRatings, setProductRatings] = useState({});
   const [subCategory, setSubCategory] = useState(null);
@@ -62,14 +68,12 @@ export default function ProductsPageSubCategory() {
         setLoading(true);
         setError(null);
 
-        // Productos por subcategoría (público)
         const res = await fetch(`${API_BASE}/api/v1/categories/${categorySlug}/sub_categories/${subCategorySlug}/products_by_sub`);
         if (!res.ok) throw new Error("Error al cargar los productos");
         const data = await res.json();
         const prods = data.products || [];
         setProducts(prods);
 
-        // Ratings: headers opcionales
         const headers = token ? { Authorization: `Bearer ${token}` } : {};
         const ratingsObj = {};
         await Promise.all(
@@ -117,7 +121,6 @@ export default function ProductsPageSubCategory() {
   useEffect(() => {
     async function fetchSubCategory() {
       try {
-        // Subcategoría (público)
         const res = await fetch(`${API_BASE}/api/v1/categories/${categorySlug}/sub_categories/${subCategorySlug}`);
         if (!res.ok) throw new Error("Error al cargar la subcategoría");
         const data = await res.json();
@@ -131,16 +134,16 @@ export default function ProductsPageSubCategory() {
 
   useEffect(() => {
     setCurrentPage(1);
-  }, [sortOrder, priceRange, selectedRatings]);
+  }, [sortOrder, appliedPriceRange, selectedRatings]);
 
   let filteredProducts = [...products];
 
-  if (priceRange.min || priceRange.max) {
+  if (appliedPriceRange.min || appliedPriceRange.max) {
     filteredProducts = filteredProducts.filter((p) => {
       const price = Number(p.precio_producto ?? 0);
       return (
-        (priceRange.min === "" || price >= parseFloat(priceRange.min)) &&
-        (priceRange.max === "" || price <= parseFloat(priceRange.max))
+        (appliedPriceRange.min === "" || price >= parseFloat(appliedPriceRange.min)) &&
+        (appliedPriceRange.max === "" || price <= parseFloat(appliedPriceRange.max))
       );
     });
   }
@@ -158,19 +161,103 @@ export default function ProductsPageSubCategory() {
     filteredProducts = [...filteredProducts].sort((a, b) => b.precio_producto - a.precio_producto);
   }
 
-  // ✅ LÓGICA DE PAGINACIÓN
   const indexOfLastProduct = currentPage * productsPerPage;
   const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
   const currentProducts = filteredProducts.slice(indexOfFirstProduct, indexOfLastProduct);
   const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
 
-  // ✅ FUNCIONES DE PAGINACIÓN
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
   const nextPage = () => {
     if (currentPage < totalPages) setCurrentPage(currentPage + 1);
   };
   const prevPage = () => {
     if (currentPage > 1) setCurrentPage(currentPage - 1);
+  };
+
+  // ✅ FUNCIÓN PARA APLICAR FILTRO (solo cuando el usuario decide)
+  const applyPriceFilter = () => {
+    setAppliedPriceRange({
+      min: priceInputsRef.current.min,
+      max: priceInputsRef.current.max
+    });
+  };
+
+  // ✅ FUNCIÓN PARA MANEJAR CAMBIOS EN INPUTS (NO causa re-render)
+  const handlePriceInputChange = (field, value) => {
+    // Solo actualizar el ref, NO el estado (evita re-render)
+    priceInputsRef.current[field] = value;
+  };
+
+  // ✅ COMPONENTE SEPARADO para inputs de precio (evita re-render del componente principal)
+  const PriceInputs = () => {
+    const [localMin, setLocalMin] = useState(priceInputsRef.current.min);
+    const [localMax, setLocalMax] = useState(priceInputsRef.current.max);
+
+    const handleLocalChange = (field, value) => {
+      if (field === 'min') setLocalMin(value);
+      if (field === 'max') setLocalMax(value);
+      
+      // Actualizar el ref
+      priceInputsRef.current[field] = value;
+    };
+
+    const handleApply = () => {
+      setAppliedPriceRange({
+        min: priceInputsRef.current.min,
+        max: priceInputsRef.current.max
+      });
+    };
+
+    return (
+      <div className="filter-group">
+        <h4>Rango de precio</h4>
+        <div className="price-range">
+          <input
+            type="text"
+            inputMode="decimal"
+            placeholder="Min"
+            value={localMin}
+            onChange={(e) => handleLocalChange("min", e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                handleApply();
+                e.target.blur();
+              }
+            }}
+          />
+          <span>-</span>
+          <input
+            type="text"
+            inputMode="decimal"
+            placeholder="Max"
+            value={localMax}
+            onChange={(e) => handleLocalChange("max", e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                handleApply();
+                e.target.blur();
+              }
+            }}
+          />
+        </div>
+        <button 
+          onClick={handleApply}
+          style={{
+            marginTop: '8px',
+            padding: '6px 12px',
+            backgroundColor: '#ff4d94',
+            color: 'white',
+            border: 'none',
+            borderRadius: '4px',
+            cursor: 'pointer',
+            fontSize: '12px',
+            width: '100%'
+          }}
+        >
+          Aplicar precio
+        </button>
+      </div>
+    );
   };
 
   const toggleFavorite = async (productId) => {
@@ -211,7 +298,6 @@ export default function ProductsPageSubCategory() {
   const addToCart = (item) => {
     const product = products.find((p) => p.id === item.id);
 
-    // Evento Analytics
     if (product) {
       window.gtag && window.gtag('event', 'add_to_cart', {
         currency: 'COP',
@@ -226,7 +312,6 @@ export default function ProductsPageSubCategory() {
       });
     }
 
-    // Backend lógica existente
     fetch(`${API_BASE}/api/v1/cart/add_product`, {
       method: "POST",
       headers: {
@@ -283,28 +368,8 @@ export default function ProductsPageSubCategory() {
         </label>
       </div>
 
-      <div className="filter-group">
-        <h4>Rango de precio</h4>
-        <div className="price-range">
-          <input
-            type="number"
-            placeholder="Min"
-            value={priceRange.min}
-            onChange={(e) =>
-              setPriceRange({ ...priceRange, min: e.target.value })
-            }
-          />
-          <span>-</span>
-          <input
-            type="number"
-            placeholder="Max"
-            value={priceRange.max}
-            onChange={(e) =>
-              setPriceRange({ ...priceRange, max: e.target.value })
-            }
-          />
-        </div>
-      </div>
+      {/* ✅ USAR COMPONENTE SEPARADO PARA INPUTS DE PRECIO */}
+      <PriceInputs />
 
       <div className="filter-group">
         <h4>Valoración</h4>
@@ -326,12 +391,13 @@ export default function ProductsPageSubCategory() {
         ))}
       </div>
 
-      {(sortOrder || priceRange.min || priceRange.max || selectedRatings.length > 0) && (
+      {(sortOrder || appliedPriceRange.min || appliedPriceRange.max || selectedRatings.length > 0) && (
         <button
           className="clear-filters"
           onClick={() => {
             setSortOrder(null);
-            setPriceRange({ min: "", max: "" });
+            setAppliedPriceRange({ min: "", max: "" });
+            priceInputsRef.current = { min: "", max: "" };
             setSelectedRatings([]);
           }}
         >
@@ -379,16 +445,13 @@ export default function ProductsPageSubCategory() {
         </div>
 
         <div className="shop-container">
-          {/* Sidebar de filtros (visible en desktop) */}
           {!isMdDown && (
             <aside className="filter-sidebar">
               <FiltersPanel />
             </aside>
           )}
 
-          {/* ✅ GRID CON PRODUCTCARD Y PAGINACIÓN */}
           <div className="products-main">
-            {/* Toggle de filtros en móviles/tablets */}
             {isMdDown && (
               <div className={`prodcli-actions-bar ${isSmallTwoCol ? 'prodcli-small-actions' : ''}`}>
                 <IconButton
@@ -426,7 +489,8 @@ export default function ProductsPageSubCategory() {
                   className="clear-filters"
                   onClick={() => {
                     setSortOrder(null);
-                    setPriceRange({ min: "", max: "" });
+                    setAppliedPriceRange({ min: "", max: "" });
+                    priceInputsRef.current = { min: "", max: "" };
                     setSelectedRatings([]);
                   }}
                 >
@@ -435,7 +499,6 @@ export default function ProductsPageSubCategory() {
               </div>
             )}
 
-            {/* ✅ PAGINACIÓN - SOLO SI HAY MÁS DE 10 PRODUCTOS */}
             {filteredProducts.length > 10 && (
               <div className="pagination">
                 <button
@@ -471,7 +534,6 @@ export default function ProductsPageSubCategory() {
         </div>
       </div>
 
-      {/* ✅ DRAWER DE FILTROS PARA MÓVILES/TABLETS */}
       <Drawer
         anchor="left"
         open={filtersOpen}
