@@ -486,7 +486,7 @@ const toggleFavorite = async (productId) => {
                   inputMode="numeric"
                   pattern="[0-9]*"
                   name="min"
-                  placeholder="$10.00"
+                  placeholder="Min"
                   value={priceRange.min}
                   onChange={handlePriceInputChange}
                   autoComplete="off"
@@ -497,7 +497,7 @@ const toggleFavorite = async (productId) => {
                   inputMode="numeric"
                   pattern="[0-9]*"
                   name="max"
-                  placeholder="$100.00"
+                  placeholder="Max"
                   value={priceRange.max}
                   onChange={handlePriceInputChange}
                   autoComplete="off"

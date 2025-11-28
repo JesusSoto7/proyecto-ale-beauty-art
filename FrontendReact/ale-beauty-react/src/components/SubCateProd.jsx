@@ -388,7 +388,8 @@ export default function ProductsPageSubCategory() {
                 )
               }
             />
-            {"★".repeat(rating)} ({rating})
+            <span className="prodcli-star">{"★".repeat(rating)}</span>
+            {rating} {rating !== 1 ? 'estrellas' : 'estrella'}
           </label>
         ))}
       </div>
