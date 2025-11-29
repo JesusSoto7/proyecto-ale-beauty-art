@@ -21,12 +21,8 @@ export default function AuthGate() {
     // Limpia sesión local (logout no hace llamadas si no hay endpoint configurado)
     logout();
 
-    // Calcula el locale actual desde la URL (evita depender de location/lang para no re-ejecutar el effect)
-    const path = window.location.pathname || '/es';
-    const locale = path.split('/')[1] || 'es';
-
-    // Redirige al login una sola vez
-    navigate(`/${locale}/login`, { replace: true });
+    // Redirige al login sin prefijo de idioma
+    navigate('/login', { replace: true });
 
     // Libera el cerrojo un poco después por si el árbol remonta en StrictMode
     setTimeout(() => { handlingRef.current = false; }, 1000);

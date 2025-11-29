@@ -187,8 +187,8 @@ function UserFullPerfil() {
     const handleLogout = () => {
         console.log("El administrador está cerrando sesión.");
         localStorage.removeItem('token');
-        const lang = useParams().lang || 'es';
-        window.location.href = `/${lang}/login`;
+        // Redirigir al login sin prefijo de idioma
+        window.location.href = `/login`;
     };
 
     const rows = orders.map((order) => ({

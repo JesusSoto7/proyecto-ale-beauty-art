@@ -206,10 +206,9 @@ export default function ProductsChart() {
       setError(e);
 
       if (e.status === 401) {
-        const lang = location.pathname.split('/')[1] || 'es';
         localStorage.removeItem('token');
         localStorage.removeItem('roles');
-        setTimeout(() => (window.location.href = `/${lang}/login`), 0);
+        setTimeout(() => (window.location.href = `/login`), 0);
       }
     } finally {
       setLoading(false);
