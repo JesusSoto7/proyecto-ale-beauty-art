@@ -265,7 +265,16 @@ export default function MainGrid() {
             <Typography variant="h6" sx={{ mb: 2, fontWeight: 700 }}>
               Embudo de productos
             </Typography>
-            <Box sx={{ height: 400, maxWidt: '1000px', minWidth: '1000px' }}>
+            <Box sx={{
+              height: 400,
+              maxWidth: '676px', // Valor por defecto
+              minWidth: '676px', // Valor por defecto
+              // Media Query: Aplica estos estilos cuando el ancho es MAYOR a 1500px
+              '@media (min-width: 1800px)': {
+                maxWidth: '1000px',
+                minWidth: '1000px',
+              },
+            }}>
               <ProductsChart />
             </Box>
           </Paper>

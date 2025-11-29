@@ -188,7 +188,12 @@
     "default": "Predeterminada",
     "edit": "Editar",
     "addNewAddress": "Agregar nueva dirección",
-    "neighborhood": "Barrio"
+    "neighborhood": "Barrio",
+    "active": "Activo",
+    "deleteError": "Error al eliminar dirección",
+    "deleteSuccess": "Dirección eliminada con éxito",
+    "delete": "Eliminar dirección",
+    "confirmDelete": "¿Estás seguro de que deseas eliminar esta dirección?"
   },
   "shippingAddressForm": {
     "notAuthenticated": "No estás autenticado",

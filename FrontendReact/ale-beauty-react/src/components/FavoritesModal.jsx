@@ -186,7 +186,6 @@ export default function FavoritesModal({ open, onClose }) {
         )
       );
       setFavorites([]);
-      alert(t('favorites.cleared'));
     } catch (err) {
       console.error(t('favorites.clearError'), err);
       alert(t('favorites.clearError'));
@@ -300,13 +299,13 @@ export default function FavoritesModal({ open, onClose }) {
                         zIndex: isStack ? '1' : 'auto',
                         border: '1px solid #e0e0e0'
                       }}
-                      onMouseEnter={(e) => { 
+                      onMouseEnter={(e) => {
                         e.currentTarget.style.background = '#ff1744';
                         e.currentTarget.style.color = '#fff';
                         e.currentTarget.style.width = '32px'; // Se expande ligeramente al hover
                         e.currentTarget.style.borderColor = '#ff1744';
                       }}
-                      onMouseLeave={(e) => { 
+                      onMouseLeave={(e) => {
                         if (!product.isRemoving) {
                           e.currentTarget.style.background = '#f5f5f5';
                           e.currentTarget.style.color = '#999';
@@ -314,11 +313,11 @@ export default function FavoritesModal({ open, onClose }) {
                           e.currentTarget.style.borderColor = '#e0e0e0';
                         }
                       }}
-                      onMouseDown={(e) => { 
+                      onMouseDown={(e) => {
                         e.currentTarget.style.background = '#d50000';
                         e.currentTarget.style.transform = 'scale(0.98)';
                       }}
-                      onMouseUp={(e) => { 
+                      onMouseUp={(e) => {
                         e.currentTarget.style.transform = 'scale(1)';
                       }}
                     >
@@ -327,9 +326,9 @@ export default function FavoritesModal({ open, onClose }) {
                     {/* Bloque superior: imagen + nombre (en stack solo esto dentro del link) */}
                     <Link
                       to={`/es/producto/${product.slug}`}
-                      style={{ 
-                        textDecoration: 'none', 
-                        color: 'inherit', 
+                      style={{
+                        textDecoration: 'none',
+                        color: 'inherit',
                         flex: isStack ? 'none' : 1,
                         marginLeft: isStack ? '28px' : '0' // Compensa el botón más delgado
                       }}

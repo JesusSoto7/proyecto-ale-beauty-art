@@ -188,7 +188,11 @@
     "default": "Default",
     "edit": "Edit",
     "addNewAddress": "Add new address",
-    "neighborhood": "Neighborhood"
+    "neighborhood": "Neighborhood",
+    "deleteError": "Error deleting address",
+    "deleteSuccess": "Address deleted successfully",
+    "delete": "Delete Address",
+    "confirmDelete": "Are you sure you want to delete this address?"
   },
   "shippingAddressForm": {
     "notAuthenticated": "You are not authenticated",
