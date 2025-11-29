@@ -110,12 +110,28 @@
   background: #fff0f7;
 }
 
-.filter-group input[type="checkbox"],
-.filter-group input[type="radio"] {
-  margin-right: 8px;
-  cursor: pointer;
-  accent-color: #ff4d94;
+
+
+
+/* Ocultar solo los radios de ordenar por precio */
+.hide-radio-input {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+  margin: 0;
+  pointer-events: none;
 }
+
+.filter-group label,
+.filter-sidebar label {
+  position: relative;
+  padding-left: 0;
+  cursor: pointer;
+  user-select: none;
+}
+
+
 
 .price-range {
   display: flex;

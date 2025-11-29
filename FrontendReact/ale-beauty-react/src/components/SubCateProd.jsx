@@ -350,6 +350,7 @@ export default function ProductsPageSubCategory() {
             name="sort"
             checked={sortOrder === null}
             onChange={() => setSortOrder(null)}
+            className="hide-radio-input"
           />
           Sin ordenar
         </label>
@@ -359,6 +360,7 @@ export default function ProductsPageSubCategory() {
             name="sort"
             checked={sortOrder === "asc"}
             onChange={() => setSortOrder("asc")}
+            className="hide-radio-input"
           />
           Menor a mayor
         </label>
@@ -368,6 +370,7 @@ export default function ProductsPageSubCategory() {
             name="sort"
             checked={sortOrder === "desc"}
             onChange={() => setSortOrder("desc")}
+            className="hide-radio-input"
           />
           Mayor a menor
         </label>
