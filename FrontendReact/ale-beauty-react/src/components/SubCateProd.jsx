@@ -26,13 +26,13 @@ export default function ProductsPageSubCategory() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [sortOrder, setSortOrder] = useState(null);
-  
+
   // ✅ SOLO UN ESTADO para precios aplicados
   const [appliedPriceRange, setAppliedPriceRange] = useState({ min: "", max: "" });
-  
+
   // ✅ useRef para almacenar los valores de input SIN causar re-renders
   const priceInputsRef = useRef({ min: "", max: "" });
-  
+
   const [selectedRatings, setSelectedRatings] = useState([]);
   const [productRatings, setProductRatings] = useState({});
   const [subCategory, setSubCategory] = useState(null);
@@ -198,10 +198,10 @@ export default function ProductsPageSubCategory() {
     const handleLocalChange = (field, value) => {
       // ✅ FILTRAR SOLO NÚMEROS, PUNTO Y COMA PARA DECIMALES
       const numericValue = value.replace(/[^\d.,]/g, '');
-      
+
       if (field === 'min') setLocalMin(numericValue);
       if (field === 'max') setLocalMax(numericValue);
-      
+
       // Actualizar el ref
       priceInputsRef.current[field] = numericValue;
     };
@@ -245,7 +245,7 @@ export default function ProductsPageSubCategory() {
             }}
           />
         </div>
-        <button 
+        <button
           onClick={handleApply}
           style={{
             marginTop: '8px',
@@ -344,35 +344,38 @@ export default function ProductsPageSubCategory() {
 
       <div className="filter-group">
         <h4>Ordenar por precio</h4>
-        <label>
+        <label style={{
+          display: "flex",
+          alignItems: "center",
+          gap: "8px",
+          marginBottom: "8px",
+          cursor: "pointer"
+        }}>
+          {/* Checkbox circular a la izquierda */}
           <input
-            type="radio"
-            name="sort"
-            checked={sortOrder === null}
-            onChange={() => setSortOrder(null)}
-            className="hide-radio-input"
-          />
-          Sin ordenar
-        </label>
-        <label>
-          <input
-            type="radio"
-            name="sort"
+            type="checkbox"
             checked={sortOrder === "asc"}
-            onChange={() => setSortOrder("asc")}
-            className="hide-radio-input"
+            onChange={e => setSortOrder(e.target.checked ? "asc" : null)}
+            className="circle-checkbox"
+            style={{ marginRight: "8px" }}
           />
-          Menor a mayor
+          <span>Menor a mayor</span>
         </label>
-        <label>
+        <label style={{
+          display: "flex",
+          alignItems: "center",
+          gap: "8px",
+          marginBottom: "8px",
+          cursor: "pointer"
+        }}>
           <input
-            type="radio"
-            name="sort"
+            type="checkbox"
             checked={sortOrder === "desc"}
-            onChange={() => setSortOrder("desc")}
-            className="hide-radio-input"
+            onChange={e => setSortOrder(e.target.checked ? "desc" : null)}
+            className="circle-checkbox"
+            style={{ marginRight: "8px" }}
           />
-          Mayor a menor
+          <span>Mayor a menor</span>
         </label>
       </div>
 
