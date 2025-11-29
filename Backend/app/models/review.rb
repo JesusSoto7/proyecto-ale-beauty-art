@@ -16,7 +16,7 @@ class Review < ApplicationRecord
 
 
     # jerga colonial
-"jopo", "monda", "añañin", "chingar", "chucha", "culote", "imbéciles", "imbécil",
+    "jopo", "monda", "añañin", "chingar", "chucha", "culote", "imbéciles", "imbécil",
 
     # Muy ofensivas / sexuales
     "mierda", "puta", "perra", "cabron", "malparido", "chingada", "coño",
