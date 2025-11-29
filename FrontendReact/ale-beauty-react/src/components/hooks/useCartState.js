@@ -25,7 +25,7 @@ export const useCartState = (token, t) => {
   const [optimisticCount, setOptimisticCount] = useState(0);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  
+
   const isFetchingRef = useRef(false);
 
   const fetchCart = useCallback(() => {
@@ -73,7 +73,7 @@ export const useCartState = (token, t) => {
   }, [token, t]);
 
   useEffect(() => {
-    const interval = setInterval(fetchCart, 10000); // cada 10 segundos
+    const interval = setInterval(fetchCart, 15000); // cada 15 segundos
     return () => clearInterval(interval);
   }, [fetchCart]);
 

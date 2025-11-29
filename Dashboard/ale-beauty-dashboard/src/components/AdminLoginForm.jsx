@@ -53,13 +53,13 @@ function AdminLoginForm({ onLogin }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (!validateFields()) return;
 
     setLoading(true);
     try {
       const data = await login({ email, password });
-      
+
       // Verificar que el usuario sea admin
       if (!data.user.roles.includes("admin")) {
         addAlert("Acceso denegado. Solo administradores pueden acceder.", "error");
@@ -68,7 +68,7 @@ function AdminLoginForm({ onLogin }) {
 
       localStorage.setItem("token", data.token);
       localStorage.setItem("roles", JSON.stringify(data.user.roles));
-      
+
       if (onLogin) onLogin();
       addAlert("Bienvenido al panel de administración", "success");
       navigate("/es/home");
@@ -186,7 +186,7 @@ function AdminLoginForm({ onLogin }) {
           {/* Footer */}
           <Box sx={{ mt: 3, textAlign: 'center' }}>
             <Typography variant="caption" color="text.secondary">
-              © 2024 Ale Beauty Art - Panel Administrativo
+              © 2025 Ale Beauty Art - Panel Administrativo
             </Typography>
           </Box>
         </Card>

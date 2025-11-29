@@ -1,4 +1,7 @@
 import React, { useState, useRef } from 'react';
+
+import Modal from '@mui/joy/Modal';
+import ModalDialog from '@mui/joy/ModalDialog';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import logo from '../assets/images/ale_logo.jpg';
@@ -13,8 +16,6 @@ import Typography from '@mui/material/Typography';
 import Menu from '@mui/material/Menu';
 import MenuIcon from '@mui/icons-material/Menu';
 
-import Modal from '@mui/joy/Modal';
-import ModalDialog from '@mui/joy/ModalDialog';
 import ModalClose from '@mui/joy/ModalClose';
 import FavoritesModal from './FavoritesModal';
 import SearchBar from "./SearchBar";
@@ -29,6 +30,7 @@ import { useScrollState } from './hooks/useScrollState';
 // Componentes separados
 import UserMenu from './UserMenu';
 import NotificationsMenu from './NotificationsMenu';
+import NotificationsModal from './NotificationsModal';
 import CategoryNav from './CategoryNav';
 
 const pinkTheme = {
@@ -96,6 +98,7 @@ export default function Header({ loadFavorites }) {
   const [anchorEl, setAnchorEl] = useState(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = useState(null);
   const [openModal, setOpenModal] = useState(false);
+  const [openNotificationsModal, setOpenNotificationsModal] = useState(false);
 
   const isMenuOpen = Boolean(anchorEl);
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
@@ -124,6 +127,11 @@ export default function Header({ loadFavorites }) {
     handleCloseNotificationsMenu,
     formatNotificationTime
   } = useNotifications(token);
+
+  const handleOpenAllNotifications = () => {
+    handleCloseNotificationsMenu();
+    setOpenNotificationsModal(true);
+  };
 
   // Función para cambiar idioma
   const handleLanguageChange = (event) => {
@@ -658,6 +666,7 @@ export default function Header({ loadFavorites }) {
           formatTime={formatNotificationTime}
           pinkTheme={pinkTheme}
           forceCenter={isHamburgerVisible}
+          onOpenAllNotifications={handleOpenAllNotifications}
         />
 
         {/* Menú de usuario */}
@@ -680,6 +689,15 @@ export default function Header({ loadFavorites }) {
             setOpenModal(false);
             loadFavorites();
           }}
+        />
+
+        {/* Modal de notificaciones */}
+        <NotificationsModal
+          open={openNotificationsModal}
+          onClose={() => setOpenNotificationsModal(false)}
+          notificaciones={notificaciones}
+          formatTime={formatNotificationTime}
+          pinkTheme={pinkTheme}
         />
       </Box>
 

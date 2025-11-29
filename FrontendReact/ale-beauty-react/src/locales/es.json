@@ -188,7 +188,8 @@
     "default": "Predeterminada",
     "edit": "Editar",
     "addNewAddress": "Agregar nueva dirección",
-    "neighborhood": "Barrio"
+    "neighborhood": "Barrio",
+    "active": "Activo"
   },
   "shippingAddressForm": {
     "notAuthenticated": "No estás autenticado",

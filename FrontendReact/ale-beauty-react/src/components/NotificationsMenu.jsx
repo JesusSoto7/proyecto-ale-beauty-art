@@ -11,7 +11,8 @@ export default function NotificationsMenu({
   loading,
   formatTime,
   pinkTheme,
-  forceCenter = false
+  forceCenter = false,
+  onOpenAllNotifications
 }) {
   const { t } = useTranslation();
   // Centrar cuando hay menú hamburguesa (forceCenter) o en móviles (<768px)
@@ -45,8 +46,8 @@ export default function NotificationsMenu({
       disableScrollLock
     >
       {/* Header */}
-      <Box sx={{ 
-        p: 2, 
+      <Box sx={{
+        p: 2,
         borderBottom: `1px solid #f0f0f0`,
         backgroundColor: 'white'
       }}>
@@ -109,11 +110,11 @@ export default function NotificationsMenu({
                   >
                     <BsBell size={14} style={{ color: pinkTheme.primary }} />
                   </Box>
-                  
+
                   <Box sx={{ flex: 1, minWidth: 0 }}>
-                    <Typography 
-                      variant="subtitle2" 
-                      sx={{ 
+                    <Typography
+                      variant="subtitle2"
+                      sx={{
                         fontWeight: 600,
                         color: '#333',
                         lineHeight: 1.3,
@@ -123,10 +124,10 @@ export default function NotificationsMenu({
                     >
                       {notificacion.notification_message?.title || 'Nueva notificación'}
                     </Typography>
-                    
-                    <Typography 
-                      variant="body2" 
-                      sx={{ 
+
+                    <Typography
+                      variant="body2"
+                      sx={{
                         color: '#666',
                         lineHeight: 1.4,
                         mb: 1,
@@ -139,25 +140,25 @@ export default function NotificationsMenu({
                     >
                       {notificacion.notification_message?.message || 'Sin descripción'}
                     </Typography>
-                    
-                    <Typography 
-                      variant="caption" 
+
+                    <Typography
+                      variant="caption"
                       sx={{ color: '#999', fontSize: '11px' }}
                     >
                       {formatTime(notificacion.notification_message?.created_at || notificacion.created_at)}
                     </Typography>
                   </Box>
-                  
+
                   {!notificacion.read && (
-                    <Box 
-                      sx={{ 
-                        width: 8, 
-                        height: 8, 
-                        borderRadius: '50%', 
+                    <Box
+                      sx={{
+                        width: 8,
+                        height: 8,
+                        borderRadius: '50%',
                         backgroundColor: pinkTheme.primary,
                         flexShrink: 0,
                         mt: 0.5
-                      }} 
+                      }}
                     />
                   )}
                 </Box>
@@ -169,15 +170,15 @@ export default function NotificationsMenu({
 
       {/* Footer */}
       {notificaciones.length > 0 && (
-        <Box sx={{ 
-          p: 2, 
+        <Box sx={{
+          p: 2,
           borderTop: `1px solid #f0f0f0`,
           backgroundColor: '#fafafa'
         }}>
-          <Typography 
-            variant="body2" 
-            sx={{ 
-              color: pinkTheme.primary, 
+          <Typography
+            variant="body2"
+            sx={{
+              color: pinkTheme.primary,
               fontWeight: 500,
               textAlign: 'center',
               display: 'block',
@@ -185,7 +186,7 @@ export default function NotificationsMenu({
               fontSize: '13px',
               '&:hover': { color: pinkTheme.dark }
             }}
-            onClick={onClose}
+            onClick={onOpenAllNotifications || onClose}
           >
             {t('notifications.viewAll', 'Ver todas las notificaciones')}
           </Typography>
