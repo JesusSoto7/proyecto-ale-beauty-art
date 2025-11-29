@@ -73,7 +73,8 @@ function LoginForm({ onLogin }) {
       localStorage.setItem("roles", JSON.stringify(data.user.roles));
       onLogin();
 
-      navigate(`/${lang}/${data.user.roles.includes("admin") ? "home" : "inicio"}`);
+      // No redirigir a panel de administración desde la tienda; siempre llevar al inicio público
+      navigate(`/${lang}/inicio`);
     } catch (err) {
       setError(err.message);
       addAlert(err.message || "Error al iniciar sesión.", "error", 8000);

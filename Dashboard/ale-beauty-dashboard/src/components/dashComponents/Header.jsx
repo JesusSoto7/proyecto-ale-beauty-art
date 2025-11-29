@@ -18,14 +18,14 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
 import CustomDatePicker from './CustomDatePicker';
 import ColorModeIconDropdown from '../../shared-theme/ColorModeIconDropdown';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 export default function Header() {
   const [user, setUser] = useState(null);
   const [pendingMessagesCount, setPendingMessagesCount] = useState(0);
   const [anchorEl, setAnchorEl] = useState(null);
   const navigate = useNavigate();
-  const { lang } = useParams();
+  // no usamos param de idioma en rutas del dashboard
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -45,10 +45,7 @@ export default function Header() {
   const handleMenuOpen = (e) => setAnchorEl(e.currentTarget);
   const handleMenuClose = () => setAnchorEl(null);
 
-  const currentLang =
-    lang && ['es', 'en'].includes(lang)
-      ? lang
-      : ((navigator.language || 'es').startsWith('es') ? 'es' : 'en');
+  // currentLang ya no necesario porque no dependemos de la URL para idioma
 
 
   const fetchPendingCount = async () => {
@@ -142,7 +139,7 @@ export default function Header() {
 
         <IconButton
           aria-label="notifications"
-          onClick={() => navigate(`/${lang}/home/support-messages`)}
+          onClick={() => navigate(`/home/support-messages`)}
           sx={{
             bgcolor: (theme) => theme.palette.mode === 'dark' ? 'grey.900' : 'grey.100',
             width: 40,
@@ -224,7 +221,7 @@ export default function Header() {
           <MenuItem
             onClick={() => {
               handleMenuClose();
-              navigate(`/${currentLang}/home/perfil`);
+              navigate(`/home/perfil`);
             }}
           >
             Profile
@@ -233,7 +230,7 @@ export default function Header() {
             onClick={() => {
               handleMenuClose();
               localStorage.removeItem('token');
-              window.location.href = `/${currentLang}/login`;
+              window.location.href = `/login`;
             }}
           >
             Logout

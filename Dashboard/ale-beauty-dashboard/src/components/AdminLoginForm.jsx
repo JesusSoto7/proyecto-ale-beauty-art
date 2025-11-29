@@ -71,7 +71,7 @@ function AdminLoginForm({ onLogin }) {
 
       if (onLogin) onLogin();
       addAlert("Bienvenido al panel de administración", "success");
-      navigate("/es/home");
+      navigate("/home");
     } catch (err) {
       addAlert(err.message || "Error al iniciar sesión.", "error");
     } finally {

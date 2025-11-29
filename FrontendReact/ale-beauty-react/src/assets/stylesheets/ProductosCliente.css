@@ -175,7 +175,7 @@
   gap: 8px;
 }
 
-.prodcli-pricerange input[type=number] {
+.prodcli-pricerange input[type="text"] {
   width: 90px;
   padding: 8px;
   border: 1px solid #ddd;
@@ -184,7 +184,7 @@
   transition: border-color 0.2s;
 }
 
-.prodcli-pricerange input[type=number]:focus {
+.prodcli-pricerange input[type="text"]:focus {
   outline: none;
   border-color: #ff4d94;
 }

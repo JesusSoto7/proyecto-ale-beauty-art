@@ -10,7 +10,7 @@ import { DataGrid } from "@mui/x-data-grid";
 import { Box, Card, CardContent, Typography, Rating, Stack } from "@mui/material";
 import LogoutIcon from '@mui/icons-material/Logout';
 import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useTheme } from "@mui/material/styles";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
@@ -32,7 +32,6 @@ function UserProfile() {
     const [error, setError] = useState(null);
     const [reviewCount, setReviewCount] = useState(0);
     const [userReviews, setUserReviews] = useState([]);
-    const { lang } = useParams();
     const navigate = useNavigate();
     const theme = useTheme();
     const isDarkMode = theme.palette.mode === "dark";
@@ -377,7 +376,7 @@ function UserProfile() {
             console.warn('Error cerrando sesión:', err);
         }
         localStorage.removeItem('token');
-        window.location.href = `/${lang || 'es'}/login`; // ✅ Redirección con idioma por defecto
+        window.location.href = `/login`; // Redirige al login sin prefijo de idioma
     }
 
     return (

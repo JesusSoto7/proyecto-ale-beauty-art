@@ -10,14 +10,13 @@ import ListItemIcon, { listItemIconClasses } from '@mui/material/ListItemIcon';
 import LogoutRoundedIcon from '@mui/icons-material/LogoutRounded';
 import MoreVertRoundedIcon from '@mui/icons-material/MoreVertRounded';
 import MenuButton from './MenuButton';
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const MenuItem = styled(MuiMenuItem)({
   margin: '2px 0',
 });
 
 export default function OptionsMenu() {
-  const { lang } = useParams();
   const navigate = useNavigate();
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
@@ -41,12 +40,12 @@ export default function OptionsMenu() {
       console.warn('Error cerrando sesión:', err);
     }
     localStorage.removeItem('token');
-    window.location.href = `/${lang || 'es'}/login`; // ✅ Redirección con idioma por defecto
+    window.location.href = `/login`; // Redirige al login sin prefijo de idioma
   }
 
   const handleProfile = () => {
     handleClose();
-    navigate(`/${lang || 'es'}/home/user-profile`);
+    navigate(`/home/user-profile`);
   };
 
   return (

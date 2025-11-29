@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate, Outlet, useParams } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Dashboard from './page/home/Dashboard';
 import DashboardLayout from './components/dashComponents/DashboardLayout.jsx';
 import ProductTable from './page/home/productTable/Productos';
@@ -15,8 +15,6 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import './assets/stylesheets/GestionUsuarios.css';
 import './App.css';
 import "./i18n";
-
-import { useTranslation } from "react-i18next";
 import ProtectedRoute from './page/home/ProtectedRoute';
 import Forbidden403 from './page/home/Forbidden403';
 import SubCategorias from './page/home/SubCategories';
@@ -32,19 +30,7 @@ import Sales from './page/home/Sales.jsx';
 import AdminSupportMessages from "./components/dashComponents/AdminSupporMessages.jsx";
 import AdminProfile from './components/dashComponents/AdminProfile.jsx';
 
-function Wrapper() {
-  const { lang } = useParams();
-  const { i18n } = useTranslation();
-
-  // cada vez que cambie la URL, se actualiza el idioma de i18n
-  React.useEffect(() => {
-    if (lang && ['es', 'en'].includes(lang)) {
-      i18n.changeLanguage(lang);
-    }
-  }, [lang, i18n]);
-
-  return <Outlet />;
-}
+// Nota: eliminada la envoltura basada en ruta de idioma. El dashboard ya no usa prefijos '/es' o '/en' en la URL.
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = React.useState(() => {
@@ -69,54 +55,50 @@ function App() {
       <Router>
         <AuthGate />
         <Routes>
-          {/* Redirige / al idioma por defecto */}
+          {/* Redirige / al dashboard o login sin prefijo de idioma */}
           <Route
             path="/"
             element={
               isLoggedIn
-                ? <Navigate to={`/${(navigator.language || "es").startsWith("es") ? "es" : "en"}/home`} replace />
-                : <Navigate to={`/${(navigator.language || "es").startsWith("es") ? "es" : "en"}/login`} replace />
+                ? <Navigate to={`/home`} replace />
+                : <Navigate to={`/login`} replace />
             }
           />
 
-          {/* Rutas con idioma */}
-          <Route path="/:lang" element={<Wrapper />}>
-            {/* Ruta de login */}
-            <Route
-              path="login"
-              element={
-                isLoggedIn ?
-                  <Navigate to="home" replace /> :
-                  <AdminLoginForm onLogin={handleLogin} />
-              }
-            />
+          {/* Ruta de login */}
+          <Route
+            path="/login"
+            element={
+              isLoggedIn ?
+                <Navigate to="/home" replace /> :
+                <AdminLoginForm onLogin={handleLogin} />
+            }
+          />
 
+          {/* Página de acceso denegado */}
+          <Route path="/403" element={<Forbidden403 />} />
 
-            {/* Página de acceso denegado */}
-            <Route path="403" element={<Forbidden403 />} />
-
-            {/* Rutas protegidas del dashboard */}
-            <Route path="home" element={
-              <ProtectedRoute requiredRole="admin">
-                <DashboardLayout />
-              </ProtectedRoute>
-            }>
-              <Route index element={<Dashboard />} />
-              <Route path="products" element={<ProductTable />} />
-              <Route path="categories" element={<Categorias />} />
-              <Route path="categories/:slug" element={<SubCategorias />} />
-              <Route path="categories/:id" element={<CategoryProducts />} />
-              <Route path="carousel" element={<Carousel />} />
-              <Route path="usuarios" element={<GestionUsuarios />} />
-              <Route path="user-full-perfil/:id" element={<UserFullPerfil />} />
-              <Route path="notificaciones" element={<Notificationes />} />
-              <Route path="crear_descuento" element={<CreateDiscount />} />
-              <Route path="user-profile" element={<UserProfile />} />
-              <Route path="orders" element={<Orders />} />
-              <Route path="ventas" element={<Sales />} />
-              <Route path="support-messages" element={<AdminSupportMessages />} />
-              <Route path="perfil" element={<AdminProfile />} />
-            </Route>
+          {/* Rutas protegidas del dashboard (sin prefijo de idioma) */}
+          <Route path="/home" element={
+            <ProtectedRoute requiredRole="admin">
+              <DashboardLayout />
+            </ProtectedRoute>
+          }>
+            <Route index element={<Dashboard />} />
+            <Route path="products" element={<ProductTable />} />
+            <Route path="categories" element={<Categorias />} />
+            <Route path="categories/:slug" element={<SubCategorias />} />
+            <Route path="categories/:id" element={<CategoryProducts />} />
+            <Route path="carousel" element={<Carousel />} />
+            <Route path="usuarios" element={<GestionUsuarios />} />
+            <Route path="user-full-perfil/:id" element={<UserFullPerfil />} />
+            <Route path="notificaciones" element={<Notificationes />} />
+            <Route path="crear_descuento" element={<CreateDiscount />} />
+            <Route path="user-profile" element={<UserProfile />} />
+            <Route path="orders" element={<Orders />} />
+            <Route path="ventas" element={<Sales />} />
+            <Route path="support-messages" element={<AdminSupportMessages />} />
+            <Route path="perfil" element={<AdminProfile />} />
           </Route>
 
           {/* Ruta catch-all para URLs no encontradas */}

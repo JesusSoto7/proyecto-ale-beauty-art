@@ -337,7 +337,7 @@ const Categorias = () => {
                         : "0 12px 40px rgba(37, 99, 235, 0.15)",
                     },
                   }}
-                  onClick={() => navigate(`/es/home/categories/${cat.slug}`)}
+                  onClick={() => navigate(`/home/categories/${cat.slug}`)}
                 >
                   <Box sx={{ position: "relative", overflow: "hidden" }}>
                     <CardMedia
