@@ -267,7 +267,10 @@ const CategoryNav = forwardRef(({
                 <Box
                   sx={{
                     display: 'grid',
-                    gridTemplateColumns: '0.8fr 1.2fr',
+                    gridTemplateColumns: {
+                      xs: '1fr',
+                      md: '0.8fr 1.2fr',
+                    },
                     gap: 4,
                     alignItems: 'center',
                     padding: '24px',
@@ -281,6 +284,7 @@ const CategoryNav = forwardRef(({
                       borderRadius: '20px',
                       overflow: 'hidden',
                       boxShadow: '0 8px 20px rgba(0,0,0,0.2)',
+                      display: { xs: 'none', md: 'block' },
                     }}
                   >
                     <img
@@ -294,7 +298,7 @@ const CategoryNav = forwardRef(({
                     />
                   </Box>
 
-                  {/* Bloque derecho: título de la categoría principal y grid con scroll */}
+                  {/* Bloque derecho: título + grid */}
                   <Box sx={{ width: '100%' }}>
 
                     {/* Título y separador */}
@@ -315,7 +319,6 @@ const CategoryNav = forwardRef(({
                       >
                         {hoveredNavCategory.nombre_categoria || hoveredNavCategory.name}
                       </Typography>
-                      {/* Línea Separadora Rosa/Roja */}
                       <Box
                         sx={{
                           width: '60px',
@@ -326,24 +329,20 @@ const CategoryNav = forwardRef(({
                       />
                     </Box>
 
-                    {/* GRID tipo tarjetas*/}
+                    {/* GRID tarjetas */}
                     <Box
                       sx={{
                         display: 'grid',
-                        gridTemplateColumns: 'repeat(3, 1fr)',
+                        gridTemplateColumns: {
+                          xs: 'repeat(2, 1fr)', // 2 columnas por defecto (desde xs hasta md/lg)
+                          lg: 'repeat(3, 1fr)', // 3 columnas a partir del breakpoint 'lg' (1200px por defecto)
+                        },
                         gap: 2,
                         paddingTop: 1,
-
                         maxHeight: "400px",
                         overflowY: "auto",
-
-                        '&::-webkit-scrollbar': {
-                          width: '6px',
-                        },
-                        '&::-webkit-scrollbar-thumb': {
-                          backgroundColor: '#ff007f',
-                          borderRadius: '10px',
-                        },
+                        '&::-webkit-scrollbar': { width: '6px' },
+                        '&::-webkit-scrollbar-thumb': { backgroundColor: '#ff4ba5ff', borderRadius: '10px' },
                       }}
                     >
                       {hoveredNavCategory.sub_categories.map((sub) => (
@@ -360,6 +359,7 @@ const CategoryNav = forwardRef(({
                             padding: '8px',
                             transition: 'all 0.2s ease-in-out',
                             boxShadow: 'none',
+                            position: 'relative',
                             '&:hover': {
                               transform: 'translateY(-2px)',
                               boxShadow: '0 4px 10px rgba(0,0,0,0.08)',
@@ -385,6 +385,40 @@ const CategoryNav = forwardRef(({
                                 objectFit: 'cover',
                               }}
                             />
+                          </Box>
+
+                          {/* Overlay de HOVER para mostrar el nombre */}
+                          <Box
+                            sx={{
+                              position: 'absolute',
+                              top: 0,
+                              left: 0,
+                              width: '100%',
+                              height: '100%',
+                              borderRadius: '16px',
+                              background: 'rgba(49, 32, 41, 0.6)',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              zIndex: 1,
+                              opacity: 0,
+                              transition: 'opacity 0.2s ease',
+                              '&:hover': {
+                                opacity: 1,
+                              },
+                            }}
+                          >
+                            <Typography
+                              variant="subtitle2"
+                              sx={{
+                                color: 'white',
+                                fontWeight: 'bold',
+                                textAlign: 'center',
+                                padding: '10px',
+                              }}
+                            >
+                              {sub.nombre_categoria || sub.nombre}
+                            </Typography>
                           </Box>
                         </Box>
                       ))}

@@ -265,6 +265,7 @@ export default function Notificaciones() {
     return `Enviar Notificación — ${n} seleccionados`;
   }, [broadcast, selectedUsers, usuarios]);
 
+  // --- Renderización del componente ---
   return (
     <Box className="ntf-root" sx={{ p: { xs: 1.5, sm: 2, md: 3, lg: 4 } }}>
       <Box className="ntf-content">
@@ -340,26 +341,39 @@ export default function Notificaciones() {
           </Grid>
         </Grid>
 
-        {/* Main Content */}
-        <Grid container spacing={{ xs: 3, md: 4 }} className="ntf-main-grid">
-          <Grid item xs={12} lg={6}>
-            <Card elevation={0} className="ntf-card">
-              <CardContent sx={{ p: { xs: 3, sm: 4, md: 4 } }}>
-                <Box sx={{ display: "flex", alignItems: "center", mb: 2.5 }}>
-                  <Box sx={{ width: 5, height: 28, borderRadius: 2, mr: 2, bgcolor: "divider" }} />
-                  <SendIcon sx={{ fontSize: 22, mr: 1 }} />
-                  <Typography variant="h6" fontWeight="800">Enviar Nueva Notificación</Typography>
-                </Box>
+        {/* --- Main Content --- */}
+        <Grid container spacing={{ xs: 3, md: 4 }} className="ntf-main-grid" style={{ gap: "20px", flexDirection: "column" }}>
+          <Box
+            sx={{
+              display: "flex",
+              gap: "20px",
+              // 1. Estilo por defecto para pantallas grandes
+              flexDirection: "row",
+              // 2. Media Query para pantallas pequeñas/medianas
+              "@media (max-width: 1370px)": {
+                flexDirection: "column",
+              },
+            }}
+          >
 
-                <Box component="form" onSubmit={handleSubmit}>
+            {/* Columna Izquierda: Selección de Usuario */}
+            <Grid item xs={12} lg={6}>
+              <Card elevation={0} className="ntf-card" sx={{ height: "100%" }}>
+                <CardContent sx={{ p: { xs: 3, sm: 4, md: 4 } }}>
+                  <Box sx={{ display: "flex", alignItems: "center", mb: 2.5 }}>
+                    <Box sx={{ width: 5, height: 28, borderRadius: 2, mr: 2, bgcolor: "divider" }} />
+                    <PeopleIcon sx={{ fontSize: 22, mr: 1 }} />
+                    <Typography variant="h6" fontWeight="800">Selección de Destinatarios</Typography>
+                  </Box>
+
                   <Stack spacing={3}>
                     <FormControl fullWidth>
-                      <InputLabel>Destinatario</InputLabel>
                       <Box className="ntf-topbar" sx={{ display: "flex", gap: 1, alignItems: "center", mb: 1, flexWrap: { xs: "wrap", md: "nowrap" } }}>
                         <Button
                           variant={broadcast ? "contained" : "outlined"}
                           onClick={() => { setBroadcast((b) => !b); if (!broadcast) setSelectedUsers([]); }}
                           sx={{ textTransform: "none" }}
+                          fullWidth={!broadcast}
                         >
                           {broadcast ? "Enviar a todos (activo)" : "Enviar a todos (desactivado)"}
                         </Button>
@@ -373,118 +387,139 @@ export default function Notificaciones() {
                       </Box>
 
                       {!broadcast && (
-                        <Paper variant="outlined" sx={{ maxHeight: 260, overflow: "auto" }}>
-                          <TableContainer className="ntf-table">
-                            <Table size="small" stickyHeader>
-                              <TableHead>
-                                <TableRow>
-                                  <TableCell padding="checkbox">
-                                    <Checkbox
-                                      indeterminate={selectedUsers.length > 0 && selectedUsers.length < pagedUsers.length}
-                                      checked={pagedUsers.length > 0 && pagedUsers.every((u) => selectedUsers.includes(u.id))}
-                                      onChange={(e) => handleSelectAllOnPage(e.target.checked)}
-                                    />
-                                  </TableCell>
-                                  <TableCell>Nombre</TableCell>
-                                  <TableCell>Email</TableCell>
-                                </TableRow>
-                              </TableHead>
-                              <TableBody>
-                                {pagedUsers.map((u) => (
-                                  <TableRow key={u.id} hover>
+                        <>
+                          <InputLabel sx={{ mb: 1 }}>Usuarios Seleccionados: {selectedUsers.length}</InputLabel>
+                          <Paper variant="outlined" sx={{ maxHeight: 350, overflow: "auto" }}>
+                            <TableContainer className="ntf-table">
+                              <Table size="small" stickyHeader>
+                                <TableHead>
+                                  <TableRow>
                                     <TableCell padding="checkbox">
-                                      <Checkbox checked={isSelected(u.id)} onChange={() => handleToggle(u.id)} />
+                                      <Checkbox
+                                        indeterminate={selectedUsers.length > 0 && selectedUsers.length < pagedUsers.length}
+                                        checked={pagedUsers.length > 0 && pagedUsers.every((u) => selectedUsers.includes(u.id))}
+                                        onChange={(e) => handleSelectAllOnPage(e.target.checked)}
+                                      />
                                     </TableCell>
-                                    <TableCell>{u.nombre || u.name || "—"}</TableCell>
-                                    <TableCell>{u.email}</TableCell>
+                                    <TableCell>Nombre</TableCell>
+                                    <TableCell>Email</TableCell>
                                   </TableRow>
-                                ))}
-                              </TableBody>
-                            </Table>
-                          </TableContainer>
-                          <TablePagination
-                            component="div"
-                            count={filteredUsers.length}
-                            page={page}
-                            onPageChange={handleChangePage}
-                            rowsPerPage={rowsPerPage}
-                            onRowsPerPageChange={handleChangeRowsPerPage}
-                            rowsPerPageOptions={[5, 8, 20]}
-                            labelRowsPerPage="Filas"
-                          />
-                        </Paper>
+                                </TableHead>
+                                <TableBody>
+                                  {pagedUsers.map((u) => (
+                                    <TableRow key={u.id} hover onClick={() => handleToggle(u.id)} sx={{ cursor: "pointer" }}>
+                                      <TableCell padding="checkbox">
+                                        <Checkbox checked={isSelected(u.id)} onChange={() => handleToggle(u.id)} onClick={(e) => e.stopPropagation()} />
+                                      </TableCell>
+                                      <TableCell>{u.nombre || u.name || "—"}</TableCell>
+                                      <TableCell>{u.email}</TableCell>
+                                    </TableRow>
+                                  ))}
+                                </TableBody>
+                              </Table>
+                            </TableContainer>
+                            <TablePagination
+                              component="div"
+                              count={filteredUsers.length}
+                              page={page}
+                              onPageChange={handleChangePage}
+                              rowsPerPage={rowsPerPage}
+                              onRowsPerPageChange={handleChangeRowsPerPage}
+                              rowsPerPageOptions={[5, 8, 20]}
+                              labelRowsPerPage="Filas"
+                            />
+                          </Paper>
+                        </>
                       )}
                     </FormControl>
-
-                    <TextField
-                      fullWidth
-                      label="Título de la Notificación"
-                      value={title}
-                      onChange={(e) => setTitle(e.target.value)}
-                      required
-                      placeholder="Ej: Actualización importante del sistema"
-                    />
-
-                    <Box className="ntf-message">
-                      <TextField
-                        name="mensaje"
-                        fullWidth
-                        variant="outlined"
-                        multiline
-                        minRows={12}
-                        label="Mensaje"
-                        value={message}
-                        onChange={(e) => setMessage(e.target.value)}
-                        required
-                        placeholder="Escribe aquí el contenido detallado de tu notificación…"
-                        InputLabelProps={{ shrink: true }}
-                        className="ntf-textarea"
-                      />
-                    </Box>
-
-                    <Box>
-                      <Button
-                        type="submit"
-                        variant="contained"
-                        fullWidth
-                        size="large"
-                        className="ntf-submit"
-                        disabled={enviando || (!broadcast && selectedUsers.length === 0)}
-                        startIcon={enviando ? null : <SendIcon />}
-                        sx={{ py: 2, borderRadius: 2.5, textTransform: "none", fontSize: "1.02rem", fontWeight: 700 }}
-                      >
-                        {enviando ? (
-                          <>
-                            <CircularProgress size={22} color="inherit" sx={{ mr: 1 }} />
-                            Enviando...
-                          </>
-                        ) : (
-                          selectedLabel
-                        )}
-                      </Button>
-
-                      {error && (
-                        <Fade in={!!error}>
-                          <Alert severity="error" sx={{ mt: 2 }}>
-                            {error}
-                          </Alert>
-                        </Fade>
-                      )}
-                      {exito && (
-                        <Fade in={!!exito}>
-                          <Alert severity="success" sx={{ mt: 2 }}>
-                            {exito}
-                          </Alert>
-                        </Fade>
-                      )}
-                    </Box>
                   </Stack>
-                </Box>
-              </CardContent>
-            </Card>
-          </Grid>
+                </CardContent>
+              </Card>
+            </Grid>
 
-          <Grid item xs={12} lg={6}>
+            {/* Columna Derecha: Formulario de Mensaje */}
+            <Grid item xs={12} lg={6} sx={{ width: "60%", "@media (max-width: 1370px)": { width: "100%" } }}>
+              <Card elevation={0} className="ntf-card" sx={{ height: "100%" }}>
+                <CardContent sx={{ p: { xs: 3, sm: 4, md: 4 } }}>
+                  <Box sx={{ display: "flex", alignItems: "center", mb: 2.5 }}>
+                    <Box sx={{ width: 5, height: 28, borderRadius: 2, mr: 2, background: "linear-gradient(90deg, #6a11cb 0%, #2575fc 100%)" }} />
+                    <MailOutlineIcon sx={{ fontSize: 22, mr: 1 }} />
+                    <Typography variant="h6" fontWeight="800">Cuerpo del Mensaje</Typography>
+                  </Box>
+
+                  <Box component="form" onSubmit={handleSubmit}>
+                    <Stack spacing={3}>
+                      <TextField
+                        fullWidth
+                        label="Título de la Notificación"
+                        value={title}
+                        onChange={(e) => setTitle(e.target.value)}
+                        required
+                        placeholder="Ej: Actualización importante del sistema"
+                      />
+
+                      <Box className="ntf-message">
+                        <TextField
+                          name="mensaje"
+                          fullWidth
+                          variant="outlined"
+                          multiline
+                          minRows={5}
+                          label="Mensaje"
+                          value={message}
+                          onChange={(e) => setMessage(e.target.value)}
+                          required
+                          placeholder="Escribe aquí el contenido detallado de tu notificación…"
+                          InputLabelProps={{ shrink: true }}
+                          className="ntf-textarea"
+                        />
+                      </Box>
+
+                      <Box>
+                        <Button
+                          type="submit"
+                          variant="contained"
+                          fullWidth
+                          size="large"
+                          className="ntf-submit"
+                          disabled={enviando || (!broadcast && selectedUsers.length === 0)}
+                          startIcon={enviando ? null : <SendIcon />}
+                          sx={{ py: 2, borderRadius: 2.5, textTransform: "none", fontSize: "1.02rem", fontWeight: 700 }}
+                        >
+                          {enviando ? (
+                            <>
+                              <CircularProgress size={22} color="inherit" sx={{ mr: 1 }} />
+                              Enviando...
+                            </>
+                          ) : (
+                            selectedLabel
+                          )}
+                        </Button>
+
+                        {error && (
+                          <Fade in={!!error}>
+                            <Alert severity="error" sx={{ mt: 2 }}>
+                              {error}
+                            </Alert>
+                          </Fade>
+                        )}
+                        {exito && (
+                          <Fade in={!!exito}>
+                            <Alert severity="success" sx={{ mt: 2 }}>
+                              {exito}
+                            </Alert>
+                          </Fade>
+                        )}
+                      </Box>
+                    </Stack>
+                  </Box>
+                </CardContent>
+              </Card>
+            </Grid>
+          </Box>
+
+          {/* Fila Inferior: Historial de Notificaciones */}
+          <Grid item xs={12} sx={{ width: "94.5%", "@media (max-width: 1370px)": { width: "100%" } }}>
             <Card elevation={0} className="ntf-card">
               <CardContent sx={{ p: { xs: 3, sm: 4, md: 4 } }}>
                 <Box sx={{ display: "flex", alignItems: "center", mb: 2.5 }}>
@@ -542,6 +577,7 @@ export default function Notificaciones() {
               </CardContent>
             </Card>
           </Grid>
+
         </Grid>
       </Box>
     </Box>
