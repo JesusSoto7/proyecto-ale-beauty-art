@@ -196,11 +196,14 @@ export default function ProductsPageSubCategory() {
     const [localMax, setLocalMax] = useState(priceInputsRef.current.max);
 
     const handleLocalChange = (field, value) => {
-      if (field === 'min') setLocalMin(value);
-      if (field === 'max') setLocalMax(value);
+      // ✅ FILTRAR SOLO NÚMEROS, PUNTO Y COMA PARA DECIMALES
+      const numericValue = value.replace(/[^\d.,]/g, '');
+      
+      if (field === 'min') setLocalMin(numericValue);
+      if (field === 'max') setLocalMax(numericValue);
       
       // Actualizar el ref
-      priceInputsRef.current[field] = value;
+      priceInputsRef.current[field] = numericValue;
     };
 
     const handleApply = () => {
