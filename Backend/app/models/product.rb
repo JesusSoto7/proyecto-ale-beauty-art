@@ -70,4 +70,19 @@ class Product < ApplicationRecord
     monto = mejor.monto_descuento_en(precio_base)
     [precio_base.to_d - monto, 0.to_d].max.round(2)
   end
+
+  # Obtener descripción traducida desde la columna JSON
+  def translated_description(locale)
+    return nil if translations.blank?
+    translations.dig(locale.to_s, 'description')
+  end
+
+  # Guardar la traducción dentro del JSON correctamente
+  def set_translated_description!(locale, text, meta = {})
+    self.translations ||= {}
+    self.translations[locale.to_s] ||= {}
+    self.translations[locale.to_s]['description'] = text
+    self.translations[locale.to_s].merge!(meta)
+    save!
+  end
 end
