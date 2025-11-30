@@ -19,13 +19,17 @@ export default function MainGrid() {
   const [token, setToken] = React.useState(null);
   const [userCount, setUserCount] = React.useState(0);
   const [completedOrders, setCompletedOrders] = React.useState(0);
+
   const [userChartData, setUserChartData] = React.useState({ labels: [], values: [] });
   const [orderCharData, setOrderCharData] = React.useState({ labels: [], values: [] });
   const [totalSales, setTotalSales] = React.useState(0);
   const [totalSalesCharData, setTotalSalesCharData] = React.useState({ labels: [], values: [] });
   const [googlePageViewsData, setGooglePageViewsData] = React.useState({ labels: [], values: [] });
 
-  const [pageViewsCharData, setPageViewsCharData] = React.useState({ labels: [], values: [] });
+  // Skeleton loading states
+  const [loadingSales, setLoadingSales] = React.useState(true);
+  const [loadingUser, setLoadingUser] = React.useState(true);
+  const [loadingPageViews, setLoadingPageViews] = React.useState(true);
 
   const { t } = useTranslation();
 
@@ -36,52 +40,80 @@ export default function MainGrid() {
 
   React.useEffect(() => {
     if (!token) return;
+    setLoadingSales(true);
 
     apiGet('/api/v1/total_sales', token)
       .then((data) => setTotalSales(formatCOP(data?.total_sales ?? 0)))
       .catch(console.error);
+
     apiGet('/api/v1/total_sales_per_day', token)
       .then((data) => {
         if (!data || !Object.keys(data).length) {
-          console.warn("No hay datos de ventas por día disponibles.");
-          setTotalSalesCharData({ labels: ["Sin datos"], values: [0] }); // Mostrar valores predeterminados
+          setTotalSalesCharData({ labels: ["Sin datos"], values: [0] });
+          setLoadingSales(false);
           return;
         }
-
         const processedData = Object.keys(data).map(dateStr => {
-          const isoDate = new Date(`${dateStr}T00:00:00`); // Asegura formato ISO
-          if (isNaN(isoDate)) {
-            console.error(`Fecha inválida recibida del backend: ${dateStr}`);
-            return { label: "Fecha inválida", value: 0 };
-          }
+          const isoDate = new Date(`${dateStr}T00:00:00`);
+          if (isNaN(isoDate)) return { label: "Fecha inválida", value: 0 };
           return {
-            label: isoDate.toLocaleDateString("es-CO", { // Formatear para UI
+            label: isoDate.toLocaleDateString("es-CO", {
               year: "numeric",
               month: "short",
-              day: "numeric",
-            }),
+              day: "numeric"
+            }).replace(/\s*de\s*/gi, ' '),
             value: Number(data[dateStr] || 0),
           };
         });
-
-        const sortedData = processedData.sort(
-          (a, b) => new Date(a.label) - new Date(b.label)
-        );
-
+        const sortedData = processedData.sort((a, b) => new Date(a.label) - new Date(b.label));
         setTotalSalesCharData({
           labels: sortedData.map(item => item.label),
           values: sortedData.map(item => item.value),
         });
       })
-      .catch((error) => {
-        console.error("Error obteniendo datos de ventas por día:", error);
-        setTotalSalesCharData({ labels: ["Error"], values: [0] }); // Manejar errores
-      });
+      .catch((error) => setTotalSalesCharData({ labels: ["Error"], values: [0] }))
+      .finally(() => setLoadingSales(false));
   }, [token]);
 
   React.useEffect(() => {
     if (!token) return;
+    setLoadingUser(true);
 
+    apiGet('/api/v1/count', token)
+      .then((data) => setUserCount(Number(data?.count ?? 0)))
+      .catch(console.error);
+
+    apiGet('/api/v1/registrations_per_day', token)
+      .then((data) => {
+        if (!data || !Object.keys(data).length || data.message) {
+          setUserChartData({ labels: ["Sin datos"], values: [0] });
+          setLoadingUser(false);
+          return;
+        }
+        const processedData = Object.keys(data).map(dateStr => {
+          const isoDate = new Date(`${dateStr}T00:00:00`);
+          if (isNaN(isoDate)) return { label: "Fecha inválida", value: 0 };
+          return {
+            label: isoDate.toLocaleDateString("es-CO", {
+              year: "numeric",
+              month: "short",
+              day: "numeric"
+            }).replace(/\s*de\s*/gi, ' '),
+            value: Number(data[dateStr] || 0),
+          };
+        });
+        const sortedData = processedData.sort((a, b) => new Date(a.label) - new Date(b.label));
+        setUserChartData({
+          labels: sortedData.map(item => item.label),
+          values: sortedData.map(item => item.value),
+        });
+      })
+      .catch((error) => setUserChartData({ labels: ["Error"], values: [0] }))
+      .finally(() => setLoadingUser(false));
+  }, [token]);
+
+  React.useEffect(() => {
+    if (!token) return;
     apiGet('/api/v1/completed_orders_count', token)
       .then((data) => setCompletedOrders(Number(data?.count ?? 0)))
       .catch(console.error);
@@ -95,37 +127,30 @@ export default function MainGrid() {
             year: "numeric",
             month: "short",
             day: "numeric"
-          });
+          }).replace(/\s*de\s*/gi, ' ');
         });
 
         const values = Object.values(data || {}).map(value => Number(value) || 0);
         setOrderCharData({ labels: adjustedLabels, values });
-
       })
       .catch(console.error);
   }, [token]);
 
   React.useEffect(() => {
     if (!token) return;
+    setLoadingPageViews(true);
 
     apiGet('/api/v1/analytics/google_page_views', token)
       .then((data) => {
-        // Combina etiquetas y valores en pares
         const combinedData = (data.labels || []).map((label, index) => ({
-          label,
+          label: label.replace(/\s*de\s*/gi, ' '),
           value: data.values[index] || 0,
         }));
 
-        // Ordena los pares basándose en las etiquetas (fechas)
-        const sortedData = combinedData.sort(
-          (a, b) => new Date(a.label) - new Date(b.label)
-        );
-
-        // Separa nuevamente las etiquetas y los valores ordenados
+        const sortedData = combinedData.sort((a, b) => new Date(a.label) - new Date(b.label));
         const sortedLabels = sortedData.map((item) => item.label);
         const sortedValues = sortedData.map((item) => item.value);
 
-        // Actualiza el estado con datos ordenados
         setGooglePageViewsData({
           labels: sortedLabels,
           values: sortedValues,
@@ -133,55 +158,10 @@ export default function MainGrid() {
       })
       .catch((err) => {
         console.error("google_page_views error:", err);
-      });
-  }, [token]);
-
-  React.useEffect(() => {
-    if (!token) return;
-
-    apiGet('/api/v1/count', token)
-      .then((data) => setUserCount(Number(data?.count ?? 0)))
-      .catch(console.error);
-    apiGet('/api/v1/registrations_per_day', token)
-      .then((data) => {
-        if (!data || !Object.keys(data).length || data.message) {
-          console.warn("No hay registros de usuarios.");
-          setUserChartData({ labels: ["Sin datos"], values: [0] });
-          return;
-        }
-
-        const processedData = Object.keys(data).map(dateStr => {
-          const isoDate = new Date(`${dateStr}T00:00:00`);
-          if (isNaN(isoDate)) {
-            console.error(`Fecha inválida recibida del backend: ${dateStr}`);
-            return { label: "Fecha inválida", value: 0 };
-          }
-          return {
-            label: isoDate.toLocaleDateString("es-CO", {
-              year: "numeric",
-              month: "short",
-              day: "numeric",
-            }),
-            value: Number(data[dateStr] || 0),
-          };
-        });
-
-        const sortedData = processedData.sort(
-          (a, b) => new Date(a.label) - new Date(b.label)
-        );
-
-        setUserChartData({
-          labels: sortedData.map(item => item.label),
-          values: sortedData.map(item => item.value),
-        });
       })
-      .catch((error) => {
-        console.error("Error obteniendo datos de usuarios registrados:", error);
-        setUserChartData({ labels: ["Error"], values: [0] });
-      });
+      .finally(() => setLoadingPageViews(false));
   }, [token]);
 
-  // compute a simple trend & delta from last two data points
   function computeTrendInfo(values) {
     if (!values || values.length < 2) {
       return { trend: 'neutral', percentText: 'Estable', deltaText: '+0' };
@@ -189,7 +169,6 @@ export default function MainGrid() {
     const last = Number(values[values.length - 1] || 0);
     const prev = Number(values[values.length - 2] || 0);
 
-    // caso especial solo para usuarios registrados: si prev es 0 y last >= 1, muestra "Nuevo registro"
     if (prev === 0 && last > 0) {
       return { trend: 'up', percentText: "Nuevo registro", deltaText: `+${last}` };
     }
@@ -197,7 +176,6 @@ export default function MainGrid() {
       return { trend: 'neutral', percentText: 'Sin actividad', deltaText: '+0' };
     }
 
-    // else, calcula normal
     const percent = ((last - prev) / Math.abs(prev)) * 100;
     const delta = last - prev;
     const trend = percent > 2 ? 'up' : percent < -2 ? 'down' : 'neutral';
@@ -207,24 +185,20 @@ export default function MainGrid() {
   }
 
   function computeUserChip(values) {
-    // Si la suma es 0, muestra "Sin registros" y usa color default
     const sum = (values || []).reduce((a, b) => a + b, 0);
     if (sum === 0) {
       return { percentText: "Sin registros", color: "default", trend: "neutral" };
     }
-    // Si hay registros pero el porcentaje da 0%, muestra "Estable"
     const trendInfo = computeTrendInfo(values);
     if (trendInfo.percentText === "+0%" || trendInfo.percentText === "0%") {
       return { percentText: "Estable", color: "default", trend: "neutral" };
     }
-    // Si sube/baja, muestra como antes
     return { percentText: trendInfo.percentText, color: trendInfo.trend === "up" ? "success" : trendInfo.trend === "down" ? "error" : "default", trend: trendInfo.trend };
   }
 
-
   const userChip = computeUserChip(userChartData.values);
   const totalSalesTrend = computeTrendInfo(totalSalesCharData.values);
-  const pageViewsTrend = computeTrendInfo(pageViewsCharData.values);
+  const pageViewsTrend = computeTrendInfo(googlePageViewsData.values);
 
   const cards = [
     {
@@ -256,9 +230,9 @@ export default function MainGrid() {
       title: 'Visitas a la página',
       value: googlePageViewsData.values.reduce((acc, curr) => acc + curr, 0),
       interval: 'Últimos 30 días',
-      trend: computeTrendInfo(googlePageViewsData.values).trend,
-      percentText: computeTrendInfo(googlePageViewsData.values).percentText,
-      deltaText: `${computeTrendInfo(googlePageViewsData.values).deltaText} vs prev`,
+      trend: pageViewsTrend.trend,
+      percentText: pageViewsTrend.percentText,
+      deltaText: `${pageViewsTrend.deltaText} vs prev`,
       subtitle: '',
       data: googlePageViewsData.values,
       labels: googlePageViewsData.labels,
@@ -268,20 +242,21 @@ export default function MainGrid() {
   ];
 
   return (
-    <Box sx={{ width: '100%', maxWidth: 'none', overflow: 'hidden', px: { xs: 1, md: 3 } }}>
+    <Box sx={{ width: '100%', maxWidth: 'none', overflow: 'hidden', px: { xs: 9, md: 3 } }}>
       <Typography component="h2" variant="h6" sx={{ mb: 3 }}>
         Resumen
       </Typography>
-
       <Grid container spacing={3} sx={{ mb: 3 }}>
-        {cards.map((card, index) => (
-          <Grid key={index} size={{ xs: 12, sm: 6, lg: 4 }}>
-            <StatCard {...card} />
-          </Grid>
-        ))}
-
+        <Grid item xs={12} size={{ xs: 12, sm: 6, lg: 4 }} sm={6} lg={4}>
+          <StatCard {...cards[0]} loading={loadingSales} />
+        </Grid>
+        <Grid item xs={12} size={{ xs: 12, sm: 6, lg: 4 }} sm={6} lg={4}>
+          <StatCard {...cards[1]} loading={loadingUser} />
+        </Grid>
+        <Grid item xs={12} size={{ xs: 12, sm: 6, lg: 4 }} sm={6} lg={4}>
+          <StatCard {...cards[2]} loading={loadingPageViews} />
+        </Grid>
       </Grid>
-
       <Grid container spacing={3} sx={{ mb: 3 }}>
         <Grid item xs={12} md={8}>
           <Paper sx={{ p: 3, borderRadius: 3, minHeight: 480 }}>
@@ -290,9 +265,8 @@ export default function MainGrid() {
             </Typography>
             <Box sx={{
               height: 400,
-              maxWidth: '676px', // Valor por defecto
-              minWidth: '676px', // Valor por defecto
-              // Media Query: Aplica estos estilos cuando el ancho es MAYOR a 1500px
+              maxWidth: '676px',
+              minWidth: '676px',
               '@media (min-width: 1800px)': {
                 maxWidth: '1000px',
                 minWidth: '1000px',
@@ -302,10 +276,8 @@ export default function MainGrid() {
             </Box>
           </Paper>
         </Grid>
-
         <Grid item xs={12} md={4}>
           <Stack spacing={3}>
-
             <Paper sx={{ p: 2.5, borderRadius: 3, minHeight: 220, maxWidth: '500px' }}>
               <Typography variant="h6" sx={{ mb: 1.5, fontWeight: 700 }}>
                 Total vendidos por categoría
@@ -317,8 +289,6 @@ export default function MainGrid() {
           </Stack>
         </Grid>
       </Grid>
-
-      {/* Footer spacing and copyright */}
       <Box sx={{ mt: 4 }}>
         <Copyright />
       </Box>

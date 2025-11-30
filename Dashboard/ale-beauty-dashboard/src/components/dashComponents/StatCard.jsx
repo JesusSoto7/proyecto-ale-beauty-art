@@ -14,6 +14,7 @@ import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import Avatar from '@mui/material/Avatar';
+import Skeleton from '@mui/material/Skeleton';
 
 function AreaGradient({ color, id }) {
   return (
@@ -31,9 +32,10 @@ AreaGradient.propTypes = {
   id: PropTypes.string.isRequired,
 };
 
-function StatCard({ title, value, interval, trend, data, labels, subtitle, percentText, deltaText, icon, hideArrow, chipColor }) {
+function StatCard({
+  title, value, interval, trend, data, labels, subtitle, percentText, deltaText, icon, hideArrow, chipColor, loading
+}) {
   const theme = useTheme();
-
 
   const trendColors = {
     up:
@@ -63,7 +65,6 @@ function StatCard({ title, value, interval, trend, data, labels, subtitle, perce
   // safe id for gradient (no spaces or $)
   const safeId = `area-gradient-${String(value).replace(/[^a-zA-Z0-9]/g, '-')}`;
 
-  // choose icon component: if prop icon exists use it, else fallback to ShoppingBagOutlinedIcon
   const IconComponent = icon || ShoppingBagOutlinedIcon;
 
   return (
@@ -78,14 +79,18 @@ function StatCard({ title, value, interval, trend, data, labels, subtitle, perce
       }}
     >
       <CardContent>
+        {/* Header */}
         <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ mb: 1 }}>
           <Stack direction="row" spacing={1} alignItems="center">
             <Avatar sx={{ bgcolor: (theme) => theme.palette.mode === 'light' ? theme.palette.grey[100] : theme.palette.grey[900], width: 40, height: 40 }}>
-              <IconComponent fontSize="small" />
+              {loading
+                ? <Skeleton variant="circular" width={28} height={28} />
+                : <IconComponent fontSize="small" />
+              }
             </Avatar>
             <Stack>
               <Typography component="h2" variant="subtitle2" sx={{ color: (theme) => theme.palette.mode === 'light' ? 'text.primary' : '#fff' }}>
-                {title}
+                {loading ? <Skeleton width={100} /> : title}
               </Typography>
               {subtitle ? (
                 <Typography variant="caption" sx={{ color: 'text.secondary' }}>
@@ -94,86 +99,73 @@ function StatCard({ title, value, interval, trend, data, labels, subtitle, perce
               ) : null}
             </Stack>
           </Stack>
-          {/* Quitar el signo ">" si hideArrow es true */}
-          {!hideArrow && (
+          {!hideArrow && !loading && (
             <ChevronRightIcon sx={{ color: 'text.secondary' }} />
           )}
         </Stack>
 
-        <Stack
-          direction="column"
-          sx={{ justifyContent: 'space-between', flexGrow: '1', gap: 1 }}
-        >
+        {/* Content */}
+        <Stack direction="column" sx={{ gap: 1 }}>
           <Stack sx={{ justifyContent: 'space-between' }}>
-            <Stack
-              direction="row"
-              sx={{ justifyContent: 'space-between', alignItems: 'center' }}
-            >
+            <Stack direction="row" sx={{ justifyContent: 'space-between', alignItems: 'center' }}>
               <Typography variant="h4" component="p" sx={{ color: (theme) => theme.palette.mode === 'light' ? 'text.primary' : '#fff' }}>
-                {value}
+                {loading ? <Skeleton width={48} /> : value}
               </Typography>
-              <Chip size="small" color={chipDisplayColor} label={percentText || trendValues[trend]} />
+              {loading
+                ? <Skeleton variant="rectangular" width={60} height={28} sx={{ borderRadius: 1 }} />
+                : <Chip size="small" color={chipDisplayColor} label={percentText || trendValues[trend]} />
+              }
             </Stack>
             <Typography variant="caption" sx={{ color: 'text.secondary' }}>
-              {interval.replace(/\s*de\s*/gi, ' ')}
+              {loading ? <Skeleton width={80} /> : interval.replace(/\s*de\s*/gi, ' ')}
             </Typography>
           </Stack>
-
           <Box sx={{ width: '100%', height: 56 }}>
-            <SparkLineChart
-              color={chartColor}
-              data={data || []}
-              area
-              showHighlight
-              showTooltip
-              xAxis={{
-                scaleType: 'band',
-                data: labels.map(label => {
-                  try {
-                    return label;
-                  } catch (e) {
-                    console.error(`Error ajustando etiqueta para gráfica: ${label}`, e);
-                    return 'Fecha inválida';
-                  }
-                }),
-              }}
-              sx={{
-                [`& .${areaElementClasses.root}`]: {
-                  fill: `url(#${safeId})`,
-                },
-                '& svg': {
-                  width: '100%',
-                  height: '56px',
-                },
-              }}
-            >
-              <AreaGradient color={chartColor} id={safeId} />
-            </SparkLineChart>
+            {loading
+              ? <Skeleton variant="rectangular" width="100%" height={56} />
+              : <SparkLineChart
+                color={chartColor}
+                data={data || []}
+                area
+                showHighlight
+                showTooltip
+                xAxis={{
+                  scaleType: 'band',
+                  data: labels.map(l => l.replace(/\s*de\s*/gi, ' ')),
+                }}
+                sx={{
+                  [`& .${areaElementClasses.root}`]: {
+                    fill: `url(#${safeId})`,
+                  },
+                  '& svg': {
+                    width: '100%',
+                    height: '56px',
+                  },
+                }}
+              >
+                <AreaGradient color={chartColor} id={safeId} />
+              </SparkLineChart>
+            }
           </Box>
-
+          {/* Pie del card */}
           <Stack direction="row" justifyContent="space-between" alignItems="center">
             <Stack direction="row" spacing={1} alignItems="center">
-              {trend === 'up' ? (
-                <ArrowUpwardIcon fontSize="small" sx={{ color: chartColor }} />
-              ) : trend === 'down' ? (
-                <ArrowDownwardIcon fontSize="small" sx={{ color: chartColor }} />
-              ) : (
-                <Box sx={{ width: 20 }} />
-              )}
+              {loading
+                ? <Skeleton variant="rectangular" width={24} height={24} sx={{ borderRadius: '50%' }} />
+                : (trend === 'up'
+                  ? <ArrowUpwardIcon fontSize="small" sx={{ color: chartColor }} />
+                  : (trend === 'down'
+                    ? <ArrowDownwardIcon fontSize="small" sx={{ color: chartColor }} />
+                    : <Box sx={{ width: 20 }} />)
+                )
+              }
               <Typography variant="body2" sx={{ color: (theme) => theme.palette.mode === 'light' ? 'text.primary' : '#fff', fontWeight: 600 }}>
-                {percentText || trendValues[trend]}
+                {loading ? <Skeleton width={38} /> : (percentText || trendValues[trend])}
               </Typography>
               <Typography variant="caption" sx={{ color: 'text.secondary' }}>
-                {deltaText}
+                {loading ? <Skeleton width={32} /> : deltaText}
               </Typography>
             </Stack>
-
-            <Typography
-              variant="caption"
-              align="right"
-              sx={{ color: theme.palette.primary.main }}
-            >
-            </Typography>
           </Stack>
         </Stack>
       </CardContent>
@@ -192,7 +184,9 @@ StatCard.propTypes = {
   percentText: PropTypes.string,
   deltaText: PropTypes.string,
   icon: PropTypes.oneOfType([PropTypes.func, PropTypes.object]),
-  hideArrow: PropTypes.bool, // <- Añadido para controlar el ">" 
+  hideArrow: PropTypes.bool,
+  chipColor: PropTypes.string,
+  loading: PropTypes.bool,
 };
 
 StatCard.defaultProps = {
@@ -202,7 +196,9 @@ StatCard.defaultProps = {
   percentText: '',
   deltaText: '',
   icon: null,
-  hideArrow: false,    // <- Añadido para default
+  hideArrow: false,
+  chipColor: undefined,
+  loading: false,
 };
 
 export default StatCard;
