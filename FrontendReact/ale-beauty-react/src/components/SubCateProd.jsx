@@ -307,16 +307,18 @@ export default function ProductsPageSubCategory() {
     const product = typeof item === "object" ? item : products.find((p) => String(p.id) === String(item));
     const productId = product?.id ?? item;
 
+    const tok = normalizeToken(localStorage.getItem("token") || token); // ← AGREGA ESTA LÍNEA
+
     if (product) {
       window.gtag && window.gtag('event', 'add_to_cart', {
-        currency: 'COP', // Cambia a la moneda que estés usando
+        currency: 'COP',
         items: [{
           item_id: product.id,
           item_name: product.nombre_producto,
           price: product.precio_producto,
           item_category: categories.find((cat) => String(cat.id_categoria || cat.id) === String(product.category_id))?.nombre_categoria || '',
           item_variant: product.sku || '',
-          quantity: 1, // Ajusta cantidad según lógica del carrito
+          quantity: 1,
         }]
       });
     }
@@ -348,7 +350,6 @@ export default function ProductsPageSubCategory() {
         }));
       });
   };
-
   // ✅ PANEL DE FILTROS REUTILIZABLE
   const FiltersPanel = () => (
     <>

@@ -14,7 +14,7 @@ const normalizeToken = (raw) => (raw && raw !== "null" && raw !== "undefined" ? 
 
 function ProductosCliente() {
   const [products, setProducts] = useState([]);
-  const [categories, setCategories] = useState([]); 
+  const [categories, setCategories] = useState([]);
   const [token, setToken] = useState(() => localStorage.getItem("token"));
   const [cart, setCart] = useState(null);
   const { favoriteIds, loadFavorites } = useOutletContext();
@@ -40,7 +40,7 @@ function ProductosCliente() {
     return () => window.removeEventListener("storage", handler);
   }, []);
 
-useEffect(() => {
+  useEffect(() => {
     const loadData = async () => {
       try {
         setLoading(true);
@@ -116,7 +116,7 @@ useEffect(() => {
 
   const getSubcategoriesForCategory = (categoryId) => {
     if (categoryId === "Todos") return [];
-    const category = categories.find(c => 
+    const category = categories.find(c =>
       String(c.id_categoria || c.id) === String(categoryId)
     );
     return category?.sub_categories || [];
@@ -216,14 +216,14 @@ useEffect(() => {
   };
 
   const handleRatingChange = (rating) => {
-    setSelectedRatings(prev => 
-      prev.includes(rating) 
+    setSelectedRatings(prev =>
+      prev.includes(rating)
         ? prev.filter(item => item !== rating)
         : [...prev, rating]
     );
   };
 
-const toggleFavorite = async (productId) => {
+  const toggleFavorite = async (productId) => {
     // Evita 401: no llames a favoritos sin token
     if (!token) {
       addAlert(t("productDetails.loginToFavorite") || "Inicia sesión para gestionar favoritos", "info", 3500);
@@ -244,7 +244,7 @@ const toggleFavorite = async (productId) => {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${token}` 
+            Authorization: `Bearer ${token}`
           },
           body: JSON.stringify({ product_id: productId }),
         });
@@ -279,16 +279,16 @@ const toggleFavorite = async (productId) => {
     }
 
     // Autenticado
-    window.dispatchEvent(new CustomEvent("cartUpdatedOptimistic", { 
-      bubbles: false, 
-      detail: { productId, action: 'add' } 
+    window.dispatchEvent(new CustomEvent("cartUpdatedOptimistic", {
+      bubbles: false,
+      detail: { productId, action: 'add' }
     }));
 
     fetch(`${API_BASE}/api/v1/cart/add_product`, {
       method: "POST",
-      headers: { 
+      headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${tok}` 
+        Authorization: `Bearer ${tok}`
       },
       body: JSON.stringify({ product_id: productId }),
     })
@@ -310,7 +310,7 @@ const toggleFavorite = async (productId) => {
       })
       .catch(() => {
         addAlert(t('productDetails.cartAddError') || "No se pudo agregar al carrito", "error", 3500);
-        window.dispatchEvent(new CustomEvent("cartUpdateFailed", { 
+        window.dispatchEvent(new CustomEvent("cartUpdateFailed", {
           bubbles: false,
           detail: { productId, action: 'add' }
         }));
@@ -381,7 +381,7 @@ const toggleFavorite = async (productId) => {
             <Typography variant="h6" className="prodcli-sidebar-title">
               {t('filters.title')}
             </Typography>
-            
+
             <div className="prodcli-sidebar-section">
               <Typography variant="subtitle1" className="prodcli-sidebar-subtitle">
                 {t('filters.categories')}
@@ -525,7 +525,7 @@ const toggleFavorite = async (productId) => {
             </div>
 
             {(selectedCategory !== "Todos" || selectedSubcategory !== "Todos" || sortOrder || priceRange.min || priceRange.max || selectedRatings.length > 0) && (
-              <button 
+              <button
                 onClick={handleClearAllFilters}
                 className="prodcli-clearbtn"
               >
@@ -550,16 +550,16 @@ const toggleFavorite = async (productId) => {
                 />
               ))}
             </div>
-            
+
             {filteredProducts.length === 0 && (
               <div className="prodcli-empty">
                 <p>{t('products.noProducts')}</p>
                 <p>
-                  {selectedCategory !== "Todos" || selectedSubcategory !== "Todos" 
-                    ? t('products.noProductsFilter') 
+                  {selectedCategory !== "Todos" || selectedSubcategory !== "Todos"
+                    ? t('products.noProductsFilter')
                     : t('products.tryOtherFilters')}
                 </p>
-                <button 
+                <button
                   onClick={handleClearAllFilters}
                   className="prodcli-clearbtn"
                 >
@@ -571,14 +571,14 @@ const toggleFavorite = async (productId) => {
             {/* ✅ COMPONENTE DE PAGINACIÓN CON FLECHAS */}
             {totalPages > 1 && (
               <div className="prodcli-pagination">
-                <button 
-                  onClick={prevPage} 
+                <button
+                  onClick={prevPage}
                   disabled={currentPage === 1}
                   className="prodcli-page-btn"
                 >
                   ←
                 </button>
-                
+
                 <div className="prodcli-page-numbers">
                   {Array.from({ length: totalPages }, (_, i) => i + 1).map(number => (
                     <button
@@ -590,9 +590,9 @@ const toggleFavorite = async (productId) => {
                     </button>
                   ))}
                 </div>
-                
-                <button 
-                  onClick={nextPage} 
+
+                <button
+                  onClick={nextPage}
                   disabled={currentPage === totalPages}
                   className="prodcli-page-btn"
                 >

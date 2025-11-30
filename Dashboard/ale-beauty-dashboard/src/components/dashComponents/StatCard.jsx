@@ -15,6 +15,7 @@ import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import Avatar from '@mui/material/Avatar';
 import Skeleton from '@mui/material/Skeleton';
+import { formatCOP } from '../../services/currency';
 
 function AreaGradient({ color, id }) {
   return (
@@ -33,7 +34,8 @@ AreaGradient.propTypes = {
 };
 
 function StatCard({
-  title, value, interval, trend, data, labels, subtitle, percentText, deltaText, icon, hideArrow, chipColor, loading
+  title, value, interval, trend, data, labels, subtitle, percentText, deltaText, icon, hideArrow, chipColor, loading,
+  isMoney,
 }) {
   const theme = useTheme();
 
@@ -133,6 +135,7 @@ function StatCard({
                   scaleType: 'band',
                   data: labels.map(l => l.replace(/\s*de\s*/gi, ' ')),
                 }}
+                valueFormatter={isMoney ? (value => formatCOP(value)) : (value => value)}
                 sx={{
                   [`& .${areaElementClasses.root}`]: {
                     fill: `url(#${safeId})`,

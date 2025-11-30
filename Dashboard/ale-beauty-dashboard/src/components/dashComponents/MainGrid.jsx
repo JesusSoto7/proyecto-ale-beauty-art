@@ -209,11 +209,12 @@ export default function MainGrid() {
       interval: 'Últimos 30 días',
       trend: totalSalesTrend.trend,
       percentText: totalSalesTrend.percentText,
-      deltaText: `${totalSalesTrend.deltaText} esta semana`,
+      deltaText: `${formatCOP(totalSalesTrend.deltaText)} esta semana`,
       subtitle: `${completedOrders} Ordenes`,
       data: totalSalesCharData.values || [],
       labels: totalSalesCharData.labels || [],
       hideArrow: true,
+      isMoney: true, // <--- SOLO esta!
     },
     {
       title: 'Usuarios Registrados',
@@ -227,6 +228,7 @@ export default function MainGrid() {
       chipColor: userChip.color,
       deltaText: '',
       hideArrow: true,
+      isMoney: false, // <--- NO formatea!
     },
     {
       title: 'Visitas a la página',
@@ -240,6 +242,7 @@ export default function MainGrid() {
       labels: googlePageViewsData.labels,
       icon: VisibilityOutlinedIcon,
       hideArrow: true,
+      isMoney: false,
     },
   ];
 

@@ -423,9 +423,9 @@ function ProductDetails() {
 
 
   const addToCart = (item) => {
-    const productId = typeof item === "object" ? item.id : item;
 
-    // Evento Analytics
+    // Evento Optimista (contador sube al instante)
+    const productId = typeof item === "object" ? item.id : item;
     window.gtag && window.gtag('event', 'add_to_cart', {
       currency: 'COP',
       items: [{
@@ -451,10 +451,12 @@ function ProductDetails() {
         if (data.cart) {
           setCart(data.cart);
           addAlert("Producto añadido al carrito.", "success", 3500);
+          window.dispatchEvent(new CustomEvent("cartUpdatedCustom", { bubbles: false }));
         }
       })
       .catch(() => {
         addAlert("Error al añadir al carrito.", "error", 3500);
+        window.dispatchEvent(new CustomEvent("cartUpdateFailed", { bubbles: false }));
       });
   };
 
