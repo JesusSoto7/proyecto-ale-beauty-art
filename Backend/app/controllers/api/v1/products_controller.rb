@@ -19,7 +19,13 @@ class Api::V1::ProductsController < Api::V1::BaseController
   end
 
   def show
-    render json: @product.as_json(
+    # Determine requested locale: `?lang=xx` or Accept-Language header, default 'es'
+    requested = params[:lang].to_s.presence || begin
+      al = request.headers['Accept-Language']
+      al&.split(',')&.first&.to_s&.slice(0,2)
+    end || 'es'
+
+    base = @product.as_json(
       include: {
         sub_category: {
           only: [:id, :nombre],
@@ -28,7 +34,29 @@ class Api::V1::ProductsController < Api::V1::BaseController
         discount: { only: [:id, :nombre, :descripcion, :tipo, :valor, :fecha_inicio, :fecha_fin, :activo] }
       },
       methods: [:imagen_url, :mejor_descuento_para_precio, :precio_con_mejor_descuento]
-    ), status: :ok
+    )
+
+    # Prefer translations stored in `translations` JSON column
+    if requested == 'es'
+      descripcion_value = @product.descripcion.presence || @product.description
+      translated_flag = true
+    else
+      translated_text = @product.try(:translated_description, requested)
+      if translated_text.present?
+        descripcion_value = translated_text
+        translated_flag = true
+      else
+        # Return original description while scheduling an async translation
+        descripcion_value = @product.descripcion.presence || @product.description
+        translated_flag = false
+        TranslateProductJob.perform_later(@product.id, requested)
+      end
+    end
+
+    base['descripcion'] = descripcion_value
+    base['translated'] = translated_flag
+
+    render json: base, status: :ok
   end
 
   def create
