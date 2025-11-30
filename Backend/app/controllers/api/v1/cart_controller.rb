@@ -33,6 +33,13 @@ module Api
         end
       end
 
+      def remove_all_product
+        cart = current_user.cart
+        cart_product = cart.cart_products.find_by(product_id: params[:product_id])
+        cart_product&.destroy
+        render json: { message: "Producto eliminado", cart: cart_json(cart) }
+      end
+
       def remove_product
         cart = current_user.cart
         return render json: { error: "Carrito no encontrado" }, status: :not_found unless cart

@@ -62,7 +62,7 @@ function renderAvatar(params) {
         alignItems: 'center',       // <-- centra verticalmente dentro de la celda
         padding: 3,
         height: '80%' // asegura centrado vertical,
-        
+
       }}
     >
       {params.value.initials}
@@ -229,27 +229,23 @@ export default function GestionUsuarios() {
   const navigate = useNavigate();
 
   const handleViewClick = (id) => () => {
-      const selectedUser = rows.find((row) => row.id === id);
-      if (selectedUser) {
-              // Navega al perfil del usuario sin prefijo de idioma
-              navigate(`/home/user-full-perfil/${selectedUser.id}`, { state: { user: selectedUser } });
-      }
+    const selectedUser = rows.find((row) => row.id === id);
+    if (selectedUser) {
+      // Navega al perfil del usuario sin prefijo de idioma
+      navigate(`/home/user-full-perfil/${selectedUser.id}`, { state: { user: selectedUser } });
+    }
   };
 
 
   React.useEffect(() => {
-    // Cambia la URL al endpoint correcto que traiga todos los usuarios
     setLoading(true);
-    fetch('https://localhost:4000/api/v1/users',{
+    fetch('https://localhost:4000/api/v1/users', {
       headers: {
         Authorization: `Bearer ${localStorage.getItem('token')}`
       }
     })
       .then((response) => response.json())
       .then((data) => {
-        // Si data es un array de usuarios
-        console.log(data);
-        
         const mappedRows = data.map((user) => ({
           ...user,
           id: user.id,
@@ -259,7 +255,11 @@ export default function GestionUsuarios() {
           },
           roles: Array.isArray(user.roles) ? user.roles : []
         }));
-        setRows(mappedRows);
+        // <-- aquí filtramos solo los clientes
+        const clientesRows = mappedRows.filter(
+          user => !user.roles.includes('admin')
+        );
+        setRows(clientesRows);
       })
       .catch((error) => {
         console.error('Error al obtener los usuarios:', error);
@@ -274,7 +274,7 @@ export default function GestionUsuarios() {
     const rowToDelete = rows.find((row) => row.id === id);
     setSelectedRowForDelete(rowToDelete);
     setIsDeleteModalOpen(true);
-};
+  };
 
   const handleCloseDeleteModal = () => {
     setIsDeleteModalOpen(false);
@@ -309,22 +309,22 @@ export default function GestionUsuarios() {
 
 
   const handleSaveEdit = (updatedRow) => {
-  // Aquí deberías hacer el fetch/PUT a tu API, ejemplo:
-  fetch(`https://localhost:4000/api/v1/users/${updatedRow.id}`, {
-    method: 'PUT',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${localStorage.getItem('token')}`
-    },
-    body: JSON.stringify(updatedRow),
-  })
-    .then((response) => response.json())
-    .then(() => {
-      // Refresca después de guardar
-      handleRefresh();
-      handleCloseModal();
-    });
-};
+    // Aquí deberías hacer el fetch/PUT a tu API, ejemplo:
+    fetch(`https://localhost:4000/api/v1/users/${updatedRow.id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${localStorage.getItem('token')}`
+      },
+      body: JSON.stringify(updatedRow),
+    })
+      .then((response) => response.json())
+      .then(() => {
+        // Refresca después de guardar
+        handleRefresh();
+        handleCloseModal();
+      });
+  };
 
   const columns = [
     {
@@ -341,11 +341,11 @@ export default function GestionUsuarios() {
     { field: 'telefono', headerName: 'Teléfono', width: 150 },
     {
       field: 'roles',
-      headerName: 'Roles',
+      headerName: 'Rol',
       width: 300,
       sortable: false,
-      align: 'center',             // <-- IMPORTANTE: centra el contenido horizontalmente
-      headerAlign: 'center',       // <-- centra el título
+      align: 'center',
+      headerAlign: 'center',
       renderCell: (params) =>
         Array.isArray(params.value) && params.value.length > 0 ? (
           <Box
@@ -420,39 +420,39 @@ export default function GestionUsuarios() {
           columns={columns}
           loading={loading}
           slots={{ toolbar: CustomToolbar }}
-          slotProps={{ 
-            toolbar: { 
-              onRefresh: handleRefresh 
+          slotProps={{
+            toolbar: {
+              onRefresh: handleRefresh
             },
             loadingOverlay: {
               variant: 'skeleton',
               noRowsVariant: 'skeleton',
             },
-           }} // Pasar handleRefresh a la toolbar
-          showToolbar 
+          }} // Pasar handleRefresh a la toolbar
+          showToolbar
         />
-      {selectedRowForEdit && (
-        <EditUserModal
-          open={isModalOpen}
-          onClose={handleCloseModal}
-          initialRowData={selectedRowForEdit}
-          onSave={handleSaveEdit} />
-      )}
-      {selectedRowForDelete && (
-        <Dialog open={isDeleteModalOpen} onClose={handleCloseDeleteModal}>
-          <DialogTitle>¿Estás seguro?</DialogTitle>
-          <DialogContent>
-            <DialogContentText>
-              ¿Seguro que deseas eliminar al usuario <b>{selectedRowForDelete.nombre} {selectedRowForDelete.apellido}</b>? Esta acción no se puede deshacer.
-            </DialogContentText>
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={handleCloseDeleteModal}>Cancelar</Button>
-            <Button color="error" onClick={handleConfirmDelete}>Eliminar</Button>
-          </DialogActions>
-        </Dialog>
-      )}
-    </Box>
-  </>
+        {selectedRowForEdit && (
+          <EditUserModal
+            open={isModalOpen}
+            onClose={handleCloseModal}
+            initialRowData={selectedRowForEdit}
+            onSave={handleSaveEdit} />
+        )}
+        {selectedRowForDelete && (
+          <Dialog open={isDeleteModalOpen} onClose={handleCloseDeleteModal}>
+            <DialogTitle>¿Estás seguro?</DialogTitle>
+            <DialogContent>
+              <DialogContentText>
+                ¿Seguro que deseas eliminar al usuario <b>{selectedRowForDelete.nombre} {selectedRowForDelete.apellido}</b>? Esta acción no se puede deshacer.
+              </DialogContentText>
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={handleCloseDeleteModal}>Cancelar</Button>
+              <Button color="error" onClick={handleConfirmDelete}>Eliminar</Button>
+            </DialogActions>
+          </Dialog>
+        )}
+      </Box>
+    </>
   );
 }

@@ -67,6 +67,39 @@ function Cart() {
     };
   };
 
+  // Eliminar todas las unidades de un producto del carrito
+  const removeAllQuantity = async (productId) => {
+    if (mode === "guest") {
+      guestRemoveItem(productId);
+      setCart(mapGuestToCart(getGuestCart()));
+      window.dispatchEvent(new CustomEvent("guestCartUpdated"));
+      return;
+    }
+
+    try {
+      const response = await fetch(`${API_BASE}/api/v1/cart/remove_all_product`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ product_id: productId }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setCart(data.cart);
+        window.dispatchEvent(new CustomEvent("cartUpdatedCustom", { bubbles: false }));
+      } else {
+        setError(t("cart.updatingError"));
+        console.warn("Error eliminando producto del carrito", await response.json());
+      }
+    } catch (error) {
+      setError(t("cart.updatingError"));
+      console.error(error);
+    }
+  };
+
   const loadCart = useCallback(async () => {
     setLoading(true);
     setError(null);
@@ -110,6 +143,7 @@ function Cart() {
   useEffect(() => {
     loadCart();
   }, [loadCart]);
+
 
   // Escuchar cambios del carrito invitado
   useEffect(() => {

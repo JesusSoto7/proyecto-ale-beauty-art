@@ -158,7 +158,10 @@
     "edit": "Editar Perfil",
     "logout": "Cerrar Sesión",
     "save": "Guardar",
-    "cancel": "Cancelar"
+    "cancel": "Cancelar",
+    "phoneError10digits": "El número de teléfono debe tener 10 dígitos",
+    "phoneErrorNumeric": "El número de teléfono debe ser numérico",
+    "updateSuccess": "Perfil actualizado con éxito"
   },
   "register": {
     "createAccount": "Crear cuenta",
@@ -215,7 +218,14 @@
     "municipality": "Municipio",
     "neighborhood": "Barrio",
     "additionalInstructions": "Indicaciones adicionales",
-    "saveButton": "Guardar dirección"
+    "saveButton": "Guardar dirección",
+    "required": "Requerido",
+    "phoneRequired": "Teléfono requerido",
+    "phoneInvalid": "Debe ser un número colombiano de 10 dígitos",
+    "postalInvalid": "Cód. postal debe tener 6 dígitos",
+    "departmentRequired": "Departamento requerido",
+    "municipalityRequired": "Municipio requerido",
+    "neighborhoodRequired": "Barrio requerido"
   },
   "orderDetail": {
     "notAuthenticated": "No autenticado",
@@ -411,6 +421,21 @@
     "ctaTitle": "Únete a la Comunidad Ale Beauty Art",
     "ctaDescription": "Descubre la belleza que hay en ti con productos que realmente funcionan",
     "exploreButton": "Explorar Productos"
+  },
+  "supportForm": {
+    "contactTitle": "Contacta con nosotros",
+    "contactSubtitle": "Si tienes alguna duda o inconveniente, no dudes en contactarnos a través del siguiente formulario o por medio de nuestros canales de atención. Estamos aquí para ayudarte y brindarte el mejor servicio posible.",
+    "email": "Email:",
+    "phone": "Teléfono:",
+    "address": "Dirección:",
+    "followUs": "Síguenos",
+    "selectOrderOption": "Seleccione número de orden",
+    "messagePlaceholder": "Tu mensaje*",
+    "sendButton": "Enviar Reporte",
+    "selectOrderAlert": "Seleccione una orden antes de enviar.",
+    "messageRequiredAlert": "Por favor escribe tu mensaje antes de enviar.",
+    "orderFetchError": "Error cargando órdenes:",
+    "sentSuccess": "Enviado correctamente"
   },
   "terms": {
     "title": "Términos y Condiciones",

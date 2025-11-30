@@ -67,22 +67,39 @@ function getPresetRange(option) {
   }
 }
 
+
+function getLastPercentChange(arr) {
+  if (!arr || arr.length < 2) return "+0%";
+  const last = arr[arr.length - 1];
+  const prev = arr[arr.length - 2];
+  if (prev === 0) return last === 0 ? "+0%" : "+100%";
+  const percent = ((last - prev) / Math.abs(prev)) * 100;
+  return `${percent >= 0 ? '+' : ''}${percent.toFixed(1)}%`;
+}
+
+
 function formatXAxisLabels(isoDates) {
   if (!isoDates || isoDates.length === 0) return [];
-  const dates = isoDates.map((d) => new Date(d)).filter((d) => !isNaN(d.getTime()));
-  const sameMonth = dates.every(
-    (d) => d.getMonth() === dates[0].getMonth() && d.getFullYear() === dates[0].getFullYear()
-  );
+  const today = new Date();
   const locale = 'es-CO';
-  if (sameMonth) {
-    return dates.map((d) => d.getDate().toString().padStart(2, '0'));
-  }
-  return dates.map((d) =>
-    d.toLocaleDateString(locale, {
+
+  const dates = isoDates.map((d) => {
+    // Maneja correctamente local iso
+    const parts = d.split('-');
+    if (parts.length === 3) {
+      return new Date(Number(parts[0]), Number(parts[1]) - 1, Number(parts[2]));
+    }
+    return new Date(d);
+  }).filter((d) => !isNaN(d.getTime()));
+
+  return dates.map((d) => {
+    let str = d.toLocaleDateString(locale, {
+      day: 'numeric',
       month: 'short',
-      day: '2-digit',
-    })
-  );
+      year: d.getFullYear() !== today.getFullYear() ? 'numeric' : undefined,
+    });
+    return str.replace(/\s*de\s*/gi, ' ');
+  });
 }
 
 // Componente principal --------------------------------------------------
@@ -102,7 +119,12 @@ export default function ProductsChart() {
     label: null,
   });
 
-  // UI state
+
+  const percentText = getLastPercentChange(chartData.values.view_item);
+
+  const dynamicColor = percentText.startsWith('+') ? 'success' : 'error';
+
+
   const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState(null);
 
@@ -164,31 +186,30 @@ export default function ProductsChart() {
 
       // Asegurarse de incluir el día actual si falta
       const rawLabels = Array.isArray(data.labels) ? data.labels : [];
-      const currentDay = new Date().toISOString().slice(0, 10);
-      if (!rawLabels.includes(currentDay)) {
-        rawLabels.push(currentDay); // Añadir día actual
-      }
+      /*       const currentDay = new Date().toISOString().slice(0, 10);
+            if (!rawLabels.includes(currentDay)) {
+              rawLabels.push(currentDay); // Añadir día actual
+            } */
 
       const formattedLabels = formatXAxisLabels(rawLabels);
       const values = data.values || {};
 
       // Asegúrate de extender valores para el día actual
-      const extendValuesToToday = (key) => {
-        const existing = Array.isArray(values[key]) ? values[key] : [];
-        if (existing.length < rawLabels.length) {
-          const difference = rawLabels.length - existing.length;
-          return [...existing, ...Array(difference).fill(0)];
+      const extendToLength = (arr, len) => {
+        if (arr.length < len) {
+          return [...arr, ...Array(len - arr.length).fill(0)];
         }
-        return existing;
+        return arr;
       };
+
 
       setChartData({
         rawLabels,
         labels: formattedLabels,
         values: {
-          view_item: extendValuesToToday('view_item'),
-          add_to_cart: extendValuesToToday('add_to_cart'),
-          purchase: extendValuesToToday('purchase'),
+          view_item: extendToLength(values.view_item || [], rawLabels.length),
+          add_to_cart: extendToLength(values.add_to_cart || [], rawLabels.length),
+          purchase: extendToLength(values.purchase || [], rawLabels.length),
         },
         start_date: data.start_date,
         end_date: data.end_date,
@@ -303,9 +324,6 @@ export default function ProductsChart() {
           spacing={2}
           sx={{ mb: 2, alignItems: { xs: 'flex-start', sm: 'center' } }}
         >
-          <Typography component="h2" variant="subtitle2" gutterBottom sx={{ mb: 0 }}>
-            Embudo de productos
-          </Typography>
 
           <TextField
             select
@@ -384,7 +402,7 @@ export default function ProductsChart() {
             <Typography variant="h5" component="p">
               {totalView} vistos · {totalCart} al carrito ({conversionCart.toFixed(1)}%) · {totalBuy} comprados ({conversionBuy.toFixed(1)}%)
             </Typography>
-            <Chip size="small" color="success" label="+35%" />
+            <Chip size="small" color={dynamicColor} label={percentText} />
           </Stack>
           <Typography variant="caption" sx={{ color: 'text.secondary' }}>
             {rangeOption === 'custom' && chartData.start_date && chartData.end_date

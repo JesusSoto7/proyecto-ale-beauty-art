@@ -62,7 +62,7 @@ export const useCartState = (token, t) => {
         setTimeout(() => {
           setOptimisticCount(0);
           isFetchingRef.current = false;
-        }, 50);
+        }, 400);
       })
       .catch((err) => {
         console.error("Error cargando cart: ", err);

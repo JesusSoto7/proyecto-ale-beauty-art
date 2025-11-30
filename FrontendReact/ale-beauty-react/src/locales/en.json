@@ -158,7 +158,10 @@
     "edit": "Edit Profile",
     "logout": "Log Out",
     "save": "Save",
-    "cancel": "Cancel"
+    "cancel": "Cancel",
+    "phoneError10digits": "Phone number must be 10 digits",
+    "phoneErrorNumeric": "Phone number must be numeric",
+    "updateSuccess": "Profile updated successfully"
   },
   "register": {
     "createAccount": "Create account",
@@ -214,7 +217,14 @@
     "municipality": "Municipality",
     "neighborhood": "Neighborhood",
     "additionalInstructions": "Additional instructions",
-    "saveButton": "Save address"
+    "saveButton": "Save address",
+    "required": "Required",
+    "phoneRequired": "Phone number is required",
+    "phoneInvalid": "Must be a 10 digit Colombian number",
+    "postalInvalid": "Postal code must be 6 digits",
+    "departmentRequired": "Department required",
+    "municipalityRequired": "Municipality required",
+    "neighborhoodRequired": "Neighborhood required"
   },
   "orderDetail": {
     "notAuthenticated": "Not authenticated",
@@ -315,6 +325,21 @@
   "banner": {
     "title": "PRODUCTS",
     "description": "Discover our wide selection of products"
+  },
+  "supportForm": {
+    "contactTitle": "Contact Us",
+    "contactSubtitle": "If you have any questions or problems, do not hesitate to contact us using the following form or through our support channels. We are here to help you and provide the best possible service.",
+    "email": "Email:",
+    "phone": "Phone:",
+    "address": "Address:",
+    "followUs": "Follow us",
+    "selectOrderOption": "Select order number",
+    "messagePlaceholder": "Your message*",
+    "sendButton": "Send Report",
+    "selectOrderAlert": "Please select an order before submitting.",
+    "messageRequiredAlert": "Please enter your message before submitting.",
+    "orderFetchError": "Error loading orders:",
+    "sentSuccess": "Sent successfully"
   },
   "productDetails": {
     "notAuthenticated": "You are not authenticated",

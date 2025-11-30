@@ -102,33 +102,33 @@ export default function SideMenu() {
           borderColor: 'divider',
         }}
       >
-{/*         <Avatar
+        {/*         <Avatar
           sizes="small"
           alt={`${user.nombre?.charAt(0).toUpperCase()}`}
           src="/static/images/avatar/7.jpg"
           sx={{ width: 36, height: 36, backgroundColor: "#f896b8" }}
         /> */}
 
-        <ListItemButton   sx={{
-            [`& .${listItemIconClasses.root}`]: {
-              ml: 'auto',
-              minWidth: 0,
-            },
-          }}
+        <ListItemButton sx={{
+          [`& .${listItemIconClasses.root}`]: {
+            ml: 'auto',
+            minWidth: 0,
+          },
+        }}
           onClick={handleLogout}>
           <ListItemIcon>
             <LogoutRoundedIcon fontSize="small" />
           </ListItemIcon>
-          <ListItemText >Logout</ListItemText>
+          <ListItemText >Cerrar Sesión</ListItemText>
 
         </ListItemButton>
 
-{/*         <Box sx={{ mr: 'auto' }}>
+        {/*         <Box sx={{ mr: 'auto' }}>
           <Typography variant="caption" sx={{ color: 'text.secondary' }}>
             {user.email}
           </Typography>
         </Box> */}
-   {/*      <OptionsMenu /> */}
+        {/*      <OptionsMenu /> */}
       </Stack>
     </Drawer>
   );

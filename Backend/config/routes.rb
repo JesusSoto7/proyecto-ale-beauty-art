@@ -34,6 +34,7 @@ Rails.application.routes.draw do
       get "cart", to: "cart#show"
       post 'cart/add_product', to: 'cart#add_product'        
       delete 'cart/remove_product', to: 'cart#remove_product'
+      delete "cart/remove_all_product", to: "cart#remove_all_product"
 
       get    'carousel', to: 'carousel#index'
       patch  'carousel', to: 'carousel#update'

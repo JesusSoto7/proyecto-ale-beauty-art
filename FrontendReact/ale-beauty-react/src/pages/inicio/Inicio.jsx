@@ -12,14 +12,13 @@ import { useHomeData } from './hooks/useHomeData';
 import { useProductRatings } from './hooks/useProductsRating.js';
 import { useCartActions } from './hooks/useCartActions';
 import { useFavoriteActions } from './hooks/useFavoriteActions';
-import useRecordPageView from './hooks/useRecordPageView.js';
 import { useTranslation } from 'react-i18next';
 
 import ProductsStrip from '../../components/ProductsStrip.jsx';
 import InicioCarousel from '../../components/InicioCarousel.jsx';
 
 function Inicio() {
-  useRecordPageView();
+
 
   const { lang } = useParams();
   const { favoriteIds, loadFavorites } = useOutletContext();

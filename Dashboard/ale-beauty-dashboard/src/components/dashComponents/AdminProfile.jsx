@@ -4,12 +4,9 @@ import {
   Box,
   Typography,
   Button,
-  Divider,
   Chip,
   Stack,
   Card,
-  CardContent,
-  Grid,
   Dialog,
   DialogTitle,
   DialogContent,
@@ -19,9 +16,8 @@ import {
 
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import EditIcon from "@mui/icons-material/Edit";
-import LogoutIcon from "@mui/icons-material/Logout";
 
-const AdminProfile = ({ onLogout }) => {
+const AdminProfile = () => {
   const [adminData, setAdminData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -30,6 +26,9 @@ const AdminProfile = ({ onLogout }) => {
   const [openEditModal, setOpenEditModal] = useState(false);
   const [editForm, setEditForm] = useState({ nombre: "", apellido: "", email: "", telefono: "" });
   const [editLoading, setEditLoading] = useState(false);
+
+  // Validación teléfono
+  const [telefonoError, setTelefonoError] = useState("");
 
   const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
 
@@ -65,6 +64,7 @@ const AdminProfile = ({ onLogout }) => {
       email: adminData?.email || "",
       telefono: adminData?.telefono || "",
     });
+    setTelefonoError("");
     setOpenEditModal(true);
   };
 
@@ -73,11 +73,34 @@ const AdminProfile = ({ onLogout }) => {
 
   // Handle form changes
   const handleFieldChange = (e) => {
-    setEditForm({ ...editForm, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+
+    // Validación para teléfono usando sólo números
+    if (name === "telefono") {
+      // Sólo admite números
+      const cleanedValue = value.replace(/\D/g, "");
+      setEditForm({ ...editForm, [name]: cleanedValue });
+
+      if (cleanedValue.length < 10) {
+        setTelefonoError("El número debe tener 10 dígitos.");
+      } else if (cleanedValue.length > 10) {
+        setTelefonoError("No puede tener más de 10 dígitos.");
+      } else {
+        setTelefonoError("");
+      }
+    } else {
+      setEditForm({ ...editForm, [name]: value });
+    }
   };
 
   // Handle save profile
   const handleSaveProfile = async () => {
+    // Validación antes de enviar
+    if (editForm.telefono.length !== 10) {
+      setTelefonoError("El número debe tener exactamente 10 dígitos.");
+      return;
+    }
+
     setEditLoading(true);
     try {
       const response = await fetch(`${apiBaseUrl}/api/v1/admin/profile`, {
@@ -119,102 +142,69 @@ const AdminProfile = ({ onLogout }) => {
   const { nombre, apellido, email, telefono, roles } = adminData || {};
 
   return (
-    <Box sx={{ maxWidth: "1100px", mx: "auto", py: 4, px: { xs: 1, md: 6 } }}>
-      {/* Header */}
-      <Card sx={{ p: { xs: 2, md: 4 }, borderRadius: 4 }}>
-        <Stack spacing={2} alignItems="center">
-          <Avatar sx={{ width: 120, height: 120, fontSize: 40 }}>
+    <Box
+      sx={{
+        minHeight: "100vh",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        backgroundColor: "background.default",
+      }}
+    >
+      <Card
+        sx={{
+          p: { xs: 8, md: 12 },
+          borderRadius: 10,
+          boxShadow: 12,
+          minWidth: { xs: 380, md: 700, lg: 950 },
+          maxWidth: { xs: "98vw", md: "60vw", lg: "45vw" },
+          minHeight: { xs: 440, md: 600, lg: 680 },
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        <Stack spacing={6} alignItems="center" sx={{ width: "100%" }}>
+          <Avatar sx={{ width: 230, height: 230, fontSize: 100 }}>
             {nombre?.charAt(0) || ""}
           </Avatar>
-
-          <Typography variant="h3" fontWeight="bold">
+          <Typography variant="h2" fontWeight="bold" align="center">
             {nombre} {apellido}
           </Typography>
-
           <Chip
-            label={roles?.join(", ")}
+            label={roles?.includes('admin') ? 'Administrador' : ''}
             color="primary"
             variant="filled"
             icon={<AccountCircleIcon />}
-            sx={{ fontSize: 18, py: 1, px: 2 }}
+            sx={{ fontSize: 32, py: 2.2, px: 5 }}
           />
-
-          <Typography variant="h6" color="text.secondary">
+          <Typography variant="h4" color="text.secondary" align="center">
             {email}
           </Typography>
           {telefono && (
-            <Typography variant="body1" color="text.secondary">
+            <Typography variant="h5" color="text.secondary" align="center">
               Teléfono: {telefono}
             </Typography>
           )}
-
-          <Stack direction="row" spacing={2} sx={{ mt: 2 }}>
+          <Stack direction="row" spacing={4} sx={{ mt: 2, width: "100%", justifyContent: "center" }}>
             <Button
               variant="contained"
               startIcon={<EditIcon />}
               onClick={handleOpenEdit}
-              sx={{ fontSize: 16, py: 1.2, px: 4 }}
+              sx={{ fontSize: 26, py: 2.2, px: 9 }}
             >
               Editar Perfil
-            </Button>
-            <Button
-              variant="outlined"
-              color="error"
-              startIcon={<LogoutIcon />}
-              onClick={onLogout}
-              sx={{ fontSize: 16, py: 1.2, px: 4 }}
-            >
-              Cerrar Sesión
             </Button>
           </Stack>
         </Stack>
       </Card>
 
-      {/* Estadísticas del Admin */}
-      <Typography variant="h4" sx={{ mt: 5, mb: 3 }}>
-        Actividad del Administrador
-      </Typography>
-
-      <Grid container spacing={3}>
-        <Grid item xs={12} sm={4}>
-          <Card sx={{ p: 3 }}>
-            <Typography variant="h6" color="primary" fontWeight="bold">
-              Órdenes de hoy
-            </Typography>
-            <Typography variant="h3" fontWeight="bold">
-              0
-            </Typography>
-          </Card>
-        </Grid>
-
-        <Grid item xs={12} sm={4}>
-          <Card sx={{ p: 3 }}>
-            <Typography variant="h6" color="primary" fontWeight="bold">
-              Usuarios nuevos
-            </Typography>
-            <Typography variant="h3" fontWeight="bold">
-              0
-            </Typography>
-          </Card>
-        </Grid>
-
-        <Grid item xs={12} sm={4}>
-          <Card sx={{ p: 3 }}>
-            <Typography variant="h6" color="primary" fontWeight="bold">
-              Productos con poco stock
-            </Typography>
-            <Typography variant="h3" fontWeight="bold">
-              0
-            </Typography>
-          </Card>
-        </Grid>
-      </Grid>
-
       {/* Modal para editar perfil */}
       <Dialog open={openEditModal} onClose={handleCloseEdit} maxWidth="sm" fullWidth>
         <DialogTitle>Editar Perfil de Administrador</DialogTitle>
         <DialogContent>
-          <Stack spacing={2}>
+          <Stack spacing={3} sx={{ mt: 2 }}>
             <TextField
               label="Nombre"
               name="nombre"
@@ -241,6 +231,13 @@ const AdminProfile = ({ onLogout }) => {
               name="telefono"
               value={editForm.telefono}
               onChange={handleFieldChange}
+              error={Boolean(telefonoError)}
+              helperText={telefonoError}
+              inputProps={{
+                maxLength: 10,
+                inputMode: "numeric",
+                pattern: "[0-9]*"
+              }}
               fullWidth
             />
           </Stack>

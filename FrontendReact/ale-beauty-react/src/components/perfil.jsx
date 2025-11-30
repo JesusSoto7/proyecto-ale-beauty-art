@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import {  useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import user_icon from "../assets/images/user_default.png";
 
@@ -13,6 +13,7 @@ export default function Perfil() {
     telefono: "",
     direccion: "",
   });
+  const [phoneError, setPhoneError] = useState(""); // Validación para teléfono
   const { lang } = useParams();
   const { t } = useTranslation();
 
@@ -39,11 +40,33 @@ export default function Perfil() {
       .catch((err) => console.error(err));
   }, [t]);
 
+  // Validación para teléfono: solo dígitos, máximo 10
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    // Para el campo teléfono
+    if (name === "telefono") {
+      // Solo permite dígitos, máximo 10
+      if (!/^\d*$/.test(value)) return;
+      if (value.length > 10) return;
+      setFormData({ ...formData, [name]: value });
+
+      // Validación en "onChange" para mostrar error en UI si se quiere
+      if (value.length > 0 && value.length < 10) {
+        setPhoneError(t("profile.phoneError10digits")); // Por ejemplo: "Debes ingresar 10 dígitos"
+      } else {
+        setPhoneError("");
+      }
+    } else {
+      setFormData({ ...formData, [name]: value });
+    }
   };
 
   const handleSave = () => {
+    // Validación extra antes de guardar (no guardar si número es inválido)
+    if (formData.telefono.length !== 10) {
+      setPhoneError(t("profile.phoneError10digits"));
+      return;
+    }
     const token = localStorage.getItem("token");
 
     fetch("https://localhost:4000/api/v1/me", {
@@ -61,6 +84,7 @@ export default function Perfil() {
       .then((updatedUser) => {
         setUser(updatedUser);
         setEditMode(false);
+        setPhoneError("");
       })
       .catch((err) => console.error(err));
   };
@@ -91,7 +115,7 @@ export default function Perfil() {
             }
           `}
         </style>
-        <h4 style={{ 
+        <h4 style={{
           color: '#ff4d94',
           fontWeight: 'bold',
           margin: 0
@@ -103,7 +127,7 @@ export default function Perfil() {
   }
 
   return (
-    <div className="d-flex justify-content-center align-items-center" style={{marginTop: "80px"}}>
+    <div className="d-flex justify-content-center align-items-center" style={{ marginTop: "80px" }}>
       <div
         className="shadow-lg rounded-4 p-4"
         style={{ maxWidth: "800px", width: "100%", backgroundColor: "#fff" }}
@@ -111,17 +135,42 @@ export default function Perfil() {
         <div className="row align-items-center g-4">
           {/* Columna izquierda - Avatar */}
           <div className="col-md-4 text-center">
-            <img
-              src={user_icon}
-              alt={t("profile.avatarAlt")}
-              className="rounded-3 img-fluid"
-              style={{
-                width: "220px",
-                height: "220px",
-                objectFit: "cover",
-                boxShadow: "0px 4px 10px rgba(0,0,0,0.1)",
-              }}
-            />
+            {
+              user.nombre ? (
+                <div
+                  style={{
+                    width: "220px",
+                    height: "220px",
+                    borderRadius: "50%",
+                    background: "#f8f8fb",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    fontSize: "96px",
+                    fontWeight: "bold",
+                    color: "#d15f8dff",
+                    boxShadow: "0px 4px 10px rgba(0,0,0,0.1)",
+                    margin: "0 auto"
+                  }}
+                  aria-label={t("profile.avatarAlt")}
+                  title={t("profile.avatarAlt")}
+                >
+                  {user.nombre.charAt(0).toUpperCase()}
+                </div>
+              ) : (
+                <img
+                  src={user_icon}
+                  alt={t("profile.avatarAlt")}
+                  className="rounded-3 img-fluid"
+                  style={{
+                    width: "220px",
+                    height: "220px",
+                    objectFit: "cover",
+                    boxShadow: "0px 4px 10px rgba(0,0,0,0.1)",
+                  }}
+                />
+              )
+            }
           </div>
 
           {/* Columna derecha */}
@@ -195,8 +244,14 @@ export default function Perfil() {
                     name="telefono"
                     value={formData.telefono}
                     onChange={handleChange}
-                    className="form-control"
+                    className={`form-control ${phoneError ? "is-invalid" : ""}`}
+                    maxLength={10}
                   />
+                  {phoneError && (
+                    <div className="invalid-feedback" style={{ display: "block" }}>
+                      {phoneError}
+                    </div>
+                  )}
                 </div>
 
                 <div className="mt-4">

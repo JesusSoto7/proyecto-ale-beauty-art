@@ -40,9 +40,9 @@ export default function MenuContent() {
 
   ];
 
-  const secondaryListItems = [
-    { text: 'Settings', icon: <SettingsRoundedIcon /> },
-  ];
+  /*   const secondaryListItems = [
+      { text: 'Settings', icon: <SettingsRoundedIcon /> },
+    ]; */
 
   return (
     <Stack sx={{ flexGrow: 1, p: 1, justifyContent: 'space-between' }}>
@@ -108,16 +108,7 @@ export default function MenuContent() {
         {/* --- Fin acordeón --- */}
       </List>
 
-      <List dense>
-        {secondaryListItems.map((item, index) => (
-          <ListItem key={index} disablePadding sx={{ display: 'block' }}>
-            <ListItemButton>
-              <ListItemIcon>{item.icon}</ListItemIcon>
-              <ListItemText primary={item.text} />
-            </ListItemButton>
-          </ListItem>
-        ))}
-      </List>
+
     </Stack>
   );
 }
