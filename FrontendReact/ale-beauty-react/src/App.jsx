@@ -35,7 +35,6 @@ import { useTranslation } from "react-i18next";
 import Pedidos from './pages/inicio/Pedidos';
 import DetallePedido from './pages/inicio/DetallePedido';
 import GuestCheckout from './components/GuestCheckout/GuestCheckout.jsx';
-import useRecordPageView from './pages/inicio/hooks/useRecordPageView.js';
 import PrivacyPolicy from './components/PrivacyPolicy.jsx';
 import SupportMs from './components/supportMs.jsx';
 
@@ -49,7 +48,6 @@ function Wrapper() {
       i18n.changeLanguage(lang);
     }
   }, [lang, i18n]);
-  useRecordPageView();
   return <Outlet />;
 }
 
