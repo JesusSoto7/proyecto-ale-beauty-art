@@ -9,8 +9,9 @@ import CardContent from '@mui/material/CardContent';
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import LinearProgress, { linearProgressClasses } from '@mui/material/LinearProgress';
+import Skeleton from '@mui/material/Skeleton';
 
-
+// ...StyledText and PieCenterLabel remain the same
 
 const StyledText = styled('text', {
   shouldForwardProp: (prop) => prop !== 'variant',
@@ -56,14 +57,14 @@ function PieCenterLabel({ primaryText, secondaryText }) {
   const secondaryY = primaryY + 24;
 
   return (
-    <React.Fragment>
+    <>
       <StyledText variant="primary" x={left + width / 2} y={primaryY}>
         {primaryText}
       </StyledText>
       <StyledText variant="secondary" x={left + width / 2} y={secondaryY}>
         {secondaryText}
       </StyledText>
-    </React.Fragment>
+    </>
   );
 }
 
@@ -79,13 +80,49 @@ const colors = [
   'hsla(249, 32%, 43%, 0.91)',
 ];
 
+// --- SKELETON COMPONENT BELOW --- //
+function DonutChartSkeleton({ rows = 2 }) {
+  return (
+    <Card variant="outlined" sx={{ display: 'flex', flexDirection: 'column', gap: '8px', flexGrow: 1 }}>
+      <CardContent>
+        <Box sx={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          minHeight: 260,
+          py: 2,
+        }}>
+
+          <Skeleton variant="circular" width={190} height={190} sx={{ mx: 'auto' }} />
+          {/* Puedes poner solo un Typography si quieres texto de carga */}
+          {/* <Typography variant="h5" sx={{ mx: 'auto' }}>Cargando gráfica...</Typography> */}
+        </Box>
+        {/* Skeleton para barras, títulos e imágenes */}
+        {Array.from({ length: rows }).map((_, idx) => (
+          <Stack key={idx} direction="row" sx={{ alignItems: 'center', gap: 2, pb: 2 }}>
+            <Skeleton variant="circular" width={32} height={32} />
+            <Stack sx={{ gap: 1, flexGrow: 1 }}>
+              <Stack direction="row" sx={{ justifyContent: 'space-between', alignItems: 'center', gap: 2 }}>
+                <Skeleton variant="text" width={70} />
+                <Skeleton variant="text" width={44} />
+              </Stack>
+              <Skeleton variant="rectangular" height={8} sx={{ borderRadius: 4, width: '100%' }} />
+            </Stack>
+          </Stack>
+        ))}
+      </CardContent>
+    </Card>
+  );
+}
+
+// --- MAIN CHART COMPONENT --- //
 export default function ChartProductsByCategory() {
-  const [token, setToken] = React.useState(null)
+  const [token, setToken] = React.useState(null);
   const [categoryData, setCategoryData] = React.useState([]);
   const [categoryPercent, setCategortPercent] = React.useState([]);
+  const [loading, setLoading] = React.useState(true);
 
   React.useEffect(() => {
-
     const savedToken = localStorage.getItem("token");
     if (savedToken) {
       setToken(savedToken);
@@ -94,9 +131,9 @@ export default function ChartProductsByCategory() {
     }
   }, []);
 
-
   React.useEffect(() => {
     if (!token) return;
+    setLoading(true);
     fetch("https://localhost:4000/api/v1/total_sales_by_category", {
       headers: {
         Authorization: `Bearer ${token}`
@@ -121,10 +158,16 @@ export default function ChartProductsByCategory() {
             value: total > 0 ? ((cat.total_sales / total) * 100).toFixed(1) : 0,
             imagen_url: cat.imagen_url,
           }))
-        )
+        );
       })
-      .catch((err) => console.error(err));
+      .catch((err) => console.error(err))
+      .finally(() => setLoading(false));
   }, [token]);
+
+  // --- Muestra Skeleton mientras loading, PieChart con info después ---
+  if (loading) {
+    return <DonutChartSkeleton rows={2} />;
+  }
 
   return (
     <Card
@@ -135,12 +178,7 @@ export default function ChartProductsByCategory() {
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
           <PieChart
             colors={colors}
-            margin={{
-              left: 80,
-              right: 80,
-              top: 80,
-              bottom: 80,
-            }}
+            margin={{ left: 80, right: 80, top: 80, bottom: 80 }}
             series={[
               {
                 data: categoryData,
@@ -162,7 +200,8 @@ export default function ChartProductsByCategory() {
                 style: "currency",
                 currency: "COP",
               })}
-              secondaryText="Total" />
+              secondaryText="Total"
+            />
           </PieChart>
         </Box>
         {categoryPercent.map((cat, index) => (
@@ -179,8 +218,6 @@ export default function ChartProductsByCategory() {
                 height={32}
                 style={{ borderRadius: '50%', objectFit: 'cover' }}
               />
-
-
             ) : (
               <Box
                 sx={{
@@ -191,7 +228,6 @@ export default function ChartProductsByCategory() {
                 }}
               />
             )}
-
 
             <Stack sx={{ gap: 1, flexGrow: 1 }}>
               <Stack

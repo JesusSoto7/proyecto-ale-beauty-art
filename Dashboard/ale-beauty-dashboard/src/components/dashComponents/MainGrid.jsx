@@ -169,11 +169,13 @@ export default function MainGrid() {
     const last = Number(values[values.length - 1] || 0);
     const prev = Number(values[values.length - 2] || 0);
 
-    if (prev === 0 && last > 0) {
-      return { trend: 'up', percentText: "Nuevo registro", deltaText: `+${last}` };
-    }
-    if (prev === 0 && last === 0) {
-      return { trend: 'neutral', percentText: 'Sin actividad', deltaText: '+0' };
+    if (prev === 0) {
+      if (last === 0) {
+        return { trend: 'neutral', percentText: 'Sin actividad', deltaText: '+0' };
+      } else {
+        // Si antes era 0 y ahora hay (por ejemplo, de 0 a 10), muestra +100%
+        return { trend: 'up', percentText: '+100%', deltaText: `+${last}` };
+      }
     }
 
     const percent = ((last - prev) / Math.abs(prev)) * 100;
