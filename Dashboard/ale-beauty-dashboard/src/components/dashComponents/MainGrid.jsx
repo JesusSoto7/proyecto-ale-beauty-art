@@ -13,6 +13,7 @@ import { formatCOP } from '../../services/currency';
 import ChartProductsByCategory from './ChartProductsByCategory';
 import { useTranslation } from "react-i18next";
 import { apiGet } from '../../services/api';
+import { Chip } from '@mui/material';
 
 export default function MainGrid() {
   const [token, setToken] = React.useState(null);
@@ -183,24 +184,45 @@ export default function MainGrid() {
   // compute a simple trend & delta from last two data points
   function computeTrendInfo(values) {
     if (!values || values.length < 2) {
-      return { trend: 'neutral', percentText: '+0%', deltaText: '+0' };
+      return { trend: 'neutral', percentText: 'Estable', deltaText: '+0' };
     }
     const last = Number(values[values.length - 1] || 0);
     const prev = Number(values[values.length - 2] || 0);
 
-    // avoid division by zero
-    const percent = prev === 0 ? (last === 0 ? 0 : 100) : ((last - prev) / Math.abs(prev)) * 100;
-    const delta = last - prev;
+    // caso especial solo para usuarios registrados: si prev es 0 y last >= 1, muestra "Nuevo registro"
+    if (prev === 0 && last > 0) {
+      return { trend: 'up', percentText: "Nuevo registro", deltaText: `+${last}` };
+    }
+    if (prev === 0 && last === 0) {
+      return { trend: 'neutral', percentText: 'Sin actividad', deltaText: '+0' };
+    }
 
+    // else, calcula normal
+    const percent = ((last - prev) / Math.abs(prev)) * 100;
+    const delta = last - prev;
     const trend = percent > 2 ? 'up' : percent < -2 ? 'down' : 'neutral';
     const percentText = `${percent >= 0 ? '+' : ''}${percent.toFixed(1)}%`;
-    const deltaText = delta >= 1000 || delta <= -1000
-      ? `${delta >= 0 ? '+' : ''}${(delta / 1000).toFixed(1)}k`
-      : `${delta >= 0 ? '+' : ''}${delta}`;
-
+    const deltaText = `${delta >= 0 ? '+' : ''}${delta}`;
     return { trend, percentText, deltaText };
   }
 
+  function computeUserChip(values) {
+    // Si la suma es 0, muestra "Sin registros" y usa color default
+    const sum = (values || []).reduce((a, b) => a + b, 0);
+    if (sum === 0) {
+      return { percentText: "Sin registros", color: "default", trend: "neutral" };
+    }
+    // Si hay registros pero el porcentaje da 0%, muestra "Estable"
+    const trendInfo = computeTrendInfo(values);
+    if (trendInfo.percentText === "+0%" || trendInfo.percentText === "0%") {
+      return { percentText: "Estable", color: "default", trend: "neutral" };
+    }
+    // Si sube/baja, muestra como antes
+    return { percentText: trendInfo.percentText, color: trendInfo.trend === "up" ? "success" : trendInfo.trend === "down" ? "error" : "default", trend: trendInfo.trend };
+  }
+
+
+  const userChip = computeUserChip(userChartData.values);
   const totalSalesTrend = computeTrendInfo(totalSalesCharData.values);
   const pageViewsTrend = computeTrendInfo(pageViewsCharData.values);
 
@@ -211,21 +233,24 @@ export default function MainGrid() {
       interval: 'Últimos 30 días',
       trend: totalSalesTrend.trend,
       percentText: totalSalesTrend.percentText,
-      deltaText: `${totalSalesTrend.deltaText} this week`,
-      subtitle: `${completedOrders} Orders`,
+      deltaText: `${totalSalesTrend.deltaText} esta semana`,
+      subtitle: `${completedOrders} Ordenes`,
       data: totalSalesCharData.values || [],
       labels: totalSalesCharData.labels || [],
+      hideArrow: true,
     },
     {
       title: 'Usuarios Registrados',
       value: userCount,
       interval: 'Últimos 30 días',
-      trend: 'up',
+      trend: userChip.trend,
       data: userChartData.values || [],
       labels: userChartData.labels || [],
       subtitle: '',
-      percentText: '+0%',
+      percentText: userChip.percentText,
+      chipColor: userChip.color,
       deltaText: '',
+      hideArrow: true,
     },
     {
       title: 'Visitas a la página',
@@ -238,17 +263,16 @@ export default function MainGrid() {
       data: googlePageViewsData.values,
       labels: googlePageViewsData.labels,
       icon: VisibilityOutlinedIcon,
+      hideArrow: true,
     },
   ];
 
   return (
     <Box sx={{ width: '100%', maxWidth: 'none', overflow: 'hidden', px: { xs: 1, md: 3 } }}>
       <Typography component="h2" variant="h6" sx={{ mb: 3 }}>
-        {t("overview")}
+        Resumen
       </Typography>
 
-      {/* Top stat cards row - 3 cards, larger */}
-      {/* Top stat cards row - 3 cards, larger */}
       <Grid container spacing={3} sx={{ mb: 3 }}>
         {cards.map((card, index) => (
           <Grid key={index} size={{ xs: 12, sm: 6, lg: 4 }}>
@@ -258,12 +282,11 @@ export default function MainGrid() {
 
       </Grid>
 
-      {/* Big charts row: ProductsChart (wide) + right column with PageViewsBarChart and Category chart stacked */}
       <Grid container spacing={3} sx={{ mb: 3 }}>
         <Grid item xs={12} md={8}>
           <Paper sx={{ p: 3, borderRadius: 3, minHeight: 480 }}>
             <Typography variant="h6" sx={{ mb: 2, fontWeight: 700 }}>
-              Embudo de productos
+              Actividad y conversión de productos
             </Typography>
             <Box sx={{
               height: 400,

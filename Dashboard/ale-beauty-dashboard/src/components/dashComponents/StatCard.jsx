@@ -31,8 +31,9 @@ AreaGradient.propTypes = {
   id: PropTypes.string.isRequired,
 };
 
-function StatCard({ title, value, interval, trend, data, labels, subtitle, percentText, deltaText, icon }) {
+function StatCard({ title, value, interval, trend, data, labels, subtitle, percentText, deltaText, icon, hideArrow, chipColor }) {
   const theme = useTheme();
+
 
   const trendColors = {
     up:
@@ -58,7 +59,7 @@ function StatCard({ title, value, interval, trend, data, labels, subtitle, perce
   const color = labelColors[trend] || 'default';
   const chartColor = trendColors[trend] || trendColors.neutral;
   const trendValues = { up: '+25%', down: '-25%', neutral: '+5%' };
-
+  const chipDisplayColor = chipColor || color;
   // safe id for gradient (no spaces or $)
   const safeId = `area-gradient-${String(value).replace(/[^a-zA-Z0-9]/g, '-')}`;
 
@@ -93,7 +94,10 @@ function StatCard({ title, value, interval, trend, data, labels, subtitle, perce
               ) : null}
             </Stack>
           </Stack>
-          <ChevronRightIcon sx={{ color: 'text.secondary' }} />
+          {/* Quitar el signo ">" si hideArrow es true */}
+          {!hideArrow && (
+            <ChevronRightIcon sx={{ color: 'text.secondary' }} />
+          )}
         </Stack>
 
         <Stack
@@ -108,10 +112,10 @@ function StatCard({ title, value, interval, trend, data, labels, subtitle, perce
               <Typography variant="h4" component="p" sx={{ color: (theme) => theme.palette.mode === 'light' ? 'text.primary' : '#fff' }}>
                 {value}
               </Typography>
-              <Chip size="small" color={color} label={percentText || trendValues[trend]} />
+              <Chip size="small" color={chipDisplayColor} label={percentText || trendValues[trend]} />
             </Stack>
             <Typography variant="caption" sx={{ color: 'text.secondary' }}>
-              {interval}
+              {interval.replace(/\s*de\s*/gi, ' ')}
             </Typography>
           </Stack>
 
@@ -188,6 +192,7 @@ StatCard.propTypes = {
   percentText: PropTypes.string,
   deltaText: PropTypes.string,
   icon: PropTypes.oneOfType([PropTypes.func, PropTypes.object]),
+  hideArrow: PropTypes.bool, // <- Añadido para controlar el ">" 
 };
 
 StatCard.defaultProps = {
@@ -197,6 +202,7 @@ StatCard.defaultProps = {
   percentText: '',
   deltaText: '',
   icon: null,
+  hideArrow: false,    // <- Añadido para default
 };
 
 export default StatCard;

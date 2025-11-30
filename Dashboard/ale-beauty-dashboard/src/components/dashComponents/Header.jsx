@@ -7,25 +7,26 @@ import {
   Avatar,
   IconButton,
   Badge,
-  Paper,
-  InputBase,
-  Menu,
-  MenuItem
 } from '@mui/material';
 import NotificationsRoundedIcon from '@mui/icons-material/NotificationsRounded';
-import SearchIcon from '@mui/icons-material/Search';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
-import CustomDatePicker from './CustomDatePicker';
 import ColorModeIconDropdown from '../../shared-theme/ColorModeIconDropdown';
 import { useNavigate } from 'react-router-dom';
+
+// Utilidad para mostrar la fecha de hoy (formato corto: 30 nov. 2025)
+function getTodayString() {
+  const today = new Date();
+  return today.toLocaleDateString('es-ES', {
+    day: '2-digit',
+    month: 'short',
+    year: 'numeric',
+  });
+}
 
 export default function Header() {
   const [user, setUser] = useState(null);
   const [pendingMessagesCount, setPendingMessagesCount] = useState(0);
-  const [anchorEl, setAnchorEl] = useState(null);
   const navigate = useNavigate();
-  // no usamos param de idioma en rutas del dashboard
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -36,37 +37,22 @@ export default function Header() {
       .then(res => res.json())
       .then(data => setUser(data))
       .catch(err => console.error(err));
-
     fetchPendingCount();
-
   }, []);
-
-  const open = Boolean(anchorEl);
-  const handleMenuOpen = (e) => setAnchorEl(e.currentTarget);
-  const handleMenuClose = () => setAnchorEl(null);
-
-  // currentLang ya no necesario porque no dependemos de la URL para idioma
-
 
   const fetchPendingCount = async () => {
     const token = localStorage.getItem("token");
     if (!token) return;
-
     try {
-      // **IMPORTANTE:** Ajusta la URL si es diferente a localhost:4000
       const res = await fetch("https://localhost:4000/api/v1/support_messages/pending_count", {
         headers: { "Authorization": `Bearer ${token}` }
       });
-
       if (!res.ok) {
-        // Manejar 401/403 si el usuario no es admin o el token falla
         console.error("Error al obtener conteo de mensajes pendientes:", res.status);
         return;
       }
-
       const data = await res.json();
       setPendingMessagesCount(data.pending_count || 0);
-
     } catch (err) {
       console.error("Error de red al obtener conteo:", err);
     }
@@ -96,46 +82,34 @@ export default function Header() {
             letterSpacing: '.4px'
           }}
         >
-          {`Welcome back${user?.nombre ? `, ${user.nombre}` : ''}`}
+          {`¡Bienvenido de nuevo${user?.nombre ? `, ${user.nombre}` : ''}!`}
         </Typography>
         <Typography
           variant="body2"
           sx={{ color: 'text.secondary', fontSize: 14 }}
         >
-          Here are today's stats from your online store!
+          Estas son las estadísticas de hoy de tu tienda en línea.
         </Typography>
       </Stack>
 
-      {/* Derecha: búsqueda + fecha + modo + notificaciones + perfil */}
+      {/* Derecha: fecha + tema + notificaciones + perfil */}
       <Stack direction="row" alignItems="center" spacing={2}>
-        {/* Barra de búsqueda */}
-        {/*         <Paper
-          elevation={0}
+        {/* Fecha de hoy */}
+        <Box
           sx={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: 1,
             px: 2,
-            py: 0.75,
+            py: 1,
             borderRadius: 5,
-            bgcolor: (theme) => theme.palette.mode === 'dark' ? 'grey.800' : '#f3f3f3',
-            minWidth: { sm: 260, md: 320 }
+            bgcolor: (theme) => theme.palette.mode === 'dark' ? 'grey.900' : 'grey.100',
+            fontWeight: 500,
+            fontSize: 15,
+            color: 'text.secondary',
           }}
         >
-          <SearchIcon fontSize="small" sx={{ color: 'text.secondary' }} />
-          <InputBase
-            placeholder="Search"
-            inputProps={{ 'aria-label': 'search' }}
-            sx={{ flex: 1, fontSize: 14 }}
-          />
-        </Paper> */}
+          {getTodayString()}
+        </Box>
 
-        <CustomDatePicker />
-
-        {/* Selector de tema */}
         <ColorModeIconDropdown />
-
-        {/* Notificaciones */}
 
         <IconButton
           aria-label="notifications"
@@ -164,12 +138,11 @@ export default function Header() {
           </Badge>
         </IconButton>
 
-        {/* Perfil */}
         <Stack
           direction="row"
           alignItems="center"
           spacing={1}
-          onClick={handleMenuOpen}
+          onClick={() => navigate(`/home/perfil`)}
           sx={{
             cursor: 'pointer',
             px: 1.2,
@@ -182,12 +155,12 @@ export default function Header() {
           }}
         >
           <Avatar
-            alt={user?.nombre || 'User'}
+            alt={user?.nombre || 'Usuario'}
             src="/static/images/avatar/7.jpg"
             sx={{
               width: 40,
               height: 40,
-              backgroundColor: '#f896b8',
+              backgroundColor: '#3d8bf2ff',
               fontWeight: 600
             }}
           >
@@ -202,40 +175,9 @@ export default function Header() {
               whiteSpace: 'nowrap'
             }}
           >
-            {user?.nombre || 'User'}
+            {user?.nombre || 'Usuario'}
           </Typography>
-          <ExpandMoreIcon sx={{ fontSize: 18, color: 'text.secondary' }} />
         </Stack>
-
-        <Menu
-          anchorEl={anchorEl}
-          open={open}
-          onClose={handleMenuClose}
-          keepMounted
-          ModalProps={{ disableScrollLock: true }}
-          MenuListProps={{ 'aria-labelledby': 'profile-button' }}
-          anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-          transformOrigin={{ vertical: 'top', horizontal: 'right' }}
-        >
-          <MenuItem disabled>{user?.email || 'user@example.com'}</MenuItem>
-          <MenuItem
-            onClick={() => {
-              handleMenuClose();
-              navigate(`/home/perfil`);
-            }}
-          >
-            Profile
-          </MenuItem>
-          <MenuItem
-            onClick={() => {
-              handleMenuClose();
-              localStorage.removeItem('token');
-              window.location.href = `/login`;
-            }}
-          >
-            Logout
-          </MenuItem>
-        </Menu>
       </Stack>
     </Box>
   );
