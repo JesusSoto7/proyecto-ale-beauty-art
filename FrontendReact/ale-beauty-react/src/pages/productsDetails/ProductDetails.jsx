@@ -114,8 +114,11 @@ function ProductDetails() {
     setError(null);
     setLoading(true);
 
-    // Producto (público)
-    fetch(`${API_BASE}/api/v1/products/${slug}`)
+    // Detectar idioma preferido: si la ruta tiene lang, úsalo; si no, usa el navegador
+    const requestedLang = (lang || (navigator.language || 'es')).slice(0,2);
+
+    // Producto (público) SOLO descripción traducida
+    fetch(`${API_BASE}/api/v1/products/${slug}?lang=${requestedLang}`)
       .then((res) => {
         if (!res.ok) throw new Error("Error loading product");
         return res.json();
@@ -155,7 +158,7 @@ function ProductDetails() {
     }
 
     return () => { cancelled = true; };
-  }, [slug, token, t]);
+  }, [slug, token, t, lang]);
 
 
   useEffect(() => {

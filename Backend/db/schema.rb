@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_11_22_230516) do
+ActiveRecord::Schema[8.0].define(version: 2025_11_30_045624) do
   create_table "active_storage_attachments", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
@@ -172,6 +172,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_11_22_230516) do
     t.string "slug"
     t.bigint "sub_category_id", null: false
     t.bigint "discount_id"
+    t.json "translations"
     t.index ["discount_id"], name: "index_products_on_discount_id"
     t.index ["slug"], name: "index_products_on_slug", unique: true
     t.index ["sub_category_id"], name: "index_products_on_sub_category_id"
