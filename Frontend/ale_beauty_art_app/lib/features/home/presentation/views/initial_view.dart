@@ -172,8 +172,8 @@ class InitialView extends StatelessWidget {
           Container(
             width: double.infinity,
             constraints: BoxConstraints(
-              // Make the white container reach near the bottom so nav rounded corners don't reveal scaffold background
-              minHeight: screenHeight - 140,
+              // Reduce the white container height to avoid large empty area below content
+              minHeight: screenHeight - 260,
             ),
             decoration: const BoxDecoration(
               color: Colors.white,

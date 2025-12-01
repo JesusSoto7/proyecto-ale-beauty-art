@@ -683,9 +683,17 @@ class _PaymentPageState extends State<PaymentPage> {
                                   keyboardType: TextInputType.number,
                                   decoration: _inputDecoration(
                                       'payment.fields.doc_number'.tr()),
-                                  inputFormatters: [
-                                    FilteringTextInputFormatter.digitsOnly,
-                                  ],
+                                    inputFormatters: [
+                                      FilteringTextInputFormatter.digitsOnly,
+                                      LengthLimitingTextInputFormatter(10),
+                                    ],
+                                    maxLength: 10,
+                                    buildCounter: (
+                                      BuildContext context, {
+                                      required int currentLength,
+                                      int? maxLength,
+                                      required bool isFocused,
+                                    }) => null,
                                   validator: (value) {
                                     if (value == null || value.isEmpty) {
                                       return 'payment.validators.required'.tr();

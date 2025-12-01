@@ -155,10 +155,11 @@ class _ProductsPageViewState extends State<ProductsPageView> {
 
         // Manual price inputs persistent (do not auto-clamp to product bounds)
         bool onlyDiscounted = current.onlyDiscounted;
-        double startVal = current.minPrice ?? 0;
-        double endVal = current.maxPrice ?? 0;
-        // If user inverted values previously, normalize but keep their intention
-        if (startVal > endVal && endVal != 0) {
+        // Use nullable doubles to represent empty inputs more clearly
+        double? startVal = current.minPrice;
+        double? endVal = current.maxPrice;
+        // If both bounds are present and inverted, swap them so UI shows a valid range
+        if (startVal != null && endVal != null && startVal > endVal) {
           final tmp = startVal; startVal = endVal; endVal = tmp;
         }
 
@@ -330,12 +331,9 @@ class _ProductsPageViewState extends State<ProductsPageView> {
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: () {
-                    // Parse manual price values
-                    // Map 0 to null (no bound). If both 0, remove price filter.
-                    double? finalMin = startVal.isFinite ? startVal : null;
-                    double? finalMax = endVal.isFinite ? endVal : null;
-                    if (finalMin == 0) finalMin = null;
-                    if (finalMax == 0) finalMax = null;
+                    // Parse manual price values: keep null when empty, swap if inverted
+                    double? finalMin = startVal;
+                    double? finalMax = endVal;
                     if (finalMin != null && finalMax != null && finalMin > finalMax) {
                       final tmp = finalMin; finalMin = finalMax; finalMax = tmp;
                     }
@@ -359,6 +357,7 @@ class _ProductsPageViewState extends State<ProductsPageView> {
                   child: Text('common.continue'.tr(), style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
                 ),
               ),
+              const SizedBox(height: 22),
             ],
           ),
         ),
