@@ -687,6 +687,7 @@ function Cart() {
         </Stack>
 
         <Stack spacing={1.5}>
+          {console.log(!isLoggedIn)}
           <Button
             fullWidth
             size="lg"

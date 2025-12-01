@@ -379,8 +379,6 @@ function UserFullPerfil() {
                     {/* Botón de Logout del ADMINISTRADOR */}
                     <div className="profile-actions">
                         <button style={{ borderRadius: 10, backgroundColor: "#f5e9e9", height: 50 }} id="notiButton" onClick={handleOpenNotif} ><NotificationAddIcon fontSize="medium" /></button>
-                        <button id="logout-button-1" className="btn btn-primary" onClick={handleLogout}>Logout Admin <LogoutIcon fontSize="small" /></button>
-                        <button id="logout-button-2" className="btn btn-primary" onClick={handleLogout}><LogoutIcon fontSize="small" /></button>
                     </div>
                 </div>
 

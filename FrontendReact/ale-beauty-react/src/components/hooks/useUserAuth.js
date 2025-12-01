@@ -10,7 +10,7 @@ export const useUserAuth = (t) => {
   useEffect(() => {
     const verifyUserSilently = async () => {
       const token = localStorage.getItem("token");
-      
+
       if (!token) {
         localStorage.removeItem('userData');
         setUser(null);
@@ -19,7 +19,7 @@ export const useUserAuth = (t) => {
 
       try {
         const response = await fetch("https://localhost:4000/api/v1/me", {
-          headers: { 
+          headers: {
             Authorization: `Bearer ${token}`,
             'Content-Type': 'application/json'
           },
@@ -51,19 +51,19 @@ export const useUserAuth = (t) => {
 
   const handleLogout = useCallback((lang, setAnchorEl) => {
     setAnchorEl(null);
-    
+
     setTimeout(() => {
       localStorage.removeItem('token');
       localStorage.removeItem('userData');
       setUser(null);
-      
+
       try {
         fetch('https://localhost:4000/api/v1/sign_out', {
           method: 'DELETE',
           headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
-        }).catch(() => {});
+        }).catch(() => { });
       } catch { }
-      
+
       window.location.href = `/${lang}/login`;
     }, 150);
   }, []);
@@ -71,6 +71,7 @@ export const useUserAuth = (t) => {
   return {
     user,
     setUser,
-    handleLogout
+    handleLogout,
+    isLoggedIn: !!user
   };
 };

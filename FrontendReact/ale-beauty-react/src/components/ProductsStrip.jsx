@@ -19,6 +19,7 @@ export default function ProductsStrip({
   autoScrollInterval = 2700
 }) {
   const stripRef = useRef(null);
+  const LIMITE_PRODUCTOS = 8;
 
   useEffect(() => {
     if (!autoScroll || loading) return;
@@ -69,8 +70,8 @@ export default function ProductsStrip({
             ❮
           </button>
 
-            <div className="carousel-items" ref={stripRef}>
-            {memoizedProducts.map(prod => (
+          <div className="carousel-items" ref={stripRef}>
+            {memoizedProducts.slice(0, LIMITE_PRODUCTOS).map(prod => (
               <ProductCard
                 key={prod.id}
                 product={prod}

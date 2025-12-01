@@ -2,7 +2,7 @@ require 'prawn'
 require 'prawn/table'
 include ActionView::Helpers::NumberHelper
 
-class FacturaPdf
+class Detalles_de_ordenPdf
   SHIPPING_COST = 10_000  # costo de envío fijo
 
   def initialize(order)
@@ -11,7 +11,7 @@ class FacturaPdf
 
   def render
     Prawn::Document.new do |pdf|
-      pdf.text "Detalle de orden #{@order.numero_de_orden}", size: 24, style: :bold, align: :center
+      pdf.text "Detalles de orden #{@order.numero_de_orden}", size: 24, style: :bold, align: :center
       pdf.move_down 10
 
       pdf.stroke_horizontal_rule

@@ -48,7 +48,8 @@
     "email": "E-mail",
     "address": "Dirección",
     "fillAllFields": "Completa los datos para continuar",
-    "orderCreationError": "No se pudo crear la orden"
+    "orderCreationError": "No se pudo crear la orden",
+    "active": "Activo"
   },
   "common": {
     "cancel": "Cancelar",
