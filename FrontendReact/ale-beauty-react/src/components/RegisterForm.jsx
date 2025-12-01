@@ -29,26 +29,26 @@ function Register() {
 
     // palabras betadas
     const badWords = [
-        // Insultos comunes
-        "tonto", "idiota", "imbecil", "estupido", "pendejo", "baboso",
-        "mamón", "gilipollas", "cretino", "tarado", "subnormal", "mongol",
-        "ignorante", "inutil", "payaso", "majadero", "cabeza de chorlito",
+      // Insultos comunes
+      "tonto", "idiota", "imbecil", "estupido", "pendejo", "baboso",
+      "mamón", "gilipollas", "cretino", "tarado", "subnormal", "mongol",
+      "ignorante", "inutil", "payaso", "majadero", "cabeza de chorlito",
 
-        // Palabras muy ofensivas/sexuales
-        "mierda", "puta", "perra", "cabron", "malparido", "chingada", "coño",
-        "verga", "pito", "culo", "joder", "polla", "zorra", "guarra",
-        "marica", "maricón", "culero", "chúpamela", "p*to", "put*s",
-        "coger", "follar", "felación", "mamada", "paja", "semen", "vagina",
-        "mierdoso", "putazo", "reputa", "maldito", "ch*nga", "penetracion",
-        "nazi", "fascista", "racista", "terrorista", "pedofilo", "violador",
+      // Palabras muy ofensivas/sexuales
+      "mierda", "puta", "perra", "cabron", "malparido", "chingada", "coño",
+      "verga", "pito", "culo", "joder", "polla", "zorra", "guarra",
+      "marica", "maricón", "culero", "chúpamela", "p*to", "put*s",
+      "coger", "follar", "felación", "mamada", "paja", "semen", "vagina",
+      "mierdoso", "putazo", "reputa", "maldito", "ch*nga", "penetracion",
+      "nazi", "fascista", "racista", "terrorista", "pedofilo", "violador",
 
-        // Variaciones y diminutivos
-        "tontito", "imbecilucho", "pendejada", "mierdecilla", "putilla",
-        "cabronazo", "estupidez", "estupidoz", "gilipollez",
+      // Variaciones y diminutivos
+      "tontito", "imbecilucho", "pendejada", "mierdecilla", "putilla",
+      "cabronazo", "estupidez", "estupidoz", "gilipollez",
 
-        // Términos para evitar (ej. nombres de usuario)
-        "admin", "administrador", "moderador", "root", "sistema", "soporte",
-        "webmaster", "oficial", "cuentaoficial"
+      // Términos para evitar (ej. nombres de usuario)
+      "admin", "administrador", "moderador", "root", "sistema", "soporte",
+      "webmaster", "oficial", "cuentaoficial"
     ];
 
     if (!nombre.trim()) {
@@ -140,11 +140,13 @@ function Register() {
                 value={nombre}
                 onChange={(e) => setNombre(e.target.value)}
                 placeholder={t("register.firstName")}
+                autocomplete="given-name"
               />
               <input
                 value={apellido}
                 onChange={(e) => setApellido(e.target.value)}
                 placeholder={t("register.lastName")}
+                autocomplete="family-name"
               />
             </div>
 
@@ -153,9 +155,9 @@ function Register() {
               name="telefono"
               type="tel"
               onChange={(e) => setTelefono(e.target.value)}
-              // placeholder={t("register.telefono")}
-              placeholder="numero celular"
+              placeholder="Telefono"
               autoComplete="tel"
+              maxLength="10"
             />
 
             <input

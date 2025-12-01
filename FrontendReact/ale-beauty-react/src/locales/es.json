@@ -14,7 +14,8 @@
     "clearAll": "Vaciar Todo",
     "items": "artículos",
     "set": "Color",
-    "outOfStock": "Agotado"
+    "outOfStock": "Agotado",
+    "loginToContinue": "Inicia sesión para continuar"
   },
   "categoryProducts": {
     "notAuth": "No autenticado",
@@ -47,7 +48,8 @@
     "email": "E-mail",
     "address": "Dirección",
     "fillAllFields": "Completa los datos para continuar",
-    "orderCreationError": "No se pudo crear la orden"
+    "orderCreationError": "No se pudo crear la orden",
+    "active": "Activo"
   },
   "common": {
     "cancel": "Cancelar",

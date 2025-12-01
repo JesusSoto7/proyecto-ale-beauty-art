@@ -14,7 +14,8 @@
     "clearAll": "Clear All",
     "items": "items",
     "set": "Color",
-    "outOfStock": "Out of Stock"
+    "outOfStock": "Out of Stock",
+    "loginToContinue": "Log in to continue"
   },
   "categoryProducts": {
     "notAuth": "Not authenticated",
@@ -47,7 +48,8 @@
     "email": "E-mail",
     "address": "Address",
     "fillAllFields": "Please fill in all required fields",
-    "orderCreationError": "Could not create the order"
+    "orderCreationError": "Could not create the order",
+    "active": "Active"
   },
   "common": {
     "cancel": "Cancel",

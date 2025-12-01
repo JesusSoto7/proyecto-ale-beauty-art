@@ -108,9 +108,15 @@ export default function Notificaciones() {
   };
 
   const filteredUsers = useMemo(() => {
+    // PASO 1: Filtrar administradores
+    const nonAdminUsers = usuarios.filter(u =>
+      !(u.roles && u.roles.includes('admin'))
+    );
+
     const q = (query || "").trim().toLowerCase();
-    if (!q) return usuarios;
-    return usuarios.filter(
+    if (!q) return nonAdminUsers;
+
+    return nonAdminUsers.filter(
       (u) =>
         (u.email || "").toLowerCase().includes(q) ||
         (u.nombre || u.name || "").toLowerCase().includes(q) ||

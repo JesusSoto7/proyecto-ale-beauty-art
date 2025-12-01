@@ -41,7 +41,7 @@ export default function Footer() {
               target="_blank"
               rel="noopener noreferrer"
             >
-              <InstagramIcon fontSize="large" style={{ color: "#ffffffff", width: "20px"}} />
+              <InstagramIcon fontSize="large" style={{ color: "#ffffffff", width: "20px" }} />
             </a>
             <a href="https://x.com" target="_blank" rel="noopener noreferrer">
               <TwitterIcon fontSize="large" style={{ color: "#ffffffff", width: "20px" }} />
@@ -54,7 +54,7 @@ export default function Footer() {
       </div>
 
       <div className="footer-bottom">
-        © 2025 {t("footer.rights")}
+        © 2025 {t("footer.rights")} | v4.0.0
       </div>
     </footer>
   );

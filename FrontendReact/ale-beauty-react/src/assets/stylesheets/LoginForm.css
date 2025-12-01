@@ -38,7 +38,7 @@
   width: 100%;
   height: 100%;
   background: radial-gradient(circle at 30% 30%, #a3bffa 0%, transparent 70%),
-              radial-gradient(circle at 70% 70%, #fbb6ce 0%, transparent 70%);
+    radial-gradient(circle at 70% 70%, #fbb6ce 0%, transparent 70%);
   filter: blur(100px);
   z-index: 0;
 }
@@ -102,15 +102,18 @@
   border: 1px solid rgba(0, 0, 0, 0.1) !important;
   color: rgb(43, 43, 43) !important;
   border-radius: 0.75rem !important;
-  padding: 0.5rem 0.75rem !important; /* ✅ Padding reducido */
-  height: 42px !important; /* ✅ Altura ligeramente mayor para mejor alineación */
+  padding: 0.5rem 0.75rem !important;
+  /* ✅ Padding reducido */
+  height: 42px !important;
+  /* ✅ Altura ligeramente mayor para mejor alineación */
   font-size: 14px !important;
   line-height: 1.5 !important;
   transition: border-color 0.15s ease-in-out !important;
 }
 
 .login-input.pe-5 {
-  padding-right: 2.5rem !important; /* ✅ Espacio para el botón de visibilidad */
+  padding-right: 2.5rem !important;
+  /* ✅ Espacio para el botón de visibilidad */
 }
 
 .login-input:focus {
@@ -134,7 +137,8 @@
 .login-btn {
   border-radius: 2rem !important;
   font-weight: 600 !important;
-  padding: 0.6rem 1rem !important; /* ✅ Padding ajustado */
+  padding: 0.6rem 1rem !important;
+  /* ✅ Padding ajustado */
   background-color: #fab1d9 !important;
   color: white !important;
   border: none !important;
@@ -149,7 +153,8 @@
 
 .login-alt-btn {
   border-radius: 0.75rem !important;
-  padding: 0.6rem 1rem !important; /* ✅ Padding ajustado */
+  padding: 0.6rem 1rem !important;
+  /* ✅ Padding ajustado */
   color: white !important;
   background-color: #111 !important;
   transition: background 0.2s !important;
@@ -167,9 +172,11 @@
 
 .login-card .btn.position-absolute {
   position: absolute !important;
-  right: 0.8rem !important; /* ✅ Posición ajustada */
-  top: 60% !important;
-  transform: translateY(-50%) !important; /* ✅ Centrado vertical perfecto */
+  right: 0.8rem !important;
+  /* ✅ Posición ajustada */
+  top: 66% !important;
+  transform: translateY(-50%) !important;
+  /* ✅ Centrado vertical perfecto */
   padding: 0.25rem !important;
   height: auto !important;
   width: auto !important;
@@ -187,7 +194,8 @@
 }
 
 .login-card .btn.position-absolute svg {
-  font-size: 25px !important; /* ✅ Tamaño del icono */
+  font-size: 25px !important;
+  /* ✅ Tamaño del icono */
 }
 
 /* ======== ENLACES ======== */
@@ -210,19 +218,23 @@
 
 /* ======== ESPACIADO REDUCIDO ======== */
 .login-card .mb-3 {
-  margin-bottom: 0.15rem !important; /* ✅ Reducido de 1rem */
+  margin-bottom: 0.15rem !important;
+  /* ✅ Reducido de 1rem */
 }
 
 .login-card .mb-4 {
-  margin-bottom: 1rem !important; /* ✅ Reducido de 1.5rem */
+  margin-bottom: 1rem !important;
+  /* ✅ Reducido de 1.5rem */
 }
 
 .login-card .mt-4 {
-  margin-top: 1rem !important; /* ✅ Reducido de 1.5rem */
+  margin-top: 1rem !important;
+  /* ✅ Reducido de 1.5rem */
 }
 
 .login-card .p-5 {
-  padding: 2rem !important; /* ✅ Reducido de 3rem */
+  padding: 2rem !important;
+  /* ✅ Reducido de 3rem */
 }
 
 .login-card .text-center {
@@ -242,19 +254,19 @@
   .login-card {
     max-width: 95% !important;
   }
-  
+
   .login-card .p-5 {
     padding: 1.5rem !important;
   }
-  
+
   .login-card h4 {
     font-size: 1.25rem !important;
   }
-  
+
   .login-input {
     font-size: 14px !important;
   }
-  
+
   .login-card .btn.position-absolute {
     right: 0.5rem !important;
   }
@@ -264,11 +276,11 @@
   .login-card .p-5 {
     padding: 1rem !important;
   }
-  
+
   .login-card h4 {
     font-size: 1.1rem !important;
   }
-  
+
   .login-card .mb-3 {
     margin-bottom: 0.6rem !important;
   }

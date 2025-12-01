@@ -10,15 +10,15 @@
   z-index: 9999;
 }
 
-.alert-icon{ 
-    background-color: #4138382b;
-    width: 45px;
-    height: 45px;
-    border-radius: 5px;
-    margin-right: 10px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+.alert-icon {
+  background-color: #4138382b;
+  width: 45px;
+  height: 45px;
+  border-radius: 5px;
+  margin-right: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .alert {
@@ -30,7 +30,7 @@
   font-size: 14px;
   color: white;
   animation: slide 0.25s ease;
-  box-shadow: 0 3px 8px rgba(0,0,0,0.2);
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
   max-height: 70px;
 }
 
@@ -62,9 +62,10 @@
   cursor: pointer;
   font-size: 16px;
 }
+
 .alert button:hover {
-    background-color: transparent;
-    color: #5f584d70;
+  background-color: transparent;
+  color: #5f584d70;
 }
 
 @keyframes slide {
@@ -72,6 +73,7 @@
     opacity: 0;
     transform: translateX(-20px);
   }
+
   to {
     opacity: 1;
     transform: translateX(0);
@@ -80,8 +82,15 @@
 
 /* Animation when appearing */
 @keyframes slideDown {
-  from { opacity: 0; transform: translateY(-10px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* Animation when closing */
@@ -111,6 +120,11 @@
 }
 
 @keyframes progress {
-  from { width: 100%; }
-  to   { width: 0%; }
+  from {
+    width: 100%;
+  }
+
+  to {
+    width: 0%;
+  }
 }

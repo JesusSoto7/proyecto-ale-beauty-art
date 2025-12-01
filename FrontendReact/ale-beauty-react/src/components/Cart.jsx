@@ -25,6 +25,7 @@ import WarningIcon from "@mui/icons-material/Warning";
 import DeleteSweepIcon from "@mui/icons-material/DeleteSweep";
 import LocalShippingIcon from "@mui/icons-material/LocalShipping";
 import DiscountIcon from "@mui/icons-material/Discount";
+import { useUserAuth } from '../components/hooks/useUserAuth'
 
 // Guest cart helpers
 import {
@@ -45,6 +46,7 @@ function Cart() {
   const token = localStorage.getItem("token");
   const { lang } = useParams();
   const { t, i18n } = useTranslation();
+  const { isLoggedIn } = useUserAuth();
 
   // Cambiar idioma según URL
   useEffect(() => {
@@ -685,11 +687,12 @@ function Cart() {
         </Stack>
 
         <Stack spacing={1.5}>
+          {console.log(!isLoggedIn)}
           <Button
             fullWidth
             size="lg"
             onClick={handleCheckout}
-            disabled={updating || !cart.products.some((p) => p.stock > 0) || cart.products.some((p) => p.cantidad > p.stock)} // Se inhabilita si hay productos con cantidades que superan el stock
+            disabled={!isLoggedIn || updating || !cart.products.some((p) => p.stock > 0) || cart.products.some((p) => p.cantidad > p.stock)} // Se inhabilita si hay productos con cantidades que superan el stock
             startDecorator={<ShoppingCartCheckoutIcon />}
             sx={{
               py: 1.5,
@@ -717,7 +720,7 @@ function Cart() {
               transition: 'all 0.2s ease-in-out',
             }}
           >
-            {t("cart.buy")}
+            {isLoggedIn ? t("cart.buy") : t("cart.loginToContinue")}
           </Button>
 
           <Button

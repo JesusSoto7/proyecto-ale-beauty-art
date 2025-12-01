@@ -47,7 +47,7 @@ class InvoiceMailer < ApplicationMailer
       end
     end
 
-    mail(to: @buyer_email, subject: "Tu factura de compra ##{@numero}")
+    mail(to: @buyer_email, subject: "Detalles de orden ##{@numero}")
   end
 
   private

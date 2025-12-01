@@ -181,7 +181,7 @@ export default function Orders() {
               <th style={{ textAlign: "left", padding: 8, borderBottom: "1px solid #eee" }}>Correo</th>
               <th style={{ textAlign: "left", padding: 8, borderBottom: "1px solid #eee" }}>Total</th>
               <th style={{ textAlign: "left", padding: 8, borderBottom: "1px solid #eee" }}>Estado</th>
-              <th style={{ textAlign: "left", padding: 8, borderBottom: "1px solid #eee" }}>Factura</th>
+              <th style={{ textAlign: "left", padding: 8, borderBottom: "1px solid #eee" }}>Detalles</th>
               <th style={{ textAlign: "left", padding: 8, borderBottom: "1px solid #eee" }}>Acción</th>
             </tr>
           </thead>

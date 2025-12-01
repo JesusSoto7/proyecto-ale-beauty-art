@@ -35,8 +35,8 @@ export default function SelectContent() {
           style: { objectFit: 'cover' }
         }}
         sx={{
-          width: { xs: 56, sm: 64, md: 80 },   // Tamaño responsivo
-          height: { xs: 56, sm: 64, md: 80 },
+          width: { xs: 56, sm: 64, md: 64 },   // Tamaño responsivo
+          height: { xs: 56, sm: 64, md: 65 },
           border: '3px solid #2727271b',
           boxShadow: '0 4px 12px rgba(0, 0, 0, 0.61)',
           backgroundColor: '#373753ff',

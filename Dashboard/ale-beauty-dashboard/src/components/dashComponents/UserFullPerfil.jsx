@@ -15,18 +15,16 @@ import { useTheme } from "@mui/material/styles";
 import NotificationAddIcon from '@mui/icons-material/NotificationAdd';
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
-
-// *NOTA*: Las funciones 't' (de i18n) y 'fetchFavorites' no están definidas aquí,
-// deberás adaptarlas o eliminarlas si no son necesarias para el perfil de administración.
+import { useAlert } from "../../components/AlertProvider.jsx";
 
 function UserFullPerfil() {
-    const { id } = useParams(); // ID del usuario a ver (viene de la URL)
-    const { state } = useLocation(); // Datos del usuario si se pasaron por navegación
+    const { id } = useParams();
+    const { state } = useLocation();
     const navigate = useNavigate();
     const theme = useTheme();
     const isDarkMode = theme.palette.mode === "dark";
+    const { addAlert } = useAlert();
 
-    // 1. ESTADOS PRINCIPALES, inicializados con datos del state o nulos.
     const [user, setUser] = useState(state?.user || null);
     const [orders, setOrders] = useState([]);
     const [userReviews, setUserReviews] = useState([]);
@@ -36,7 +34,6 @@ function UserFullPerfil() {
     const [favorites, setFavorites] = useState([]);
     const [cart, setCart] = useState(null);
 
-    // --- Modal para Enviar Notificación ---
     const [openNotifModal, setOpenNotifModal] = useState(false);
     const [notifTitle, setNotifTitle] = useState("");
     const [notifMessage, setNotifMessage] = useState("");
@@ -97,7 +94,7 @@ function UserFullPerfil() {
                     Authorization: `Bearer ${token}`,
                 },
                 body: JSON.stringify({
-                    user_id: id,   // ← EL USUARIO ACTUAL
+                    user_id: id,
                     title: notifTitle,
                     message: notifMessage,
                 }),
@@ -187,7 +184,6 @@ function UserFullPerfil() {
     const handleLogout = () => {
         console.log("El administrador está cerrando sesión.");
         localStorage.removeItem('token');
-        // Redirigir al login sin prefijo de idioma
         window.location.href = `/login`;
     };
 
@@ -374,9 +370,8 @@ function UserFullPerfil() {
                         </div>
                         <div id="div-name-role" style={{ display: "flex", flexDirection: "column", marginLeft: "20px", justifyContent: "end" }}>
                             <h1 className="profile-name">{user.nombre} {user.apellido}</h1>
-                            <p className="profile-role">
-                                {/* Puedes usar el rol del usuario aquí */}
-                                Usuario ID: {user.id}
+                            <p className="profile-role" style={{ color: "#8b949e" }} s>
+                                {user.email}
                             </p>
                         </div>
                     </div>
@@ -384,8 +379,6 @@ function UserFullPerfil() {
                     {/* Botón de Logout del ADMINISTRADOR */}
                     <div className="profile-actions">
                         <button style={{ borderRadius: 10, backgroundColor: "#f5e9e9", height: 50 }} id="notiButton" onClick={handleOpenNotif} ><NotificationAddIcon fontSize="medium" /></button>
-                        <button id="logout-button-1" className="btn btn-primary" onClick={handleLogout}>Logout Admin <LogoutIcon fontSize="small" /></button>
-                        <button id="logout-button-2" className="btn btn-primary" onClick={handleLogout}><LogoutIcon fontSize="small" /></button>
                     </div>
                 </div>
 
@@ -420,10 +413,10 @@ function UserFullPerfil() {
                         </div>
 
                         <div id="more-me">
-                            <h2 className="h2-unic">Datos de contacto</h2>
+                            <h2 className="h2-unic">Datos de Usuario</h2>
                             <div className="about-details">
                                 <div>
-                                    <strong>Dirección:</strong> {user.direccion || "No proporcionada"}
+                                    <strong>Fecha de registro:</strong> {user.created_at ? new Date(user.created_at).toLocaleDateString() : "No disponible"}
                                 </div>
                                 <hr />
                                 <div>
@@ -475,35 +468,12 @@ function UserFullPerfil() {
                 <section className="experience-section section-user-profile">
                     <h2>Información Administrativa</h2>
                     <div className="experience-grid">
-                        <div className="exp-card">
-                            <h3>Roles</h3>
-                            <p>{user.roles?.join(", ") || "Regular User"}</p>
-                            <span>Último acceso: N/A</span>
-                        </div>
-                        <div className="exp-card">
+
+                        <div className="exp-card" style={{ maxWidth: "500px" }}>
                             <h3>ID de usuario</h3>
                             <p> USER ID: {user.id || "Not provided"}</p>
                             <span>ID de la base de datos</span>
                         </div>
-                        {user.roles?.includes("admin") ? (
-                            <div id="role-user" className="exp-card" style={{ background: "background.paper" }}>
-                                <div>
-                                    <h3>Tipo de usuario</h3>
-                                    <p>Admin</p>
-                                    <span>Acceso total</span>
-                                </div>
-                                <div style={{ width: "80px", height: "80px", backgroundColor: "#a7ffa7ff", borderRadius: 10, display: "flex", alignItems: "center", justifyContent: "center" }}><h1>A</h1></div>
-                            </div>
-                        ) : (
-                            <div id="role-user" className="exp-card" style={{ background: "paper" }}>
-                                <div>
-                                    <h3>Tipo de usuario</h3>
-                                    <p>Regular User</p>
-                                    <span>Acceso limitado</span>
-                                </div>
-                                <div style={{ width: "80px", height: "80px", backgroundColor: "#eb5e8c", borderRadius: 10, display: "flex", alignItems: "center", justifyContent: "center" }}><h1 style={{ color: "#fff" }}>R</h1></div>
-                            </div>
-                        )}
                     </div>
                 </section>
 
