@@ -26,9 +26,9 @@ export default function DashboardLayout(props) {
   return (
     <AppTheme {...props} themeComponents={xThemeComponents}>
       <CssBaseline enableColorScheme />
-      <Box sx={{ 
-        display: 'flex', 
-        width: '100%', 
+      <Box sx={{
+        display: 'flex',
+        width: '100%',
         minHeight: '100vh',
         overflow: 'hidden' // Prevenir scroll horizontal
       }}>
@@ -41,8 +41,7 @@ export default function DashboardLayout(props) {
             width: 0, // Forzar que tome solo el espacio disponible
             backgroundColor: theme.vars
               ? `rgba(${theme.vars.palette.background.defaultChannel} / 1)`
-              : alpha(theme.palette.background.default, 1),
-            overflow: 'auto',
+              : alpha(theme.palette.background.default, 1)
           })}
         >
 
@@ -57,7 +56,7 @@ export default function DashboardLayout(props) {
               maxWidth: 'none',
             }}
           >
-            <Header/>
+            <Header />
             {/* Aquí se renderizan las rutas hijas */}
             <Outlet />
           </Stack>

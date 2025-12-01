@@ -50,13 +50,13 @@ module Api
       def show
         user = User.includes(
           cart: { cart_products: :product },
-          orders: { order_details: :product }, # 🔹 corregido aquí
+          orders: { order_details: :product },
           favorites: :product,
           reviews: :product
         ).find(params[:id])
 
         render json: user.as_json(
-          only: [:id, :email, :nombre, :apellido, :telefono],
+          only: [:id, :email, :nombre, :apellido, :telefono, :created_at], # <-- ¡Añadido :created_at aquí!
           include: {
             cart: {
               include: {
@@ -74,7 +74,7 @@ module Api
             },
             orders: {
               include: {
-                order_details: { # 🔹 corregido aquí también
+                order_details: {
                   include: {
                     product: { only: [:id, :nombre_producto, :precio_producto] }
                   }
@@ -88,7 +88,7 @@ module Api
             }
           }
         ).merge(roles: user.roles.pluck(:name))
-      end
+    end
 
 
 

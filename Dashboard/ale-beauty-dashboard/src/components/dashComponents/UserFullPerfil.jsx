@@ -16,17 +16,14 @@ import NotificationAddIcon from '@mui/icons-material/NotificationAdd';
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 
-// *NOTA*: Las funciones 't' (de i18n) y 'fetchFavorites' no están definidas aquí,
-// deberás adaptarlas o eliminarlas si no son necesarias para el perfil de administración.
 
 function UserFullPerfil() {
-    const { id } = useParams(); // ID del usuario a ver (viene de la URL)
-    const { state } = useLocation(); // Datos del usuario si se pasaron por navegación
+    const { id } = useParams();
+    const { state } = useLocation();
     const navigate = useNavigate();
     const theme = useTheme();
     const isDarkMode = theme.palette.mode === "dark";
 
-    // 1. ESTADOS PRINCIPALES, inicializados con datos del state o nulos.
     const [user, setUser] = useState(state?.user || null);
     const [orders, setOrders] = useState([]);
     const [userReviews, setUserReviews] = useState([]);
@@ -36,7 +33,6 @@ function UserFullPerfil() {
     const [favorites, setFavorites] = useState([]);
     const [cart, setCart] = useState(null);
 
-    // --- Modal para Enviar Notificación ---
     const [openNotifModal, setOpenNotifModal] = useState(false);
     const [notifTitle, setNotifTitle] = useState("");
     const [notifMessage, setNotifMessage] = useState("");
@@ -97,7 +93,7 @@ function UserFullPerfil() {
                     Authorization: `Bearer ${token}`,
                 },
                 body: JSON.stringify({
-                    user_id: id,   // ← EL USUARIO ACTUAL
+                    user_id: id,
                     title: notifTitle,
                     message: notifMessage,
                 }),
@@ -187,7 +183,6 @@ function UserFullPerfil() {
     const handleLogout = () => {
         console.log("El administrador está cerrando sesión.");
         localStorage.removeItem('token');
-        // Redirigir al login sin prefijo de idioma
         window.location.href = `/login`;
     };
 
@@ -420,10 +415,10 @@ function UserFullPerfil() {
                         </div>
 
                         <div id="more-me">
-                            <h2 className="h2-unic">Datos de contacto</h2>
+                            <h2 className="h2-unic">Datos de Usuario</h2>
                             <div className="about-details">
                                 <div>
-                                    <strong>Dirección:</strong> {user.direccion || "No proporcionada"}
+                                    <strong>Fecha de registro:</strong> {user.created_at ? new Date(user.created_at).toLocaleDateString() : "No disponible"}
                                 </div>
                                 <hr />
                                 <div>

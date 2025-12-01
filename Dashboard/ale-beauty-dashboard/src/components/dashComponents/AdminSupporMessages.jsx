@@ -58,43 +58,43 @@ export default function AdminSupportMessages() {
     );
   }
 
-    const handleReplySubmit = async () => {
-        if (!selectedMessage || !replyText.trim()) {
-            alert("Por favor, selecciona un mensaje y escribe una respuesta.");
-            return;
-        }
+  const handleReplySubmit = async () => {
+    if (!selectedMessage || !replyText.trim()) {
+      alert("Por favor, selecciona un mensaje y escribe una respuesta.");
+      return;
+    }
 
-        const token = localStorage.getItem("token");
-        if (!token) {
-            console.error("No hay token.");
-            return;
-        }
+    const token = localStorage.getItem("token");
+    if (!token) {
+      console.error("No hay token.");
+      return;
+    }
 
-        try {
-            const res = await fetch(`https://localhost:4000/api/v1/support_messages/${selectedMessage.id}/reply`, {
-                method: 'POST',
-                headers: {
-                    "Authorization": `Bearer ${token}`,
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                    reply_content: replyText, // El nombre debe coincidir con params[:reply_content] en Rails
-                }),
-            });
+    try {
+      const res = await fetch(`https://localhost:4000/api/v1/support_messages/${selectedMessage.id}/reply`, {
+        method: 'POST',
+        headers: {
+          "Authorization": `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          reply_content: replyText, // El nombre debe coincidir con params[:reply_content] en Rails
+        }),
+      });
 
-            if (!res.ok) {
-                const errorData = await res.json();
-                throw new Error(errorData.error || "Error al enviar la respuesta.");
-            }
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.error || "Error al enviar la respuesta.");
+      }
 
-            alert("Respuesta enviada con éxito.");
-            setReplyText("");
+      alert("Respuesta enviada con éxito.");
+      setReplyText("");
 
-        } catch (error) {
-            console.error("Error al enviar la respuesta:", error);
-            alert(`Fallo al enviar la respuesta: ${error.message}`);
-        }
-    };
+    } catch (error) {
+      console.error("Error al enviar la respuesta:", error);
+      alert(`Fallo al enviar la respuesta: ${error.message}`);
+    }
+  };
 
   return (
     <div className="admin-support-layout">
@@ -102,15 +102,15 @@ export default function AdminSupportMessages() {
         <h1 className="admin-support-title">Mensajes de soporte</h1>
         <div className="message-filter-controls">
           <label htmlFor="status-filter">Filtrar por estado:</label>
-            <select
-              id="status-filter"
-              value={filterStatus}
-              onChange={(e) => setFilterStatus(e.target.value)} // Esto dispara el useEffect
-            >
-              <option value="all">Todos</option>
-              <option value="pending">Pendiente</option>
-              <option value="replied">Respondido</option>
-            </select>
+          <select
+            id="status-filter"
+            value={filterStatus}
+            onChange={(e) => setFilterStatus(e.target.value)} // Esto dispara el useEffect
+          >
+            <option value="all">Todos</option>
+            <option value="pending">Pendiente</option>
+            <option value="replied">Respondido</option>
+          </select>
         </div>
         {messages.length === 0 ? (
           <p className="no-messages-text">No hay mensajes aún.</p>
@@ -120,9 +120,8 @@ export default function AdminSupportMessages() {
               <div
                 key={msg.id}
                 // Compara con selectedMessage.id para aplicar la clase
-                className={`message-card ${
-                  selectedMessage && selectedMessage.id === msg.id ? "message-card-selected" : ""
-                }`}
+                className={`message-card ${selectedMessage && selectedMessage.id === msg.id ? "message-card-selected" : ""
+                  }`}
                 onClick={() => setSelectedMessage(msg)} // Al hacer clic, guarda el objeto completo
               >
                 <div className="message-header">
@@ -134,7 +133,7 @@ export default function AdminSupportMessages() {
                       {msg.order.user.nombre} {msg.order.user.apellido}
                     </h3>
                     <p className="message-subtitle">{msg.order.correo_cliente}</p>
-                    
+
                     {msg.replied ? (
                       <span className="status-badge status-replied">
                         RESPONDIDO
@@ -144,7 +143,7 @@ export default function AdminSupportMessages() {
                         PENDIENTE
                       </span>
                     )}
-                    
+
                   </div>
                   <div className="message-meta">
                     <span className="message-date">
@@ -181,7 +180,7 @@ export default function AdminSupportMessages() {
                 {new Date(selectedMessage.created_at).toLocaleString()}
               </span>
             </div>
-            
+
             <div className="details-section">
               <h3>numero de orden:</h3>
               <p>{selectedMessage.order.numero_de_orden}</p>
@@ -196,15 +195,17 @@ export default function AdminSupportMessages() {
 
             {/* Aquí podrías añadir un campo para responder al mensaje */}
             <div className="reply-section">
-                <textarea
-                    placeholder="Escribe tu respuesta..."
-                    className="reply-textarea"
-                    value={replyText}
-                    onChange={(e) => setReplyText(e.target.value)}
-                ></textarea>
-                <button className="reply-button" onClick={handleReplySubmit}>
-                    Enviar Respuesta
-                </button>
+              <textarea
+                placeholder="Escribe tu respuesta..."
+                className="reply-textarea"
+                value={replyText}
+                onChange={(e) => setReplyText(e.target.value)}
+                minLength={20}
+                maxLength={500}
+              ></textarea>
+              <button className="reply-button" onClick={handleReplySubmit}>
+                Enviar Respuesta
+              </button>
             </div>
           </div>
         ) : (
