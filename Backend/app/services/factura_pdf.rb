@@ -2,7 +2,7 @@ require 'prawn'
 require 'prawn/table'
 include ActionView::Helpers::NumberHelper
 
-class Detalles_de_ordenPdf
+class FacturaPdf
   SHIPPING_COST = 10_000  # costo de envío fijo
 
   def initialize(order)
