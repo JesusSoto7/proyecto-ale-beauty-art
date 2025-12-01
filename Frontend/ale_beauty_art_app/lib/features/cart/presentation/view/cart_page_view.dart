@@ -89,12 +89,12 @@ class _CartPageViewState extends State<CartPageView> {
             return const LoadingView();
           }
 
-          if ((state.token == null || state.token!.isEmpty) &&
-              state.products.isEmpty) {
+          if (state.products.isEmpty) {
             return Center(
               child: Text(
                 'cart.empty'.tr(),
                 style: const TextStyle(fontSize: 16, color: Colors.black54),
+                textAlign: TextAlign.center,
               ),
             );
           }
