@@ -264,7 +264,10 @@ class _ShippingAddressFormPageState extends State<ShippingAddressAdd> {
           TextFormField(
                       controller: telefonoController,
             decoration: _inputDecoration('addresses.phone'.tr()),
-            validator: (v) => v!.isEmpty ? 'addresses.required'.tr() : null),
+            inputFormatters: [FilteringTextInputFormatter.digitsOnly, LengthLimitingTextInputFormatter(10)],
+            maxLength: 10,
+            buildCounter: (BuildContext context, {int? currentLength, int? maxLength, bool? isFocused}) => null,
+            validator: (v) => v!.isEmpty ? 'addresses.required'.tr() : (v.length > 10 ? 'Máximo 10 caracteres' : null)),
                   const SizedBox(height: 14),
           TextFormField(
                       controller: direccionController,
@@ -273,7 +276,10 @@ class _ShippingAddressFormPageState extends State<ShippingAddressAdd> {
                   const SizedBox(height: 14),
                   TextFormField(
                     controller: codigoPostalController,
-          decoration: _inputDecoration('addresses.postal_code'.tr()),
+                    decoration: _inputDecoration('addresses.postal_code'.tr()),
+                    inputFormatters: [FilteringTextInputFormatter.digitsOnly, LengthLimitingTextInputFormatter(6)],
+                    maxLength: 6,
+                    buildCounter: (BuildContext context, {int? currentLength, int? maxLength, bool? isFocused}) => null,
                   ),
                   const SizedBox(height: 14),
                   DropdownButtonFormField<String>(

@@ -2,6 +2,7 @@ import 'package:ale_beauty_art_app/features/auth/bloc/auth_bloc.dart';
 import 'package:ale_beauty_art_app/styles/colors.dart';
 import 'package:ale_beauty_art_app/styles/text_styles.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ale_beauty_art_app/core/utils/app_snack_bar.dart';
@@ -203,6 +204,17 @@ class _RegisterPageState extends State<RegisterPage> {
                             borderSide: BorderSide.none,
                           ),
                         ),
+                        // Limit to digits and max 10 characters
+                        inputFormatters: [
+                          FilteringTextInputFormatter.digitsOnly,
+                          LengthLimitingTextInputFormatter(10),
+                        ],
+                        maxLength: 10,
+                        buildCounter: (BuildContext context, {int? currentLength, int? maxLength, bool? isFocused}) => null,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) return null; // optional
+                          return value.length > 10 ? 'Máximo 10 caracteres' : null;
+                        },
                       ),
                       const SizedBox(height: 12),
                       // Contraseña
