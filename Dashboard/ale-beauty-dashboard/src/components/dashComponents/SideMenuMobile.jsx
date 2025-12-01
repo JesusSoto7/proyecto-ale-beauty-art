@@ -10,8 +10,40 @@ import LogoutRoundedIcon from '@mui/icons-material/LogoutRounded';
 import NotificationsRoundedIcon from '@mui/icons-material/NotificationsRounded';
 import MenuButton from './MenuButton';
 import MenuContent from './MenuContent';
+import { useEffect, useState } from 'react';
 
 function SideMenuMobile({ open, toggleDrawer }) {
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) return;
+    fetch("https://localhost:4000/api/v1/me", {
+      headers: {
+        "Authorization": `Bearer ${token}`
+      }
+    })
+      .then(res => res.json())
+      .then(data => setUser(data))
+      .catch(err => console.error(err));
+  }, []);
+
+  async function handleLogout() {
+    const token = localStorage.getItem('token');
+    try {
+      await fetch('https://localhost:4000/api/v1/sign_out', {
+        method: 'DELETE',
+        headers: { Authorization: `Bearer ${token}` },
+      });
+    } catch (err) {
+      console.warn('Error cerrando sesión:', err);
+    }
+    localStorage.removeItem('token');
+    window.location.href = `/login`; // Redirige al login sin prefijo de idioma
+  }
+
+  if (!user) return null;
+
   return (
     <Drawer
       anchor="right"
@@ -38,12 +70,12 @@ function SideMenuMobile({ open, toggleDrawer }) {
           >
             <Avatar
               sizes="small"
-              alt="Riley Carter"
+              alt={`${user.nombre?.charAt(0).toUpperCase()}`}
               src="/static/images/avatar/7.jpg"
-              sx={{ width: 24, height: 24 }}
+              sx={{ width: 36, height: 36, backgroundColor: "#f896b8" }}
             />
             <Typography component="p" variant="h6">
-              Riley Carter
+              {user.nombre}
             </Typography>
           </Stack>
           <MenuButton showBadge>
@@ -55,8 +87,8 @@ function SideMenuMobile({ open, toggleDrawer }) {
           <MenuContent />
           <Divider />
         </Stack>
-        <Stack sx={{ p: 2 }}>
-          <Button variant="outlined" fullWidth startIcon={<LogoutRoundedIcon />}>
+        <Stack sx={{ p: 2 }} >
+          <Button variant="outlined" fullWidth startIcon={<LogoutRoundedIcon />} onClick={handleLogout}>
             Logout
           </Button>
         </Stack>

@@ -15,7 +15,7 @@ import { useTheme } from "@mui/material/styles";
 import NotificationAddIcon from '@mui/icons-material/NotificationAdd';
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
-
+import { useAlert } from "../../components/AlertProvider.jsx";
 
 function UserFullPerfil() {
     const { id } = useParams();
@@ -23,6 +23,7 @@ function UserFullPerfil() {
     const navigate = useNavigate();
     const theme = useTheme();
     const isDarkMode = theme.palette.mode === "dark";
+    const { addAlert } = useAlert();
 
     const [user, setUser] = useState(state?.user || null);
     const [orders, setOrders] = useState([]);
@@ -369,9 +370,8 @@ function UserFullPerfil() {
                         </div>
                         <div id="div-name-role" style={{ display: "flex", flexDirection: "column", marginLeft: "20px", justifyContent: "end" }}>
                             <h1 className="profile-name">{user.nombre} {user.apellido}</h1>
-                            <p className="profile-role">
-                                {/* Puedes usar el rol del usuario aquí */}
-                                Usuario ID: {user.id}
+                            <p className="profile-role" style={{ color: "#8b949e" }} s>
+                                {user.email}
                             </p>
                         </div>
                     </div>
@@ -470,35 +470,12 @@ function UserFullPerfil() {
                 <section className="experience-section section-user-profile">
                     <h2>Información Administrativa</h2>
                     <div className="experience-grid">
-                        <div className="exp-card">
-                            <h3>Roles</h3>
-                            <p>{user.roles?.join(", ") || "Regular User"}</p>
-                            <span>Último acceso: N/A</span>
-                        </div>
-                        <div className="exp-card">
+
+                        <div className="exp-card" style={{ maxWidth: "500px" }}>
                             <h3>ID de usuario</h3>
                             <p> USER ID: {user.id || "Not provided"}</p>
                             <span>ID de la base de datos</span>
                         </div>
-                        {user.roles?.includes("admin") ? (
-                            <div id="role-user" className="exp-card" style={{ background: "background.paper" }}>
-                                <div>
-                                    <h3>Tipo de usuario</h3>
-                                    <p>Admin</p>
-                                    <span>Acceso total</span>
-                                </div>
-                                <div style={{ width: "80px", height: "80px", backgroundColor: "#a7ffa7ff", borderRadius: 10, display: "flex", alignItems: "center", justifyContent: "center" }}><h1>A</h1></div>
-                            </div>
-                        ) : (
-                            <div id="role-user" className="exp-card" style={{ background: "paper" }}>
-                                <div>
-                                    <h3>Tipo de usuario</h3>
-                                    <p>Regular User</p>
-                                    <span>Acceso limitado</span>
-                                </div>
-                                <div style={{ width: "80px", height: "80px", backgroundColor: "#eb5e8c", borderRadius: 10, display: "flex", alignItems: "center", justifyContent: "center" }}><h1 style={{ color: "#fff" }}>R</h1></div>
-                            </div>
-                        )}
                     </div>
                 </section>
 

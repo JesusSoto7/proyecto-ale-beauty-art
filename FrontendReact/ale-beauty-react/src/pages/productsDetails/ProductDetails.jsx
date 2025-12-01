@@ -385,8 +385,6 @@ function ProductDetails() {
     );
   }
 
-
-
   const handleBuyNow = (productId, quantity = 1) => {
     fetch("https://localhost:4000/api/v1/orders", {
       method: "POST",
@@ -420,7 +418,6 @@ function ProductDetails() {
       })
       .catch(() => setError(t("cart.orderError")));
   };
-
 
   const addToCart = (item) => {
 
@@ -476,7 +473,8 @@ function ProductDetails() {
       const data = await res.json();
 
       if (res.ok) {
-        setReviews((prev) => [...prev, data]);
+        const reviewWithUser = { ...data, user: user };
+        setReviews((prev) => [...prev, reviewWithUser]);
         setNewReview({ rating: 0, comentario: "" });
         setShowReviewForm(false);
       } else {
@@ -558,7 +556,7 @@ function ProductDetails() {
   return (
     <div className="product-details-page" style={{
       marginTop: "60px",
-      maxWidth: "1200px",
+      maxWidth: "1250px",
       margin: "60px auto 0",
       padding: "0 20px"
     }}>
@@ -796,8 +794,8 @@ function ProductDetails() {
               </button>
             )}
           </div>
-        </div>
-      </div>
+        </div >
+      </div >
 
       <section id="detalles-producto" className="details-reviews-container" style={{
         backgroundColor: "white",
@@ -1090,7 +1088,6 @@ function ProductDetails() {
 
       </section>
 
-
       {relatedProducts && relatedProducts.length > 0 ? (
         <section className="related-products" style={{ marginBottom: "60px" }}>
           <h3 style={{
@@ -1107,7 +1104,7 @@ function ProductDetails() {
             <div className="carousel-items" style={{
               display: "flex",
               gap: "24px",
-              padding: "0 10px"
+              padding: "0 -10px"
             }}>
               {relatedProducts
                 .filter((rp) => rp.subcategoria_id === product.subcategoria_id)
@@ -1117,14 +1114,14 @@ function ProductDetails() {
                     key={rp.id}
                     product={rp}
                     lang={lang}
-                    isFavorite={favoriteIds.includes(rp.id)} // Manejo de favoritos
-                    onToggleFavorite={toggleFavorite} // Acción al presionar el botón de favoritos
-                    onAddToCart={(item) => addToCart(item)} // Acción para agregar al carrito
+                    isFavorite={favoriteIds.includes(rp.id)}
+                    onToggleFavorite={toggleFavorite}
+                    onAddToCart={(item) => addToCart(item)}
                     productRating={{
-                      avg: productRatings[rp.id]?.avg, // Promedio de calificaciones
-                      count: productRatings[rp.id]?.count, // Cantidad de reseñas
+                      avg: productRatings[rp.id]?.avg,
+                      count: productRatings[rp.id]?.count,
                     }}
-                    t={t} // Traducción
+                    t={t}
                   />
                 ))}
             </div>
@@ -1173,7 +1170,7 @@ function ProductDetails() {
         </section>
       )}
 
-    </div>
+    </div >
   );
 }
 
