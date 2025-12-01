@@ -100,6 +100,7 @@ function LoginForm({ onLogin }) {
           <div className="mb-3">
             <input
               type="email"
+              name="email"
               className={`login-input ${emailError ? "is-invalid" : ""}`}
               placeholder={t("login.emailPlaceholder")}
               value={email}
@@ -155,9 +156,9 @@ function LoginForm({ onLogin }) {
 
         <p className="text-secondary text-center mt-4 small">
           {t("login.terms1")}{" "}
-          <span className="rosa text-decoration-underline">{t("login.termsOfService")}</span>{" "}
+          <a className="rosa text-decoration-underline" href={`/${lang}/terms`}>{t("footer.information.terms")}</a>{" "}
           {t("login.and")}{" "}
-          <span className="rosa text-decoration-underline">{t("login.privacyPolicy")}</span>.
+          <a className="rosa text-decoration-underline" href={`/${lang}/privacy-policy`}>{t("footer.information.privacy")}</a>.
         </p>
       </div>
 

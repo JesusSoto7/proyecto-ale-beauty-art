@@ -14,7 +14,8 @@
     "clearAll": "Clear All",
     "items": "items",
     "set": "Color",
-    "outOfStock": "Out of Stock"
+    "outOfStock": "Out of Stock",
+    "loginToContinue": "Log in to continue"
   },
   "categoryProducts": {
     "notAuth": "Not authenticated",

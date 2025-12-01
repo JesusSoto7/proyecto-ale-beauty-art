@@ -14,7 +14,8 @@
     "clearAll": "Vaciar Todo",
     "items": "artículos",
     "set": "Color",
-    "outOfStock": "Agotado"
+    "outOfStock": "Agotado",
+    "loginToContinue": "Inicia sesión para continuar"
   },
   "categoryProducts": {
     "notAuth": "No autenticado",

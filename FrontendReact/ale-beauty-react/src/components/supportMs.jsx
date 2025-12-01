@@ -112,6 +112,8 @@ export default function SupportMs() {
                         value={message_text}
                         onChange={(e) => setMessageText(e.target.value)}
                         rows="10"
+                        minLength={20}
+                        maxLength={500}
                         style={{ background: "#f8f9f9" }}
                     ></textarea>
                     <button type="submit" className="send-btn">

@@ -11,7 +11,7 @@ class FacturaPdf
 
   def render
     Prawn::Document.new do |pdf|
-      pdf.text "Factura ##{@order.numero_de_orden}", size: 24, style: :bold, align: :center
+      pdf.text "Detalle de orden #{@order.numero_de_orden}", size: 24, style: :bold, align: :center
       pdf.move_down 10
 
       pdf.stroke_horizontal_rule
