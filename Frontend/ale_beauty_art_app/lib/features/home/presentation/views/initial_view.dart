@@ -173,7 +173,7 @@ class InitialView extends StatelessWidget {
             width: double.infinity,
             constraints: BoxConstraints(
               // Reduce the white container height to avoid large empty area below content
-              minHeight: screenHeight - 280,
+              minHeight: screenHeight - 260,
             ),
             decoration: const BoxDecoration(
               color: Colors.white,
